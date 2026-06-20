@@ -1,0 +1,192 @@
+{
+  "runId": "2026-06-19-01",
+  "runAt": "2026-06-19T22:30:00Z",
+  "engine": "Claude committee + independent review (separate-context agent, its own web research)",
+  "costMeter": "This run executed inside Claude Code. No separate API charge.",
+  "dataAsOf": "Prices 2026-06-18 close · fundamentals + news pulled live 2026-06-19",
+  "accounts": {
+    "fidelity-joint": {
+      "headline": "Your real risk isn't any single stock — it's that ~76% of this account is ONE bet (AI chips). Exit the speculative satellite (QBTS), trim the expensive half (AMD), keep the cheaper leader (NVDA) — and put every freed dollar somewhere that ISN'T AI.",
+      "independentCheck": {
+        "verdict": "Agrees with the direction — disagrees with the reasoning, and the timidity.",
+        "gist": "A separate reviewer (its own context, its own web research, never saw the desk's logic) called it: the desk was 'trimming the wrong stock for the right reason and holding the right stock for the wrong reason.' Same three actions, sharper logic — cut AMD deeper because it's the expensive, all-time-high half of your AI bet; exit QBTS to your OWN 3% cap, not a soft 5%; and keep NVDA only if you call it a deliberate override, not 'discipline.' Its biggest point, which the cap system is blind to: this isn't a 4-stock portfolio, it's ~1.5 bets."
+      },
+      "trueConcentration": {
+        "factor": "AI / semiconductor compute",
+        "pct": 76,
+        "allTech": 94,
+        "effectiveBets": 1.5,
+        "note": "AMD + NVDA are the same trade (~0.7–0.8 daily correlation, both long AI-data-center capex). QBTS is a higher-beta tail on the same theme. By single-name % you look like 40/36/18/5; by what-moves-together you own ~1.5 independent bets. The 12% single-name cap polices the wrong axis — your risk is almost pure AI-factor risk."
+      },
+      "proposals": [
+        {
+          "id": "p1",
+          "action": "TRIM",
+          "symbol": "QBTS",
+          "sizing": "Sell ~12 of 15 shares (~$300). Cuts 18% → ~3% (your own satellite cap). Do this FIRST.",
+          "estCash": 300,
+          "kind": "House money + biggest risk cut, cheapest tax",
+          "tradeoff": "If D-Wave moons again you miss some of it, that's the cost. But this is the cheapest risk reduction you own: it's already +142%, selling ~$300 takes your original stake plus profit off the table, and your own playbook caps speculative names at 3% — you're holding it at 18%, six times the limit. The one trim worth making even chasing max growth.",
+          "grounded": "Revenue last quarter was $2.9M — DOWN 81% year-over-year — against a ~$9B valuation (≈215× sales). The product milestone that would justify the price (100 logical qubits) isn't projected until 2032; today it's an 8-qubit demo. The company funds itself by issuing stock (~27% dilution last year). It's already fallen ~47% from its October high. A 3%-cap science project you're carrying at 18%.",
+          "tax": "Realizes ~$176 gain → est. tax ~$44 (assume long-term, ~25% blended). Net cash ~$256. Smallest tax bill for the biggest risk drop — that's why it goes first.",
+          "consensus": {
+            "label": "Independent check: agrees, and goes further",
+            "detail": "The outside reviewer said trim to 3% or exit entirely — citing your own satellite cap and revenue down 81%. The desk's earlier 5% target was too soft."
+          },
+          "eli5": "A risky quantum-computing bet got lucky and ballooned to a big chunk of your account. Risky bets are supposed to be tiny. Take your original money plus the winnings off the table, leave a sliver. Do this one first — safest, cheapest cleanup.",
+          "scout": "QBTS is 18% of the account, six times the 3% satellite cap, up 142% but already down 47% from its high.",
+          "bull": "Quantum is a real frontier; bookings spiked and the cash runway is long. Cutting a 142% winner feels early.",
+          "bear": "Revenue is going BACKWARDS (-81% YoY) at 215× sales, funded by serial dilution, with the real catalyst six years out. A meme multiple with no earnings floor.",
+          "risk": "Six times the satellite cap. Trim to 3% or exit. Non-negotiable under the playbook.",
+          "pm": "Sell ~$300 to ~3%. Take stake + profit; leave a lottery stub if you want exposure. First action of the run.",
+          "status": "pending"
+        },
+        {
+          "id": "p2",
+          "action": "TRIM",
+          "symbol": "AMD",
+          "sizing": "Sell ~$500 (40% → ~15%). Use specific LONG-TERM lots, not average cost.",
+          "estCash": 500,
+          "kind": "Safety + valuation (the expensive half of your AI bet)",
+          "tradeoff": "If AMD keeps running you make less than if you'd held — real, and you should expect it. But you're trimming the most expensive, most extended thing you own, at an all-time high, right before earnings. This protects; it does not grow. NOTE: your weekend deposit alone drops AMD under the 12% cap — so this trim is now OPTIONAL, a pure valuation call, not a required de-risk.",
+          "grounded": "AMD trades at ~62× FORWARD earnings (176× trailing) and hit an all-time high four days ago after a ~28% run in a month — on analyst upgrades, not results. Next earnings Aug 4. It's the #2 in a duopoly where NVIDIA has reportedly locked the chip supply chain (CoWoS / HBM) through 2026. A stretched multiple on the weaker half of your AI bet, near its peak.",
+          "tax": "Realizes ~$380 gain → est. tax ~$95. Net cash ~$405. If you do it: sell specific long-term lots to minimize gain per dollar, and don't trim past ~15%.",
+          "consensus": {
+            "label": "Independent check: agrees, would cut deeper",
+            "detail": "The outside reviewer agreed AMD is the right name to trim and argued for ~12–15% on valuation: a 62× forward multiple at an all-time high is itself a risk event."
+          },
+          "eli5": "Almost half your account is one chip stock at a record high that's very expensive. Selling some takes the spike risk off — but your new $5K deposit already shrinks AMD under the limit, so this one's now your choice, not a must.",
+          "scout": "AMD is 40% of the account, 3× the 12% cap, at an all-time high on a 28% monthly run.",
+          "bull": "Best performer you own; the MI400 roadmap is real and analysts see $600+. Cutting a 315% winner stings.",
+          "bear": "~62× forward for the #2, at an all-time high, the day after a sentiment-driven melt-up, pre-earnings. In any AI-capex wobble the pricey name falls first.",
+          "risk": "Was a mandatory cap breach; the deposit relieves it. Now a valuation-only trim to ~15%, your call.",
+          "pm": "Optional post-deposit. If valuation worries you, sell ~$500 via long-term lots; otherwise let it ride under its new sub-cap weight.",
+          "status": "pending"
+        }
+      ],
+      "noAction": [
+        {
+          "symbols": "NVDA",
+          "kind": "Deliberate override — named, not hidden",
+          "override": true,
+          "reason": "You're holding NVDA at 36%, over the 12% cap. The honest version: defensible — but ONLY as a deliberate choice to express your AI bet through the higher-quality name. NVIDIA is cheaper (~21× forward vs AMD's ~62×), faster-growing (last guide beat consensus by ~$12B), more dominant, and below its 52-week high. It is NOT 'discipline.' The desk logs it as an OVERRIDE, scores it, and keeps flagging while it breaches the cap. Your weekend deposit also drops it back under the cap on its own.",
+          "eli5": "You're keeping NVIDIA bigger than your own rules allow. That's an OK call — it's the best, cheapest company of the bunch — but it's a rule-break you're choosing on purpose, not 'being disciplined.' Your new deposit shrinks it under the limit anyway."
+        },
+        {
+          "symbols": "AAPL",
+          "reason": "5.3%, within every cap, quality, and the only current holding that ISN'T an AI-compute bet. Hold.",
+          "eli5": "Apple is a small, sensible slice and the only thing you own that isn't an AI chip bet. Leave it alone."
+        },
+        {
+          "symbols": "TAX · sequencing",
+          "reason": "If you do the trims: QBTS first (smallest gain %, biggest risk drop), AMD via specific long-term lots, don't over-trim. Est. total tax on both ~$140. The $5K of new BUYS below have NO tax — they're new money.",
+          "eli5": "Selling winners means taxes; buying with new money doesn't. Do the cheap sale (QBTS) first if you sell at all. The new buys below cost no tax."
+        }
+      ],
+      "deployment": {
+        "headline": "Buy what's green on the day NVDA is red. $5,000 into 8 specific names whose cash flows have nothing to do with GPU demand — not index funds, not more chips.",
+        "strategy": "Your risk is one factor (AI-compute), not too few tickers. So we buy specific businesses run by different engines: biology (LLY), government budgets (GD), consumer spending (V), insurance + rails + energy (BRK.B), and a real cash floor (SGOV). Concentrated conviction picks, not a closet index fund.",
+        "trap": "The obvious 'diversifier' is a trap. Power stocks (Vistra / Constellation / GE Vernova) look non-tech, but on the Jan-2025 DeepSeek AI-spend scare they fell HARDER than NVIDIA itself (VST −28% vs NVDA −17%). They're AI-capex beta in a utility costume. We keep only VST, sized small, and only because it's beaten down ~39% to contracted-cash-flow value — a satellite, not the diversifier it pretends to be.",
+        "independentCheck": {
+          "verdict": "Refereed and rebuilt — cut 2 names, added defense, sized the trap small.",
+          "gist": "An independent strategist (own web research, separate context) proved the power-stock trap with the DeepSeek tape, cut GE Vernova (it IS the AI factor — up 243%, no margin of safety) and Constellation (reactor reconnection slipped to 2031), made the cash floor a real position, and added General Dynamics as the most AI-orthogonal cash flow available. This allocation is its call, not just mine."
+        },
+        "biggestRisk": "If the AI-capex boom re-accelerates instead of breaking, this plan underperforms doing nothing — you're buying laggards and ballast while your AMD/NVDA book keeps ripping. That foregone upside IS the cost of insurance. But at 76% one-factor concentration the asymmetry has flipped: you're no longer paid enough for the next dollar of AI risk, and one DeepSeek-grade headline takes the whole book down together.",
+        "lanes": [
+          {
+            "name": "Moderate · growth, de-correlated from chips",
+            "amount": 3000,
+            "picks": [
+              {
+                "sym": "LLY",
+                "name": "Eli Lilly",
+                "amt": 1000,
+                "px": 1118.67,
+                "kind": "Biology, not chips",
+                "thesis": "The GLP-1 / obesity-drug juggernaut. Down ~13% YTD on a single pipeline stumble (its oral pill missed estimates after Novo's beat it head-to-head) — but the injectable franchise (Zepbound / Mounjaro) still dominates.",
+                "diversifies": "Earnings come from prescriptions and biology — zero relationship to GPU capex or hyperscaler spend. A completely different kind of risk.",
+                "entry": "Good entry — down on a drug-specific miss, not a broken franchise."
+              },
+              {
+                "sym": "GD",
+                "name": "General Dynamics",
+                "amt": 900,
+                "px": 349.86,
+                "kind": "Government budgets",
+                "thesis": "Cleanest defense pure-play: submarines + AUKUS, $130B+ backlog, Q1 EPS beat ~11% with a raised guide. Global defense spend +8% to $2.6T.",
+                "diversifies": "Revenue is multi-year government appropriations — about as orthogonal to AI-chip demand as a public stock gets. Naval contracts don't care about DeepSeek.",
+                "entry": "~5% below its high — quality, not a discount. Reasonable to buy half now, half on a dip toward ~$330."
+              },
+              {
+                "sym": "V",
+                "name": "Visa",
+                "amt": 700,
+                "px": 332.0,
+                "kind": "Consumer spending",
+                "thesis": "The toll booth on global payments. Q2 revenue +17% (fastest since 2022), and it turned the stablecoin threat into a ~$7B settlement tailwind. JPMorgan's top payments pick.",
+                "diversifies": "Tracks transaction volume and the consumer, not data-center capex cycles. Correlates to the economy, not the GPU.",
+                "entry": "Near its high (~28×) — a fair-value entry, not a bargain."
+              },
+              {
+                "sym": "VST",
+                "name": "Vistra",
+                "amt": 400,
+                "px": 162.1,
+                "kind": "AI-adjacent satellite — small on purpose",
+                "thesis": "The ONE re-expressed AI bet: contracted power (20-yr Meta/AWS deals) + nuclear, down ~39% from its high at ~18× forward. You're buying contracted cash flow at a discount, not narrative at a premium.",
+                "diversifies": "Only PARTIALLY — its cash flows would survive an AI-spending pause, but the stock still carries AI-sentiment beta (that's the trap above). Which is exactly why it's the smallest position.",
+                "entry": "Best entry on the list — down ~39%, near its 52-week low, with EBITDA guidance reaffirmed."
+              }
+            ]
+          },
+          {
+            "name": "Safer · ballast + cash floor",
+            "amount": 2000,
+            "picks": [
+              {
+                "sym": "BRK.B",
+                "name": "Berkshire Hathaway",
+                "amt": 800,
+                "px": 492.0,
+                "kind": "Volatility dampener",
+                "thesis": "The best shock-absorber you can buy: record ~$397B cash (~59% of assets), insurance + railroad + energy + staples, ~14.6× earnings / 1.45× book.",
+                "diversifies": "Diversified non-tech cash flows. One asterisk: it recently put ~$21.6B into Alphabet, so a small AI tilt — still the strongest ballast on the list.",
+                "entry": "Mid-range ($455–517) — reasonable, not stretched."
+              },
+              {
+                "sym": "JNJ",
+                "name": "Johnson & Johnson",
+                "amt": 600,
+                "px": 232.1,
+                "kind": "Non-cyclical income",
+                "thesis": "Defensive healthcare: diversified pharma + medtech, AAA balance sheet, 2.3% dividend.",
+                "diversifies": "Healthcare demand is recession- and tech-cycle-proof — no link to compute spending. A classic low-beta anchor.",
+                "entry": "Near its high — you pay up modestly for safety. Fine for ballast."
+              },
+              {
+                "sym": "SGOV",
+                "name": "0–3 month T-Bills",
+                "amt": 400,
+                "px": 100.59,
+                "kind": "Dry powder — fixes your 0% cash floor",
+                "thesis": "Risk-free ~4% yield, instant liquidity. This fixes your actual structural problem — you currently hold NO cash — and gives you ammo to buy the next DeepSeek-grade dip.",
+                "diversifies": "Zero equity correlation by definition. The optionality you don't currently have.",
+                "entry": "Always in season. Buy immediately, no timing risk."
+              },
+              {
+                "sym": "GLD",
+                "name": "Gold",
+                "amt": 200,
+                "px": 391.24,
+                "kind": "Panic hedge",
+                "thesis": "The one asset that tends to rise WHEN equities panic. Pulled back ~23% from its January top; bank targets still higher.",
+                "diversifies": "Negative-to-zero correlation with stocks in stress — literally green on the day NVDA is red. Small tail-hedge sizing.",
+                "entry": "Buying the pullback, not the spike. Fine for a small hedge."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,2384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PendulumPro · Control Room</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #060707;
+        --bg-2: #0c0e0d;
+        --surface: #101312;
+        --surface-2: #161a18;
+        --line: rgba(255, 255, 255, 0.08);
+        --line-strong: rgba(255, 255, 255, 0.14);
+        --green: #00c805;
+        --green-soft: #7cffa0;
+        --green-dim: #0a7d22;
+        --loss: #ff5000;
+        --text: #f4f6f5;
+        --muted: #8b938d;
+        --muted-2: #5b635d;
+        --display: "Bricolage Grotesque", serif;
+        --body: "Hanken Grotesk", sans-serif;
+        --mono: "JetBrains Mono", monospace;
+        --bar-bg: rgba(6, 7, 7, 0.85);
+        --glow-op: 1;
+      }
+      [data-theme="light"] {
+        --bg: #f6f7f5;
+        --bg-2: #eceee9;
+        --surface: #ffffff;
+        --surface-2: #f1f3ef;
+        --line: rgba(0, 0, 0, 0.1);
+        --line-strong: rgba(0, 0, 0, 0.16);
+        --green: #07a013;
+        --green-soft: #0a7d22;
+        --green-dim: #9fd9a8;
+        --loss: #e64500;
+        --text: #0d0f0e;
+        --muted: #5b635d;
+        --muted-2: #6f766f;
+        --bar-bg: rgba(246, 247, 245, 0.88);
+        --glow-op: 0.35;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--body);
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.5;
+      }
+      .grid-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 64px 64px;
+        -webkit-mask-image: radial-gradient(
+          ellipse 80% 60% at 50% 0%,
+          #000 40%,
+          transparent 85%
+        );
+        mask-image: radial-gradient(
+          ellipse 80% 60% at 50% 0%,
+          #000 40%,
+          transparent 85%
+        );
+        opacity: 0.3;
+      }
+      .glow {
+        position: fixed;
+        width: 46vw;
+        height: 46vw;
+        left: -10vw;
+        top: -12vw;
+        border-radius: 50%;
+        filter: blur(120px);
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          circle,
+          rgba(0, 200, 5, 0.12),
+          transparent 70%
+        );
+        opacity: var(--glow-op);
+      }
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px 100px;
+      }
+
+      /* top bar */
+      .bar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        flex-wrap: wrap;
+        padding: 16px 24px;
+        margin: 0 -24px 8px;
+        background: var(--bar-bg);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      .nav {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .nav a {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 5px 9px;
+        border-radius: 7px;
+        border: 1px solid transparent;
+      }
+      .nav a:hover {
+        color: var(--green);
+        border-color: var(--green-dim);
+      }
+      .toggle {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        background: transparent;
+        border: 1px solid var(--line-strong);
+        border-radius: 7px;
+        padding: 6px 11px;
+        cursor: pointer;
+      }
+      .toggle:hover {
+        color: var(--text);
+        border-color: var(--green-dim);
+      }
+      .toggle.on {
+        color: var(--green);
+        border-color: var(--green-dim);
+        background: rgba(0, 200, 5, 0.08);
+      }
+      .anchor {
+        scroll-margin-top: 96px;
+      }
+      /* plain-english mode: hide the analyst grid, show the ELI5 block */
+      .eli5 {
+        display: none;
+        border-top: 1px solid var(--line);
+        padding: 16px 20px;
+        font-size: 1rem;
+        line-height: 1.55;
+        color: var(--text);
+      }
+      .eli5 .lab {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--green);
+        display: block;
+        margin-bottom: 8px;
+      }
+      body.plain .roles {
+        display: none;
+      }
+      body.plain .eli5 {
+        display: block;
+      }
+      .brand {
+        font-family: var(--mono);
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--text);
+      }
+      .brand .tick {
+        color: var(--green);
+      }
+      .live {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 3px 9px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: none;
+        cursor: pointer;
+      }
+      .live:hover {
+        border-color: var(--muted);
+        color: var(--text);
+      }
+      .live .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--muted-2);
+      }
+      .live.on {
+        color: var(--green);
+        border-color: var(--green-dim);
+      }
+      .live.on .dot {
+        background: var(--green);
+        box-shadow: 0 0 8px var(--green);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
+      .bar .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .bar .stat .k {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        color: var(--muted-2);
+        text-transform: uppercase;
+      }
+      .bar .stat .v {
+        font-family: var(--mono);
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .bar .spacer {
+        flex: 1;
+      }
+      .up {
+        color: var(--green);
+      }
+      .dn {
+        color: var(--loss);
+      }
+      .flat {
+        color: var(--muted);
+      }
+
+      h1 {
+        font-family: var(--display);
+        font-weight: 800;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        letter-spacing: -0.03em;
+        line-height: 1;
+        margin: 34px 0 6px;
+      }
+      .sub {
+        color: var(--muted);
+        max-width: 60ch;
+        margin-bottom: 8px;
+      }
+      .section-label {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        color: var(--green);
+        text-transform: uppercase;
+        margin: 42px 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .section-label::before {
+        content: "";
+        width: 26px;
+        height: 1px;
+        background: var(--green);
+      }
+      .section-label .count {
+        color: var(--muted-2);
+        letter-spacing: 0.1em;
+      }
+
+      /* playbook check chips */
+      .checks {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+      @media (max-width: 760px) {
+        .checks {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .chip {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 16px;
+        background: var(--surface);
+        position: relative;
+        overflow: hidden;
+      }
+      .chip.fail {
+        border-color: rgba(255, 80, 0, 0.4);
+      }
+      .chip.pass {
+        border-color: var(--green-dim);
+      }
+      .chip .lab {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      .chip .big {
+        font-family: var(--display);
+        font-size: 1.7rem;
+        font-weight: 700;
+      }
+      .chip .meta {
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .chip .tag {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        padding: 2px 7px;
+        border-radius: 10px;
+      }
+      .chip.fail .tag {
+        background: rgba(255, 80, 0, 0.14);
+        color: var(--loss);
+      }
+      .chip.pass .tag {
+        background: rgba(0, 200, 5, 0.14);
+        color: var(--green);
+      }
+
+      /* headline */
+      .headline {
+        border-left: 2px solid var(--green);
+        padding: 14px 0 14px 20px;
+        margin: 6px 0 4px;
+        font-family: var(--display);
+        font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+        font-weight: 600;
+        line-height: 1.25;
+        letter-spacing: -0.01em;
+      }
+
+      /* proposal cards */
+      .prop {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: linear-gradient(160deg, var(--surface), var(--bg-2));
+        margin-bottom: 14px;
+        overflow: hidden;
+        transition: border-color 0.3s;
+      }
+      .prop:hover {
+        border-color: var(--green-dim);
+      }
+      .prop.sell {
+      }
+      .prop-head {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 20px;
+        flex-wrap: wrap;
+      }
+      .act {
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        padding: 5px 11px;
+        border-radius: 7px;
+      }
+      .act.TRIM {
+        background: rgba(255, 180, 0, 0.14);
+        color: #ffb400;
+      }
+      .act.SELL {
+        background: rgba(255, 80, 0, 0.16);
+        color: var(--loss);
+      }
+      .act.BUY {
+        background: rgba(0, 200, 5, 0.16);
+        color: var(--green);
+      }
+      .prop-sym {
+        font-family: var(--display);
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .prop-size {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .prop-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 9px;
+      }
+      .btn {
+        font-family: var(--mono);
+        font-size: 12px;
+        padding: 9px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: none;
+        letter-spacing: 0.04em;
+      }
+      .btn.approve {
+        background: var(--green);
+        color: #021400;
+        font-weight: 700;
+        box-shadow: 0 0 18px rgba(0, 200, 5, 0.25);
+      }
+      .btn.pass {
+        background: transparent;
+        border: 1px solid var(--line-strong);
+        color: var(--muted);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .roles {
+        border-top: 1px solid var(--line);
+        padding: 6px 20px 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 28px;
+      }
+      @media (max-width: 680px) {
+        .roles {
+          grid-template-columns: 1fr;
+        }
+      }
+      .role {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .role:last-child,
+      .role:nth-last-child(2):nth-child(odd) {
+        border-bottom: none;
+      }
+      .role .rn {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        margin-bottom: 5px;
+      }
+      .role.scout .rn {
+        color: var(--green);
+      }
+      .role.bull .rn {
+        color: var(--green-soft);
+      }
+      .role.bear .rn {
+        color: var(--loss);
+      }
+      .role.risk .rn {
+        color: #ffb400;
+      }
+      .role.pm .rn {
+        color: var(--text);
+      }
+      .role p {
+        font-size: 0.88rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .prop-resolved {
+        padding: 14px 20px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 12px;
+        display: none;
+      }
+      .prop.approved .prop-resolved {
+        display: block;
+        color: var(--green);
+      }
+      .prop.passed .prop-resolved {
+        display: block;
+        color: var(--muted);
+      }
+      .prop.suggested .prop-resolved {
+        display: block;
+        color: #ffb400;
+      }
+      .prop.approved .prop-actions,
+      .prop.passed .prop-actions,
+      .prop.suggested .prop-actions {
+        display: none;
+      }
+      .btn.suggest {
+        background: none;
+        color: #ffb400;
+        border: 1px solid rgba(255, 180, 0, 0.4);
+      }
+      .btn.suggest:hover {
+        background: rgba(255, 180, 0, 0.1);
+      }
+      .mini.reopen {
+        color: var(--muted);
+        margin-left: 8px;
+      }
+      /* write-in suggestion box */
+      .suggest-box {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .sg-lab {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: #ffb400;
+      }
+      .sg-input {
+        width: 100%;
+        box-sizing: border-box;
+        background: var(--bg-2);
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.92rem;
+        padding: 9px 11px;
+        resize: vertical;
+      }
+      .sg-input:focus {
+        outline: 2px solid rgba(255, 180, 0, 0.5);
+        outline-offset: 1px;
+      }
+      .sg-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      /* your-decisions archive */
+      #archive {
+        margin-top: 6px;
+      }
+      .arch-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+      .arch-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-left: 2px solid var(--line-strong);
+        border-radius: 8px;
+        font-size: 0.86rem;
+      }
+      .arch-row.approved {
+        border-left-color: var(--green);
+      }
+      .arch-row.passed {
+        border-left-color: var(--loss);
+      }
+      .arch-row.suggested {
+        border-left-color: #ffb400;
+      }
+      .arch-row.reopened {
+        border-left-color: var(--muted-2);
+        opacity: 0.7;
+      }
+      .arch-ev {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+      .arch-sym {
+        font-family: var(--mono);
+        font-weight: 600;
+        color: var(--text);
+      }
+      .arch-sug {
+        color: #ffb400;
+        font-style: italic;
+      }
+      .arch-t {
+        margin-left: auto;
+        color: var(--muted-2);
+        font-family: var(--mono);
+        font-size: 10px;
+      }
+
+      /* no-action */
+      .noact {
+        border: 1px dashed var(--line-strong);
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+        background: rgba(255, 255, 255, 0.015);
+      }
+      .noact .ns {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin-bottom: 5px;
+      }
+      .noact .ns b {
+        color: var(--text);
+      }
+      .noact p {
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+
+      /* holdings table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: var(--muted-2);
+        text-transform: uppercase;
+        text-align: right;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--line);
+        font-weight: 500;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+      td {
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+        font-variant-numeric: tabular-nums;
+        font-family: var(--mono);
+        font-size: 0.85rem;
+      }
+      td.sym {
+        font-family: var(--body);
+        font-weight: 700;
+        font-size: 0.95rem;
+        font-variant-numeric: normal;
+      }
+      .theme {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        padding: 2px 6px;
+        border-radius: 8px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.05);
+        margin-left: 8px;
+      }
+      .theme.miner {
+        color: #ffb400;
+        background: rgba(255, 180, 0, 0.1);
+      }
+      .theme.ai {
+        color: var(--green);
+        background: rgba(0, 200, 5, 0.1);
+      }
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* decision log */
+      .logrow {
+        display: grid;
+        grid-template-columns: 90px 1fr;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+        align-items: baseline;
+      }
+      @media (max-width: 600px) {
+        .logrow {
+          grid-template-columns: 1fr;
+          gap: 3px;
+        }
+      }
+      .logrow .lt {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--muted-2);
+        letter-spacing: 0.06em;
+      }
+      .logrow .ld {
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+      .logrow .ld .badge {
+        font-family: var(--mono);
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 6px;
+        margin-right: 8px;
+        letter-spacing: 0.06em;
+      }
+      .badge.TRIM {
+        background: rgba(255, 180, 0, 0.14);
+        color: #ffb400;
+      }
+      .badge.SELL {
+        background: rgba(255, 80, 0, 0.14);
+        color: var(--loss);
+      }
+      .badge.HOLD,
+      .badge.NO_BUY,
+      .badge.FLAG {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--muted);
+      }
+      .badge.BENCHMARK_SET,
+      .badge.BUY {
+        background: rgba(0, 200, 5, 0.12);
+        color: var(--green);
+      }
+      .by {
+        font-family: var(--mono);
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 6px;
+        letter-spacing: 0.04em;
+      }
+      .by.you {
+        background: rgba(0, 200, 5, 0.12);
+        color: var(--green);
+      }
+      .by.auto {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--muted);
+      }
+      .ld b {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      footer {
+        margin-top: 50px;
+        border-top: 1px solid var(--line);
+        padding-top: 20px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--muted-2);
+        letter-spacing: 0.04em;
+        line-height: 1.7;
+      }
+      .loading {
+        padding: 60px 0;
+        text-align: center;
+        font-family: var(--mono);
+        color: var(--muted);
+        letter-spacing: 0.1em;
+      }
+      .err {
+        color: var(--loss);
+      }
+
+      /* ---- audit batch additions ---- */
+      :focus-visible {
+        outline: 2px solid var(--green);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      /* breach chips become links to their fix */
+      .chip.linked {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+      }
+      .chip.linked:hover {
+        border-color: var(--loss);
+      }
+      .chip-fix {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        color: var(--loss);
+        margin-top: 8px;
+      }
+      /* agreement signal: amber when not unanimous */
+      /* color every theme tag (was only miner/ai) */
+      .theme.megacap {
+        color: #6ea8ff;
+        background: rgba(110, 168, 255, 0.1);
+      }
+      .theme.spec {
+        color: var(--loss);
+        background: rgba(255, 80, 0, 0.1);
+      }
+      .theme.cashlike {
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.06);
+      }
+      /* holdings: dollar sub-amount + totals row */
+      td .amt {
+        color: var(--muted);
+        font-size: 0.78rem;
+        margin-left: 4px;
+      }
+      tr.tot td {
+        border-top: 1px solid var(--line-strong);
+        border-bottom: none;
+        font-weight: 700;
+        padding-top: 13px;
+      }
+      tr.tot:hover td {
+        background: transparent;
+      }
+      /* decision log run subheader */
+      .logrun {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--green);
+        text-transform: uppercase;
+        margin: 18px 0 4px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+      }
+      .logrun:first-of-type {
+        border-top: none;
+        padding-top: 0;
+      }
+      /* approved order ticket */
+      .ticket {
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        background: rgba(0, 200, 5, 0.1);
+        border: 1px solid var(--green-dim);
+        border-radius: 6px;
+        padding: 3px 8px;
+        color: var(--text);
+      }
+      .mini {
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--line-strong);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        text-decoration: none;
+        margin-left: 4px;
+      }
+      .mini:hover {
+        color: var(--green);
+        border-color: var(--green-dim);
+      }
+      .muted-note {
+        color: var(--muted-2);
+        font-size: 0.8rem;
+        margin-left: 4px;
+      }
+      /* plain-english swap for non-card text (no-action items) */
+      .only-plain {
+        display: none;
+      }
+      body.plain .only-plain {
+        display: block;
+      }
+      body.plain .only-detail {
+        display: none;
+      }
+      /* mobile: collapse the bar's stat cluster (numbers live in chips + holdings) */
+      @media (max-width: 760px) {
+        .bar {
+          gap: 12px;
+        }
+        .bar .stat {
+          display: none;
+        }
+        .anchor {
+          scroll-margin-top: 70px;
+        }
+      }
+
+      /* holdings: theme group headers */
+      tr.grp td {
+        background: rgba(255, 255, 255, 0.035);
+        font-weight: 700;
+        border-bottom: 1px solid var(--line-strong);
+        padding-top: 15px;
+        font-family: var(--body);
+        font-variant-numeric: tabular-nums;
+      }
+      [data-theme="light"] tr.grp td {
+        background: rgba(0, 0, 0, 0.035);
+      }
+      tr.grp:hover td {
+        background: rgba(255, 255, 255, 0.035);
+      }
+      [data-theme="light"] tr.grp:hover td {
+        background: rgba(0, 0, 0, 0.035);
+      }
+      tr.grp .grp-n {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--muted);
+        margin-left: 8px;
+        font-weight: 400;
+      }
+      td.sym.indent {
+        padding-left: 24px;
+      }
+      /* scorecard */
+      .scorenote {
+        font-size: 0.8rem;
+      }
+      .scorefoot {
+        margin: 8px 0 0;
+        display: block;
+      }
+      .badge.BUY {
+        background: rgba(0, 200, 5, 0.16);
+        color: var(--green);
+      }
+      /* approve-all batch button */
+      .batchbar {
+        display: flex;
+        justify-content: flex-end;
+        margin: 4px 0 2px;
+      }
+      .btn.batch {
+        font-size: 12px;
+        padding: 10px 18px;
+      }
+      .btn.batch:disabled {
+        background: transparent;
+        border: 1px solid var(--line-strong);
+        color: var(--muted-2);
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+      /* account tabs */
+      .tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: stretch;
+        margin: 26px 0 8px;
+      }
+      .tab {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        align-items: flex-start;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 16px;
+        cursor: pointer;
+        min-width: 150px;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease;
+      }
+      .tab:hover {
+        border-color: var(--green-dim);
+      }
+      .tab.active {
+        border-color: var(--green);
+        background: linear-gradient(160deg, var(--surface-2), var(--bg-2));
+      }
+      .tab-name {
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text);
+      }
+      .tab-mandate {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 2px 7px;
+        border-radius: 10px;
+      }
+      .tab-mandate.managed {
+        color: var(--green);
+        background: rgba(0, 200, 5, 0.12);
+      }
+      .tab-mandate.monitor {
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.06);
+      }
+      [data-theme="light"] .tab-mandate.monitor {
+        background: rgba(0, 0, 0, 0.06);
+      }
+      .tab-val {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .tab-grand {
+        margin-left: auto;
+        align-self: center;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted-2);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 3px;
+      }
+      .tab-grand b {
+        font-size: 17px;
+        color: var(--text);
+        letter-spacing: 0;
+      }
+      /* monitor-account banner */
+      .monitor-banner {
+        border: 1px solid var(--line-strong);
+        border-left: 2px solid var(--muted);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 16px 18px;
+        margin: 18px 0 4px;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      [data-theme="light"] .monitor-banner {
+        background: rgba(0, 0, 0, 0.02);
+      }
+      .monitor-banner b {
+        color: var(--text);
+      }
+      .monitor-banner .eye {
+        opacity: 0.7;
+      }
+      /* balance + chart showcase */
+      .balance-card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: linear-gradient(160deg, var(--surface), var(--bg-2));
+        padding: 22px 22px 14px;
+        margin: 8px 0 4px;
+        overflow: hidden;
+      }
+      .bal-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 24px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .bal-label {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted-2);
+      }
+      .bal-value {
+        font-family: var(--display);
+        font-weight: 800;
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        margin: 2px 0 4px;
+      }
+      .bal-sub {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .bal-gist {
+        max-width: 34ch;
+        font-size: 1.02rem;
+        line-height: 1.4;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.03);
+        border-left: 2px solid var(--green);
+        border-radius: 8px;
+        padding: 12px 14px;
+      }
+      [data-theme="light"] .bal-gist {
+        background: rgba(0, 0, 0, 0.03);
+      }
+      .balchart {
+        width: 100%;
+        height: 170px;
+        display: block;
+      }
+      .bal-axis {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        color: var(--muted-2);
+        margin-top: 4px;
+      }
+      .bal-axis span:nth-child(2) {
+        color: var(--muted);
+      }
+      /* honest trade-off: the cost of acting, shown at the decision point */
+      .prop-kind {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 10px;
+        color: #ffb400;
+        background: rgba(255, 180, 0, 0.12);
+      }
+      .tradeoff {
+        margin: 0 20px 14px;
+        padding: 13px 15px;
+        border: 1px solid rgba(255, 180, 0, 0.32);
+        border-radius: 10px;
+        background: rgba(255, 180, 0, 0.06);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: var(--text);
+      }
+      .tradeoff .to-lab {
+        display: block;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: #ffb400;
+        margin-bottom: 6px;
+      }
+      /* grounded data + after-tax + independent-check blocks */
+      .grounded,
+      .taxline,
+      .consensus {
+        margin: 0 20px 12px;
+        padding: 11px 15px;
+        border-radius: 10px;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        color: var(--text);
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      [data-theme="light"] .grounded,
+      [data-theme="light"] .taxline,
+      [data-theme="light"] .consensus {
+        background: rgba(0, 0, 0, 0.02);
+      }
+      .grounded {
+        border-color: rgba(120, 160, 255, 0.32);
+      }
+      .consensus {
+        border-color: rgba(0, 200, 5, 0.3);
+      }
+      .g-lab,
+      .t-lab,
+      .c-lab {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        margin-right: 8px;
+        white-space: nowrap;
+      }
+      .g-lab {
+        color: #8fb6ff;
+      }
+      .t-lab {
+        color: var(--muted);
+      }
+      .c-lab {
+        color: var(--green);
+      }
+      .consensus b {
+        color: var(--text);
+      }
+      /* independent review callout (run-level) */
+      .indcheck {
+        margin: 4px 0 18px;
+        padding: 14px 16px;
+        border: 1px solid rgba(170, 130, 255, 0.38);
+        border-left: 3px solid #b794f6;
+        border-radius: 10px;
+        background: rgba(170, 130, 255, 0.07);
+        line-height: 1.55;
+      }
+      .indcheck .ic-lab {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: #b794f6;
+        margin-right: 8px;
+      }
+      .indcheck b {
+        color: var(--text);
+      }
+      .indcheck p {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      /* goal/horizon line in balance card */
+      .bal-goal {
+        margin-top: 7px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      .bal-goal .unset {
+        color: #ffb400;
+        background: rgba(255, 180, 0, 0.12);
+        padding: 1px 7px;
+        border-radius: 8px;
+        margin-left: 6px;
+      }
+      /* override + kind tags on no-action items */
+      .noact.override {
+        border-left: 2px solid #ffb400;
+        padding-left: 13px;
+      }
+      .noact-kind,
+      .override-badge {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 9px;
+        margin-left: 9px;
+        color: #ffb400;
+        background: rgba(255, 180, 0, 0.13);
+      }
+      .override-badge {
+        color: var(--bg);
+        background: #ffb400;
+      }
+      /* live-prices timestamp (pill is styled by .live / .live.on) */
+      .live-time {
+        font-size: 9px;
+        color: var(--muted);
+        margin-left: 2px;
+      }
+      /* deployment plan section */
+      .deploy-strategy,
+      .deploy-trap,
+      .deploy-risk {
+        margin: 0 0 14px;
+        padding: 13px 15px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        line-height: 1.55;
+        color: var(--text);
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      [data-theme="light"] .deploy-strategy,
+      [data-theme="light"] .deploy-trap,
+      [data-theme="light"] .deploy-risk {
+        background: rgba(0, 0, 0, 0.02);
+      }
+      .deploy-trap {
+        border-color: rgba(255, 180, 0, 0.34);
+        background: rgba(255, 180, 0, 0.06);
+      }
+      .deploy-risk {
+        border-color: rgba(255, 80, 0, 0.3);
+        background: rgba(255, 80, 0, 0.05);
+      }
+      .ds-lab,
+      .dt-lab,
+      .dr-lab {
+        display: block;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        margin-bottom: 6px;
+      }
+      .ds-lab {
+        color: var(--green);
+      }
+      .dt-lab {
+        color: #ffb400;
+      }
+      .dr-lab {
+        color: var(--loss);
+      }
+      .lane {
+        margin: 16px 0;
+      }
+      .lane-head {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 0 2px 8px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 10px;
+      }
+      .lane-head b {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text);
+      }
+      .lane-amt {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--green);
+      }
+      .pick {
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        padding: 13px 15px;
+        margin-bottom: 10px;
+        background: var(--surface);
+      }
+      .pick-top {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-bottom: 7px;
+      }
+      .pick-sym {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text);
+      }
+      .pick-name {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .pick-amt {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 0.92rem;
+        color: var(--green);
+      }
+      .pick-sh {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+      .pick-thesis {
+        font-size: 0.93rem;
+        line-height: 1.5;
+        color: var(--text);
+        margin-bottom: 7px;
+      }
+      .pick-div {
+        font-size: 0.88rem;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+      .pd-lab,
+      .pe-lab {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.06em;
+        color: #8fb6ff;
+        margin-right: 6px;
+      }
+      .pick-entry {
+        margin-top: 6px;
+        font-size: 0.85rem;
+        color: var(--muted-2);
+      }
+      .pe-lab {
+        color: var(--muted-2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-bg"></div>
+    <div class="glow"></div>
+
+    <header class="bar">
+      <span class="brand"><span class="tick">▲</span> PENDULUM&nbsp;PRO</span>
+      <button
+        class="live"
+        id="liveBtn"
+        onclick="toggleLive()"
+        aria-pressed="false"
+        title="Toggle live prices — free Finnhub feed"
+      >
+        <span class="dot"></span> <span id="liveLabel">LIVE · OFF</span
+        ><span class="live-time" id="liveTime"></span>
+      </button>
+      <nav class="nav" aria-label="Sections">
+        <a href="#sec-check">Check</a>
+        <a href="#sec-proposals">Proposals</a>
+        <a href="#sec-holdings">Holdings</a>
+        <a href="#sec-log">Log</a>
+      </nav>
+      <div class="spacer"></div>
+      <div class="stat">
+        <span class="k">Account</span><span class="v" id="b-acct">—</span>
+      </div>
+      <div class="stat">
+        <span class="k">Value</span><span class="v" id="b-val">—</span>
+      </div>
+      <div class="stat">
+        <span class="k">Today</span><span class="v" id="b-day">—</span>
+      </div>
+      <div class="stat">
+        <span class="k">vs SPY</span><span class="v" id="b-spy">—</span>
+      </div>
+      <button class="toggle" id="plainBtn" onclick="togglePlain()">
+        Plain English
+      </button>
+      <button class="toggle" id="themeBtn" onclick="toggleTheme()">
+        ☾ Dark
+      </button>
+    </header>
+
+    <main class="wrap">
+      <h1>Control Room</h1>
+      <p class="sub" id="asof">Loading the desk…</p>
+
+      <nav class="tabs" id="tabs" aria-label="Accounts"></nav>
+
+      <div id="app" class="loading">
+        Reading portfolio, proposals, and the decision log…
+      </div>
+    </main>
+
+    <script>
+      // Caps mirror playbook.md — keep in sync if you edit the playbook.
+      const CAPS = { cashFloorMin: 5, themeMax: 35, singleMax: 12 };
+      const fmtUSD = (n) =>
+        "$" +
+        n.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      const pct = (n) => (n >= 0 ? "+" : "") + n.toFixed(1) + "%";
+      const signed = (n) => (n >= 0 ? "+" : "-") + fmtUSD(Math.abs(n));
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>]/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c],
+        );
+
+      let VIEWS = {};
+      let ORDER = [];
+      // live-prices state (free Finnhub feed; off by default)
+      const LIVE = {
+        on: false,
+        prices: {},
+        key: localStorage.getItem("desk-finnhub-key") || "",
+        timer: null,
+        acct: null,
+        lastTs: 0,
+      };
+
+      async function load() {
+        let portfolio, proposals, logText;
+        const v = "?v=" + Date.now(); // cache-bust: always load fresh data
+        try {
+          [portfolio, proposals] = await Promise.all([
+            fetch("./data/portfolio.json" + v).then((r) => r.json()),
+            fetch("./data/proposals.json" + v).then((r) => r.json()),
+          ]);
+          logText = await fetch("./data/decisions.jsonl" + v).then((r) =>
+            r.text(),
+          );
+        } catch (e) {
+          document.getElementById("app").innerHTML =
+            '<div class="err">Could not load data files. Serve this folder over http (not file://) so fetch works.</div>';
+          return;
+        }
+        const lines = logText.trim().split("\n");
+        VIEWS = {};
+        ORDER = [];
+        portfolio.accounts.forEach((a) => {
+          const ap = (proposals.accounts && proposals.accounts[a.id]) || {};
+          const port = {
+            account: a.account,
+            name: a.name,
+            broker: a.broker,
+            mandate: a.mandate,
+            mandateNote: a.mandateNote || "",
+            accountType: a.broker + " · " + a.mandate,
+            asOfLabel: a.asOfLabel || portfolio.asOf,
+            cash: a.cash || 0,
+            baseline: a.baseline,
+            benchmark: portfolio.benchmark,
+            positions: a.positions,
+            history: a.history || [],
+            historyPct: a.historyPct || 0,
+            activity: a.activity || [],
+            goal: a.goal || "",
+            horizon: a.horizon || "",
+            taxTreatment: a.taxTreatment || "",
+            goalConfirmed: a.goalConfirmed !== false,
+          };
+          const prop = {
+            runId: a.id + ":" + (proposals.runId || "run"),
+            headline: ap.headline || "",
+            proposals: ap.proposals || [],
+            noAction: ap.noAction || [],
+            independentCheck: ap.independentCheck || null,
+            trueConcentration: ap.trueConcentration || null,
+            deployment: ap.deployment || null,
+            costMeter: proposals.costMeter || "",
+          };
+          const acctLog = lines
+            .filter((l) => {
+              try {
+                return JSON.parse(l).account === a.id;
+              } catch (e) {
+                return false;
+              }
+            })
+            .join("\n");
+          const value =
+            a.positions.reduce((s, p) => s + p.qty * p.price, 0) +
+            (a.cash || 0);
+          VIEWS[a.id] = {
+            port,
+            prop,
+            logText: acctLog,
+            mandate: a.mandate,
+            name: a.name,
+            value,
+          };
+          ORDER.push(a.id);
+        });
+        renderTabs();
+        const def =
+          portfolio.accounts.find((a) => a.mandate === "managed") ||
+          portfolio.accounts[0];
+        show(def.id);
+      }
+
+      function renderTabs() {
+        const grand = ORDER.reduce((s, id) => s + VIEWS[id].value, 0);
+        document.getElementById("tabs").innerHTML =
+          ORDER.map((id) => {
+            const vw = VIEWS[id];
+            return `<button class="tab" data-acct="${id}" onclick="show('${id}')"><span class="tab-name">${esc(vw.name)}</span><span class="tab-mandate ${vw.mandate}">${vw.mandate}</span><span class="tab-val">${fmtUSD(vw.value)}</span></button>`;
+          }).join("") +
+          `<div class="tab-grand">All accounts<b>${fmtUSD(grand)}</b></div>`;
+      }
+
+      function show(acctId) {
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) =>
+            t.classList.toggle("active", t.dataset.acct === acctId),
+          );
+        const changed = LIVE.acct !== acctId;
+        LIVE.acct = acctId; // set before render so the archive filters to this account
+        const vw = VIEWS[acctId];
+        render(vw.port, vw.prop, vw.logText);
+        if (changed && LIVE.on) startLive(); // re-arm polling for the newly shown account
+      }
+
+      function render(port, prop, logText) {
+        // ---- compute positions ----
+        const rows = port.positions
+          .map((p) => {
+            const lp = LIVE.on ? LIVE.prices[p.symbol] : null;
+            const price = lp && lp.c != null ? lp.c : p.price;
+            const prevClose = lp && lp.pc != null ? lp.pc : p.prevClose;
+            const value = p.qty * price,
+              cost = p.qty * p.avgCost;
+            return {
+              ...p,
+              price,
+              prevClose,
+              value,
+              cost,
+              pnl: value - cost,
+              pnlPct: ((value - cost) / cost) * 100,
+              dayPct: ((price - prevClose) / prevClose) * 100,
+            };
+          })
+          .sort((a, b) => b.value - a.value);
+        const liveSpy =
+          LIVE.on && LIVE.prices.SPY && LIVE.prices.SPY.c != null
+            ? LIVE.prices.SPY.c
+            : port.benchmark.price;
+        const total = rows.reduce((s, r) => s + r.value, 0);
+        const themeSum = {};
+        rows.forEach(
+          (r) => (themeSum[r.theme] = (themeSum[r.theme] || 0) + r.value),
+        );
+        const top = rows[0];
+        const topPct = (top.value / total) * 100;
+        const cashPct = ((port.cash + (themeSum.cashlike || 0)) / total) * 100; // true cash + SGOV
+
+        // ---- top bar ----
+        document.getElementById("b-acct").textContent = port.account;
+        document.getElementById("b-val").textContent = fmtUSD(total);
+        const totalPrev = rows.reduce((s, r) => s + r.qty * r.prevClose, 0);
+        const dayMove = ((total - totalPrev) / totalPrev) * 100;
+        const dayEl = document.getElementById("b-day");
+        dayEl.textContent = pct(dayMove);
+        dayEl.className = "v " + (dayMove >= 0 ? "up" : "dn");
+        // vs SPY: real return vs benchmark from the day-zero baseline (0.0% on day zero)
+        const base = port.baseline || {};
+        const portRet = base.portfolioValue
+          ? total / base.portfolioValue - 1
+          : 0;
+        const spyRet = base.spy ? liveSpy / base.spy - 1 : 0;
+        const vsSpy = (portRet - spyRet) * 100;
+        const spyEl = document.getElementById("b-spy");
+        const vsSpyShown = Math.abs(vsSpy) < 0.05 ? 0 : vsSpy;
+        spyEl.textContent = pct(vsSpyShown);
+        spyEl.className =
+          "v " + (vsSpyShown === 0 ? "flat" : vsSpyShown > 0 ? "up" : "dn");
+        document.getElementById("asof").innerHTML =
+          `${port.asOfLabel} · ${esc(port.accountType)} · benchmark <b>SPY ${liveSpy.toFixed(2)}</b>${LIVE.on ? ` <span class="up">● live</span>` : ""} · <span class="flat">vs-SPY from ${esc(base.date || "baseline")}</span>`;
+
+        let h = "";
+        const managed = port.mandate !== "monitor";
+        const runId = prop.runId || "run";
+        const fix = managed ? "#sec-proposals" : null;
+        const THEME_LABEL = {
+          miner: "Bitcoin miners",
+          ai: "AI / semis",
+          megacap: "Megacap tech",
+          spec: "Speculative",
+          cashlike: "Cash-like",
+        };
+        const themeRank = Object.keys(themeSum).sort(
+          (a, b) => themeSum[b] - themeSum[a],
+        );
+        const topThemeKey = themeRank[0];
+        const topThemePct = (themeSum[topThemeKey] / total) * 100;
+
+        // ---- balance + chart (the showcase) ----
+        let gist;
+        if (cashPct < CAPS.cashFloorMin && topPct > CAPS.singleMax)
+          gist = `Almost no cash, and way too much riding on one stock (${top.symbol} is ${topPct.toFixed(0)}%).`;
+        else if (topPct > CAPS.singleMax)
+          gist = `Too much in one stock. ${top.symbol} is ${topPct.toFixed(0)}% of this account (the rule says keep any one under ${CAPS.singleMax}%).`;
+        else if (topThemePct > CAPS.themeMax)
+          gist = `Too concentrated in ${(THEME_LABEL[topThemeKey] || topThemeKey).toLowerCase()} (${topThemePct.toFixed(0)}% of the account).`;
+        else if (cashPct < CAPS.cashFloorMin)
+          gist = `Decent spread, but almost no cash cushion.`;
+        else gist = `Looks balanced and within the rules.`;
+        const r0 = port.history[0];
+        const rN = port.history[port.history.length - 1];
+        h += `<div class="balance-card">
+      <div class="bal-top">
+        <div>
+          <div class="bal-label">${esc(port.name)} · value</div>
+          <div class="bal-value">${fmtUSD(total)}</div>
+          <div class="bal-sub"><span class="${dayMove >= 0 ? "up" : "dn"}">${pct(dayMove)} today</span>${port.history.length ? ` · <span class="${port.historyPct >= 0 ? "up" : "dn"}">${pct(port.historyPct)} past year</span>` : ""}</div>
+          ${port.goal ? `<div class="bal-goal">🎯 ${esc(port.goal)} · ${esc(port.horizon)}${!port.goalConfirmed ? `<span class="unset">confirm</span>` : ""}</div>` : ""}
+        </div>
+        <div class="bal-gist">${managed ? "📋" : "👁"} ${esc(gist)}</div>
+      </div>
+      ${chartSVG(port.history)}
+      ${port.history.length ? `<div class="bal-axis"><span>${esc(r0.d)}</span><span>peak ${fmtUSD(Math.max(...port.history.map((p) => p.v)))}</span><span>${esc(rN.d)}</span></div>` : ""}
+    </div>`;
+
+        // ---- playbook check ----
+        h += `<div class="section-label anchor" id="sec-check">Playbook check</div><div class="checks">`;
+        if (prop.trueConcentration) {
+          const tc = prop.trueConcentration;
+          h += chip(
+            "True concentration",
+            tc.factor + " " + tc.pct + "%",
+            "≈" + tc.effectiveBets + " real bets · single-name caps miss this",
+            false,
+            false,
+            fix,
+          );
+        }
+        h += chip(
+          "Cash floor",
+          cashPct.toFixed(1) + "%",
+          "target " + CAPS.cashFloorMin + "–10%",
+          cashPct >= CAPS.cashFloorMin,
+          false,
+          fix,
+        );
+        h += chip(
+          "Top theme",
+          (THEME_LABEL[topThemeKey] || topThemeKey) +
+            " " +
+            topThemePct.toFixed(0) +
+            "%",
+          "cap " + CAPS.themeMax + "%",
+          topThemePct <= CAPS.themeMax,
+          false,
+          fix,
+        );
+        h += chip(
+          "Top position",
+          top.symbol + " " + topPct.toFixed(0) + "%",
+          "cap " + CAPS.singleMax + "%",
+          topPct <= CAPS.singleMax,
+          false,
+          fix,
+        );
+        h += chip("Positions", rows.length, rows.length + " names", true, true);
+        h += `</div>`;
+
+        // ---- proposals + no action (managed accounts only) ----
+        window.__props = {};
+        if (managed) {
+          h += `<div class="section-label anchor" id="sec-proposals">Pending proposals <span class="count">· needs your OK</span></div>`;
+          h += `<div class="headline">${esc(prop.headline)}</div>`;
+          if (prop.independentCheck) {
+            h += `<div class="indcheck"><span class="ic-lab">👥 INDEPENDENT REVIEW</span><b>${esc(prop.independentCheck.verdict)}</b><p>${esc(prop.independentCheck.gist)}</p></div>`;
+          }
+          if (!prop.proposals.length) {
+            h += `<div class="noact">Nothing to approve right now. The desk is holding.</div>`;
+          }
+          prop.proposals.forEach((p) => {
+            window.__props[p.id] = {
+              runId,
+              action: p.action,
+              symbol: p.symbol,
+              sizing: p.sizing,
+              broker: port.broker,
+            };
+            h += `<div class="prop ${p.action.toLowerCase()}" id="prop-${p.id}">
+      <div class="prop-head">
+        <span class="act ${p.action}">${p.action}</span>
+        <span class="prop-sym">${esc(p.symbol)}</span>
+        <span class="prop-size">${esc(p.sizing)}</span>
+        ${p.kind ? `<span class="prop-kind">${esc(p.kind)}</span>` : ""}
+        <span class="prop-actions">
+          <button class="btn approve" onclick="resolve('${p.id}','approve')">Approve</button>
+          <button class="btn pass" onclick="resolve('${p.id}','pass')">Pass</button>
+          <button class="btn suggest" onclick="resolve('${p.id}','suggest')">Suggest…</button>
+        </span>
+      </div>
+      ${p.tradeoff ? `<div class="tradeoff"><span class="to-lab">⚖ The honest trade-off</span> ${esc(p.tradeoff)}</div>` : ""}
+      ${p.grounded ? `<div class="grounded"><span class="g-lab">🔎 The data</span>${esc(p.grounded)}</div>` : ""}
+      ${p.tax ? `<div class="taxline"><span class="t-lab">🧾 After tax</span>${esc(p.tax)}</div>` : ""}
+      ${p.consensus ? `<div class="consensus"><span class="c-lab">👥 Independent check</span><b>${esc(p.consensus.label)}.</b> ${esc(p.consensus.detail)}</div>` : ""}
+      <div class="roles">
+        ${role("scout", "Scout", p.scout)}${role("bull", "Bull", p.bull)}
+        ${role("bear", "Bear", p.bear)}${role("risk", "Risk", p.risk)}
+        ${role("pm", "PM", p.pm)}
+      </div>
+      <div class="eli5"><span class="lab">IN PLAIN ENGLISH</span>${esc(p.eli5 || "")}</div>
+      <div class="prop-resolved" id="res-${p.id}"></div>
+    </div>`;
+          });
+          if (prop.proposals.length > 1) {
+            h += `<div class="batchbar"><button class="btn approve batch" id="approveAllBtn" onclick="approveAll()" disabled>Approve all · scroll through them first</button></div>`;
+          }
+          h += `<div class="section-label">No action <span class="count">· logged</span></div>`;
+          prop.noAction.forEach((n) => {
+            h += `<div class="noact${n.override ? " override" : ""}"><div class="ns"><b>${esc(n.symbols)}</b>${n.kind ? `<span class="noact-kind">${esc(n.kind)}</span>` : ""}${n.override ? `<span class="override-badge">tracked override</span>` : ""}</div><p class="only-detail">${esc(n.reason)}</p>${n.eli5 ? `<p class="only-plain">${esc(n.eli5)}</p>` : ""}</div>`;
+          });
+          if (prop.deployment) {
+            const dp = prop.deployment;
+            h += `<div class="section-label anchor" id="sec-deploy">Deployment plan <span class="count">· your $5K · specific names, not index funds</span></div>`;
+            h += `<div class="headline">${esc(dp.headline)}</div>`;
+            if (dp.strategy)
+              h += `<div class="deploy-strategy"><span class="ds-lab">🎯 The strategy</span>${esc(dp.strategy)}</div>`;
+            if (dp.trap)
+              h += `<div class="deploy-trap"><span class="dt-lab">⚠ The trap we avoided</span>${esc(dp.trap)}</div>`;
+            if (dp.independentCheck)
+              h += `<div class="indcheck"><span class="ic-lab">👥 INDEPENDENT REVIEW</span><b>${esc(dp.independentCheck.verdict)}</b><p>${esc(dp.independentCheck.gist)}</p></div>`;
+            dp.lanes.forEach((lane) => {
+              h += `<div class="lane"><div class="lane-head"><b>${esc(lane.name)}</b><span class="lane-amt">${fmtUSD(lane.amount)}</span></div>`;
+              lane.picks.forEach((pk) => {
+                const sh = pk.px ? pk.amt / pk.px : null;
+                h += `<div class="pick">
+        <div class="pick-top"><span class="pick-sym">${esc(pk.sym)}</span><span class="pick-name">${esc(pk.name)}</span><span class="pick-amt">${fmtUSD(pk.amt)}${sh ? ` <span class="pick-sh">≈${sh.toFixed(sh < 1 ? 2 : 1)} sh @ ${fmtUSD(pk.px)}</span>` : ""}</span>${pk.kind ? `<span class="prop-kind">${esc(pk.kind)}</span>` : ""}</div>
+        <div class="pick-thesis">${esc(pk.thesis)}</div>
+        <div class="pick-div"><span class="pd-lab">↔ why it diversifies</span> ${esc(pk.diversifies)}</div>
+        ${pk.entry ? `<div class="pick-entry"><span class="pe-lab">entry</span> ${esc(pk.entry)}</div>` : ""}
+      </div>`;
+              });
+              h += `</div>`;
+            });
+            if (dp.biggestRisk)
+              h += `<div class="deploy-risk"><span class="dr-lab">⚖ The honest cost of this plan</span>${esc(dp.biggestRisk)}</div>`;
+            h += `<div class="muted-note">New money — <b>no tax</b> on these buys. Fidelity has no API, so you'll place these by hand (or tell me to set up Robinhood-sleeve tickets). When you deposit, say the amount and I'll refresh prices + finalize share counts.</div>`;
+          }
+          h += `<div id="archive"></div>`;
+        } else {
+          h += `<div class="monitor-banner"><span class="eye">👁</span> <b>Monitored, not managed.</b> ${esc(port.mandateNote)}</div>`;
+        }
+
+        // ---- holdings ----
+        h += `<div class="section-label anchor" id="sec-holdings">Holdings <span class="count">· ${rows.length} positions · ${fmtUSD(total)}</span></div>`;
+        const totCost = rows.reduce((s, r) => s + r.cost, 0);
+        const totPnlPct = ((total - totCost) / totCost) * 100;
+        const byTheme = {};
+        rows.forEach((r) => {
+          (byTheme[r.theme] = byTheme[r.theme] || []).push(r);
+        });
+        const themeOrder = Object.keys(byTheme).sort(
+          (a, b) => themeSum[b] - themeSum[a],
+        );
+        const rowHtml = (r) => {
+          const dayAmt = r.value - r.qty * r.prevClose;
+          return `<tr>
+      <td class="sym indent">${r.symbol}<span class="theme ${r.theme}">${r.theme}</span></td>
+      <td>${fmtUSD(r.value)}</td>
+      <td class="flat">${((r.value / total) * 100).toFixed(1)}%</td>
+      <td class="${r.pnl >= 0 ? "up" : "dn"}">${pct(r.pnlPct)} <span class="amt">${signed(r.pnl)}</span></td>
+      <td class="${r.dayPct >= 0 ? "up" : "dn"}">${pct(r.dayPct)} <span class="amt">${signed(dayAmt)}</span></td>
+    </tr>`;
+        };
+        h += `<table><thead><tr><th>Symbol</th><th>Value</th><th>Wt</th><th>P&L</th><th>Today</th></tr></thead><tbody>`;
+        themeOrder.forEach((t) => {
+          const tw = (themeSum[t] / total) * 100;
+          const overCap = t === "miner" && tw > CAPS.themeMax;
+          h += `<tr class="grp"><td class="sym">${THEME_LABEL[t] || t}<span class="grp-n">${byTheme[t].length}</span></td><td>${fmtUSD(themeSum[t])}</td><td class="${overCap ? "dn" : "flat"}">${tw.toFixed(1)}%</td><td></td><td></td></tr>`;
+          byTheme[t].forEach((r) => {
+            h += rowHtml(r);
+          });
+        });
+        h += `<tr class="tot"><td class="sym">TOTAL</td><td>${fmtUSD(total)}</td><td class="flat">100.0%</td><td class="${total - totCost >= 0 ? "up" : "dn"}">${pct(totPnlPct)} <span class="amt">${signed(total - totCost)}</span></td><td></td></tr>`;
+        h += `</tbody></table>`;
+
+        // ---- recent activity (real broker fills) ----
+        if (port.activity && port.activity.length) {
+          h += `<div class="section-label anchor" id="sec-activity">Recent activity <span class="count">· last ${port.activity.length} fills · live from ${esc(port.broker)}</span></div>`;
+          h += `<table><thead><tr><th>Date</th><th>Action</th><th>Symbol</th><th>Shares</th><th>Price</th><th>By</th></tr></thead><tbody>`;
+          port.activity.forEach((a) => {
+            const side = (a.side || "").toUpperCase();
+            const sh = (+a.qty).toLocaleString("en-US", {
+              maximumFractionDigits: 4,
+            });
+            const by = a.by === "you" ? "you" : "auto";
+            h += `<tr>
+      <td class="flat">${esc(a.d)}</td>
+      <td><span class="badge ${side}">${side}</span></td>
+      <td class="sym">${esc(a.sym)}</td>
+      <td class="flat">${sh}</td>
+      <td>${fmtUSD(a.px)}</td>
+      <td><span class="by ${by}">${by}</span></td>
+    </tr>`;
+          });
+          h += `</tbody></table>`;
+          h += `<div class="muted-note">Real fills pulled from ${esc(port.broker)} on each run. <b>By</b> tags who placed each order: <b>you</b> (a manual tap in the app) vs <b>auto</b> (the fund / recurring). Read-only ledger — the desk never places these.</div>`;
+        }
+
+        // ---- decision log ----
+        const logs = logText
+          .trim()
+          .split("\n")
+          .map((l) => {
+            try {
+              return JSON.parse(l);
+            } catch (e) {
+              return null;
+            }
+          })
+          .filter(Boolean)
+          .reverse();
+
+        // ---- scorecard: how the desk's past calls are doing ----
+        const priceMap = {};
+        rows.forEach((r) => (priceMap[r.symbol] = r.price));
+        const calls = logs.filter((l) => l.type === "proposal");
+        if (calls.length) {
+          h += `<div class="section-label anchor" id="sec-score">Scorecard <span class="count">· how the desk's calls are doing</span></div>`;
+          h += `<table><thead><tr><th>Call</th><th>At</th><th>Now</th><th>Since</th><th>Verdict</th></tr></thead><tbody>`;
+          calls.forEach((l) => {
+            const now = priceMap[l.symbol];
+            let nowTxt = "—",
+              sinceTxt = "—",
+              sinceCls = "flat",
+              verdict = "position closed / not held";
+            if (now != null && l.price) {
+              const since = (now / l.price - 1) * 100;
+              const trim = l.action === "TRIM" || l.action === "SELL";
+              sinceTxt = pct(since);
+              nowTxt = fmtUSD(now);
+              if (Math.abs(since) < 0.3) {
+                verdict = "too soon to call (same session)";
+                sinceCls = "flat";
+              } else if (trim) {
+                verdict =
+                  since < 0
+                    ? "good trim so far · it fell after"
+                    : "early cost · it rose after";
+                sinceCls = since < 0 ? "up" : "dn";
+              } else {
+                verdict = since > 0 ? "working so far" : "underwater so far";
+                sinceCls = since > 0 ? "up" : "dn";
+              }
+            }
+            h += `<tr>
+      <td class="sym"><span class="badge ${l.action}">${l.action}</span> ${esc(l.symbol)}</td>
+      <td>${fmtUSD(l.price)}</td>
+      <td>${nowTxt}</td>
+      <td class="${sinceCls}">${sinceTxt}</td>
+      <td class="flat scorenote">${verdict}</td>
+    </tr>`;
+          });
+          h += `</tbody></table>`;
+          h += `<div class="muted-note scorefoot">⚠ Tiny sample (a handful of calls over days). This is <b>noise</b> until ~10+ calls over months — don't read skill into it yet. And vs-SPY up top is <b>not risk-adjusted</b>: beating SPY while holding ~3× its volatility is leverage, not skill.</div>`;
+        }
+
+        h += `<div class="section-label anchor" id="sec-log">Decision log <span class="count">· ${logs.length} entries · the scoreboard</span></div>`;
+        let lastRun = null;
+        logs.forEach((l) => {
+          const d = new Date(l.ts);
+          const t = d.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+          if (l.runId && l.runId !== lastRun) {
+            lastRun = l.runId;
+            h += `<div class="logrun">RUN ${esc(l.runId)} · ${t}</div>`;
+          }
+          h += `<div class="logrow">
+      <span class="lt">${t}</span>
+      <span class="ld"><span class="badge ${l.action}">${l.action.replace(/_/g, " ")}</span><b>${esc(l.symbol)}</b> · ${esc(l.reason)}</span>
+    </div>`;
+        });
+
+        h += `<footer>${esc(prop.costMeter)}<br>For discussion only. Not investment advice. PendulumPro proposes; you approve and place every order by hand at your broker. No auto-execution. Markets carry real risk of loss.</footer>`;
+
+        const app = document.getElementById("app");
+        app.className = "";
+        app.innerHTML = h;
+        // re-apply any saved approve/pass decisions for this run (survives reload)
+        prop.proposals.forEach((p) => {
+          const saved = localStorage.getItem("desk-" + runId + "-" + p.id);
+          if (saved) applyResolved(p.id, saved);
+        });
+        setupApproveAll(prop.proposals, runId);
+        renderArchive();
+      }
+
+      // "Approve all" — armed only once you've actually scrolled through every proposal
+      function setupApproveAll(proposals, runId) {
+        const btn = document.getElementById("approveAllBtn");
+        if (!btn) return;
+        const pending = proposals
+          .map((p) => p.id)
+          .filter((id) => !localStorage.getItem("desk-" + runId + "-" + id));
+        if (!pending.length) {
+          btn.style.display = "none";
+          return;
+        }
+        const viewed = new Set();
+        const check = () => {
+          const vh = window.innerHeight;
+          pending.forEach((id) => {
+            const el = document.getElementById("prop-" + id);
+            if (!el) return;
+            const r = el.getBoundingClientRect();
+            if (r.top < vh * 0.9 && r.bottom > 0) viewed.add(id);
+          });
+          const all = pending.every((id) => viewed.has(id));
+          btn.disabled = !all;
+          btn.textContent = all
+            ? `Approve all (${pending.length})`
+            : `Approve all · scroll through them (${viewed.size}/${pending.length})`;
+        };
+        window.addEventListener("scroll", check, { passive: true });
+        window.addEventListener("resize", check);
+        check();
+      }
+      function approveAll() {
+        const p = window.__props || {};
+        Object.keys(p).forEach((id) => {
+          if (!localStorage.getItem("desk-" + p[id].runId + "-" + id))
+            resolve(id, "approve");
+        });
+        const btn = document.getElementById("approveAllBtn");
+        if (btn) btn.style.display = "none";
+      }
+
+      function chip(lab, big, meta, pass, neutral, href) {
+        const cls = neutral ? "" : pass ? "pass" : "fail";
+        const breach = !neutral && !pass;
+        const tag = neutral
+          ? ""
+          : `<span class="tag">${pass ? "OK" : "BREACH"}</span>`;
+        const fix =
+          breach && href ? `<div class="chip-fix">Fix it ↓</div>` : "";
+        const inner = `${tag}<div class="lab">${lab}</div><div class="big">${big}</div><div class="meta">${meta}</div>${fix}`;
+        return breach && href
+          ? `<a class="chip ${cls} linked" href="${href}">${inner}</a>`
+          : `<div class="chip ${cls}">${inner}</div>`;
+      }
+      function role(cls, name, txt) {
+        return `<div class="role ${cls}"><div class="rn">${name.toUpperCase()}</div><p>${esc(txt)}</p></div>`;
+      }
+
+      // Portfolio-value sparkline from [{d, v}] history (peaks + valleys, Fidelity-style)
+      function chartSVG(history) {
+        if (!history || history.length < 2) return "";
+        const W = 720,
+          H = 170,
+          pad = 8;
+        const vals = history.map((p) => p.v);
+        const min = Math.min(...vals),
+          max = Math.max(...vals);
+        const rng = max - min || 1;
+        const X = (i) => pad + (i * (W - 2 * pad)) / (history.length - 1);
+        const Y = (v) => pad + (1 - (v - min) / rng) * (H - 2 * pad);
+        const line = history
+          .map(
+            (p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p.v).toFixed(1)}`,
+          )
+          .join(" ");
+        const area = `${line} L${X(history.length - 1).toFixed(1)},${H} L${X(0).toFixed(1)},${H} Z`;
+        const up = history[history.length - 1].v >= history[0].v;
+        const col = up ? "var(--green)" : "var(--loss)";
+        const lastX = X(history.length - 1).toFixed(1);
+        const lastY = Y(history[history.length - 1].v).toFixed(1);
+        return `<svg class="balchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="balgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${col}" stop-opacity=".22"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+      <path d="${area}" fill="url(#balgrad)"/>
+      <path d="${line}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle cx="${lastX}" cy="${lastY}" r="3.5" fill="${col}"/>
+    </svg>`;
+      }
+
+      function ticketFor(p) {
+        const verb = p.action === "BUY" ? "BUY" : "SELL";
+        return `${verb} ${p.symbol} · ${p.sizing}`;
+      }
+      function copyTicket(id) {
+        const p = (window.__props || {})[id];
+        const btn = document.querySelector(`[onclick="copyTicket('${id}')"]`);
+        if (p && navigator.clipboard) {
+          navigator.clipboard.writeText(ticketFor(p));
+          if (btn) {
+            btn.textContent = "Copied ✓";
+            setTimeout(() => (btn.textContent = "Copy"), 1500);
+          }
+        }
+      }
+      function deskKey(id) {
+        const p = (window.__props || {})[id] || {};
+        return (p.runId || "run") + "-" + id;
+      }
+      function applyResolved(id, kind) {
+        const p = (window.__props || {})[id];
+        const card = document.getElementById("prop-" + id);
+        const res = document.getElementById("res-" + id);
+        if (!card || !res) return;
+        card.classList.remove("approved", "passed", "suggested");
+        const reopenBtn = `<button class="mini reopen" onclick="reopen('${id}')">↩ reopen</button>`;
+        if (kind === "approve") {
+          card.classList.add("approved");
+          const tkt = p ? ticketFor(p) : "";
+          const broker = (p && p.broker) || "Robinhood";
+          const sym = p ? encodeURIComponent(p.symbol) : "";
+          const link =
+            broker === "Fidelity"
+              ? "https://digital.fidelity.com/prgw/digital/research/quote/dashboard/summary?symbol=" +
+                sym
+              : "https://robinhood.com/stocks/" + sym;
+          res.innerHTML = `✓ APPROVED. Place by hand: <code class="ticket">${esc(tkt)}</code> <button class="mini" onclick="copyTicket('${id}')">Copy</button> <a class="mini" href="${link}" target="_blank" rel="noopener">Open in ${esc(broker)} ↗</a> ${reopenBtn} <span class="muted-note">PendulumPro never executes; you do.</span>`;
+        } else if (kind === "suggest") {
+          card.classList.add("suggested");
+          const text =
+            localStorage.getItem("desk-suggest-" + deskKey(id)) || "";
+          (window.__deskPrompt = window.__deskPrompt || {})[id] =
+            "Re: " +
+            (p
+              ? p.action + " " + p.symbol + " (" + p.sizing + ")"
+              : "proposal") +
+            " — my counter: " +
+            text +
+            ". Brainstorm this against the playbook and revise the proposal.";
+          res.innerHTML = `💬 <b>Your counter:</b> ${esc(text)} <button class="mini" onclick="copyDesk('${id}')">Copy for the desk →</button> ${reopenBtn}<br><span class="muted-note">Paste that to PendulumPro in a session — it'll brainstorm and revise this card.</span>`;
+        } else {
+          card.classList.add("passed");
+          res.innerHTML = `✕ Passed. Logged as no-action. ${reopenBtn}`;
+        }
+      }
+      function resolve(id, kind) {
+        if (kind === "suggest") return openSuggest(id);
+        localStorage.setItem("desk-" + deskKey(id), kind);
+        logDecision(id, kind === "approve" ? "approved" : "passed");
+        applyResolved(id, kind);
+      }
+      function openSuggest(id) {
+        const res = document.getElementById("res-" + id);
+        const card = document.getElementById("prop-" + id);
+        if (!res || !card) return;
+        card.classList.add("suggested"); // reveal the resolved area for the form
+        const prev = localStorage.getItem("desk-suggest-" + deskKey(id)) || "";
+        res.innerHTML = `<div class="suggest-box">
+        <label class="sg-lab" for="sg-${id}">💬 Your counter — type it, the desk brainstorms on it</label>
+        <textarea id="sg-${id}" class="sg-input" rows="3" placeholder="e.g. trim only half · wait until earnings · what about LLY instead?">${esc(prev)}</textarea>
+        <div class="sg-actions"><button class="btn approve" onclick="saveSuggest('${id}')">Save suggestion</button><button class="mini reopen" onclick="reopen('${id}')">cancel</button></div>
+      </div>`;
+        const ta = document.getElementById("sg-" + id);
+        if (ta) ta.focus();
+      }
+      function saveSuggest(id) {
+        const ta = document.getElementById("sg-" + id);
+        const text = ((ta && ta.value) || "").trim();
+        if (!text) return;
+        localStorage.setItem("desk-" + deskKey(id), "suggest");
+        localStorage.setItem("desk-suggest-" + deskKey(id), text);
+        logDecision(id, "suggested", text);
+        applyResolved(id, "suggest");
+      }
+      function reopen(id) {
+        localStorage.removeItem("desk-" + deskKey(id));
+        localStorage.removeItem("desk-suggest-" + deskKey(id));
+        logDecision(id, "reopened");
+        const card = document.getElementById("prop-" + id);
+        const res = document.getElementById("res-" + id);
+        if (card) card.classList.remove("approved", "passed", "suggested");
+        if (res) res.innerHTML = "";
+      }
+      function copyDesk(id) {
+        const t = (window.__deskPrompt || {})[id];
+        const btn = document.querySelector(`[onclick="copyDesk('${id}')"]`);
+        if (t && navigator.clipboard) {
+          navigator.clipboard.writeText(t);
+          if (btn) {
+            btn.textContent = "Copied ✓";
+            setTimeout(() => (btn.textContent = "Copy for the desk →"), 1500);
+          }
+        }
+      }
+      // ---- decisions archive (every approve/pass/suggest/reopen, reversible) ----
+      function getArchive() {
+        try {
+          return JSON.parse(localStorage.getItem("desk-archive") || "[]");
+        } catch (e) {
+          return [];
+        }
+      }
+      function logDecision(id, event, suggestion) {
+        const p = (window.__props || {})[id] || {};
+        const arr = getArchive();
+        arr.push({
+          ts: Date.now(),
+          acct: LIVE.acct || "",
+          runId: p.runId || "run",
+          pid: id,
+          symbol: p.symbol || "",
+          action: p.action || "",
+          event: event,
+          suggestion: suggestion || "",
+        });
+        localStorage.setItem("desk-archive", JSON.stringify(arr.slice(-200)));
+        renderArchive();
+      }
+      const EV_LABEL = {
+        approved: "✓ Approved",
+        passed: "✕ Passed",
+        suggested: "💬 Suggested",
+        reopened: "↩ Reopened",
+      };
+      function renderArchive() {
+        const el = document.getElementById("archive");
+        if (!el) return;
+        const rows = getArchive()
+          .filter((r) => r.acct === LIVE.acct)
+          .reverse();
+        if (!rows.length) {
+          el.innerHTML = "";
+          return;
+        }
+        let h = `<div class="section-label anchor" id="sec-archive">Your decisions <span class="count">· ${rows.length} logged · reversible</span></div><div class="arch-list">`;
+        rows.forEach((r) => {
+          const t = new Date(r.ts).toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          });
+          h += `<div class="arch-row ${r.event}"><span class="arch-ev">${EV_LABEL[r.event] || r.event}</span><span class="arch-sym">${esc(r.action)} ${esc(r.symbol)}</span>${r.suggestion ? `<span class="arch-sug">“${esc(r.suggestion)}”</span>` : ""}<span class="arch-t">${t}</span></div>`;
+        });
+        h += `</div><button class="mini" onclick="clearArchive()">Clear archive</button>`;
+        el.innerHTML = h;
+      }
+      function clearArchive() {
+        if (!confirm("Clear your decision archive? This can't be undone."))
+          return;
+        localStorage.removeItem("desk-archive");
+        renderArchive();
+      }
+
+      // ---- plain-english + light/dark toggles (persisted) ----
+      function togglePlain() {
+        const on = document.body.classList.toggle("plain");
+        localStorage.setItem("desk-plain", on ? "1" : "0");
+        syncPlainBtn();
+      }
+      function syncPlainBtn() {
+        const on = document.body.classList.contains("plain");
+        const b = document.getElementById("plainBtn");
+        b.classList.toggle("on", on);
+        b.setAttribute("aria-pressed", on);
+        b.textContent = on ? "Plain English ✓" : "Plain English";
+      }
+      function toggleTheme() {
+        const light =
+          document.documentElement.getAttribute("data-theme") !== "light";
+        document.documentElement.setAttribute(
+          "data-theme",
+          light ? "light" : "dark",
+        );
+        localStorage.setItem("desk-theme", light ? "light" : "dark");
+        syncThemeBtn();
+      }
+      function syncThemeBtn() {
+        const light =
+          document.documentElement.getAttribute("data-theme") === "light";
+        const tb = document.getElementById("themeBtn");
+        tb.setAttribute("aria-pressed", light);
+        tb.textContent = light ? "☀ Light" : "☾ Dark";
+      }
+      // ---- live prices (free Finnhub feed; real-time US quotes) ----
+      async function pollLive() {
+        if (!LIVE.on || !LIVE.key || !LIVE.acct) return;
+        const vw = VIEWS[LIVE.acct];
+        if (!vw) return;
+        const syms = [
+          ...new Set(vw.port.positions.map((p) => p.symbol).concat("SPY")),
+        ];
+        const results = await Promise.all(
+          syms.map((s) =>
+            fetch(
+              `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(s)}&token=${LIVE.key}`,
+            )
+              .then((r) => (r.ok ? r.json() : null))
+              .then((q) => ({ s, q }))
+              .catch((err) => {
+                console.warn("[LIVE] quote failed for " + s, err);
+                return { s, q: null };
+              }),
+          ),
+        );
+        let got = 0;
+        results.forEach(({ s, q }) => {
+          if (q && typeof q.c === "number" && q.c > 0) {
+            LIVE.prices[s] = { c: q.c, pc: q.pc };
+            got++;
+          }
+        });
+        const t = document.getElementById("liveTime");
+        if (got) {
+          LIVE.lastTs = Date.now();
+          const y = window.scrollY; // preserve scroll across re-render
+          show(LIVE.acct);
+          window.scrollTo({ top: y, left: 0, behavior: "instant" }); // beat scroll-behavior:smooth
+          syncLiveBtn();
+        } else if (t) {
+          t.textContent = "⚠ check key";
+        }
+      }
+      function startLive() {
+        if (LIVE.timer) clearInterval(LIVE.timer);
+        const vw = VIEWS[LIVE.acct];
+        const n = vw ? vw.port.positions.length + 1 : 6;
+        const interval = n <= 8 ? 12000 : 30000; // stay under Finnhub 60/min free cap
+        pollLive();
+        LIVE.timer = setInterval(pollLive, interval);
+      }
+      function stopLive() {
+        if (LIVE.timer) clearInterval(LIVE.timer);
+        LIVE.timer = null;
+      }
+      function toggleLive() {
+        if (!LIVE.on) {
+          if (!LIVE.key) {
+            const k = prompt(
+              "Paste your free Finnhub API key to turn on live prices.\n\nGet one in 30 seconds at finnhub.io/register — the free tier includes real-time US stock quotes.",
+            );
+            if (!k) return;
+            LIVE.key = k.trim();
+            localStorage.setItem("desk-finnhub-key", LIVE.key);
+          }
+          LIVE.on = true;
+          localStorage.setItem("desk-live", "1");
+          startLive();
+        } else {
+          LIVE.on = false;
+          localStorage.setItem("desk-live", "0");
+          stopLive();
+          LIVE.prices = {};
+          const y = window.scrollY;
+          if (LIVE.acct) show(LIVE.acct); // repaint with snapshot prices
+          window.scrollTo({ top: y, left: 0, behavior: "instant" });
+        }
+        syncLiveBtn();
+      }
+      function syncLiveBtn() {
+        const b = document.getElementById("liveBtn");
+        if (!b) return;
+        b.classList.toggle("on", LIVE.on);
+        b.setAttribute("aria-pressed", LIVE.on);
+        const lab = document.getElementById("liveLabel");
+        if (lab) lab.textContent = LIVE.on ? "LIVE" : "LIVE · OFF";
+        const t = document.getElementById("liveTime");
+        if (t)
+          t.textContent =
+            LIVE.on && LIVE.lastTs
+              ? new Date(LIVE.lastTs).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  second: "2-digit",
+                })
+              : "";
+      }
+      function initLive() {
+        if (localStorage.getItem("desk-live") === "1" && LIVE.key) {
+          LIVE.on = true;
+          if (!LIVE.acct) LIVE.acct = ORDER[0];
+          startLive();
+        }
+        syncLiveBtn();
+      }
+
+      // apply saved prefs before first paint of controls
+      if (localStorage.getItem("desk-plain") === "1")
+        document.body.classList.add("plain");
+      document.documentElement.setAttribute(
+        "data-theme",
+        localStorage.getItem("desk-theme") ||
+          (window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches
+            ? "light"
+            : "dark"),
+      );
+      syncPlainBtn();
+      syncThemeBtn();
+
+      load().then(initLive);
+    </script>
+  </body>
+</html>
