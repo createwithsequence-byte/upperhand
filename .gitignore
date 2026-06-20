@@ -1,0 +1,14 @@
+# ─── SAFETY: this Git repo is rooted at your HOME directory ───
+# Deny everything by default so a stray `git add` can NEVER stage secrets
+# (~/.ssh, ~/.aws, ~/.config, ~/.netrc, Library/, .Trash/, etc.) and push
+# them to the remote. Only the project workspace below is trackable.
+# Fully reversible — to track something elsewhere, add another `!` rule.
+/*
+!/.gitignore
+!/Documents/
+/Documents/*
+!/Documents/Claude code/
+
+# ─── Within the workspace, still ignore build output + local secrets ───
+.vercel
+.env*.local
