@@ -8,6 +8,8 @@
 !/Documents/
 /Documents/*
 !/Documents/Claude code/
+# the-desk now lives in its own private repo (createwithsequence-byte/pendulumpro)
+/Documents/Claude code/the-desk/
 
 # ─── Within the workspace, still ignore build output + local secrets ───
 .vercel
