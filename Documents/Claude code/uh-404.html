@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 · Upperhand</title>
+    <meta
+      name="description"
+      content="This page does not exist. Your problem probably does."
+    />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="robots" content="noindex" />
+    <style>
+      :root {
+        --ink: #131313;
+        --white: #ffffff;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --blue: #1231c9;
+        --disp: "Archivo Black", sans-serif;
+        --body: "Hanken Grotesk", sans-serif;
+        --mono: "JetBrains Mono", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        background: var(--blue);
+        color: var(--white);
+        font-family: var(--body);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 32px;
+        gap: 26px;
+      }
+      .code {
+        font-family: var(--mono);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        color: var(--volt);
+      }
+      h1 {
+        font-family: var(--disp);
+        font-size: clamp(2rem, 6vw, 4.6rem);
+        line-height: 0.98;
+        text-transform: uppercase;
+        letter-spacing: -0.01em;
+        max-width: 14ch;
+      }
+      p {
+        font-weight: 600;
+        font-size: 1.02rem;
+        color: rgba(255, 255, 255, 0.75);
+        max-width: 44ch;
+        line-height: 1.6;
+      }
+      .row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      a.btn {
+        display: inline-block;
+        font-family: var(--disp);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        text-decoration: none;
+        padding: 15px 26px;
+        border-radius: 999px;
+        letter-spacing: 0.04em;
+      }
+      a.hot {
+        background: var(--volt);
+        color: var(--ink);
+      }
+      a.ghost {
+        color: var(--white);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+      }
+      a.ghost:hover {
+        border-color: var(--white);
+      }
+      .mark {
+        position: fixed;
+        top: 22px;
+        left: 26px;
+        font-family: var(--disp);
+        font-size: 0.9rem;
+        letter-spacing: 0.02em;
+        color: var(--white);
+        text-decoration: none;
+      }
+      .mark i {
+        font-style: normal;
+        color: var(--volt);
+      }
+    </style>
+  </head>
+  <body>
+    <a class="mark" href="/merge-3">UPPERHAND<i>®</i></a>
+    <span class="code">404 · NOT FOUND</span>
+    <h1>This isn't the problem we solve.</h1>
+    <p>
+      The page you wanted does not exist. The problem that will not leave you
+      alone probably does. Bring us that one instead.
+    </p>
+    <div class="row">
+      <a class="btn hot" href="/brief">SEND THE PROBLEM →</a>
+      <a class="btn ghost" href="/merge-3">BACK TO THE SITE</a>
+    </div>
+    <script defer src="/_vercel/insights/script.js"></script>
+  </body>
+</html>

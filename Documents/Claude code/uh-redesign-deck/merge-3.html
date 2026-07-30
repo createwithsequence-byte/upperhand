@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upperhand · The Blue Spine</title>
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content="Upperhand · The Blue Spine" />
+    <meta
+      property="og:description"
+      content="Upperhand is a small, focused design and build studio in Chicago. Phase one live in 21 days."
+    />
+    <meta
+      property="og:image"
+      content="https://uh-redesign-deck.vercel.app/og.png"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta
+      name="description"
+      content="Upperhand is a small, focused design and build studio in Chicago. Phase one live in 21 days."
+    />
+    <meta name="robots" content="noindex" />
+    <style>
+      :root {
+        --ink: #131313;
+        --white: #ffffff;
+        --bone: #faf8f1;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --cyan: #2ee6ff;
+        --blue: #1231c9;
+        --spine: 76px;
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --disp: "Archivo Black";
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+      }
+      body {
+        background: var(--white);
+        color: var(--ink);
+        font-family: var(--body);
+      }
+      .rv {
+        opacity: 0;
+        transform: translateY(16px);
+        transition:
+          opacity 650ms var(--ease),
+          transform 650ms var(--ease);
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+      /* the blue spine */
+      .spine {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--spine);
+        background: var(--blue);
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .spine span {
+        font-family: var(--disp);
+        font-size: 1.25rem;
+        color: #fff;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+      main {
+        margin-left: var(--spine);
+      }
+      /* pill nav */
+      .pillnav {
+        position: fixed;
+        top: 16px;
+        left: calc(50% + var(--spine) / 2);
+        transform: translateX(-50%);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        background: var(--ink);
+        border-radius: 99px;
+        padding: 10px 12px 10px 20px;
+        box-shadow: 0 10px 30px rgba(19, 19, 19, 0.25);
+        max-width: calc(100vw - var(--spine) - 20px);
+      }
+      .pillnav .brand {
+        font-family: var(--disp);
+        font-size: 13px;
+        color: var(--bone);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .pillnav .links {
+        display: flex;
+        gap: 16px;
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .pillnav .links a {
+        color: rgba(250, 248, 241, 0.65);
+        text-decoration: none;
+      }
+      .pillnav .links a:hover {
+        color: var(--volt);
+      }
+      .pillnav .go {
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        padding: 9px 16px;
+        border-radius: 99px;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .pillnav .go:hover {
+        background: var(--blue);
+        color: #fff;
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 clamp(1.2rem, 4vw, 3rem);
+      }
+      /* hero */
+      .hero {
+        min-height: 96svh;
+        display: grid;
+        grid-template-columns: 1.25fr 1fr;
+        gap: clamp(1.4rem, 3vw, 2.6rem);
+        align-items: center;
+      }
+      .kick {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        color: #8f8d84;
+      }
+      .hero h1 {
+        font-family: var(--disp);
+        font-size: clamp(2.7rem, 7.4vw, 6.4rem);
+        line-height: 0.9;
+        text-transform: uppercase;
+        letter-spacing: -0.015em;
+        margin-top: 16px;
+      }
+      .hero h1 .hl {
+        background: var(--volt);
+        padding: 0 0.1em;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--blue);
+      }
+      .hero .sub {
+        margin-top: 20px;
+        max-width: 34em;
+        font-weight: 600;
+        font-size: clamp(1rem, 1.7vw, 1.22rem);
+        color: #55534b;
+        line-height: 1.55;
+      }
+      .cta {
+        display: inline-block;
+        width: fit-content;
+        margin-top: 24px;
+        background: var(--blue);
+        color: #fff;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        padding: 14px 24px;
+        border-radius: 99px;
+        text-decoration: none;
+      }
+      .cta:hover {
+        background: var(--ink);
+        color: var(--volt);
+      }
+      .hero .meta {
+        margin-top: 16px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        color: #8f8d84;
+      }
+      .herotxt {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .heropane {
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+        min-height: 62svh;
+        background: var(--blue);
+      }
+      .heropane video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        scale: 1.18;
+        filter: grayscale(1) contrast(1.05) brightness(1.95);
+      }
+      .heropane .dip {
+        position: absolute;
+        inset: 0;
+        background: var(--blue);
+        mix-blend-mode: multiply;
+        opacity: 0.82;
+      }
+      .heropane .tag {
+        position: absolute;
+        left: 6%;
+        bottom: 6%;
+        z-index: 2;
+        font-family: var(--disp);
+        color: #fff;
+        font-size: clamp(1.1rem, 2vw, 1.7rem);
+      }
+      .heropane .chip2 {
+        position: absolute;
+        top: 6%;
+        left: 6%;
+        z-index: 2;
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        padding: 5px 10px;
+        border-radius: 3px;
+      }
+      /* sections */
+      section.blk {
+        padding: clamp(3.2rem, 8vh, 5.4rem) 0;
+      }
+      h2 {
+        font-family: var(--disp);
+        font-size: clamp(1.7rem, 4.4vw, 3.2rem);
+        line-height: 0.94;
+        text-transform: uppercase;
+        letter-spacing: -0.012em;
+        margin-top: 10px;
+      }
+      h2 .hl {
+        background: var(--volt);
+        padding: 0 0.08em;
+      }
+      /* make: numbered rows, blue numbers */
+      .mrow {
+        display: flex;
+        gap: 20px;
+        align-items: baseline;
+        padding: clamp(1.2rem, 3vh, 1.9rem) 0;
+        border-bottom: 2px solid rgba(19, 19, 19, 0.1);
+      }
+      .mrow .no {
+        font-family: var(--disp);
+        font-size: 1.2rem;
+        color: var(--blue);
+        min-width: 44px;
+      }
+      .mrow h3 {
+        font-family: var(--disp);
+        font-size: clamp(1.2rem, 2.8vw, 2.1rem);
+        text-transform: uppercase;
+        line-height: 1;
+        flex: 1;
+      }
+      .mrow:hover h3 {
+        color: var(--blue);
+      }
+      .mrow p {
+        max-width: 24em;
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: #55534b;
+        line-height: 1.5;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 30px;
+      }
+      .card {
+        background: var(--white);
+        border: 2.5px solid var(--ink);
+        border-radius: 12px;
+        padding: clamp(1.3rem, 2.8vw, 2rem);
+        box-shadow: 6px 6px 0 var(--blue);
+      }
+      .card .cno {
+        font-family: var(--disp);
+        font-size: 1.2rem;
+        color: var(--pink);
+      }
+      .card h3 {
+        font-family: var(--disp);
+        font-size: clamp(1.02rem, 1.8vw, 1.4rem);
+        text-transform: uppercase;
+        line-height: 1.14;
+        margin-top: 10px;
+      }
+      .card p {
+        margin-top: 10px;
+        color: #55534b;
+        font-size: 0.93rem;
+        line-height: 1.6;
+      }
+      /* work: full-width dip bands */
+      .band {
+        position: relative;
+        min-height: 74svh;
+        border-radius: 18px;
+        overflow: hidden;
+        margin-top: 22px;
+      }
+      .band video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        scale: 1.18;
+        filter: grayscale(1) contrast(1.05) brightness(1.75);
+      }
+      .band .dip {
+        position: absolute;
+        inset: 0;
+        mix-blend-mode: multiply;
+      }
+      .band.db .dip {
+        background: var(--blue);
+        opacity: 0.82;
+      }
+      .band.dp .dip {
+        background: var(--pink);
+      }
+      .band.dc .dip {
+        background: var(--cyan);
+      }
+      .band .shade {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          10deg,
+          rgba(19, 19, 19, 0.55) 6%,
+          transparent 48%
+        );
+      }
+      .band .in2 {
+        position: absolute;
+        left: 6%;
+        right: 6%;
+        bottom: 8%;
+        z-index: 2;
+        color: #fff;
+      }
+      .band .sent {
+        font-weight: 600;
+        font-size: clamp(1.15rem, 2.3vw, 1.9rem);
+        line-height: 1.3;
+        max-width: 30em;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.55);
+      }
+      .band .chip {
+        display: inline-block;
+        margin-top: 12px;
+        background: #fff;
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        padding: 5px 10px;
+        border-radius: 3px;
+      }
+      .band .case {
+        display: inline-block;
+        margin-left: 10px;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        color: #fff;
+        text-decoration: none;
+        border-bottom: 2px solid var(--volt);
+        padding-bottom: 2px;
+      }
+      .band .case:hover {
+        color: var(--volt);
+      }
+      /* steps: white cards, pink numbers */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+        margin-top: 26px;
+      }
+      .step {
+        background: var(--bone);
+        border-radius: 14px;
+        padding: clamp(1.3rem, 2.8vw, 2rem);
+      }
+      .step .sno {
+        display: inline-grid;
+        place-items: center;
+        min-width: 46px;
+        height: 36px;
+        padding: 0 9px;
+        background: var(--pink);
+        color: #fff;
+        font-family: var(--disp);
+        font-size: 1.05rem;
+        border-radius: 8px;
+      }
+      .step b {
+        display: block;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        margin-top: 12px;
+      }
+      .step p {
+        margin-top: 8px;
+        color: #55534b;
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
+      /* record + studio */
+      .two {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 22px;
+        margin-top: 24px;
+        align-items: start;
+      }
+      .lrow {
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(19, 19, 19, 0.12);
+      }
+      .lrow b {
+        font-family: var(--disp);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .lrow span {
+        flex: 1;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #55534b;
+        min-width: 0;
+      }
+      .lrow i {
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 7.5px;
+        letter-spacing: 0.14em;
+        border: 1.5px solid rgba(19, 19, 19, 0.35);
+        border-radius: 99px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
+      .duo {
+        background: var(--blue);
+        color: #fff;
+        border-radius: 14px;
+        padding: clamp(1.3rem, 2.8vw, 2rem);
+      }
+      .duo .lab {
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .duo .pair {
+        display: grid;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .duo b {
+        font-family: var(--disp);
+        text-transform: uppercase;
+        font-size: 0.95rem;
+      }
+      .duo b i {
+        font-style: normal;
+        color: var(--volt);
+      }
+      .duo p {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.78);
+        margin-top: 3px;
+      }
+      /* footer */
+      footer {
+        background: var(--blue);
+        color: var(--bone);
+        margin-left: 0;
+        padding: clamp(2.6rem, 7vh, 4.4rem) 0 0;
+        overflow: hidden;
+      }
+      .frow {
+        display: flex;
+        gap: clamp(1.2rem, 3.4vw, 3rem);
+        flex-wrap: wrap;
+        align-items: baseline;
+      }
+      .femail {
+        font-family: var(--disp);
+        font-size: clamp(1.05rem, 2.2vw, 1.8rem);
+        color: var(--volt);
+        text-decoration: none;
+        border-bottom: 3px solid var(--pink);
+        padding-bottom: 4px;
+      }
+      .femail:hover {
+        color: #ffffff;
+        border-color: var(--volt);
+      }
+      .fsmall {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 2;
+      }
+      .bigname {
+        font-family: var(--disp);
+        font-size: clamp(2.6rem, 11vw, 10rem);
+        line-height: 0.76;
+        letter-spacing: -0.02em;
+        text-align: center;
+        white-space: nowrap;
+        margin-top: clamp(1.4rem, 4vh, 2.6rem);
+        margin-bottom: -0.1em;
+        color: #ffffff;
+        -webkit-text-stroke: 0;
+      }
+      @media (max-width: 860px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .heropane {
+          min-height: 42svh;
+        }
+        :root {
+          --spine: 0px;
+        }
+        .spine {
+          position: sticky;
+          top: 0;
+          bottom: auto;
+          width: 100%;
+          height: 54px;
+        }
+        .spine span {
+          writing-mode: horizontal-tb;
+          transform: none;
+          font-size: clamp(0.62rem, 3.2vw, 0.9rem);
+          padding: 0 10px;
+          max-width: 100%;
+        }
+        main {
+          margin-left: 0;
+        }
+        .pillnav {
+          display: none;
+        }
+        .band {
+          min-height: 60svh;
+        }
+        .two {
+          grid-template-columns: 1fr;
+        }
+        .bigname {
+          white-space: normal;
+          font-size: 16vw;
+          line-height: 0.84;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .rv {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        html {
+          scroll-behavior: auto;
+          scroll-snap-type: none;
+        }
+      }
+
+      .spineprog {
+        position: absolute;
+        right: 8px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--volt);
+        transform-origin: bottom;
+        transform: scaleY(0);
+      }
+      @media (max-width: 860px) {
+        .spineprog {
+          right: 0;
+          left: 0;
+          top: auto;
+          bottom: 0;
+          width: auto;
+          height: 2px;
+          transform-origin: left;
+          transform: scaleX(0);
+        }
+      }
+      .hl-anim {
+        background-image: linear-gradient(var(--volt), var(--volt));
+        background-color: transparent !important;
+        background-repeat: no-repeat;
+        background-position: left center;
+        background-size: 0% 100%;
+        transition: background-size 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      .hl-anim.drawn {
+        background-size: 100% 100%;
+      }
+      .pillnav {
+        transition: padding 220ms var(--ease);
+      }
+      .pillnav.slim {
+        padding: 6px 9px 6px 15px;
+      }
+      .pillnav .links a.on {
+        color: #fff;
+      }
+      .pillnav .links a.on::after {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 99px;
+        background: var(--volt);
+        margin-left: 6px;
+        vertical-align: 2px;
+      }
+      .lrow {
+        transition: padding-left 200ms var(--ease);
+      }
+      .lrow:hover {
+        padding-left: 8px;
+      }
+      .lrow:hover b {
+        color: var(--blue);
+      }
+      .lrow i {
+        transition:
+          background 180ms var(--ease),
+          color 180ms var(--ease),
+          border-color 180ms var(--ease);
+      }
+      .lrow:hover i {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+      }
+      .bigname .bl {
+        display: inline-block;
+      }
+      .cyc {
+        display: inline-block;
+        padding: 0 0.06em;
+        border-radius: 8px;
+        animation: cyc 8s steps(1, end) infinite;
+      }
+      @keyframes cyc {
+        0%,
+        24.9% {
+          color: var(--ink);
+          background: transparent;
+        }
+        25%,
+        49.9% {
+          color: var(--blue);
+          background: transparent;
+        }
+        50%,
+        74.9% {
+          color: var(--pink);
+          background: transparent;
+        }
+        75%,
+        100% {
+          color: var(--ink);
+          background: var(--volt);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .cyc {
+          animation: none;
+        }
+      }
+      .dlab {
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        color: #8f8d84;
+      }
+      .drow {
+        display: flex;
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .drow i {
+        font-style: normal;
+        font-family: var(--disp);
+        font-size: 0.85rem;
+        color: var(--pink);
+      }
+      .drow p {
+        font-size: 0.92rem;
+        color: #55534b;
+        line-height: 1.6;
+        font-weight: 600;
+      }
+      .redact {
+        display: inline-block;
+        width: 92px;
+        height: 0.8em;
+        background: var(--ink);
+        border-radius: 3px;
+        vertical-align: middle;
+        opacity: 0.85;
+      }
+      .redact.short {
+        width: 56px;
+      }
+      .dfoot {
+        margin-top: 16px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.1em;
+        color: #8f8d84;
+        line-height: 1.8;
+      }
+      .alt {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: baseline;
+        padding: 13px 0;
+        border-bottom: 1px solid rgba(19, 19, 19, 0.12);
+      }
+      .alt b {
+        font-family: var(--disp);
+        text-transform: uppercase;
+        font-size: 0.9rem;
+      }
+      .alt span {
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: #55534b;
+        text-align: right;
+      }
+      .alt.hot b {
+        color: var(--blue);
+      }
+      .alt.hot span {
+        color: var(--blue);
+      }
+      a.lrow {
+        text-decoration: none;
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="spine" aria-hidden="true">
+      <span>Upperhand® · The Next Level of Your Business</span
+      ><i class="spineprog" aria-hidden="true"></i>
+    </aside>
+    <nav class="pillnav">
+      <a class="brand" href="#top">● UPPERHAND</a>
+      <div class="links">
+        <a href="#make">What we make</a><a href="#work">Work</a
+        ><a href="#how">How</a><a href="#record">Record</a>
+      </div>
+      <a class="go" href="/brief">START →</a>
+    </nav>
+
+    <main>
+      <header class="hero wrap" id="top">
+        <div class="herotxt">
+          <span class="kick rv">BUILT BY OPERATORS · CHICAGO + EVERYWHERE</span>
+          <h1 class="rv">
+            The <span class="cyc">bold</span> version<br />of your business,
+            <em>built.</em>
+          </h1>
+          <p class="sub rv">
+            We're operators, not agency people. We've sat on your side of the
+            counter, and we build the fix we wished we had.
+            <b>Phase one, live, in 21 days.</b>
+          </p>
+          <a class="cta rv" href="/brief">START A BUILD →</a>
+          <p class="meta rv">9 BUILDS LIVE · ONE SLOT OPEN THIS MONTH</p>
+        </div>
+        <div class="heropane rv">
+          <video
+            poster="/posters/studio.jpg"
+            muted
+            loop
+            autoplay
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/9736522/9736522-sd_640_360_24fps.mp4"
+          ></video>
+          <span class="dip" aria-hidden="true"></span>
+          <span class="chip2">THE STUDIO · AT WORK</span>
+          <span class="tag">Upperhand®</span>
+        </div>
+      </header>
+
+      <section class="blk wrap" id="make">
+        <span class="kick rv">WHAT WE MAKE · NAMED AFTER OUTCOMES</span>
+        <h2 class="rv">Three things, <span class="hl">done loudly.</span></h2>
+        <div class="cards">
+          <div class="card rv">
+            <span class="cno">01</span>
+            <h3>The thing your customers use</h3>
+            <p>
+              Storefronts, booking engines, member apps. Designed to be pointed
+              at.
+            </p>
+          </div>
+          <div class="card rv">
+            <span class="cno">02</span>
+            <h3>The system that runs your day</h3>
+            <p>
+              Order desks, case files, ops consoles. The machine behind the
+              counter.
+            </p>
+          </div>
+          <div class="card rv">
+            <span class="cno">03</span>
+            <h3>The presence that sells while you sleep</h3>
+            <p>
+              Sites and content engines with a pulse, honest enough to close.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="blk wrap" id="work">
+        <span class="kick rv"
+          >THE WORK · EVERY BUILD LINKS TO ITS CASE STUDY</span
+        >
+        <h2 class="rv">Dipped, shipped,<br />still running.</h2>
+        <div class="band db rv">
+          <video
+            poster="/posters/tf.jpg"
+            muted
+            loop
+            autoplay
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/17722430/17722430-sd_640_360_24fps.mp4"
+          ></video
+          ><span class="dip"></span><span class="shade"></span>
+          <div class="in2">
+            <p class="sent">
+              Records cut one at a time. An order desk that keeps the lathe
+              warm.
+            </p>
+            <span class="chip">TANGIBLE FORMATS · SITE + OPS</span
+            ><a class="case" href="/case-tangible-formats">CASE STUDY →</a>
+          </div>
+        </div>
+        <div class="band dp rv">
+          <video
+            poster="/posters/moo.jpg"
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/4881730/4881730-sd_960_506_25fps.mp4"
+          ></video
+          ><span class="dip"></span><span class="shade"></span>
+          <div class="in2">
+            <p class="sent">
+              A drive-in in a cow pasture, sold out every Saturday since.
+            </p>
+            <span class="chip">MOO V NIGHT · PRODUCT</span
+            ><a class="case" href="/case-moo-v-night">CASE STUDY →</a>
+          </div>
+        </div>
+        <div class="band dc rv">
+          <video
+            poster="/posters/fit.jpg"
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/6980128/6980128-sd_640_338_30fps.mp4"
+          ></video
+          ><span class="dip"></span><span class="shade"></span>
+          <div class="in2">
+            <p class="sent">A Highland Park gym in every member's pocket.</p>
+            <span class="chip">FISHERFIT · MEMBER APP</span
+            ><a class="case" href="/case-fisherfit">CASE STUDY →</a>
+          </div>
+        </div>
+        <div class="band db rv">
+          <video
+            poster="/posters/mrd.jpg"
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/8523306/8523306-sd_960_540_30fps.mp4"
+          ></video
+          ><span class="dip"></span><span class="shade"></span>
+          <div class="in2">
+            <p class="sent">
+              A Chicago beef stand gone cinematic. The line goes out the door.
+            </p>
+            <span class="chip">MR. D'S · SITE</span
+            ><a class="case" href="/case-mr-ds">CASE STUDY →</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="blk wrap" id="how">
+        <span class="kick rv">HOW IT WORKS</span>
+        <h2 class="rv">Three steps. No decks<br />about decks.</h2>
+        <div class="steps">
+          <div class="step rv">
+            <span class="sno">01</span><b>THE CHALLENGE</b>
+            <p>
+              One call, then a written read of your operation. The diagnosis is
+              sharp and free; the fix has one flat number.
+            </p>
+          </div>
+          <div class="step rv">
+            <span class="sno">21</span><b>PHASE ONE · LIVE</b>
+            <p>
+              A running build in 21 days, not a proposal. The first win,
+              shipped, priced flat, yours either way.
+            </p>
+          </div>
+          <div class="step rv">
+            <span class="sno">03</span><b>THE NEXT MOVE</b>
+            <p>
+              Each phase earns the next. Stop any time and keep everything,
+              source included.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="blk wrap" id="read">
+        <span class="kick rv">THE FIRST ARTIFACT · BEFORE ANY INVOICE</span>
+        <h2 class="rv">The diagnosis <span class="hl">comes first.</span></h2>
+        <div
+          class="cards"
+          style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))"
+        >
+          <div class="card rv">
+            <span class="dlab">THE READ · SAMPLE · REDACTED</span>
+            <div class="drow">
+              <i>01</i>
+              <p>
+                Orders arrive in three inboxes; two of them are somebody's
+                memory. The <span class="redact"></span> never sees half of
+                them.
+              </p>
+            </div>
+            <div class="drow">
+              <i>02</i>
+              <p>
+                The busiest hours produce the least revenue:
+                <span class="redact short"></span> is unstaffed exactly when
+                <span class="redact"></span> peaks.
+              </p>
+            </div>
+            <div class="drow">
+              <i>03</i>
+              <p>
+                The fix is not more staff. It is one system at the counter, and
+                it pays for itself by <span class="redact short"></span>.
+              </p>
+            </div>
+            <p class="dfoot">
+              Every engagement starts with a read like this one. Yours is free,
+              and it is yours to keep either way.
+            </p>
+          </div>
+          <div class="card rv">
+            <span class="dlab">PRICED AGAINST YOUR REAL ALTERNATIVES</span>
+            <div class="alt">
+              <b>An ops hire</b><span>$3,000+ every month, forever</span>
+            </div>
+            <div class="alt">
+              <b>A dev shop</b><span>$20k, four months, then maintenance</span>
+            </div>
+            <div class="alt hot">
+              <b>Upperhand</b><span>one flat number · live in 21 days</span>
+            </div>
+            <p class="dfoot">
+              Stop any time. You keep everything, source included.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="blk wrap" id="record">
+        <span class="kick rv">THE RECORD · 9 BUILDS LIVE · ALL RUNNING</span>
+        <div class="two">
+          <div class="rv">
+            <a class="lrow" href="/case-tangible-formats">
+              <b>Tangible Formats</b><span>vinyl storefront + order desk</span
+              ><i>SITE + OPS</i>
+            </a>
+            <a class="lrow" href="/case-moo-v-night">
+              <b>Moo V Night</b><span>drive-in trivia on every phone</span
+              ><i>PRODUCT</i>
+            </a>
+            <a class="lrow" href="/case-fisherfit">
+              <b>FisherFit</b><span>the gym in every member's pocket</span
+              ><i>APP</i>
+            </a>
+            <div class="lrow" title="Case study on the way">
+              <b>Covered</b><span>sub plans while teachers sleep</span
+              ><i>SAAS</i>
+            </div>
+            <div class="lrow" title="Case study on the way">
+              <b>Counsel</b><span>a case desk that loses nothing</span
+              ><i>TOOL</i>
+            </div>
+            <a class="lrow" href="/case-mr-ds">
+              <b>Mr. D's</b><span>a beef stand gone cinematic</span><i>SITE</i>
+            </a>
+            <div class="lrow" title="Case study on the way">
+              <b>Shelf Life</b><span>one shoot, a month of social</span
+              ><i>ENGINE</i>
+            </div>
+            <div class="lrow" title="Case study on the way">
+              <b>Good Grief</b><span>paperwork that ends in a song</span
+              ><i>PORTAL</i>
+            </div>
+          </div>
+          <div class="duo rv">
+            <span class="lab">THE STUDIO</span>
+            <div class="pair">
+              <div>
+                <b>A SMALL, <i>CURATED TEAM</i></b>
+                <p>
+                  Run by people who have owned the problem, not just scoped it.
+                  Senior hands, zero handoffs, no telephone game.
+                </p>
+              </div>
+              <div>
+                <b>DESIGN <i>· MADE TO BE POINTED AT</i></b>
+                <p>Craft, motion, and the details people screenshot.</p>
+              </div>
+              <div>
+                <b>STRATEGY <i>· BUILT TO CLOSE</i></b>
+                <p>Positioning and the words that sell it.</p>
+              </div>
+              <div>
+                <b>THE RACE <i>· FIRST WIN IN 21 DAYS</i></b>
+                <p>
+                  We bring ideas and businesses to life, then keep them moving.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer id="start">
+        <div class="wrap">
+          <div class="frow rv">
+            <a class="femail" href="mailto:brief@getupperhand.io"
+              >BRIEF@GETUPPERHAND.IO</a
+            ><a class="fsmall" href="/brief" style="text-decoration: none"
+              >OR SEND A BRIEF ONLINE →</a
+            >
+            <span class="fsmall"
+              >EST. 2025 · CHICAGO + EVERYWHERE · ONE SLOT OPEN</span
+            >
+            <span class="fsmall">©2026 UPPERHAND LLC</span>
+          </div>
+          <div class="bigname rv">UPPERHAND</div>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.1 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+      const vio = new IntersectionObserver(
+        (es) =>
+          es.forEach((en) => {
+            if (en.isIntersecting)
+              en.target
+                .play()
+                .catch((err) => console.warn("[VIDEO] autoplay blocked", err));
+            else en.target.pause();
+          }),
+        { threshold: 0.2 },
+      );
+      document.querySelectorAll("video").forEach((v) => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          v.removeAttribute("autoplay");
+          v.pause();
+        } else vio.observe(v);
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+    <script>
+      (() => {
+        // Active-section state works even with reduced motion: it is state, not animation.
+        const navLinks = [...document.querySelectorAll(".pillnav .links a")];
+        const byHash = new Map(
+          navLinks.map((a) => [a.getAttribute("href").replace(/^.*#/, "#"), a]),
+        );
+        const secObs = new IntersectionObserver(
+          (es) =>
+            es.forEach((e) => {
+              if (!e.isIntersecting) return;
+              const link = byHash.get("#" + e.target.id);
+              if (!link) return;
+              navLinks.forEach((a) => a.classList.toggle("on", a === link));
+            }),
+          { rootMargin: "-30% 0px -55% 0px" },
+        );
+        ["make", "work", "how", "record"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) secObs.observe(el);
+        });
+
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!window.gsap || !window.Lenis) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
+        lenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add((t) => lenis.raf(t * 1000));
+        gsap.ticker.lagSmoothing(0);
+        document.querySelectorAll('a[href^="#"]').forEach((a) =>
+          a.addEventListener("click", (e) => {
+            const el = document.querySelector(a.getAttribute("href"));
+            if (el) {
+              e.preventDefault();
+              lenis.scrollTo(el, { offset: -20 });
+            }
+          }),
+        );
+
+        // Pill breathes: compact after the first scroll stretch.
+        const pill = document.querySelector(".pillnav");
+        lenis.on("scroll", ({ scroll }) => {
+          if (pill) pill.classList.toggle("slim", scroll > 100);
+        });
+
+        const own = (el) => {
+          if (!el) return;
+          el.classList.add("in");
+          el.style.transition = "none";
+        };
+        const mobile = matchMedia("(max-width: 860px)").matches;
+
+        // Word-mask splitter. Elements with .hl are wrapped whole so the highlight
+        // stays one continuous stroke.
+        const split = (root) => {
+          const walk = (node) => {
+            [...node.childNodes].forEach((n) => {
+              if (n.nodeType === 3 && n.textContent.trim()) {
+                const frag = document.createDocumentFragment();
+                n.textContent.split(/(\s+)/).forEach((w) => {
+                  if (!w.trim()) {
+                    frag.appendChild(document.createTextNode(w));
+                    return;
+                  }
+                  const m = document.createElement("span");
+                  m.style.cssText =
+                    "display:inline-block;overflow:hidden;vertical-align:top";
+                  const inner = document.createElement("span");
+                  inner.className = "kw";
+                  inner.style.display = "inline-block";
+                  inner.textContent = w;
+                  m.appendChild(inner);
+                  frag.appendChild(m);
+                });
+                n.replaceWith(frag);
+              } else if (n.nodeType === 1 && n.classList.contains("hl")) {
+                const m = document.createElement("span");
+                m.style.cssText =
+                  "display:inline-block;overflow:hidden;vertical-align:top";
+                n.replaceWith(m);
+                const inner = document.createElement("span");
+                inner.className = "kw";
+                inner.style.display = "inline-block";
+                inner.appendChild(n);
+                m.appendChild(inner);
+              } else if (n.nodeType === 1) walk(n);
+            });
+          };
+          walk(root);
+          return root.querySelectorAll(".kw");
+        };
+
+        // Hero + section headlines hide now, split and animate after fonts settle.
+        const h1 = document.querySelector(".hero h1");
+        const heroBits = gsap.utils.toArray(
+          ".herotxt .kick, .herotxt .sub, .herotxt .cta, .herotxt .meta",
+        );
+        const pane = document.querySelector(".heropane");
+        const h2s = gsap.utils.toArray("main section.blk h2");
+        [h1, ...heroBits, pane, ...h2s].forEach(own);
+        if (h1) gsap.set(h1, { autoAlpha: 0 });
+        if (heroBits.length) gsap.set(heroBits, { autoAlpha: 0 });
+        if (pane) gsap.set(pane, { autoAlpha: 0 });
+        h2s.forEach((h) => gsap.set(h, { autoAlpha: 0 }));
+
+        const fontsReady = Promise.race([
+          document.fonts ? document.fonts.ready : Promise.resolve(),
+          new Promise((r) => setTimeout(r, 1500)),
+        ]);
+
+        fontsReady.then(() => {
+          if (h1) {
+            const words = split(h1);
+            gsap.set(h1, { autoAlpha: 1 });
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+            tl.from(words, { yPercent: 115, duration: 0.9, stagger: 0.055 }, 0);
+            if (heroBits.length)
+              tl.fromTo(
+                heroBits,
+                { y: 26, autoAlpha: 0 },
+                { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.09 },
+                0.35,
+              );
+            if (pane)
+              tl.fromTo(
+                pane,
+                { y: 40, autoAlpha: 0 },
+                { y: 0, autoAlpha: 1, duration: 0.9 },
+                0.25,
+              );
+          }
+          // Section H2s: same grammar, smaller travel.
+          h2s.forEach((h) => {
+            const words = split(h);
+            gsap.set(h, { autoAlpha: 1 });
+            gsap.from(words, {
+              yPercent: 105,
+              duration: 0.6,
+              ease: "power3.out",
+              stagger: 0.045,
+              scrollTrigger: { trigger: h, start: "top 85%", once: true },
+            });
+          });
+          // Highlights draw themselves in as you reach them.
+          document.querySelectorAll(".hl").forEach((el) => {
+            el.classList.add("hl-anim");
+            ScrollTrigger.create({
+              trigger: el,
+              start: "top 80%",
+              once: true,
+              onEnter: () => el.classList.add("drawn"),
+            });
+          });
+        });
+
+        // The spine is also the progress bar: volt hairline climbs with the page.
+        const prog = document.querySelector(".spineprog");
+        if (prog)
+          gsap.fromTo(prog, mobile ? { scaleX: 0 } : { scaleY: 0 }, {
+            ...(mobile ? { scaleX: 1 } : { scaleY: 1 }),
+            ease: "none",
+            scrollTrigger: {
+              trigger: document.body,
+              start: "top top",
+              end: "max",
+              scrub: true,
+            },
+          });
+
+        if (!mobile) {
+          const pv = document.querySelector(".heropane video");
+          if (pv)
+            gsap.fromTo(
+              pv,
+              { yPercent: -7 },
+              {
+                yPercent: 7,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: ".heropane",
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true,
+                },
+              },
+            );
+
+          document.querySelectorAll(".band").forEach((b) => {
+            const v = b.querySelector("video");
+            const c = b.querySelector(".in2");
+            const dip = b.querySelector(".dip");
+            if (v)
+              gsap.fromTo(
+                v,
+                { yPercent: -8 },
+                {
+                  yPercent: 8,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: b,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true,
+                  },
+                },
+              );
+            if (c)
+              gsap.fromTo(
+                c,
+                { y: 34 },
+                {
+                  y: -12,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: b,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true,
+                  },
+                },
+              );
+            // The dip develops: footage surfaces as the band takes center stage, then re-submerges.
+            if (dip) {
+              const rest = b.classList.contains("db") ? 0.82 : 1;
+              const mid = b.classList.contains("db") ? 0.66 : 0.8;
+              gsap
+                .timeline({
+                  scrollTrigger: {
+                    trigger: b,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: true,
+                  },
+                })
+                .fromTo(
+                  dip,
+                  { opacity: rest },
+                  { opacity: mid, duration: 1, ease: "none" },
+                )
+                .to(dip, { opacity: rest, duration: 1, ease: "none" });
+            }
+          });
+
+          const cards = gsap.utils.toArray(".cards .card");
+          cards.forEach(own);
+          ScrollTrigger.batch(cards, {
+            start: "top 88%",
+            onEnter: (els) =>
+              gsap.from(els, {
+                y: 44,
+                opacity: 0,
+                duration: 0.7,
+                ease: "power3.out",
+                stagger: 0.09,
+              }),
+            once: true,
+          });
+
+          // Record rows land one at a time.
+          const rows = gsap.utils.toArray(".lrow");
+          ScrollTrigger.batch(rows, {
+            start: "top 90%",
+            onEnter: (els) =>
+              gsap.from(els, {
+                y: 18,
+                opacity: 0,
+                duration: 0.5,
+                ease: "power2.out",
+                stagger: 0.05,
+              }),
+            once: true,
+          });
+
+          // Footer wordmark: nine letters, one drumroll.
+          const big = document.querySelector(".bigname");
+          if (big) {
+            own(big);
+            const letters = big.textContent.trim().split("");
+            big.textContent = "";
+            letters.forEach((ch) => {
+              const s = document.createElement("span");
+              s.className = "bl";
+              s.textContent = ch;
+              big.appendChild(s);
+            });
+            gsap.from(big.querySelectorAll(".bl"), {
+              yPercent: 70,
+              opacity: 0,
+              duration: 0.7,
+              ease: "power3.out",
+              stagger: 0.035,
+              scrollTrigger: {
+                trigger: "footer",
+                start: "top 80%",
+                once: true,
+              },
+            });
+          }
+
+          const sp = document.querySelector(".spine span");
+          if (sp)
+            gsap.fromTo(
+              sp,
+              { y: -14 },
+              {
+                y: 14,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: document.body,
+                  start: "top top",
+                  end: "max",
+                  scrub: true,
+                },
+              },
+            );
+        }
+      })();
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+  </body>
+</html>

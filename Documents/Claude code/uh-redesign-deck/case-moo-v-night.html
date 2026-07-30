@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upperhand · Moo V Night · Case Study</title>
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:title" content="Upperhand · Moo V Night · Case Study" />
+    <meta
+      property="og:description"
+      content="A drive-in in a cow pasture, sold out every Saturday since."
+    />
+    <meta
+      property="og:image"
+      content="https://uh-redesign-deck.vercel.app/og.png"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta
+      name="description"
+      content="A drive-in in a cow pasture, sold out every Saturday since."
+    />
+    <meta name="robots" content="noindex" />
+    <style>
+      :root {
+        --ink: #131313;
+        --white: #ffffff;
+        --bone: #faf8f1;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --cyan: #2ee6ff;
+        --blue: #1231c9;
+        --spine: 76px;
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --disp: "Archivo Black";
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--white);
+        color: var(--ink);
+        font-family: var(--body);
+      }
+      .rv {
+        opacity: 0;
+        transform: translateY(16px);
+        transition:
+          opacity 650ms var(--ease),
+          transform 650ms var(--ease);
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+      .spine {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--spine);
+        background: var(--blue);
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .spine span {
+        font-family: var(--disp);
+        font-size: 1.1rem;
+        color: #fff;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+      main {
+        margin-left: var(--spine);
+      }
+      .pillnav {
+        position: fixed;
+        top: 16px;
+        left: calc(50% + var(--spine) / 2);
+        transform: translateX(-50%);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        background: var(--ink);
+        border-radius: 99px;
+        padding: 10px 12px 10px 20px;
+        box-shadow: 0 10px 30px rgba(19, 19, 19, 0.25);
+        max-width: calc(100vw - var(--spine) - 20px);
+      }
+      .pillnav .brand {
+        font-family: var(--disp);
+        font-size: 13px;
+        color: var(--bone);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .pillnav .links {
+        display: flex;
+        gap: 16px;
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .pillnav .links a {
+        color: rgba(250, 248, 241, 0.65);
+        text-decoration: none;
+      }
+      .pillnav .links a:hover {
+        color: var(--volt);
+      }
+      .pillnav .go {
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        padding: 9px 16px;
+        border-radius: 99px;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .pillnav .go:hover {
+        background: var(--blue);
+        color: #fff;
+      }
+      .wrap {
+        max-width: 1020px;
+        margin: 0 auto;
+        padding: 0 clamp(1.2rem, 4vw, 3rem);
+      }
+      .kick {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        color: #8f8d84;
+      }
+      h1 {
+        font-family: var(--disp);
+        font-size: clamp(2.2rem, 6vw, 4.6rem);
+        line-height: 0.92;
+        text-transform: uppercase;
+        letter-spacing: -0.015em;
+        margin-top: 14px;
+      }
+      h2 {
+        font-family: var(--disp);
+        font-size: clamp(1.5rem, 3.6vw, 2.6rem);
+        line-height: 0.96;
+        text-transform: uppercase;
+        letter-spacing: -0.012em;
+        margin-top: 10px;
+      }
+      .hl {
+        background: var(--volt);
+        padding: 0 0.09em;
+      }
+      section.blk {
+        padding: clamp(2.8rem, 7vh, 4.6rem) 0;
+      }
+      .lede {
+        margin-top: 16px;
+        max-width: 38em;
+        font-weight: 600;
+        font-size: clamp(1rem, 1.6vw, 1.18rem);
+        color: #55534b;
+        line-height: 1.6;
+      }
+      .band {
+        position: relative;
+        min-height: 68svh;
+        border-radius: 18px;
+        overflow: hidden;
+        margin-top: 90px;
+      }
+      .band video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(1) contrast(1.05) brightness(1.75);
+        scale: 1.06;
+      }
+      .band .dip {
+        position: absolute;
+        inset: 0;
+        mix-blend-mode: multiply;
+      }
+      .band.db .dip {
+        background: var(--blue);
+        opacity: 0.82;
+      }
+      .band.dp .dip {
+        background: var(--pink);
+      }
+      .band.dc .dip {
+        background: var(--cyan);
+      }
+      .band .shade {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          10deg,
+          rgba(19, 19, 19, 0.55) 6%,
+          transparent 48%
+        );
+      }
+      .band .in2 {
+        position: absolute;
+        left: 6%;
+        right: 6%;
+        bottom: 8%;
+        z-index: 2;
+        color: #fff;
+      }
+      .band .bk {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .band h1 {
+        color: #fff;
+      }
+      .band .tg {
+        margin-top: 12px;
+        font-weight: 600;
+        font-size: clamp(1rem, 1.9vw, 1.4rem);
+        max-width: 30em;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 28px;
+      }
+      .card {
+        background: var(--white);
+        border: 2.5px solid var(--ink);
+        border-radius: 12px;
+        padding: clamp(1.2rem, 2.6vw, 1.9rem);
+        box-shadow: 6px 6px 0 var(--blue);
+      }
+      .card h3 {
+        font-family: var(--disp);
+        font-size: clamp(1rem, 1.7vw, 1.3rem);
+        text-transform: uppercase;
+        line-height: 1.14;
+      }
+      .card p {
+        margin-top: 10px;
+        color: #55534b;
+        font-size: 0.93rem;
+        line-height: 1.6;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin-top: 26px;
+      }
+      .step {
+        background: var(--bone);
+        border-radius: 14px;
+        padding: clamp(1.2rem, 2.6vw, 1.8rem);
+      }
+      .step .sno {
+        display: inline-grid;
+        place-items: center;
+        min-width: 44px;
+        height: 34px;
+        padding: 0 9px;
+        background: var(--pink);
+        color: #fff;
+        font-family: var(--disp);
+        font-size: 1rem;
+        border-radius: 8px;
+      }
+      .step b {
+        display: block;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        margin-top: 12px;
+      }
+      .step p {
+        margin-top: 8px;
+        color: #55534b;
+        font-size: 0.9rem;
+        line-height: 1.55;
+      }
+      .results {
+        margin-top: 22px;
+      }
+      .rrow {
+        display: flex;
+        gap: 14px;
+        align-items: baseline;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(19, 19, 19, 0.12);
+        font-weight: 600;
+        font-size: clamp(0.98rem, 1.6vw, 1.15rem);
+      }
+      .rrow i {
+        font-style: normal;
+        color: var(--blue);
+        font-family: var(--disp);
+      }
+      .nextcase {
+        display: block;
+        margin-top: 30px;
+        background: var(--bone);
+        border-radius: 16px;
+        padding: clamp(1.4rem, 3vw, 2.2rem);
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .nextcase:hover h2 {
+        color: var(--blue);
+      }
+      footer {
+        background: var(--blue);
+        color: #fff;
+        padding: clamp(2.4rem, 6vh, 4rem) 0 0;
+        overflow: hidden;
+        margin-top: clamp(2.6rem, 7vh, 4.6rem);
+      }
+      .frow {
+        display: flex;
+        gap: clamp(1.2rem, 3.4vw, 3rem);
+        flex-wrap: wrap;
+        align-items: baseline;
+      }
+      .femail {
+        font-family: var(--disp);
+        font-size: clamp(1rem, 2vw, 1.6rem);
+        color: var(--volt);
+        text-decoration: none;
+        border-bottom: 3px solid var(--pink);
+        padding-bottom: 4px;
+      }
+      .femail:hover {
+        color: #fff;
+      }
+      .fsmall {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 2;
+      }
+      .bigname {
+        font-family: var(--disp);
+        font-size: clamp(2.4rem, 10.4vw, 9.4rem);
+        line-height: 0.76;
+        letter-spacing: -0.02em;
+        text-align: center;
+        white-space: nowrap;
+        margin-top: clamp(1.2rem, 3.6vh, 2.4rem);
+        margin-bottom: -0.1em;
+        color: #fff;
+      }
+      @media (max-width: 860px) {
+        :root {
+          --spine: 0px;
+        }
+        .spine {
+          position: sticky;
+          top: 0;
+          bottom: auto;
+          width: 100%;
+          height: 50px;
+        }
+        .spine span {
+          writing-mode: horizontal-tb;
+          transform: none;
+          font-size: clamp(0.62rem, 3.2vw, 0.9rem);
+          padding: 0 10px;
+          max-width: 100%;
+        }
+        main {
+          margin-left: 0;
+        }
+        .pillnav {
+          display: none;
+        }
+        .band {
+          min-height: 56svh;
+          margin-top: 14px;
+        }
+        .bigname {
+          white-space: normal;
+          font-size: 15vw;
+          line-height: 0.84;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .rv {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      .browser {
+        border: 2.5px solid var(--ink);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 8px 8px 0 var(--blue);
+        margin-top: 26px;
+        background: #fff;
+      }
+      .bhead {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bone);
+        border-bottom: 1.5px solid rgba(19, 19, 19, 0.2);
+        padding: 10px 14px;
+      }
+      .bhead i {
+        width: 9px;
+        height: 9px;
+        border-radius: 99px;
+        background: rgba(19, 19, 19, 0.25);
+      }
+      .bhead i:first-child {
+        background: var(--pink);
+      }
+      .bhead span {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.08em;
+        color: #55534b;
+      }
+      .browser img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="spine" aria-hidden="true">
+      <span>Upperhand® · The Next Level of Your Business</span>
+    </aside>
+    <nav class="pillnav">
+      <a class="brand" href="/merge-3">● UPPERHAND</a>
+      <div class="links">
+        <a href="/merge-3#make">What we make</a><a href="/merge-3#work">Work</a
+        ><a href="/merge-3#how">How</a><a href="/merge-3#record">Record</a>
+      </div>
+      <a class="go" href="/brief">START →</a>
+    </nav>
+    <main>
+      <div class="wrap">
+        <div class="band dp">
+          <video
+            poster="/posters/moo.jpg"
+            muted
+            loop
+            autoplay
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/4881730/4881730-sd_960_506_25fps.mp4"
+          ></video>
+          <span class="dip"></span><span class="shade"></span>
+          <div class="in2">
+            <span class="bk">CASE STUDY · PRODUCT · OUTDOOR CINEMA</span>
+            <h1>Moo V Night</h1>
+            <p class="tg">
+              A drive-in in a cow pasture, sold out every Saturday since.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <section class="blk wrap">
+        <span class="kick rv">A FIELD OF CARS AND DEAD AIR</span>
+        <h2 class="rv">The problem.</h2>
+        <p class="lede rv">
+          An outdoor cinema with a great show and forty-five minutes of nothing
+          before it. A field of parked cars, every audience member holding a
+          phone, and no way to reach any of them. Pre-show time was dead time,
+          and dead time does not sell snacks or bring people back.
+        </p>
+      </section>
+
+      <section class="blk wrap" style="padding-top: 0">
+        <span class="kick rv">WHAT WE BUILT</span>
+        <h2 class="rv">The <span class="hl">fix.</span></h2>
+        <div class="cards">
+          <div class="card rv">
+            <h3>Trivia on every phone</h3>
+            <p>
+              Scan a code from the driver seat and the whole field is playing
+              the same game, live, round by round.
+            </p>
+          </div>
+          <div class="card rv">
+            <h3>Style rounds and reactions</h3>
+            <p>
+              Movie-themed rounds, reaction drops, and an avatar leaderboard
+              across the lot. The pre-show became part of the show.
+            </p>
+          </div>
+          <div class="card rv">
+            <h3>The booking engine</h3>
+            <p>
+              Private events quoted and booked in one flow, so the pasture earns
+              on the nights the projector is off.
+            </p>
+          </div>
+          <div class="card rv">
+            <h3>Zero-install everything</h3>
+            <p>
+              Nothing to download in a field with one bar of signal. A code on
+              the screen is the whole onboarding.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="blk wrap" style="padding-top: 0">
+        <span class="kick rv">EXHIBIT · THE REAL THING, LIVE TODAY</span>
+        <div class="browser rv">
+          <div class="bhead">
+            <i></i><i></i><i></i><span>moo-v-night.vercel.app</span>
+          </div>
+          <img
+            src="/shots/moo.png"
+            width="1280"
+            height="800"
+            loading="lazy"
+            alt="Moo V Night live site"
+          />
+        </div>
+      </section>
+
+      <section class="blk wrap" style="padding-top: 0">
+        <span class="kick rv">HOW IT WENT</span>
+        <h2 class="rv">Three weeks, start to live.</h2>
+        <div class="steps">
+          <div class="step rv">
+            <span class="sno">01</span><b>THE CHALLENGE</b>
+            <p>
+              One call, the problem in the owner's words, one flat number. No
+              discovery theater.
+            </p>
+          </div>
+          <div class="step rv">
+            <span class="sno">21</span><b>PHASE ONE · LIVE</b>
+            <p>
+              A running build in 21 days, in front of real customers, priced
+              flat.
+            </p>
+          </div>
+          <div class="step rv">
+            <span class="sno">03</span><b>THE NEXT MOVE</b>
+            <p>
+              Each phase since has earned the next. Stop any time, keep
+              everything.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="blk wrap" style="padding-top: 0">
+        <span class="kick rv">THE RESULT</span>
+        <div class="results">
+          <div class="rrow rv">
+            <i>→</i
+            ><span
+              >Every phone in the field playing along before the opening
+              credits.</span
+            >
+          </div>
+          <div class="rrow rv">
+            <i>→</i
+            ><span
+              >Saturdays sell out; the pre-show is now a reason to come
+              early.</span
+            >
+          </div>
+          <div class="rrow rv">
+            <i>→</i><span>Phase one shipped live in 21 days, priced flat.</span>
+          </div>
+        </div>
+        <a class="nextcase rv" href="/case-fisherfit">
+          <span class="kick">NEXT CASE</span>
+          <h2>FisherFit →</h2>
+        </a>
+      </section>
+    </main>
+    <footer id="start">
+      <div class="wrap">
+        <div class="frow rv">
+          <a class="femail" href="mailto:brief@getupperhand.io"
+            >BRIEF@GETUPPERHAND.IO</a
+          >
+          <a class="fsmall" href="/brief" style="text-decoration: none"
+            >OR SEND A BRIEF ONLINE →</a
+          >
+          <span class="fsmall">©2026 UPPERHAND LLC</span>
+        </div>
+        <div class="bigname rv">UPPERHAND</div>
+      </div>
+    </footer>
+    <script>
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.1 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+      const vio = new IntersectionObserver(
+        (es) =>
+          es.forEach((en) => {
+            if (en.isIntersecting)
+              en.target
+                .play()
+                .catch((err) => console.warn("[VIDEO] autoplay blocked", err));
+            else en.target.pause();
+          }),
+        { threshold: 0.2 },
+      );
+      document.querySelectorAll("video").forEach((v) => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          v.removeAttribute("autoplay");
+          v.pause();
+        } else vio.observe(v);
+      });
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+  </body>
+</html>

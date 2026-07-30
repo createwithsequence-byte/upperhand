@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upperhand · Your Unfair Creative Advantage</title>
+    <meta
+      name="description"
+      content="Upperhand is a small, focused design and build studio in Chicago. Phase one in 21 days."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #131313;
+        --paper: #fbfaf6;
+        --card: #ffffff;
+        --line: #e2ddd2;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --dim: #55534b;
+        --faint: #8f8d84;
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --disp: "Archivo Black";
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --expo: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--body);
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 clamp(1.2rem, 4vw, 3rem);
+        text-align: center;
+      }
+      section {
+        padding: clamp(3.4rem, 9vh, 7rem) 0;
+      }
+      .rv {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 700ms var(--ease),
+          transform 700ms var(--expo);
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+      /* pill nav */
+      .pillnav {
+        position: fixed;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: clamp(10px, 1.8vw, 24px);
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 9px 12px 9px 20px;
+        box-shadow: 0 8px 28px rgba(19, 19, 19, 0.09);
+        z-index: 50;
+      }
+      .pillnav .brand {
+        font-weight: 700;
+        font-size: 13.5px;
+        letter-spacing: 0.01em;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .pillnav a {
+        text-decoration: none;
+        color: var(--dim);
+        font-weight: 600;
+        font-size: 12.5px;
+        transition: color 160ms var(--ease);
+      }
+      .pillnav a:hover {
+        color: var(--ink);
+      }
+      .pillnav .cta {
+        background: var(--volt);
+        color: var(--ink);
+        border-radius: 99px;
+        padding: 9px 16px;
+        font-weight: 700;
+      }
+      .pillnav .cta:hover {
+        background: var(--ink);
+        color: var(--volt);
+      }
+      /* hero */
+      .hero {
+        padding-top: clamp(7rem, 18vh, 11rem);
+        padding-bottom: clamp(3rem, 8vh, 5rem);
+      }
+      .badge {
+        display: inline-block;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        padding: 7px 14px;
+        color: var(--dim);
+        animation: bob 4.5s ease-in-out infinite;
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+      h1 {
+        font-family: var(--disp);
+        font-size: clamp(2.6rem, 7vw, 5.4rem);
+        line-height: 0.96;
+        letter-spacing: -0.015em;
+        margin-top: 22px;
+      }
+      .hero .sub {
+        margin-top: 20px;
+        font-weight: 600;
+        font-size: clamp(1rem, 1.6vw, 1.2rem);
+        color: var(--dim);
+      }
+      .hero .actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-block;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+        border-radius: 99px;
+        padding: 15px 28px;
+        transition:
+          transform 180ms var(--expo),
+          background 180ms var(--ease),
+          color 180ms var(--ease);
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+      .btn.v {
+        background: var(--volt);
+        color: var(--ink);
+      }
+      .btn.v:hover {
+        background: var(--ink);
+        color: var(--volt);
+      }
+      .btn.g {
+        background: transparent;
+        color: var(--ink);
+        border: 1.5px solid var(--ink);
+      }
+      .btn.g:hover {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .proof {
+        margin-top: 44px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: var(--faint);
+      }
+      /* section headers */
+      .kick {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.24em;
+        color: var(--faint);
+      }
+      h2 {
+        font-family: var(--disp);
+        font-size: clamp(1.8rem, 4.2vw, 3.2rem);
+        line-height: 1;
+        letter-spacing: -0.01em;
+        margin-top: 14px;
+      }
+      .lede {
+        margin-top: 16px;
+        color: var(--dim);
+        font-weight: 600;
+        max-width: 38em;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      /* services */
+      .cards3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+        margin-top: 40px;
+        text-align: left;
+      }
+      .scard {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 26px;
+        transition:
+          transform 220ms var(--expo),
+          box-shadow 220ms var(--ease);
+      }
+      .scard:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 44px rgba(19, 19, 19, 0.09);
+      }
+      .scard .no {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: var(--faint);
+      }
+      .scard h3 {
+        font-family: var(--disp);
+        font-size: 1.05rem;
+        line-height: 1.25;
+        margin-top: 12px;
+        text-transform: uppercase;
+      }
+      .scard h3 i {
+        font-style: normal;
+        background: var(--volt);
+        padding: 0 4px;
+      }
+      .scard p {
+        margin-top: 12px;
+        color: var(--dim);
+        font-size: 0.95rem;
+        line-height: 1.55;
+      }
+      .scard .eg {
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        color: var(--faint);
+        line-height: 1.8;
+      }
+      /* work */
+      .workgrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 14px;
+        margin-top: 40px;
+        text-align: left;
+      }
+      .wcard {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+        transition:
+          transform 220ms var(--expo),
+          box-shadow 220ms var(--ease);
+      }
+      .wcard:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 44px rgba(19, 19, 19, 0.09);
+      }
+      .wcard .media {
+        aspect-ratio: 16/9;
+        position: relative;
+        overflow: hidden;
+        background: var(--ink);
+      }
+      .wcard .media video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .wcard .body {
+        padding: 16px 18px 18px;
+      }
+      .wcard b {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+      }
+      .wcard p {
+        margin-top: 6px;
+        color: var(--dim);
+        font-size: 0.88rem;
+      }
+      .wcard .tag {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 0.12em;
+        padding: 4px 8px;
+        border-radius: 3px;
+      }
+      .th {
+        aspect-ratio: 16/9;
+        position: relative;
+      }
+      .th-cov {
+        background:
+          repeating-linear-gradient(
+            180deg,
+            transparent 0 16px,
+            rgba(36, 49, 255, 0.25) 16px 17px
+          ),
+          #fdfcf6;
+      }
+      .th-cov::after {
+        content: "✓";
+        position: absolute;
+        right: 12px;
+        bottom: 6px;
+        font-weight: 700;
+        color: #1a8f4c;
+        font-size: 1.5rem;
+      }
+      .th-shelf {
+        background:
+          linear-gradient(0deg, #e8e0d0 0 30%, transparent 30%),
+          linear-gradient(
+            90deg,
+            #ff7a1a 0 22%,
+            #ffcf3f 22% 44%,
+            #2ee6ff 44% 66%,
+            #ff2e88 66% 88%,
+            #ccff00 88%
+          );
+      }
+      .th-gg {
+        background:
+          radial-gradient(circle at 50% 40%, #f6d34e 0 26px, transparent 27px),
+          #221f33;
+      }
+      .th-gg::after {
+        content: "♪";
+        position: absolute;
+        left: 50%;
+        top: 34%;
+        transform: translate(-50%, -50%);
+        color: #221f33;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      /* process */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 40px;
+      }
+      .step {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 26px;
+        text-align: left;
+        position: relative;
+      }
+      .step .n {
+        font-family: var(--disp);
+        font-size: 2rem;
+        color: var(--ink);
+      }
+      .step:nth-child(2) .n {
+        background: var(--volt);
+        padding: 0 8px;
+      }
+      .step h3 {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        margin-top: 12px;
+      }
+      .step p {
+        margin-top: 10px;
+        color: var(--dim);
+        font-size: 0.93rem;
+        line-height: 1.55;
+      }
+      /* who */
+      .who p.big {
+        font-weight: 600;
+        font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+        line-height: 1.45;
+        max-width: 30em;
+        margin: 26px auto 0;
+      }
+      .who .duo {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 26px;
+        flex-wrap: wrap;
+      }
+      .who .chipp {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 8px 16px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        color: var(--dim);
+      }
+      /* cta band */
+      .ctaband {
+        background: var(--ink);
+        color: var(--paper);
+        border-radius: 28px;
+        padding: clamp(3rem, 7vh, 5rem) clamp(1.4rem, 4vw, 3rem);
+      }
+      .ctaband .badge {
+        background: transparent;
+        border-color: rgba(251, 250, 246, 0.25);
+        color: rgba(251, 250, 246, 0.7);
+      }
+      .ctaband h2 {
+        color: var(--paper);
+      }
+      .ctaband .email {
+        display: inline-block;
+        margin-top: 26px;
+        background: var(--volt);
+        color: var(--ink);
+        text-decoration: none;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: clamp(0.85rem, 1.8vw, 1.15rem);
+        letter-spacing: 0.06em;
+        padding: 16px 26px;
+        border-radius: 99px;
+        transition: transform 180ms var(--expo);
+      }
+      .ctaband .email:hover {
+        transform: translateY(-2px) rotate(-1deg);
+      }
+      .ctaband .fine {
+        margin-top: 18px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.18em;
+        color: rgba(251, 250, 246, 0.55);
+      }
+      footer {
+        padding: 40px 0 50px;
+      }
+      footer .f {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: var(--faint);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .badge {
+          animation: none;
+        }
+        .rv {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
+      @media (max-width: 700px) {
+        .pillnav .plinks {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="pillnav" aria-label="Main">
+      <a class="brand" href="#top">⬢ UPPERHAND</a>
+      <span class="plinks" style="display: flex; gap: inherit">
+        <a href="#work">Work</a><a href="#services">What we make</a
+        ><a href="#process">How it works</a><a href="#who">Who we are</a>
+      </span>
+      <a class="cta" href="#contact">START →</a>
+    </nav>
+
+    <section class="hero wrap" id="top">
+      <span class="badge">★ CHICAGO STUDIO · ONE SLOT OPEN</span>
+      <h1>YOUR UNFAIR<br />CREATIVE ADVANTAGE</h1>
+      <p class="sub">
+        Upperhand designs and builds the thing your competitors will screenshot.
+      </p>
+      <div class="actions">
+        <a class="btn v" href="#contact">BRING US A PROBLEM →</a>
+        <a class="btn g" href="#work">SEE THE WORK</a>
+      </div>
+      <p class="proof">9 BUILDS LIVE · PHASE ONE IN 21 DAYS · RUN BY HUMANS</p>
+    </section>
+
+    <section class="wrap rv" id="services">
+      <p class="kick">WHAT WE MAKE</p>
+      <h2>Named after outcomes,<br />not deliverables.</h2>
+      <div class="cards3">
+        <div class="scard">
+          <span class="no">01</span>
+          <h3>The thing your <i>customers use</i></h3>
+          <p>
+            Apps, booking engines, member portals, trivia machines. Software
+            with your name on it that people actually open.
+          </p>
+          <p class="eg">FISHERFIT MEMBER APP · MOO V NIGHT PRE-SHOW ENGINE</p>
+        </div>
+        <div class="scard">
+          <span class="no">02</span>
+          <h3>The system that <i>runs your day</i></h3>
+          <p>
+            Ops consoles, case desks, automations. The busywork gets a machine;
+            you get your week back.
+          </p>
+          <p class="eg">TANGIBLE FORMATS ORDER DESK · COUNSEL CASE FILES</p>
+        </div>
+        <div class="scard">
+          <span class="no">03</span>
+          <h3>The presence that <i>sells while you sleep</i></h3>
+          <p>
+            Sites, brands, and content engines built to be pointed at. Loud
+            where it earns attention, quiet where it earns trust.
+          </p>
+          <p class="eg">
+            MR. D'S CINEMATIC STOREFRONT · SHELF LIFE CONTENT ENGINE
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap rv" id="work">
+      <p class="kick">THE WORK</p>
+      <h2>Every one shipped.<br />Every one still running.</h2>
+      <div class="workgrid">
+        <div class="wcard">
+          <div class="media">
+            <video
+              muted
+              loop
+              autoplay
+              playsinline
+              preload="metadata"
+              src="https://videos.pexels.com/video-files/17722430/17722430-sd_640_360_24fps.mp4"
+            ></video
+            ><span class="tag">SITE + OPS</span>
+          </div>
+          <div class="body">
+            <b>TANGIBLE FORMATS</b>
+            <p>
+              Records cut one at a time. A storefront and an order desk for a
+              lathe-cut vinyl maker.
+            </p>
+          </div>
+        </div>
+        <div class="wcard">
+          <div class="media">
+            <video
+              muted
+              loop
+              autoplay
+              playsinline
+              preload="metadata"
+              src="https://videos.pexels.com/video-files/4881730/4881730-sd_960_506_25fps.mp4"
+            ></video
+            ><span class="tag">PRODUCT</span>
+          </div>
+          <div class="body">
+            <b>MOO V NIGHT</b>
+            <p>
+              Outdoor cinema in a cow pasture. Trivia on every phone before the
+              movie starts.
+            </p>
+          </div>
+        </div>
+        <div class="wcard">
+          <div class="media">
+            <video
+              muted
+              loop
+              autoplay
+              playsinline
+              preload="metadata"
+              src="https://videos.pexels.com/video-files/6980128/6980128-sd_640_338_30fps.mp4"
+            ></video
+            ><span class="tag">MEMBER APP</span>
+          </div>
+          <div class="body">
+            <b>FISHERFIT</b>
+            <p>
+              A Highland Park gym, in every member's pocket. Goals, streaks,
+              progress photos.
+            </p>
+          </div>
+        </div>
+        <div class="wcard">
+          <div class="media">
+            <video
+              muted
+              loop
+              autoplay
+              playsinline
+              preload="metadata"
+              src="https://videos.pexels.com/video-files/8135728/8135728-sd_640_338_25fps.mp4"
+            ></video
+            ><span class="tag">OPS</span>
+          </div>
+          <div class="body">
+            <b>COUNSEL</b>
+            <p>
+              A case desk for an attorney with 150 restaurant clients. No file
+              ever lost again.
+            </p>
+          </div>
+        </div>
+        <div class="wcard">
+          <div class="media">
+            <video
+              muted
+              loop
+              autoplay
+              playsinline
+              preload="metadata"
+              src="https://videos.pexels.com/video-files/8523306/8523306-sd_960_540_30fps.mp4"
+            ></video
+            ><span class="tag">SITE</span>
+          </div>
+          <div class="body">
+            <b>MR. D'S</b>
+            <p>
+              A Chicago beef stand gone cinematic. Video hero, grill-born
+              embers, real reviews.
+            </p>
+          </div>
+        </div>
+        <div class="wcard">
+          <div class="media th th-cov"><span class="tag">SAAS</span></div>
+          <div class="body">
+            <b>COVERED</b>
+            <p>
+              Sub plans while teachers sleep. A real curriculum in, a ready
+              classroom out.
+            </p>
+          </div>
+        </div>
+        <div class="wcard">
+          <div class="media th th-shelf"><span class="tag">CONTENT</span></div>
+          <div class="body">
+            <b>SHELF LIFE</b>
+            <p>
+              A content engine for CPG brands. Product photos in, a month of
+              social out.
+            </p>
+          </div>
+        </div>
+        <div class="wcard">
+          <div class="media th th-gg"><span class="tag">PRODUCT</span></div>
+          <div class="body">
+            <b>GOOD GRIEF</b>
+            <p>
+              An executor portal with a heart: a tribute song where the
+              paperwork ends.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap rv" id="process">
+      <p class="kick">HOW IT WORKS</p>
+      <h2>Three steps.<br />No decks about decks.</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="n">01</span>
+          <h3>THE CHALLENGE</h3>
+          <p>
+            Bring us the problem that will not leave you alone. We scope it in
+            one call and put a number on it.
+          </p>
+        </div>
+        <div class="step">
+          <span class="n">21</span>
+          <h3>PHASE ONE · DAYS</h3>
+          <p>
+            A running build, not a proposal. Priced flat, shipped live, yours to
+            keep either way.
+          </p>
+        </div>
+        <div class="step">
+          <span class="n">03</span>
+          <h3>THE NEXT MOVE</h3>
+          <p>
+            Each phase earns the next. Stop any time and keep everything,
+            including the source.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap rv who" id="who">
+      <p class="kick">WHO WE ARE</p>
+      <h2>Small team. Nine builds.<br />Zero account managers.</h2>
+      <p class="big">
+        Upperhand is a small, focused design and build studio in Chicago. We use
+        AI like a power tool, not a personality: it does the heavy lifting, and
+        every call, every pixel, and every invoice has a human's name on it.
+      </p>
+      <div class="duo">
+        <span class="chipp">GREG · MAKES IT BEAUTIFUL</span>
+        <span class="chipp">JOHN · MAKES IT SELL</span>
+        <span class="chipp">EST. 2025 · CHICAGO + EVERYWHERE</span>
+      </div>
+    </section>
+
+    <section class="wrap rv" id="contact">
+      <div class="ctaband">
+        <span class="badge">★ ONE SLOT OPEN THIS MONTH</span>
+        <h2>BRING US A PROBLEM.</h2>
+        <a class="email" href="mailto:brief@getupperhand.io"
+          >BRIEF@GETUPPERHAND.IO</a
+        >
+        <p class="fine">ONE CALL · ONE NUMBER · PHASE ONE IN 21 DAYS</p>
+      </div>
+    </section>
+
+    <footer class="wrap">
+      <div class="f">
+        <span>©2026 UPPERHAND LLC</span><span>CHICAGO · SHIPS EVERYWHERE</span
+        ><span>INSTAGRAM · LINKEDIN · YOUTUBE</span>
+      </div>
+    </footer>
+
+    <script>
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.1 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+      const vio = new IntersectionObserver(
+        (es) =>
+          es.forEach((en) => {
+            if (en.isIntersecting) en.target.play().catch(() => {});
+            else en.target.pause();
+          }),
+        { threshold: 0.2 },
+      );
+      document.querySelectorAll("video").forEach((v) => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          v.removeAttribute("autoplay");
+          v.pause();
+        } else vio.observe(v);
+      });
+    </script>
+  </body>
+</html>
