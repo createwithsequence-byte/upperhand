@@ -806,7 +806,24 @@
         text-decoration: none;
         color: inherit;
       }
-    </style>
+          .lrow { display: grid; grid-template-columns: 40px 96px 1fr auto 10px auto; gap: 12px; align-items: center; padding: 10px 0; }
+      .ser { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; color: var(--pink); }
+      .lthumb { width: 96px; height: 60px; object-fit: cover; object-position: top; border: 1.5px solid var(--ink); border-radius: 4px; box-shadow: 3px 3px 0 var(--blue); background: #fff; display: block; }
+      .lmain { min-width: 0; }
+      .lmain b { display: block; }
+      .ldesc { display: block; font-weight: 600; font-size: 0.82rem; color: #55534b; }
+      .ldate { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; color: #9a968a; white-space: nowrap; }
+      .ldot { width: 7px; height: 7px; border-radius: 99px; background: var(--volt); border: 1.5px solid var(--ink); }
+      .lrow i { border: 1.5px solid var(--ink); color: var(--ink); border-radius: 3px; font-weight: 700; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; }
+      .lrow i.red { border-color: var(--pink); color: var(--pink); }
+      .lthumb-nda { display: grid; place-items: center; background: var(--ink); font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.18em; color: var(--volt); }
+      .rname { display: inline-block; width: 140px; height: 14px; background: var(--ink); border-radius: 2px; }
+      @media (max-width: 640px) {
+        .lrow { grid-template-columns: 34px 64px 1fr 10px; }
+        .ldate, .lrow i { display: none; }
+        .lthumb { width: 64px; height: 44px; }
+      }
+</style>
   </head>
   <body>
     <aside class="spine" aria-hidden="true">
@@ -1051,35 +1068,76 @@
         <div class="two">
           <div class="rv">
             <a class="lrow" href="/case-tangible-formats">
-              <b>Tangible Formats</b><span>vinyl storefront + order desk</span
-              ><i>SITE + OPS</i>
+              <span class="ser">B·01</span>
+              <img class="lthumb" src="/shots/tf.png" alt="" loading="lazy" />
+              <span class="lmain"><b>Tangible Formats</b><span class="ldesc">vinyl storefront + order desk</span></span>
+              <span class="ldate">LIVE 05.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>SITE + OPS</i>
             </a>
             <a class="lrow" href="/case-moo-v-night">
-              <b>Moo V Night</b><span>drive-in trivia on every phone</span
-              ><i>PRODUCT</i>
+              <span class="ser">B·02</span>
+              <img class="lthumb" src="/shots/moo.png" alt="" loading="lazy" />
+              <span class="lmain"><b>Moo V Night</b><span class="ldesc">drive-in trivia on every phone</span></span>
+              <span class="ldate">LIVE 06.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>PRODUCT</i>
             </a>
             <a class="lrow" href="/case-fisherfit">
-              <b>FisherFit</b><span>the gym in every member's pocket</span
-              ><i>APP</i>
+              <span class="ser">B·03</span>
+              <img class="lthumb" src="/shots/fit.png" alt="" loading="lazy" />
+              <span class="lmain"><b>FisherFit</b><span class="ldesc">the gym in every member's pocket</span></span>
+              <span class="ldate">LIVE 06.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>APP</i>
             </a>
             <div class="lrow" title="Case study on the way">
-              <b>Covered</b><span>sub plans while teachers sleep</span
-              ><i>SAAS</i>
+              <span class="ser">B·04</span>
+              <img class="lthumb" src="/shots/covered.png" alt="" loading="lazy" />
+              <span class="lmain"><b>Covered</b><span class="ldesc">sub plans while teachers sleep</span></span>
+              <span class="ldate">LIVE 06.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>SAAS</i>
             </div>
             <div class="lrow" title="Case study on the way">
-              <b>Counsel</b><span>a case desk that loses nothing</span
-              ><i>TOOL</i>
+              <span class="ser">B·05</span>
+              <img class="lthumb" src="/shots/counsel.png" alt="" loading="lazy" />
+              <span class="lmain"><b>Counsel</b><span class="ldesc">a case desk that loses nothing</span></span>
+              <span class="ldate">LIVE 06.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>TOOL</i>
             </div>
             <a class="lrow" href="/case-mr-ds">
-              <b>Mr. D's</b><span>a beef stand gone cinematic</span><i>SITE</i>
+              <span class="ser">B·06</span>
+              <img class="lthumb" src="/shots/mrd.png" alt="" loading="lazy" />
+              <span class="lmain"><b>Mr. D's</b><span class="ldesc">a beef stand gone cinematic</span></span>
+              <span class="ldate">LIVE 07.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>SITE</i>
             </a>
             <div class="lrow" title="Case study on the way">
-              <b>Shelf Life</b><span>one shoot, a month of social</span
-              ><i>ENGINE</i>
+              <span class="ser">B·07</span>
+              <img class="lthumb" src="/shots/shelf.png" alt="" loading="lazy" />
+              <span class="lmain"><b>Shelf Life</b><span class="ldesc">one shoot, a month of social</span></span>
+              <span class="ldate">LIVE 07.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>ENGINE</i>
             </div>
             <div class="lrow" title="Case study on the way">
-              <b>Good Grief</b><span>paperwork that ends in a song</span
-              ><i>PORTAL</i>
+              <span class="ser">B·08</span>
+              <img class="lthumb" src="/shots/goodgrief.png" alt="" loading="lazy" />
+              <span class="lmain"><b>Good Grief</b><span class="ldesc">paperwork that ends in a song</span></span>
+              <span class="ldate">LIVE 07.26</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i>PORTAL</i>
+            </div>
+            <div class="lrow nda">
+              <span class="ser">B·09</span>
+              <span class="lthumb lthumb-nda">NDA</span>
+              <span class="lmain"><span class="rname"></span><span class="ldesc">in build · under NDA</span></span>
+              <span class="ldate">IN BUILD</span>
+              <span class="ldot" aria-hidden="true"></span>
+              <i class="red">REDACTED</i>
             </div>
           </div>
           <div class="duo rv">
