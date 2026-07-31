@@ -6,6 +6,9 @@
     <title>Upperhand · The Blue Spine</title>
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/ArchivoBlack-400.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/HankenGrotesk-400.woff2" crossorigin />
+
     <meta property="og:title" content="Upperhand · The Blue Spine" />
     <meta
       property="og:description"
@@ -607,11 +610,10 @@
         .two {
           grid-template-columns: 1fr;
         }
-        .bigname {
-          white-space: normal;
-          font-size: 16vw;
-          line-height: 0.84;
-        }
+        .bigname { white-space: normal; text-align: left; line-height: 0.82; margin-bottom: -0.12em; }
+        .bigname .bw { display: block; }
+        .bigname .bw:first-child { font-size: calc((100vw - 2.6rem) / 3.62); }
+        .bigname .bw:last-child { font-size: calc((100vw - 2.6rem) / 2.9); }
       }
       @media (prefers-reduced-motion: reduce) {
         .rv {
@@ -806,28 +808,145 @@
         text-decoration: none;
         color: inherit;
       }
-          .lrow { display: grid; grid-template-columns: 40px 96px 1fr auto 10px auto; gap: 12px; align-items: center; padding: 10px 0; }
-      .ser { font-family: var(--mono); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; color: var(--pink); }
-      .lthumb { width: 96px; height: 60px; object-fit: cover; object-position: top; border: 1.5px solid var(--ink); border-radius: 4px; box-shadow: 3px 3px 0 var(--blue); background: #fff; display: block; }
-      .lmain { min-width: 0; }
-      .lmain b { display: block; }
-      .ldesc { display: block; font-weight: 600; font-size: 0.82rem; color: #55534b; }
-      .ldate { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; color: #9a968a; white-space: nowrap; }
-      .ldot { width: 7px; height: 7px; border-radius: 99px; background: var(--volt); border: 1.5px solid var(--ink); }
-      .lrow i { border: 1.5px solid var(--ink); color: var(--ink); border-radius: 3px; font-weight: 700; font-size: 8px; letter-spacing: 0.12em; padding: 3px 8px; }
-      .lrow i.red { border-color: var(--pink); color: var(--pink); }
-      .lthumb-nda { display: grid; place-items: center; background: var(--ink); font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: 0.18em; color: var(--volt); }
-      .rname { display: inline-block; width: 140px; height: 14px; background: var(--ink); border-radius: 2px; }
+      .lrow {
+        display: grid;
+        grid-template-columns: 40px 96px 1fr auto 10px auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 0;
+      }
+      .ser {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--pink);
+      }
+      .lthumb {
+        width: 96px;
+        height: 60px;
+        object-fit: cover;
+        object-position: top;
+        border: 1.5px solid var(--ink);
+        border-radius: 4px;
+        box-shadow: 3px 3px 0 var(--blue);
+        background: #fff;
+        display: block;
+      }
+      .lmain {
+        min-width: 0;
+      }
+      .lmain b {
+        display: block;
+      }
+      .ldesc {
+        display: block;
+        font-weight: 600;
+        font-size: 0.82rem;
+        color: #55534b;
+      }
+      .ldate {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.1em;
+        color: #9a968a;
+        white-space: nowrap;
+      }
+      .ldot {
+        width: 7px;
+        height: 7px;
+        border-radius: 99px;
+        background: var(--volt);
+        border: 1.5px solid var(--ink);
+      }
+      .lrow i {
+        border: 1.5px solid var(--ink);
+        color: var(--ink);
+        border-radius: 3px;
+        font-weight: 700;
+        font-size: 8px;
+        letter-spacing: 0.12em;
+        padding: 3px 8px;
+      }
+      .lrow i.red {
+        border-color: var(--pink);
+        color: var(--pink);
+      }
+      .lthumb-nda {
+        display: grid;
+        place-items: center;
+        background: var(--ink);
+        font-family: var(--mono);
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        color: var(--volt);
+      }
+      .rname {
+        display: inline-block;
+        width: 140px;
+        height: 14px;
+        background: var(--ink);
+        border-radius: 2px;
+      }
       @media (max-width: 640px) {
-        .lrow { grid-template-columns: 34px 64px 1fr 10px; }
-        .ldate, .lrow i { display: none; }
-        .lthumb { width: 64px; height: 44px; }
+        .lrow {
+          grid-template-columns: 34px 64px 1fr 10px;
+        }
+        .ldate,
+        .lrow i {
+          display: none;
+        }
+        .lthumb {
+          width: 64px;
+          height: 44px;
+        }
+      }
+          .sbrand, .sgo { display: none; }
+      @media (max-width: 860px) {
+        .spine { justify-content: space-between; padding: 0 14px; }
+        .spine > span { display: none; }
+        .sbrand { display: flex; align-items: center; height: 100%; font-family: var(--disp); font-size: 13px; letter-spacing: 0.03em; color: #fff; text-decoration: none; }
+        .sgo { display: flex; align-items: center; position: relative; background: var(--volt); color: var(--ink); font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: 0.12em; padding: 8px 14px; border-radius: 99px; text-decoration: none; }
+        .sgo::after { content: ""; position: absolute; inset: -10px -8px; }
+        .sgo:active { background: var(--blue); color: #fff; }
+      }
+      .recta { margin-top: 44px; }
+      .recta .rmeta { margin-top: 12px; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; color: #8f8d84; }
+      .fbtn { display: none; }
+      a.lrow { -webkit-tap-highlight-color: transparent; }
+      .lrow:active { background: rgba(18, 49, 201, 0.08); }
+      a.lrow[href]::after { content: "→"; font-family: var(--mono); font-weight: 700; font-size: 11px; color: var(--blue); display: none; }
+      @media (hover: none) {
+        .lrow:hover { padding-left: 0; }
+        .lrow:hover b { color: inherit; }
+        .lrow:hover i { background: transparent; border-color: var(--ink); color: var(--ink); }
+      }
+      @media (max-width: 860px) {
+        .fbtn { display: flex; align-items: center; justify-content: center; min-height: 56px; border: 2px solid var(--volt); border-radius: 12px; color: var(--volt); font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: 0.12em; text-decoration: none; margin-bottom: 24px; }
+        .fbtn:active { background: var(--volt); color: var(--ink); }
+        .frow a.fsmall[href="/brief"] { display: none; }
+        .femail:active { color: #fff; }
+      }
+      @media (max-width: 640px) {
+        .lrow { grid-template-columns: 34px 64px 1fr 10px 14px; }
+        a.lrow[href]::after { display: block; }
+      }
+      @media (max-width: 860px) {
+        section.blk.wrap { padding-inline: max(16px, clamp(1.2rem, 4vw, 3rem)); }
+        section.blk .wrap { padding-inline: max(16px, clamp(1.2rem, 4vw, 3rem)); }
+      }
+      @media (max-width: 860px) {
+        section.blk { padding-block: 32px 40px; }
+        .cards { margin-top: 22px; }
+        .steps { margin-top: 20px; }
+        .band { margin-top: 16px; }
+        #how h2 br { display: none; }
       }
 </style>
   </head>
   <body>
-    <aside class="spine" aria-hidden="true">
-      <span>Upperhand® · The Next Level of Your Business</span
+    <aside class="spine" aria-label="Site"><a class="sbrand" href="#top">UPPERHAND®</a><span aria-hidden="true">Upperhand® · The Next Level of Your Business</span><a class="sgo" href="/brief">START →</a><span style="display:none"
       ><i class="spineprog" aria-hidden="true"></i>
     </aside>
     <nav class="pillnav">
@@ -857,13 +976,13 @@
         </div>
         <div class="heropane rv">
           <video
+            autoplay
             poster="/posters/studio.jpg"
             muted
             loop
-            autoplay
             playsinline
-            preload="metadata"
-            src="https://videos.pexels.com/video-files/9736522/9736522-sd_640_360_24fps.mp4"
+            preload="none"
+            src="/video/studio.mp4"
           ></video>
           <span class="dip" aria-hidden="true"></span>
           <span class="chip2">THE STUDIO · AT WORK</span>
@@ -911,10 +1030,9 @@
             poster="/posters/tf.jpg"
             muted
             loop
-            autoplay
             playsinline
-            preload="metadata"
-            src="https://videos.pexels.com/video-files/17722430/17722430-sd_640_360_24fps.mp4"
+            preload="none"
+            src="/video/tf.mp4"
           ></video
           ><span class="dip"></span><span class="shade"></span>
           <div class="in2">
@@ -932,8 +1050,8 @@
             muted
             loop
             playsinline
-            preload="metadata"
-            src="https://videos.pexels.com/video-files/4881730/4881730-sd_960_506_25fps.mp4"
+            preload="none"
+            src="/video/moo.mp4"
           ></video
           ><span class="dip"></span><span class="shade"></span>
           <div class="in2">
@@ -950,8 +1068,8 @@
             muted
             loop
             playsinline
-            preload="metadata"
-            src="https://videos.pexels.com/video-files/6980128/6980128-sd_640_338_30fps.mp4"
+            preload="none"
+            src="/video/fit.mp4"
           ></video
           ><span class="dip"></span><span class="shade"></span>
           <div class="in2">
@@ -966,8 +1084,8 @@
             muted
             loop
             playsinline
-            preload="metadata"
-            src="https://videos.pexels.com/video-files/8523306/8523306-sd_960_540_30fps.mp4"
+            preload="none"
+            src="/video/mrd.mp4"
           ></video
           ><span class="dip"></span><span class="shade"></span>
           <div class="in2">
@@ -982,7 +1100,7 @@
 
       <section class="blk wrap" id="how">
         <span class="kick rv">HOW IT WORKS</span>
-        <h2 class="rv">Three steps. No decks<br />about decks.</h2>
+        <h2 class="rv">Three steps. No decks <br />about decks.</h2>
         <div class="steps">
           <div class="step rv">
             <span class="sno">01</span><b>THE CHALLENGE</b>
@@ -1069,64 +1187,90 @@
           <div class="rv">
             <a class="lrow" href="/case-tangible-formats">
               <span class="ser">B·01</span>
-              <img class="lthumb" src="/shots/tf.png" alt="" loading="lazy" />
-              <span class="lmain"><b>Tangible Formats</b><span class="ldesc">vinyl storefront + order desk</span></span>
+              <img class="lthumb" src="/shots/thumbs/tf.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>Tangible Formats</b
+                ><span class="ldesc">vinyl storefront + order desk</span></span
+              >
               <span class="ldate">LIVE 05.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>SITE + OPS</i>
             </a>
             <a class="lrow" href="/case-moo-v-night">
               <span class="ser">B·02</span>
-              <img class="lthumb" src="/shots/moo.png" alt="" loading="lazy" />
-              <span class="lmain"><b>Moo V Night</b><span class="ldesc">drive-in trivia on every phone</span></span>
+              <img class="lthumb" src="/shots/thumbs/moo.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>Moo V Night</b
+                ><span class="ldesc">drive-in trivia on every phone</span></span
+              >
               <span class="ldate">LIVE 06.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>PRODUCT</i>
             </a>
             <a class="lrow" href="/case-fisherfit">
               <span class="ser">B·03</span>
-              <img class="lthumb" src="/shots/fit.png" alt="" loading="lazy" />
-              <span class="lmain"><b>FisherFit</b><span class="ldesc">the gym in every member's pocket</span></span>
+              <img class="lthumb" src="/shots/thumbs/fit.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>FisherFit</b
+                ><span class="ldesc"
+                  >the gym in every member's pocket</span
+                ></span
+              >
               <span class="ldate">LIVE 06.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>APP</i>
             </a>
             <div class="lrow" title="Case study on the way">
               <span class="ser">B·04</span>
-              <img class="lthumb" src="/shots/covered.png" alt="" loading="lazy" />
-              <span class="lmain"><b>Covered</b><span class="ldesc">sub plans while teachers sleep</span></span>
+              <img class="lthumb" src="/shots/thumbs/covered.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>Covered</b
+                ><span class="ldesc">sub plans while teachers sleep</span></span
+              >
               <span class="ldate">LIVE 06.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>SAAS</i>
             </div>
             <div class="lrow" title="Case study on the way">
               <span class="ser">B·05</span>
-              <img class="lthumb" src="/shots/counsel.png" alt="" loading="lazy" />
-              <span class="lmain"><b>Counsel</b><span class="ldesc">a case desk that loses nothing</span></span>
+              <img class="lthumb" src="/shots/thumbs/counsel.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>Counsel</b
+                ><span class="ldesc">a case desk that loses nothing</span></span
+              >
               <span class="ldate">LIVE 06.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>TOOL</i>
             </div>
             <a class="lrow" href="/case-mr-ds">
               <span class="ser">B·06</span>
-              <img class="lthumb" src="/shots/mrd.png" alt="" loading="lazy" />
-              <span class="lmain"><b>Mr. D's</b><span class="ldesc">a beef stand gone cinematic</span></span>
+              <img class="lthumb" src="/shots/thumbs/mrd.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>Mr. D's</b
+                ><span class="ldesc">a beef stand gone cinematic</span></span
+              >
               <span class="ldate">LIVE 07.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>SITE</i>
             </a>
             <div class="lrow" title="Case study on the way">
               <span class="ser">B·07</span>
-              <img class="lthumb" src="/shots/shelf.png" alt="" loading="lazy" />
-              <span class="lmain"><b>Shelf Life</b><span class="ldesc">one shoot, a month of social</span></span>
+              <img class="lthumb" src="/shots/thumbs/shelf.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>Shelf Life</b
+                ><span class="ldesc">one shoot, a month of social</span></span
+              >
               <span class="ldate">LIVE 07.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>ENGINE</i>
             </div>
             <div class="lrow" title="Case study on the way">
               <span class="ser">B·08</span>
-              <img class="lthumb" src="/shots/goodgrief.png" alt="" loading="lazy" />
-              <span class="lmain"><b>Good Grief</b><span class="ldesc">paperwork that ends in a song</span></span>
+              <img class="lthumb" src="/shots/thumbs/goodgrief.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
+              <span class="lmain"
+                ><b>Good Grief</b
+                ><span class="ldesc">paperwork that ends in a song</span></span
+              >
               <span class="ldate">LIVE 07.26</span>
               <span class="ldot" aria-hidden="true"></span>
               <i>PORTAL</i>
@@ -1134,7 +1278,10 @@
             <div class="lrow nda">
               <span class="ser">B·09</span>
               <span class="lthumb lthumb-nda">NDA</span>
-              <span class="lmain"><span class="rname"></span><span class="ldesc">in build · under NDA</span></span>
+              <span class="lmain"
+                ><span class="rname"></span
+                ><span class="ldesc">in build · under NDA</span></span
+              >
               <span class="ldate">IN BUILD</span>
               <span class="ldot" aria-hidden="true"></span>
               <i class="red">REDACTED</i>
@@ -1167,10 +1314,15 @@
             </div>
           </div>
         </div>
+        <div class="recta rv">
+          <a class="cta" href="/brief">START A BUILD →</a>
+          <p class="rmeta">ONE SLOT OPEN THIS MONTH</p>
+        </div>
       </section>
 
       <footer id="start">
         <div class="wrap">
+          <a class="fbtn rv" href="/brief">SEND A BRIEF ONLINE →</a>
           <div class="frow rv">
             <a class="femail" href="mailto:brief@getupperhand.io"
               >BRIEF@GETUPPERHAND.IO</a
@@ -1182,7 +1334,7 @@
             >
             <span class="fsmall">©2026 UPPERHAND LLC</span>
           </div>
-          <div class="bigname rv">UPPERHAND</div>
+          <div class="bigname rv"><span class="bw">UPPER</span><span class="bw">HAND</span></div>
         </div>
       </footer>
     </main>
@@ -1210,10 +1362,13 @@
           }),
         { threshold: 0.2 },
       );
+      const mobLite = matchMedia("(max-width: 860px)").matches;
       document.querySelectorAll("video").forEach((v) => {
         if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
           v.removeAttribute("autoplay");
           v.pause();
+        } else if (mobLite && v.closest(".band")) {
+          v.removeAttribute("src");
         } else vio.observe(v);
       });
     </script>

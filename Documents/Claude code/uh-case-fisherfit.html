@@ -6,6 +6,9 @@
     <title>Upperhand · FisherFit · Case Study</title>
     <link rel="stylesheet" href="/fonts/fonts.css" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/ArchivoBlack-400.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="/fonts/HankenGrotesk-400.woff2" crossorigin />
+
     <meta property="og:title" content="Upperhand · FisherFit · Case Study" />
     <meta
       property="og:description"
@@ -456,11 +459,36 @@
         width: 100%;
         height: auto;
       }
-    </style>
+          .sbrand, .sgo { display: none; }
+      @media (max-width: 860px) {
+        .spine { justify-content: space-between; padding: 0 14px; }
+        .spine > span { display: none; }
+        .sbrand { display: flex; align-items: center; height: 100%; font-family: var(--disp); font-size: 13px; letter-spacing: 0.03em; color: #fff; text-decoration: none; }
+        .sgo { display: flex; align-items: center; position: relative; background: var(--volt); color: var(--ink); font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: 0.12em; padding: 8px 14px; border-radius: 99px; text-decoration: none; }
+        .sgo::after { content: ""; position: absolute; inset: -10px -8px; }
+        .sgo:active { background: var(--blue); color: #fff; }
+      }
+      @media (max-width: 640px) {
+        .browser img { height: auto; }
+      }
+      @media (max-width: 860px) {
+        section.blk.wrap { padding-inline: max(16px, clamp(1.2rem, 4vw, 3rem)); }
+        section.blk .wrap { padding-inline: max(16px, clamp(1.2rem, 4vw, 3rem)); }
+      }
+      @media (max-width: 860px) {
+        .bigname { white-space: normal; text-align: left; line-height: 0.82; margin-bottom: -0.12em; }
+        .bigname .bw { display: block; }
+        .bigname .bw:first-child { font-size: calc((100vw - 2.6rem) / 3.62); }
+        .bigname .bw:last-child { font-size: calc((100vw - 2.6rem) / 2.9); }
+      }
+      @media (max-width: 860px) {
+        section.blk { padding-block: 32px 40px; }
+        .cards { margin-top: 22px; }
+      }
+</style>
   </head>
   <body>
-    <aside class="spine" aria-hidden="true">
-      <span>Upperhand® · The Next Level of Your Business</span>
+    <aside class="spine" aria-label="Site"><a class="sbrand" href="/merge-3">UPPERHAND®</a><span aria-hidden="true">Upperhand® · The Next Level of Your Business</span><a class="sgo" href="/brief">START →</a><span style="display:none">
     </aside>
     <nav class="pillnav">
       <a class="brand" href="/merge-3">● UPPERHAND</a>
@@ -480,7 +508,7 @@
             autoplay
             playsinline
             preload="metadata"
-            src="https://videos.pexels.com/video-files/6980128/6980128-sd_640_338_30fps.mp4"
+            src="/video/fit.mp4"
           ></video>
           <span class="dip"></span><span class="shade"></span>
           <div class="in2">
@@ -543,13 +571,12 @@
           <div class="bhead">
             <i></i><i></i><i></i><span>fisherfit-hub.vercel.app</span>
           </div>
-          <img
-            src="/shots/fit.png"
+          <picture><source media="(max-width: 640px)" srcset="/shots/fit-m.png" width="390" height="700" /><img src="/shots/fit.png"
             width="1280"
             height="800"
             loading="lazy"
             alt="FisherFit live site"
-          />
+          /></picture>
         </div>
       </section>
 
@@ -619,7 +646,7 @@
           >
           <span class="fsmall">©2026 UPPERHAND LLC</span>
         </div>
-        <div class="bigname rv">UPPERHAND</div>
+        <div class="bigname rv"><span class="bw">UPPER</span><span class="bw">HAND</span></div>
       </div>
     </footer>
     <script>

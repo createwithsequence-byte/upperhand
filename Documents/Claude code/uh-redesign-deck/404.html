@@ -28,7 +28,7 @@
         box-sizing: border-box;
       }
       body {
-        min-height: 100vh;
+        min-height: 100svh;
         background: var(--blue);
         color: var(--white);
         font-family: var(--body);
@@ -102,6 +102,17 @@
       .mark i {
         font-style: normal;
         color: var(--volt);
+      }
+      @media (max-width: 480px) {
+        .row {
+          flex-direction: column;
+          width: 100%;
+          max-width: 320px;
+        }
+        a.btn {
+          display: block;
+          text-align: center;
+        }
       }
     </style>
   </head>
