@@ -540,6 +540,12 @@
         .bd { display: none; }
         main h1 { font-size: clamp(1.4rem, 7.2vw, 1.9rem); }
       }
+      .fhint { display: block; font-family: var(--mono); font-size: 8.5px; font-weight: 700; letter-spacing: 0.14em; color: #8f8d84; margin: 4px 0 8px; }
+      label .opt { font-style: normal; font-family: var(--mono); font-size: 8.5px; color: #8f8d84; letter-spacing: 0.14em; }
+      .pchips { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 10px; }
+      .pchip { font-family: var(--mono); font-weight: 700; font-size: 8.5px; letter-spacing: 0.1em; color: var(--ink); background: transparent; border: 1.5px solid var(--ink); border-radius: 99px; padding: 6px 11px; cursor: pointer; }
+      .pchip:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+      .pchip:active { background: var(--ink); border-color: var(--ink); color: var(--volt); }
 </style>
   </head>
   <body>
@@ -563,8 +569,8 @@
           <span class="hl">leave you alone?</span>
         </h1>
         <p class="lede rv">
-          Write it the way you'd say it out loud. We read every brief the day it
-          lands, and the reply is a real assessment of your operation, not a
+          One link is enough. Send the site, the Instagram, or just the name, and
+          we'll find the problem. We read every brief the day it lands, and the reply is a real assessment of your operation, not a
           sales sequence.
         </p>
 
@@ -584,6 +590,24 @@
             "
             aria-hidden="true"
           />
+          <label for="bf-biz">THE BUSINESS</label>
+          <span class="fhint">YOUR SITE, YOUR INSTAGRAM, OR JUST THE NAME · ONE LINK IS ENOUGH</span>
+          <input autocomplete="organization" enterkeyhint="next" id="bf-biz"
+            name="business"
+            placeholder="yoursite.com, @handle, or just the name"
+            required
+          />
+          <label for="bf-problem">THE PROBLEM <i class="opt">· OPTIONAL</i></label>
+          <div class="pchips">
+            <button type="button" class="pchip" data-t="Orders live in my inbox and somebody's memory. ">ORDERS LIVE IN MY INBOX</button>
+            <button type="button" class="pchip" data-t="Our busiest hours are our most chaotic. ">BUSY HOURS ARE CHAOS</button>
+            <button type="button" class="pchip" data-t="People love us in person, but nobody finds us online. ">NOBODY FINDS US ONLINE</button>
+          </div>
+          <textarea
+            id="bf-problem"
+            name="problem"
+            placeholder="Say as much or as little as you want. We'll find it either way."
+          ></textarea>
           <label for="bf-name">YOUR NAME</label>
           <input id="bf-name" name="name" required autocomplete="name" enterkeyhint="next" />
           <label for="bf-email">EMAIL</label>
@@ -594,19 +618,6 @@
             required
             autocomplete="email"
           />
-          <label for="bf-biz">THE BUSINESS</label>
-          <input autocomplete="organization" enterkeyhint="next" id="bf-biz"
-            name="business"
-            placeholder="Name + what it does, one line"
-            required
-          />
-          <label for="bf-problem">THE PROBLEM</label>
-          <textarea
-            id="bf-problem"
-            name="problem"
-            placeholder="The thing that eats your week. The order chaos, the dead hours, the invisible storefront. Plain words."
-            required
-          ></textarea>
           <button class="send" type="submit">SEND THE BRIEF →</button>
           <p class="note">
             PHASE ONE IN 21 DAYS · STOP ANY TIME, KEEP EVERYTHING
@@ -662,8 +673,14 @@
         } else vio.observe(v);
       });
 
-      document
-        .getElementById("briefForm")
+      document.querySelectorAll(".pchip").forEach((c) =>
+        c.addEventListener("click", () => {
+          const t = document.getElementById("bf-problem");
+          t.value += c.dataset.t;
+          t.focus();
+        }),
+      );
+      document.getElementById("briefForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
           const f = e.target;
@@ -687,8 +704,7 @@
                 data.name +
                 "\nBusiness: " +
                 data.business +
-                "\n\nThe problem:\n" +
-                data.problem,
+                (data.problem ? "\n\nThe problem:\n" + data.problem : "\n\nNo write-up. Start from the business line above."),
             );
             location.href =
               "mailto:brief@getupperhand.io?subject=" +

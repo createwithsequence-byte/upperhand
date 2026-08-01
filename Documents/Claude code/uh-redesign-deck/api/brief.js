@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   const { name, email, business, problem, website } = req.body ?? {};
   if (website)
     return res.status(200).json({ ok: true, at: new Date().toISOString() });
-  if (!name || !email || !problem)
+  if (!name || !email || !business)
     return res.status(400).json({ error: "missing fields" });
 
   const key = process.env.RESEND_API_KEY;
@@ -23,7 +23,8 @@ export default async function handler(req, res) {
       to: ["brief@getupperhand.io"],
       reply_to: email,
       subject: `Brief: ${business ?? name}`,
-      text: `Name: ${name}\nEmail: ${email}\nBusiness: ${business ?? ""}\n\nThe problem:\n${problem}`,
+      text: `Name: ${name}\nEmail: ${email}\nBusiness: ${business ?? ""}\n\nThe problem:
+${problem || "(no write-up; start from the business line)"}`,
     }),
   });
   if (!r.ok) {
