@@ -950,6 +950,8 @@
       .recta .rmeta { text-align: center; }
       section.blk.wrap { padding-inline: clamp(1.2rem, 4vw, 3rem); }
       section.blk .wrap { padding-inline: clamp(1.2rem, 4vw, 3rem); }
+      .ldot.down { background: var(--pink); }
+      .sweepline { font-family: var(--mono); font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; color: #9a968a; margin-top: 12px; }
 </style>
   </head>
   <body>
@@ -1192,7 +1194,7 @@
         <span class="kick rv">THE RECORD · 8 BUILDS LIVE · ALL RUNNING</span>
         <div class="two">
           <div class="rv">
-            <a class="lrow" href="/case-tangible-formats">
+            <a class="lrow" data-k="tf" href="/case-tangible-formats">
               <span class="ser">B·01</span>
               <img class="lthumb" src="/shots/thumbs/tf.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1203,7 +1205,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>SITE + OPS</i>
             </a>
-            <a class="lrow" href="/case-moo-v-night">
+            <a class="lrow" data-k="moo" href="/case-moo-v-night">
               <span class="ser">B·02</span>
               <img class="lthumb" src="/shots/thumbs/moo.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1214,7 +1216,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>PRODUCT</i>
             </a>
-            <a class="lrow" href="/case-fisherfit">
+            <a class="lrow" data-k="fit" href="/case-fisherfit">
               <span class="ser">B·03</span>
               <img class="lthumb" src="/shots/thumbs/fit.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1227,7 +1229,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>APP</i>
             </a>
-            <a class="lrow" href="/case-covered">
+            <a class="lrow" data-k="covered" href="/case-covered">
               <span class="ser">B·04</span>
               <img class="lthumb" src="/shots/thumbs/covered.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1238,7 +1240,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>SAAS</i>
             </a>
-            <a class="lrow" href="/case-counsel">
+            <a class="lrow" data-k="counsel" href="/case-counsel">
               <span class="ser">B·05</span>
               <img class="lthumb" src="/shots/thumbs/counsel.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1249,7 +1251,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>TOOL</i>
             </a>
-            <a class="lrow" href="/case-mr-ds">
+            <a class="lrow" data-k="mrd" href="/case-mr-ds">
               <span class="ser">B·06</span>
               <img class="lthumb" src="/shots/thumbs/mrd.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1260,7 +1262,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>SITE</i>
             </a>
-            <a class="lrow" href="/case-shelf-life">
+            <a class="lrow" data-k="shelf" href="/case-shelf-life">
               <span class="ser">B·07</span>
               <img class="lthumb" src="/shots/thumbs/shelf.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1271,7 +1273,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>ENGINE</i>
             </a>
-            <a class="lrow" href="/case-good-grief">
+            <a class="lrow" data-k="goodgrief" href="/case-good-grief">
               <span class="ser">B·08</span>
               <img class="lthumb" src="/shots/thumbs/goodgrief.webp" alt="" width="96" height="60" loading="lazy" decoding="async" />
               <span class="lmain"
@@ -1282,6 +1284,7 @@
               <span class="ldot" aria-hidden="true"></span>
               <i>PORTAL</i>
             </a>
+            <p class="sweepline" id="sweep">STATUS CHECKED LIVE AGAINST ALL 8 DEPLOYMENTS · SWEEPING…</p>
             </div>
           <div class="rcol">
           <div class="duo rv">
@@ -1690,6 +1693,36 @@
               },
             );
         }
+      })();
+    </script>
+    <script>
+      (() => {
+        const sweep = () => {
+          fetch("/api/status")
+            .then((r) => r.json())
+            .then((d) => {
+              const t = new Date();
+              const hh = String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0");
+              let up = 0;
+              d.sites.forEach((x) => {
+                const row = document.querySelector('.lrow[data-k="' + x.k + '"]');
+                if (!row) return;
+                const dot = row.querySelector(".ldot");
+                if (dot) dot.classList.toggle("down", !x.up);
+                row.title = x.up ? "UP · " + x.ms + "MS · CHECKED " + hh : "NOT RESPONDING · CHECKED " + hh;
+                if (x.up) up++;
+              });
+              const line = document.getElementById("sweep");
+              if (line)
+                line.textContent =
+                  "STATUS CHECKED LIVE AGAINST ALL " + d.sites.length + " DEPLOYMENTS · " +
+                  (up === d.sites.length ? "ALL UP" : up + " OF " + d.sites.length + " RESPONDING") +
+                  " · LAST SWEEP " + hh;
+            })
+            .catch((err) => console.warn("[STATUS] sweep failed", err));
+        };
+        sweep();
+        setInterval(sweep, 60000);
       })();
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
