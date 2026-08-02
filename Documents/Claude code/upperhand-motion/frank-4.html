@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upperhand · The Board</title>
+    <meta
+      name="description"
+      content="Upperhand is a small, focused design and build studio in Chicago. Phase one live in 21 days."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #131313;
+        --board: #d9d6d0;
+        --bone: #faf8f1;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --blue: #1231c9;
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --disp: "Archivo Black";
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --expo: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--board);
+        color: var(--ink);
+        font-family: var(--body);
+        padding: clamp(10px, 1.6vw, 22px);
+      }
+      .rv {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+          opacity 650ms var(--ease),
+          transform 650ms var(--expo);
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+      .pillnav {
+        position: fixed;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: clamp(10px, 1.8vw, 22px);
+        background: var(--ink);
+        border-radius: 99px;
+        padding: 10px 12px 10px 20px;
+        box-shadow: 0 10px 30px rgba(19, 19, 19, 0.3);
+      }
+      .pillnav .brand {
+        font-family: var(--disp);
+        font-size: 13px;
+        color: var(--bone);
+        text-decoration: none;
+      }
+      .pillnav .links {
+        display: flex;
+        gap: clamp(10px, 1.6vw, 18px);
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .pillnav .links a {
+        color: rgba(250, 248, 241, 0.65);
+        text-decoration: none;
+      }
+      .pillnav .links a:hover {
+        color: var(--volt);
+      }
+      .pillnav .go {
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        padding: 9px 16px;
+        border-radius: 99px;
+        text-decoration: none;
+      }
+      .pillnav .go:hover {
+        background: var(--pink);
+        color: #fff;
+      }
+      /* the board */
+      .board {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: clamp(10px, 1.6vw, 22px);
+        max-width: 1500px;
+        margin: 90px auto 0;
+      }
+      .tile {
+        background: var(--bone);
+        border-radius: 10px;
+        padding: clamp(1.2rem, 2.6vw, 2.2rem);
+        position: relative;
+        overflow: hidden;
+      }
+      .tile .lab {
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        color: #8f8d84;
+      }
+      /* hero tile */
+      .t-hero {
+        grid-column: 1 / 5;
+        min-height: 56svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+      .t-hero h1 {
+        font-family: var(--disp);
+        font-size: clamp(2.6rem, 6.2vw, 5.6rem);
+        line-height: 0.9;
+        text-transform: uppercase;
+        letter-spacing: -0.015em;
+      }
+      .t-hero h1 em {
+        font-style: normal;
+        color: var(--blue);
+      }
+      .t-hero .sub {
+        margin-top: 16px;
+        max-width: 30em;
+        font-weight: 600;
+        color: #55534b;
+        line-height: 1.55;
+      }
+      .t-brand {
+        grid-column: 5 / 7;
+        background: var(--blue);
+        color: #fff;
+        min-height: 56svh;
+        display: grid;
+        place-items: center;
+      }
+      .t-brand span {
+        font-family: var(--disp);
+        font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+        writing-mode: vertical-rl;
+        letter-spacing: 0.04em;
+      }
+      /* stat + cta tiles */
+      .t-stat {
+        grid-column: span 2;
+        background: var(--ink);
+        color: var(--bone);
+      }
+      .t-stat .big {
+        font-family: var(--disp);
+        font-size: clamp(2.2rem, 4.6vw, 4rem);
+        margin-top: 10px;
+      }
+      .t-stat p {
+        margin-top: 8px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        color: rgba(250, 248, 241, 0.6);
+      }
+      .t-cta {
+        grid-column: span 2;
+        background: var(--volt);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 200px;
+      }
+      .t-cta h3 {
+        font-family: var(--disp);
+        font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+        text-transform: uppercase;
+        line-height: 1;
+      }
+      .t-cta a {
+        width: fit-content;
+        background: var(--ink);
+        color: var(--volt);
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        padding: 12px 20px;
+        border-radius: 99px;
+        text-decoration: none;
+      }
+      .t-cta a:hover {
+        background: var(--pink);
+        color: #fff;
+      }
+      /* make tiles */
+      .t-make {
+        grid-column: span 2;
+        min-height: 240px;
+      }
+      .t-make h3 {
+        font-family: var(--disp);
+        font-size: clamp(1.05rem, 1.9vw, 1.5rem);
+        text-transform: uppercase;
+        line-height: 1.12;
+        margin-top: 12px;
+      }
+      .t-make p {
+        margin-top: 10px;
+        color: #55534b;
+        font-size: 0.93rem;
+        line-height: 1.6;
+      }
+      .t-make .cno {
+        position: absolute;
+        top: 14px;
+        right: 16px;
+        font-family: var(--disp);
+        font-size: 1.4rem;
+        color: var(--pink);
+      }
+      /* work tiles: videos live INSIDE the board */
+      .t-work {
+        grid-column: span 3;
+        min-height: 54svh;
+        padding: 0;
+      }
+      .t-work video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .t-work .wash {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          10deg,
+          rgba(19, 19, 19, 0.78) 8%,
+          rgba(19, 19, 19, 0.1) 55%
+        );
+      }
+      .t-work .in2 {
+        position: absolute;
+        left: 6%;
+        right: 6%;
+        bottom: 7%;
+        z-index: 2;
+        color: #fff;
+      }
+      .t-work .sent {
+        font-weight: 600;
+        font-size: clamp(1.05rem, 1.9vw, 1.5rem);
+        line-height: 1.35;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+      }
+      .t-work .chip {
+        display: inline-block;
+        margin-top: 10px;
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        padding: 5px 10px;
+        border-radius: 3px;
+      }
+      .t-work .case {
+        display: inline-block;
+        margin-left: 10px;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        color: #fff;
+        text-decoration: none;
+        border-bottom: 2px solid var(--pink);
+        padding-bottom: 2px;
+      }
+      .t-work .case:hover {
+        color: var(--pink);
+      }
+      /* steps strip */
+      .t-step {
+        grid-column: span 2;
+        background: var(--bone);
+        border: 2px solid var(--ink);
+        box-shadow: 5px 5px 0 rgba(19, 19, 19, 0.16);
+        border-radius: 6px;
+      }
+      .t-step .sno {
+        display: inline-grid;
+        place-items: center;
+        min-width: 46px;
+        height: 36px;
+        padding: 0 8px;
+        background: var(--pink);
+        color: #fff;
+        font-family: var(--disp);
+        font-size: 1.05rem;
+        border-radius: 6px;
+      }
+      .t-step b {
+        display: block;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        margin-top: 12px;
+      }
+      .t-step p {
+        margin-top: 8px;
+        color: #55534b;
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
+      /* record tile + studio tiles */
+      .t-rec {
+        grid-column: 1 / 4;
+      }
+      .lrow {
+        display: flex;
+        gap: 12px;
+        align-items: baseline;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(19, 19, 19, 0.14);
+      }
+      .lrow b {
+        font-family: var(--disp);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .lrow span {
+        flex: 1;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #55534b;
+        min-width: 0;
+      }
+      .lrow i {
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 7.5px;
+        letter-spacing: 0.14em;
+        border: 1.5px solid rgba(19, 19, 19, 0.4);
+        border-radius: 99px;
+        padding: 2px 8px;
+        white-space: nowrap;
+      }
+      .t-duo {
+        grid-column: span 3;
+        background: var(--pink);
+        color: #fff;
+      }
+      .t-duo .pair {
+        display: grid;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .t-duo .pair b {
+        font-family: var(--disp);
+        text-transform: uppercase;
+        font-size: 1rem;
+      }
+      .t-duo .pair p {
+        font-size: 0.92rem;
+        font-weight: 600;
+        line-height: 1.5;
+        opacity: 0.92;
+      }
+      /* footer tile */
+      .t-foot {
+        grid-column: 1 / 7;
+        background: var(--ink);
+        color: var(--bone);
+        padding-bottom: 0;
+        overflow: hidden;
+      }
+      .t-foot .frow {
+        display: flex;
+        gap: clamp(1.4rem, 4vw, 3.4rem);
+        flex-wrap: wrap;
+        align-items: baseline;
+      }
+      .t-foot .femail {
+        font-family: var(--disp);
+        font-size: clamp(1.1rem, 2.4vw, 1.9rem);
+        color: var(--volt);
+        text-decoration: none;
+        border-bottom: 3px solid var(--pink);
+        padding-bottom: 4px;
+      }
+      .t-foot .femail:hover {
+        color: var(--pink);
+        border-color: var(--volt);
+      }
+      .t-foot .fsmall {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: rgba(250, 248, 241, 0.55);
+        line-height: 2;
+      }
+      .t-foot .bigname {
+        font-family: var(--disp);
+        font-size: clamp(3rem, 12.8vw, 12rem);
+        line-height: 0.74;
+        letter-spacing: -0.02em;
+        text-align: center;
+        white-space: nowrap;
+        margin-top: clamp(1.6rem, 4vh, 3rem);
+        margin-bottom: -0.1em;
+      }
+      @media (max-width: 900px) {
+        .board {
+          grid-template-columns: 1fr 1fr;
+        }
+        .t-hero,
+        .t-brand,
+        .t-work,
+        .t-rec,
+        .t-duo,
+        .t-foot {
+          grid-column: 1 / -1;
+        }
+        .t-brand {
+          min-height: 200px;
+        }
+        .t-brand span {
+          writing-mode: horizontal-tb;
+        }
+        .pillnav .links {
+          display: none;
+        }
+        .t-foot .bigname {
+          white-space: normal;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .rv {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="pillnav">
+      <a class="brand" href="#top">● UPPERHAND</a>
+      <div class="links">
+        <a href="#make">What we make</a><a href="#work">Work</a
+        ><a href="#how">How</a><a href="#record">Record</a>
+      </div>
+      <a class="go" href="#start">START →</a>
+    </nav>
+
+    <div class="board" id="top">
+      <div class="tile t-hero rv">
+        <span class="lab">UPPERHAND · A DESIGN AND BUILD STUDIO · CHICAGO</span>
+        <h1>The bold version<br />of your business, <em>built.</em></h1>
+        <p class="sub">
+          Small, focused, and fast: we bring ideas and businesses to life, and
+          we race you to the first win. Phase one live in 21 days.
+        </p>
+      </div>
+      <div class="tile t-brand rv"><span>Upperhand®</span></div>
+
+      <div class="tile t-stat rv">
+        <span class="lab" style="color: rgba(250, 248, 241, 0.5)"
+          >THE RECORD</span
+        >
+        <div class="big">9 LIVE</div>
+        <p>EVERY PHASE ONE · ON TIME</p>
+      </div>
+      <div class="tile t-stat rv">
+        <span class="lab" style="color: rgba(250, 248, 241, 0.5)"
+          >THE CLOCK</span
+        >
+        <div class="big">21 DAYS</div>
+        <p>IDEA → RUNNING BUILD</p>
+      </div>
+      <div class="tile t-cta rv" id="start">
+        <h3>One slot open this month</h3>
+        <a href="mailto:brief@getupperhand.io">BRIEF@GETUPPERHAND.IO →</a>
+      </div>
+
+      <div class="tile t-make rv" id="make">
+        <span class="cno">01</span><span class="lab">WHAT WE MAKE</span>
+        <h3>The thing your customers use</h3>
+        <p>
+          Storefronts, booking engines, member apps. Designed to be pointed at.
+        </p>
+      </div>
+      <div class="tile t-make rv">
+        <span class="cno">02</span><span class="lab">WHAT WE MAKE</span>
+        <h3>The system that runs your day</h3>
+        <p>
+          Order desks, case files, ops consoles. The machine behind the counter.
+        </p>
+      </div>
+      <div class="tile t-make rv">
+        <span class="cno">03</span><span class="lab">WHAT WE MAKE</span>
+        <h3>The presence that sells while you sleep</h3>
+        <p>Sites and content engines with a pulse, honest enough to close.</p>
+      </div>
+
+      <div class="tile t-work rv" id="work">
+        <video
+          muted
+          loop
+          autoplay
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/17722430/17722430-sd_640_360_24fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <div class="in2">
+          <p class="sent">
+            Records cut one at a time. An order desk that keeps the lathe warm.
+          </p>
+          <span class="chip">TANGIBLE FORMATS · SITE + OPS</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+      <div class="tile t-work rv">
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/4881730/4881730-sd_960_506_25fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <div class="in2">
+          <p class="sent">
+            A drive-in in a cow pasture, sold out every Saturday since.
+          </p>
+          <span class="chip">MOO V NIGHT · PRODUCT</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+      <div class="tile t-work rv">
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/6980128/6980128-sd_640_338_30fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <div class="in2">
+          <p class="sent">A Highland Park gym in every member's pocket.</p>
+          <span class="chip">FISHERFIT · MEMBER APP</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+      <div class="tile t-work rv">
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/8523306/8523306-sd_960_540_30fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <div class="in2">
+          <p class="sent">
+            A Chicago beef stand gone cinematic. The line goes out the door.
+          </p>
+          <span class="chip">MR. D'S · SITE</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+
+      <div class="tile t-step rv" id="how">
+        <span class="sno">01</span><b>THE CHALLENGE</b>
+        <p>
+          Bring us the problem that will not leave you alone. One call, one flat
+          number, no discovery theater.
+        </p>
+      </div>
+      <div class="tile t-step rv">
+        <span class="sno">21</span><b>PHASE ONE · LIVE</b>
+        <p>
+          A running build in 21 days, not a proposal. The first win, shipped,
+          priced flat, yours either way.
+        </p>
+      </div>
+      <div class="tile t-step rv">
+        <span class="sno">03</span><b>THE NEXT MOVE</b>
+        <p>
+          Each phase earns the next. Stop any time and keep everything, source
+          included.
+        </p>
+      </div>
+
+      <div class="tile t-rec rv" id="record">
+        <span class="lab">THE RECORD · ALL RUNNING</span>
+        <div style="margin-top: 12px">
+          <div class="lrow">
+            <b>Tangible Formats</b><span>vinyl storefront + order desk</span
+            ><i>SITE + OPS</i>
+          </div>
+          <div class="lrow">
+            <b>Moo V Night</b><span>drive-in trivia on every phone</span
+            ><i>PRODUCT</i>
+          </div>
+          <div class="lrow">
+            <b>FisherFit</b><span>the gym in every member's pocket</span
+            ><i>APP</i>
+          </div>
+          <div class="lrow">
+            <b>Covered</b><span>sub plans while teachers sleep</span><i>SAAS</i>
+          </div>
+          <div class="lrow">
+            <b>Counsel</b><span>a case desk that loses nothing</span><i>TOOL</i>
+          </div>
+          <div class="lrow">
+            <b>Mr. D's</b><span>a beef stand gone cinematic</span><i>SITE</i>
+          </div>
+          <div class="lrow">
+            <b>Shelf Life</b><span>one shoot, a month of social</span
+            ><i>ENGINE</i>
+          </div>
+          <div class="lrow">
+            <b>Good Grief</b><span>paperwork that ends in a song</span
+            ><i>PORTAL</i>
+          </div>
+        </div>
+      </div>
+      <div class="tile t-duo rv">
+        <span class="lab" style="color: rgba(255, 255, 255, 0.7)"
+          >THE STUDIO</span
+        >
+        <div class="pair">
+          <div>
+            <b>Greg · makes it beautiful</b>
+            <p>Design, motion, and the details people screenshot.</p>
+          </div>
+          <div>
+            <b>John · makes it sell</b>
+            <p>Strategy, positioning, and the words that close.</p>
+          </div>
+          <div>
+            <b>The race · first win in 21 days</b>
+            <p>We bring ideas and businesses to life, then keep them moving.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile t-foot rv">
+        <div class="frow">
+          <a class="femail" href="mailto:brief@getupperhand.io"
+            >BRIEF@GETUPPERHAND.IO</a
+          >
+          <span class="fsmall"
+            >EST. 2025 · CHICAGO + EVERYWHERE · ONE SLOT OPEN</span
+          >
+          <span class="fsmall">©2026 UPPERHAND LLC</span>
+        </div>
+        <div class="bigname">UPPERHAND</div>
+      </div>
+    </div>
+
+    <script>
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.1 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+      const vio = new IntersectionObserver(
+        (es) =>
+          es.forEach((en) => {
+            if (en.isIntersecting) en.target.play().catch(() => {});
+            else en.target.pause();
+          }),
+        { threshold: 0.2 },
+      );
+      document.querySelectorAll("video").forEach((v) => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          v.removeAttribute("autoplay");
+          v.pause();
+        } else vio.observe(v);
+      });
+    </script>
+  </body>
+</html>

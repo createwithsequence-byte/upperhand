@@ -1,0 +1,2471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UPPERHAND · The 03 × 06 Sessions · Twenty-Four Takes</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Anton&family=Sora:wght@500;800&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Fraunces:ital,opsz,wght@1,9..144,500&family=Caveat:wght@700&family=Hanken+Grotesk:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #131313;
+        --paper: #f4f2ec;
+        --bone: #f2f0ea;
+        --dim: #8f8d84;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --cyan: #2ee6ff;
+        --orange: #ff7a1a;
+        --uv: #b366ff;
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --hand: "Caveat", cursive;
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --expo: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: #0b0b0c;
+        color: var(--bone);
+        font-family: var(--body);
+      }
+      .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 clamp(1.2rem, 4vw, 4rem);
+      }
+      /* header */
+      .top {
+        display: flex;
+        justify-content: space-between;
+        padding: 26px 0;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--dim);
+      }
+      .hero {
+        padding: clamp(2rem, 6vh, 5rem) 0 clamp(2rem, 5vh, 4rem);
+      }
+      .kicker {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.26em;
+        color: var(--volt);
+      }
+      .hero h1 {
+        font-family: "Archivo Black";
+        font-size: clamp(2.6rem, 7vw, 5.6rem);
+        line-height: 0.95;
+        letter-spacing: -0.01em;
+        margin-top: 18px;
+        text-wrap: balance;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--volt);
+      }
+      .hero .lede {
+        margin-top: 20px;
+        max-width: 44em;
+        color: #b9b9bf;
+        font-size: 1.02rem;
+        line-height: 1.6;
+      }
+      .hero .lede b {
+        color: var(--bone);
+      }
+      /* take scaffolding */
+      .take {
+        padding: clamp(2.2rem, 5vh, 4rem) 0;
+        border-top: 1px solid rgba(242, 240, 234, 0.1);
+      }
+      .take header {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      .tno {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        color: #55555c;
+      }
+      .fb {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: var(--volt);
+        text-decoration: none;
+        border: 1px solid var(--volt);
+        border-radius: 99px;
+        padding: 5px 11px;
+        align-self: center;
+      }
+      .fb:hover {
+        background: var(--volt);
+        color: #0b0b0c;
+      }
+      .take h2 {
+        font-family: "Archivo Black";
+        font-size: clamp(1.3rem, 2.6vw, 2rem);
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+      .pal {
+        display: inline-flex;
+        gap: 5px;
+        align-self: center;
+      }
+      .pal i {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        border: 1px solid rgba(242, 240, 234, 0.25);
+      }
+      .th {
+        margin-left: auto;
+        max-width: 30em;
+        color: var(--dim);
+        font-size: 0.92rem;
+      }
+      .art {
+        position: relative;
+        aspect-ratio: 16/8.2;
+        border-radius: 18px;
+        overflow: hidden;
+        border: 1px solid rgba(242, 240, 234, 0.18);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+        padding: clamp(1.2rem, 3.4vw, 3.2rem);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .art .nav {
+        position: absolute;
+        top: clamp(0.9rem, 2vw, 1.6rem);
+        left: clamp(1.2rem, 3.4vw, 3.2rem);
+        right: clamp(1.2rem, 3.4vw, 3.2rem);
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        z-index: 4;
+      }
+      .art h3 {
+        font-size: clamp(2rem, 5.6vw, 4.6rem);
+        line-height: 0.95;
+        letter-spacing: -0.01em;
+        z-index: 3;
+        position: relative;
+        max-width: 12em;
+      }
+      .cta {
+        display: inline-block;
+        width: fit-content;
+        margin-top: clamp(0.9rem, 2vw, 1.6rem);
+        padding: 9px 18px;
+        border-radius: 99px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        z-index: 3;
+        position: relative;
+      }
+      .bgv {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      /* reveal */
+      .rv {
+        opacity: 0;
+        transform: translateY(22px);
+        transition:
+          opacity 700ms var(--ease),
+          transform 700ms var(--expo);
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* 01 POSTER */
+      .a01 {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .a01 .nav {
+        color: #8f8d84;
+      }
+      .a01 h3 {
+        font-family: "Archivo Black";
+      }
+      .a01 .hl {
+        background: var(--volt);
+        padding: 0 0.12em;
+      }
+      .a01 .cta {
+        background: var(--pink);
+        color: #fff;
+      }
+      .a01 .acid {
+        position: absolute;
+        right: 8%;
+        bottom: 12%;
+        width: 9%;
+        aspect-ratio: 1;
+        background: var(--volt);
+        animation: snap01 7s steps(1) infinite;
+      }
+      @keyframes snap01 {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        34% {
+          transform: translate(-26px, -30px);
+        }
+        67% {
+          transform: translate(16px, 18px);
+        }
+      }
+      /* 02 INVERSE */
+      .a02 {
+        background: #101012;
+        color: var(--bone);
+      }
+      .a02 .nav {
+        color: #6d6d74;
+      }
+      .a02 h3 {
+        font-family: "Archivo Black";
+      }
+      .a02 .v {
+        color: var(--volt);
+        text-shadow: 0 0 26px rgba(204, 255, 0, 0.35);
+      }
+      .a02 .rule {
+        width: 120px;
+        height: 3px;
+        background: var(--pink);
+        margin-top: 18px;
+      }
+      .a02 .cta {
+        border: 1px solid var(--volt);
+        color: var(--volt);
+      }
+      /* 03 TWO-TONE */
+      .a03 {
+        background: linear-gradient(
+          90deg,
+          var(--volt) 0 50%,
+          var(--paper) 50% 100%
+        );
+        color: var(--ink);
+      }
+      .a03 .nav {
+        color: rgba(19, 19, 19, 0.6);
+      }
+      .a03 h3 {
+        font-family: "Anton";
+        letter-spacing: 0.01em;
+      }
+      .a03 .seam {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--ink);
+      }
+      .a03 .rider {
+        position: absolute;
+        left: calc(50% - 7px);
+        width: 14px;
+        height: 14px;
+        background: var(--pink);
+        animation: ride 6s var(--expo) infinite;
+      }
+      @keyframes ride {
+        0%,
+        100% {
+          top: 18%;
+        }
+        50% {
+          top: 72%;
+        }
+      }
+      .a03 .cta {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .a03 .mans {
+        position: absolute;
+        right: 6%;
+        bottom: 12%;
+        text-align: right;
+        display: grid;
+        gap: 14px;
+      }
+      .a03 .mans p {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: #55534b;
+      }
+      .a03 .mans b {
+        display: block;
+        font-family: "Anton";
+        font-size: 1.1rem;
+        letter-spacing: 0.04em;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      /* 04 OUTLINE */
+      .a04 {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .a04 .nav {
+        color: rgba(19, 19, 19, 0.6);
+      }
+      .a04 h3 {
+        font-family: "Archivo Black";
+        color: transparent;
+        -webkit-text-stroke: 2px var(--ink);
+      }
+      .a04 h3 .fill {
+        color: var(--pink);
+        -webkit-text-stroke: 0;
+      }
+      .a04 .corner {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 12%;
+        aspect-ratio: 1;
+        background: var(--cyan);
+      }
+      .a04 .cta {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      /* 05 CHECKER */
+      .a05 {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .a05 .q {
+        position: absolute;
+        width: 50%;
+        height: 50%;
+        z-index: 0;
+      }
+      .a05 .q1 {
+        left: 0;
+        top: 0;
+        background: var(--volt);
+      }
+      .a05 .q2 {
+        right: 0;
+        top: 0;
+        background: var(--paper);
+      }
+      .a05 .q3 {
+        left: 0;
+        bottom: 0;
+        background: var(--paper);
+      }
+      .a05 .q4 {
+        right: 0;
+        bottom: 0;
+        background: var(--cyan);
+        animation: q4swap 9s steps(1) infinite;
+      }
+      @keyframes q4swap {
+        0%,
+        100% {
+          background: var(--cyan);
+        }
+        34% {
+          background: var(--pink);
+        }
+        67% {
+          background: var(--orange);
+        }
+      }
+      .a05 .nav {
+        color: rgba(19, 19, 19, 0.55);
+      }
+      .a05 h3 {
+        font-family: "Archivo Black";
+      }
+      .a05 .cta {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      /* 06 HIGHLIGHT REEL */
+      .a06 {
+        background: #101012;
+        color: var(--bone);
+      }
+      .a06 .bgv {
+        filter: grayscale(1) contrast(1.1) brightness(0.55);
+      }
+      .a06 .wash {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          0deg,
+          rgba(16, 16, 18, 0.92) 10%,
+          rgba(16, 16, 18, 0.35) 60%
+        );
+      }
+      .a06 .nav {
+        color: #9a9aa2;
+      }
+      .a06 h3 {
+        font-family: "Sora";
+        font-weight: 800;
+      }
+      .a06 .circ {
+        position: relative;
+        white-space: nowrap;
+      }
+      .a06 .circ::after {
+        content: "";
+        position: absolute;
+        inset: -10% -6%;
+        border: 4px solid var(--volt);
+        border-radius: 46% 54% 50% 50% / 60% 44% 56% 40%;
+        transform: rotate(-2deg);
+      }
+      .a06 .note {
+        position: absolute;
+        right: 9%;
+        bottom: 18%;
+        font-family: var(--hand);
+        font-size: 1.3rem;
+        color: var(--pink);
+        transform: rotate(-5deg);
+        z-index: 3;
+      }
+      .a06 .cta {
+        background: var(--volt);
+        color: #101012;
+      }
+      /* 07 STACK */
+      .a07 {
+        background: var(--bone);
+        color: var(--ink);
+      }
+      .a07 .nav {
+        color: #8f8d84;
+      }
+      .a07 h3 {
+        font-family: "Archivo Black";
+        max-width: 8.5em;
+      }
+      .a07 .chips {
+        position: absolute;
+        right: 6%;
+        top: 12%;
+        bottom: 12%;
+        width: 26%;
+        display: grid;
+        gap: 8px;
+        z-index: 1;
+      }
+      .a07 .chip {
+        border-radius: 6px;
+        position: relative;
+      }
+      .a07 .chip b {
+        position: absolute;
+        left: 10px;
+        bottom: 6px;
+        font-family: var(--mono);
+        font-weight: 400;
+        font-size: 8px;
+        letter-spacing: 0.18em;
+        color: rgba(19, 19, 19, 0.72);
+      }
+      .a07 .c1 {
+        background: var(--volt);
+      }
+      .a07 .c2 {
+        background: var(--pink);
+      }
+      .a07 .c3 {
+        background: var(--cyan);
+      }
+      .a07 .c4 {
+        background: var(--orange);
+      }
+      .a07 .c5 {
+        background: var(--ink);
+      }
+      .a07 .c5 b {
+        color: rgba(242, 240, 234, 0.75);
+      }
+      .a07 .cta {
+        background: var(--ink);
+        color: var(--bone);
+      }
+      /* 08 PUNCH */
+      .a08 {
+        background: var(--bone);
+        color: var(--ink);
+      }
+      .a08 .nav {
+        color: #8f8d84;
+      }
+      .a08 h3 {
+        font-family: "Bricolage Grotesque";
+        font-weight: 800;
+        max-width: 7em;
+      }
+      .a08 .dot {
+        position: absolute;
+        right: -6%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 42%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: var(--pink);
+        animation: dotb 5s ease-in-out infinite;
+      }
+      @keyframes dotb {
+        50% {
+          transform: translateY(-50%) scale(1.025);
+        }
+      }
+      .a08 .sq {
+        position: absolute;
+        right: 36%;
+        bottom: 14%;
+        width: 26px;
+        height: 26px;
+        background: var(--cyan);
+      }
+      .a08 .cta {
+        background: var(--pink);
+        color: #fff;
+      }
+      /* 09 UV */
+      .a09 {
+        background: #0c0a10;
+        color: var(--bone);
+      }
+      .a09 .nav {
+        color: #6d6580;
+      }
+      .a09 h3 {
+        font-family: "Archivo Black";
+      }
+      .a09 .uvw {
+        color: var(--uv);
+        text-shadow: 0 0 34px rgba(179, 102, 255, 0.55);
+        animation: uvpulse 4s ease-in-out infinite;
+      }
+      @keyframes uvpulse {
+        50% {
+          text-shadow: 0 0 18px rgba(179, 102, 255, 0.35);
+        }
+      }
+      .a09 .ul {
+        width: 170px;
+        height: 4px;
+        background: var(--volt);
+        margin-top: 16px;
+      }
+      .a09 .cta {
+        border: 1px solid var(--uv);
+        color: var(--uv);
+      }
+      /* 10 CUTOUT */
+      .a10 {
+        background: var(--volt);
+        color: var(--ink);
+      }
+      .a10 .win {
+        position: absolute;
+        left: 8%;
+        right: 8%;
+        bottom: 7%;
+        height: 20%;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 3px solid var(--ink);
+      }
+      .a10 .win video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(1) contrast(1.15);
+      }
+      .a10 .nav {
+        color: rgba(19, 19, 19, 0.6);
+      }
+      .a10 h3 {
+        font-family: "Archivo Black";
+      }
+      .a10 .cta {
+        background: var(--ink);
+        color: var(--volt);
+      }
+      /* 11 TAPE */
+      .a11 {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .a11 .nav {
+        color: #8f8d84;
+      }
+      .a11 h3 {
+        font-family: "Anton";
+        letter-spacing: 0.01em;
+      }
+      .a11 .strip {
+        position: absolute;
+        height: 34px;
+        left: -4%;
+        right: -4%;
+        opacity: 0.88;
+        box-shadow: 0 1px 5px rgba(19, 19, 19, 0.18);
+      }
+      .a11 .s1 {
+        top: 16%;
+        background: var(--volt);
+        transform: rotate(-4deg);
+      }
+      .a11 .s2 {
+        top: 62%;
+        background: var(--pink);
+        transform: rotate(3deg);
+      }
+      .a11 .s3 {
+        top: 82%;
+        background: var(--cyan);
+        transform: rotate(-2deg);
+      }
+      .a11 .cta {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      /* 12 TICKER */
+      .a12 {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .a12 .bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 8px 0;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+      }
+      .a12 .bt {
+        top: 0;
+        background: var(--volt);
+        color: var(--ink);
+      }
+      .a12 .bb {
+        bottom: 0;
+        background: var(--pink);
+        color: #fff;
+      }
+      .a12 .bar span {
+        display: inline-block;
+        animation: tick12 16s linear infinite;
+      }
+      .a12 .bb span {
+        animation-duration: 22s;
+      }
+      @keyframes tick12 {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .a12 .nav {
+        display: none;
+      }
+      .a12 h3 {
+        font-family: "Archivo Black";
+      }
+      .a12 .cta {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      /* 13 GRID POP */
+      .a13 {
+        background: var(--bone);
+        color: var(--ink);
+        background-image: linear-gradient(
+          90deg,
+          rgba(19, 19, 19, 0.09) 1px,
+          transparent 1px
+        );
+        background-size: 25% 100%;
+      }
+      .a13 .nav {
+        color: #8f8d84;
+      }
+      .a13 h3 {
+        font-family: "Sora";
+        font-weight: 800;
+      }
+      .a13 .cell {
+        position: absolute;
+        width: 25%;
+        height: 38%;
+        z-index: 0;
+      }
+      .a13 .cv {
+        left: 50%;
+        top: 0;
+        background: var(--volt);
+      }
+      .a13 .cp {
+        left: 75%;
+        bottom: 0;
+        width: 25%;
+        background: var(--pink);
+      }
+      .a13 .cn {
+        position: absolute;
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.18em;
+        color: rgba(19, 19, 19, 0.5);
+      }
+      .a13 .n1 {
+        left: 52%;
+        top: 6%;
+      }
+      .a13 .n2 {
+        left: 77%;
+        bottom: 6%;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .a13 .cta {
+        background: var(--ink);
+        color: var(--bone);
+      }
+      /* 14 ACID WASH */
+      .a14 {
+        background: var(--ink);
+        color: var(--ink);
+      }
+      .a14 .bgv {
+        filter: grayscale(1) contrast(1.05) brightness(1.75);
+      }
+      .a14 .acidwash {
+        position: absolute;
+        inset: 0;
+        background: var(--volt);
+        mix-blend-mode: multiply;
+      }
+      .a14 .nav {
+        color: rgba(19, 19, 19, 0.72);
+      }
+      .a14 h3 {
+        font-family: "Archivo Black";
+        color: var(--ink);
+      }
+      .a14 .cta {
+        background: var(--ink);
+        color: var(--volt);
+      }
+      /* 15 NIGHT SLAM */
+      .a15 {
+        background: #0e0d11;
+        color: var(--bone);
+      }
+      .a15 .nav {
+        color: #6d6d74;
+      }
+      .a15 h3 {
+        font-family: "Archivo Black";
+      }
+      .a15 .neon {
+        color: var(--pink);
+        text-shadow:
+          0 0 14px rgba(255, 46, 136, 0.7),
+          0 0 44px rgba(255, 46, 136, 0.4);
+        animation: flick15 7s steps(1) infinite;
+      }
+      @keyframes flick15 {
+        0%,
+        91%,
+        94%,
+        100% {
+          opacity: 1;
+        }
+        92.5% {
+          opacity: 0.55;
+        }
+      }
+      .a15 .tags {
+        display: flex;
+        gap: 8px;
+        margin-top: 18px;
+      }
+      .a15 .tag {
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.16em;
+        border: 1px solid rgba(204, 255, 0, 0.5);
+        color: var(--volt);
+        border-radius: 99px;
+        padding: 4px 10px;
+      }
+      .a15 .cta {
+        background: var(--pink);
+        color: #fff;
+      }
+
+      /* footer */
+      .end {
+        padding: clamp(3rem, 8vh, 6rem) 0;
+        border-top: 1px solid rgba(242, 240, 234, 0.1);
+      }
+      .end p {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: var(--dim);
+        line-height: 2;
+      }
+      .end b {
+        color: var(--volt);
+        font-weight: 400;
+      }
+      /* 16 FULL BLEED (after 72andSunny) */
+      .a16 {
+        background: #131313;
+        color: var(--bone);
+      }
+      .a16 .wash16 {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          15deg,
+          rgba(19, 19, 19, 0.72) 12%,
+          transparent 55%
+        );
+      }
+      .a16 .nav {
+        color: rgba(242, 240, 234, 0.75);
+      }
+      .a16 .sent {
+        position: absolute;
+        left: clamp(1.2rem, 3.4vw, 3.2rem);
+        bottom: 22%;
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: clamp(1.15rem, 2.2vw, 1.8rem);
+        line-height: 1.3;
+        z-index: 3;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+      }
+      .a16 .chip16 {
+        position: absolute;
+        left: clamp(1.2rem, 3.4vw, 3.2rem);
+        bottom: 12%;
+        background: var(--volt);
+        color: #131313;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        padding: 5px 10px;
+        border-radius: 3px;
+        z-index: 3;
+      }
+      .a16 .prog {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 4.5%;
+        display: flex;
+        gap: 6px;
+        z-index: 3;
+      }
+      .a16 .prog i {
+        width: 34px;
+        height: 3px;
+        background: rgba(242, 240, 234, 0.28);
+        border-radius: 2px;
+      }
+      .a16 .prog i.on {
+        background: var(--volt);
+        animation: progpulse 2.4s ease-in-out infinite;
+      }
+      @keyframes progpulse {
+        50% {
+          opacity: 0.55;
+        }
+      }
+      /* 17 FLOOD (after Beans) */
+      .a17 {
+        background: var(--volt);
+        color: var(--ink);
+      }
+      .a17 .nav {
+        color: rgba(19, 19, 19, 0.55);
+      }
+      .a17 h3 {
+        font-family: "Bricolage Grotesque";
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .a17 .cta {
+        background: var(--ink);
+        color: var(--volt);
+      }
+      .a17 .obj {
+        position: absolute;
+      }
+      .a17 .cyl {
+        right: 30%;
+        bottom: 10%;
+        width: 9%;
+        aspect-ratio: 1/1.15;
+        background: #b5e300;
+        border-radius: 50% 50% 46% 46% / 14% 14% 12% 12%;
+        box-shadow: inset -14px 0 22px rgba(19, 19, 19, 0.08);
+      }
+      .a17 .cube {
+        right: 8%;
+        top: 14%;
+        width: 7%;
+        aspect-ratio: 1;
+        background: #d9ff4d;
+        transform: rotate(12deg);
+        box-shadow: inset -10px -10px 0 #b5e300;
+      }
+      .a17 .bean {
+        position: absolute;
+        right: 14%;
+        bottom: 16%;
+        width: 12%;
+        aspect-ratio: 1/1.3;
+        background: #e2ff66;
+        border-radius: 48% 52% 50% 50% / 58% 58% 42% 42%;
+        box-shadow: inset -12px -8px 0 #b5e300;
+        animation: beanbob 4.5s ease-in-out infinite;
+      }
+      .a17 .bean .sh {
+        position: absolute;
+        top: 26%;
+        left: 18%;
+        width: 26%;
+        height: 14%;
+        background: #131313;
+        border-radius: 3px;
+      }
+      .a17 .bean .sh.s2 {
+        left: 56%;
+      }
+      .a17 .bean::after {
+        content: "";
+        position: absolute;
+        top: 33%;
+        left: 42%;
+        width: 18%;
+        height: 4%;
+        background: #131313;
+      }
+      @keyframes beanbob {
+        50% {
+          transform: translateY(-9px) rotate(-2deg);
+        }
+      }
+      .a17 .rooms {
+        position: absolute;
+        left: clamp(1.2rem, 3.4vw, 3.2rem);
+        bottom: 10%;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        color: rgba(19, 19, 19, 0.72);
+        display: grid;
+        gap: 4px;
+      }
+      .a17 .peek {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 26px;
+        background: var(--pink);
+        animation: peekb 6s var(--expo) infinite;
+      }
+      .a17 .peek b {
+        position: absolute;
+        top: 50%;
+        right: 34px;
+        transform: rotate(90deg) translateX(-50%);
+        transform-origin: right center;
+        font-family: var(--mono);
+        font-weight: 400;
+        font-size: 8px;
+        letter-spacing: 0.22em;
+        color: rgba(19, 19, 19, 0.6);
+        white-space: nowrap;
+      }
+      @keyframes peekb {
+        0%,
+        74%,
+        100% {
+          width: 26px;
+        }
+        84%,
+        92% {
+          width: 44px;
+        }
+      }
+      /* 18 WOVEN (after Dragon Rouge) */
+      .a18 {
+        background: var(--paper);
+        color: var(--ink);
+        justify-content: flex-start;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+      .a18 .nav {
+        color: #8f8d84;
+      }
+      .a18 .slabs {
+        position: absolute;
+        inset: 4% 0 12%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .a18 .slabs span {
+        font-family: "Archivo Black";
+        font-size: clamp(3.2rem, 9.4vw, 8rem);
+        line-height: 0.88;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+      }
+      .a18 .l1 {
+        position: relative;
+        z-index: 1;
+      }
+      .a18 .l2 {
+        position: relative;
+        z-index: 3;
+      }
+      .a18 .l3 {
+        position: relative;
+        z-index: 3;
+      }
+      .a18 .arrow {
+        position: absolute;
+        left: 50%;
+        top: 6%;
+        bottom: 24%;
+        width: clamp(54px, 6vw, 92px);
+        transform: translateX(-50%);
+        z-index: 2;
+        animation: arrowrise 5s var(--expo) infinite;
+      }
+      .a18 .arrow .tip {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: clamp(27px, 3vw, 46px) solid transparent;
+        border-right: clamp(27px, 3vw, 46px) solid transparent;
+        border-bottom: clamp(34px, 3.6vw, 58px) solid var(--volt);
+      }
+      .a18 .arrow .stem {
+        position: absolute;
+        top: clamp(30px, 3.2vw, 52px);
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 46%;
+        background: var(--volt);
+      }
+      @keyframes arrowrise {
+        0%,
+        100% {
+          margin-top: 10px;
+        }
+        50% {
+          margin-top: -6px;
+        }
+      }
+      .a18 .band {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--pink);
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.24em;
+        text-align: center;
+        padding: 12px 0;
+        z-index: 4;
+      }
+      /* 19 OFF-CENTER (after Huge, 1) */
+      .a19 {
+        background: #0a0a0a;
+        color: #c9c9cf;
+        justify-content: flex-end;
+      }
+      .a19 .field19 {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse at 72% 30%,
+            #ff2ea6 0%,
+            #d1128a 34%,
+            #7a0d55 62%,
+            #0a0a0a 92%
+          ),
+          radial-gradient(
+            circle at 20% 80%,
+            rgba(204, 255, 0, 0.18),
+            transparent 40%
+          );
+        opacity: 0.92;
+        animation: fielddrift 12s ease-in-out infinite;
+      }
+      @keyframes fielddrift {
+        50% {
+          transform: scale(1.06) translate(-1.5%, 1%);
+        }
+      }
+      .a19 .blocknav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        z-index: 3;
+      }
+      .a19 .blocknav span {
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 52px;
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .a19 .b1 {
+        background: #ccff00;
+        color: #0a0a0a;
+      }
+      .a19 .b2 {
+        background: #1c1c1e;
+        color: #c9c9cf;
+      }
+      .a19 .talk {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #1c1c1e;
+        color: #e8e8ec;
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: 12px;
+        padding: 18px 24px;
+        z-index: 3;
+      }
+      .a19 .ann {
+        position: relative;
+        z-index: 2;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: rgba(242, 240, 234, 0.6);
+        margin-bottom: 8px;
+      }
+      .a19 h3 {
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: clamp(2.4rem, 6vw, 5rem);
+        letter-spacing: -0.02em;
+        line-height: 1.02;
+        color: rgba(235, 233, 240, 0.88);
+        max-width: 8em;
+        margin-bottom: 4%;
+      }
+      /* 20 VOID BLOCK (after Huge, 2) */
+      .a20 {
+        background: #0a0a0a;
+        color: #8a8a92;
+      }
+      .a20 .nav {
+        color: #6d6d74;
+      }
+      .a20 .block20 {
+        position: absolute;
+        left: 44%;
+        top: 34%;
+        width: clamp(120px, 15vw, 210px);
+        aspect-ratio: 1;
+        background: #ccff00;
+        color: #0a0a0a;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        font-family: "Archivo Black";
+        font-size: clamp(1.1rem, 2.1vw, 1.8rem);
+        line-height: 1;
+        animation: wander 9s steps(1) infinite;
+      }
+      @keyframes wander {
+        0%,
+        100% {
+          left: 44%;
+          top: 34%;
+        }
+        34% {
+          left: 58%;
+          top: 22%;
+        }
+        67% {
+          left: 30%;
+          top: 46%;
+        }
+      }
+      .a20 .meta20 {
+        position: absolute;
+        left: clamp(1.2rem, 3.4vw, 3.2rem);
+        bottom: 8%;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.22em;
+        color: #55555c;
+      }
+      /* 21 PEEK (after BEGG) */
+      .a21 {
+        background: #f0ead8;
+        color: #131313;
+      }
+      .a21 .nav {
+        color: #9a927c;
+      }
+      .a21 .peek21 {
+        font-family: "Anton";
+        font-size: clamp(3rem, 8.6vw, 7.2rem);
+        line-height: 0.92;
+        letter-spacing: 0.01em;
+        color: transparent;
+        background: linear-gradient(
+          120deg,
+          #ffcf3f 0%,
+          #ff9d2e 28%,
+          #ffffff 46%,
+          #ffcf3f 60%,
+          #f2b31c 82%,
+          #fff2c9 100%
+        );
+        background-size: 180% 180%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        animation: peekdrift 9s ease-in-out infinite;
+      }
+      @keyframes peekdrift {
+        50% {
+          background-position: 80% 60%;
+        }
+      }
+      .a21 .script21 {
+        position: absolute;
+        left: 34%;
+        top: 52%;
+        font-family: var(--hand);
+        font-weight: 700;
+        font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+        color: #131313;
+        transform: rotate(-5deg);
+        z-index: 3;
+      }
+      .a21 .drip {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -2px;
+        display: flex;
+        align-items: flex-end;
+        gap: 0;
+        height: 12%;
+      }
+      .a21 .drip i {
+        flex: 1;
+        background: #ffffff;
+        border-radius: 48% 52% 0 0 / 100% 90% 0 0;
+      }
+      .a21 .drip i:nth-child(1) {
+        height: 55%;
+      }
+      .a21 .drip i:nth-child(2) {
+        height: 92%;
+        border-radius: 44% 56% 0 0 / 88% 100% 0 0;
+      }
+      .a21 .drip i:nth-child(3) {
+        height: 64%;
+      }
+      .a21 .drip i:nth-child(4) {
+        height: 100%;
+        border-radius: 56% 44% 0 0 / 100% 84% 0 0;
+      }
+      .a21 .drip i:nth-child(5) {
+        height: 72%;
+      }
+      /* 22 STAGGER (after Depo) */
+      .a22 {
+        background: #d9d6d0;
+        padding: 0;
+        display: block;
+      }
+      .a22 .p {
+        position: absolute;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .a22 .pw {
+        left: 4%;
+        top: 30%;
+        width: 52%;
+        height: 44%;
+        background: #ffffff;
+        color: #131313;
+        display: flex;
+        align-items: center;
+        padding: 0 4%;
+        animation: par1 7s ease-in-out infinite;
+      }
+      .a22 .pw h3 {
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: clamp(1.5rem, 3.4vw, 2.8rem);
+        letter-spacing: -0.02em;
+        line-height: 1.08;
+      }
+      .a22 .pw em {
+        font-style: normal;
+        color: #1231c9;
+      }
+      .a22 .pb {
+        left: 60%;
+        top: 6%;
+        width: 16%;
+        height: 52%;
+        background: #1231c9;
+        animation: par2 7s ease-in-out infinite;
+      }
+      .a22 .pb .vert {
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translateX(-50%) rotate(90deg);
+        transform-origin: center;
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+        color: #fff;
+        white-space: nowrap;
+      }
+      .a22 .pk {
+        left: 78%;
+        top: 10%;
+        width: 18%;
+        height: 40%;
+        background: #131313;
+        color: #f2f0ea;
+        display: grid;
+        place-items: center;
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: clamp(0.7rem, 1.2vw, 1rem);
+        line-height: 1.5;
+        animation: par3 7s ease-in-out infinite;
+      }
+      .a22 .pc {
+        left: 66%;
+        top: 64%;
+        width: 30%;
+        height: 30%;
+        background: #ffffff;
+        color: #131313;
+        animation: par2 7s ease-in-out infinite;
+      }
+      .a22 .pc .arr {
+        position: absolute;
+        top: 8%;
+        right: 8%;
+        font-size: 1.6rem;
+        color: #1231c9;
+      }
+      .a22 .pc b {
+        position: absolute;
+        left: 8%;
+        bottom: 8%;
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+      }
+      @keyframes par1 {
+        50% {
+          transform: translateY(-14px);
+        }
+      }
+      @keyframes par2 {
+        50% {
+          transform: translateY(10px);
+        }
+      }
+      @keyframes par3 {
+        50% {
+          transform: translateY(-22px);
+        }
+      }
+      /* 23 FAT FOOTER (after Rebellion) */
+      .a23 {
+        background: var(--paper);
+        color: var(--ink);
+        padding: 0;
+        display: block;
+      }
+      .a23 .fgrid {
+        position: absolute;
+        left: 4%;
+        right: 4%;
+        top: 7%;
+        height: 42%;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr 1.6fr;
+        border: 1.5px solid var(--ink);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .a23 .fcell {
+        padding: clamp(0.8rem, 1.8vw, 1.6rem);
+        border-left: 1.5px solid var(--ink);
+        position: relative;
+      }
+      .a23 .fcell:first-child {
+        border-left: 0;
+      }
+      .a23 .fmark {
+        display: grid;
+        place-items: center;
+      }
+      .a23 .glyph {
+        position: relative;
+        width: 56%;
+        aspect-ratio: 1;
+        transform: rotate(-14deg);
+        animation: glyphtilt 8s ease-in-out infinite;
+      }
+      @keyframes glyphtilt {
+        50% {
+          transform: rotate(-8deg);
+        }
+      }
+      .a23 .glyph i {
+        position: absolute;
+        background: var(--ink);
+      }
+      .a23 .glyph i:nth-child(1) {
+        left: 0;
+        top: 0;
+        width: 38%;
+        height: 62%;
+      }
+      .a23 .glyph i:nth-child(2) {
+        right: 0;
+        top: 18%;
+        width: 30%;
+        height: 30%;
+      }
+      .a23 .glyph i:nth-child(3) {
+        left: 22%;
+        bottom: 0;
+        width: 30%;
+        height: 34%;
+        background: var(--volt);
+      }
+      .a23 .glyph i:nth-child(4) {
+        right: 12%;
+        bottom: 8%;
+        width: 22%;
+        height: 22%;
+      }
+      .a23 .flabel {
+        display: block;
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.2em;
+        color: #8f8d84;
+        margin-bottom: 8px;
+      }
+      .a23 .femail {
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: clamp(0.85rem, 1.6vw, 1.2rem);
+        letter-spacing: 0.02em;
+        border-bottom: 2px solid var(--volt);
+        padding-bottom: 2px;
+      }
+      .a23 .fsoc {
+        display: grid;
+        gap: 3px;
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        color: #55534b;
+      }
+      .a23 .fcols {
+        display: flex;
+        gap: 8%;
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.1em;
+        line-height: 1.8;
+        color: #55534b;
+      }
+      .a23 .bigname {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 4%;
+        font-family: "Archivo Black";
+        font-size: clamp(3.4rem, 11.4vw, 9.8rem);
+        line-height: 0.78;
+        text-align: center;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .a23 .ftags {
+        position: absolute;
+        left: 4%;
+        right: 4%;
+        bottom: 2.5%;
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--mono);
+        font-size: 7.5px;
+        letter-spacing: 0.14em;
+        color: #8f8d84;
+      }
+      /* 24 CENTER STAGE (after SaveDay) */
+      .a24 {
+        background: #fbfaf6;
+        color: var(--ink);
+        align-items: center;
+        text-align: center;
+      }
+      .a24 .pillnav {
+        position: absolute;
+        top: 6%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: clamp(10px, 1.6vw, 22px);
+        background: #ffffff;
+        border: 1px solid #e2ddd2;
+        border-radius: 99px;
+        padding: 9px 12px 9px 18px;
+        box-shadow: 0 6px 22px rgba(19, 19, 19, 0.07);
+      }
+      .a24 .pl {
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: 12.5px;
+      }
+      .a24 .plinks {
+        display: flex;
+        gap: clamp(8px, 1.2vw, 16px);
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: 11.5px;
+        color: #55534b;
+      }
+      .a24 .plinks i {
+        font-style: normal;
+      }
+      .a24 .pcta {
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: 11px;
+        border-radius: 99px;
+        padding: 8px 14px;
+      }
+      .a24 .badge24 {
+        display: inline-block;
+        margin-bottom: 14px;
+        background: #ffffff;
+        border: 1px solid #e2ddd2;
+        border-radius: 99px;
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.14em;
+        padding: 6px 12px;
+        color: #55534b;
+        animation: badgebob 4s ease-in-out infinite;
+      }
+      @keyframes badgebob {
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+      .a24 h3 {
+        font-family: "Archivo Black";
+        font-size: clamp(2rem, 4.9vw, 4rem);
+        line-height: 0.96;
+        letter-spacing: -0.015em;
+        max-width: none;
+      }
+      .a24 .sub24 {
+        margin-top: 14px;
+        font-family: var(--body);
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: #55534b;
+      }
+
+      @media (max-width: 760px) {
+        .art {
+          aspect-ratio: 4/4.4;
+        }
+        .th {
+          margin-left: 0;
+        }
+        .a07 .chips {
+          display: none;
+        }
+        .a08 .dot {
+          width: 60%;
+          right: -22%;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .a01 .acid,
+        .a03 .rider,
+        .a05 .q4,
+        .a08 .dot,
+        .a09 .uvw,
+        .a12 .bar span,
+        .a15 .neon {
+          animation: none;
+        }
+        .a19 .field19,
+        .a20 .block20,
+        .a21 .peek21,
+        .a22 .p,
+        .a23 .glyph,
+        .a24 .badge24,
+        .a16 .prog i.on,
+        .a17 .bean,
+        .a17 .peek,
+        .a18 .arrow {
+          animation: none;
+        }
+        .rv {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <span>UPPERHAND LLC</span
+        ><span>03 × 06 SESSIONS · FOR JOHN · JULY 2026</span>
+      </div>
+      <section class="hero">
+        <p class="kicker">BILLBOARD × SUPERCOLOR · TWENTY-FOUR TAKES</p>
+        <h1>One lane.<br />Twenty-four <em>ways to drive it.</em></h1>
+        <p class="lede">
+          John picked 03 and 06: the type slam and the pop color. These fifteen
+          cross them with
+          <b>fluorescent-on-monochrome and full pop</b>, one composition idea
+          per take. Same bar as always: bold, sleek, alive. Kill fast. Keep two
+          or three, and we take those to full page comps. Takes 16 up are
+          studies of John’s references.
+        </p>
+      </section>
+
+      <section class="take rv" id="t01">
+        <header>
+          <span class="tno">01</span>
+          <h2>Poster</h2>
+          <span class="pal"
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            The baseline, sharpened: paper, slam, one acid block that will not
+            sit still.
+          </p>
+        </header>
+        <div class="art a01">
+          <div class="nav">
+            <span>UPPERHAND</span><span>SEEN FROM THE STREET</span>
+          </div>
+          <h3>WE MAKE THINGS<br />PEOPLE <span class="hl">POINT</span> AT.</h3>
+          <span class="cta">LOOK →</span
+          ><span class="acid" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t02">
+        <header>
+          <span class="tno">02</span>
+          <h2>Inverse</h2>
+          <span class="pal"
+            ><i style="background: #101012"></i
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            The same slam with the lights off: fluorescent life on monochrome
+            dark.
+          </p>
+        </header>
+        <div class="art a02">
+          <div class="nav">
+            <span>UPPERHAND</span><span>NIGHT PRESS RUN</span>
+          </div>
+          <h3>DARK OUT.<br /><span class="v">STILL SHIPPING.</span></h3>
+          <div class="rule" aria-hidden="true"></div>
+          <span class="cta">GET LOUD →</span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t03">
+        <header>
+          <span class="tno">03</span>
+          <h2>Two-Tone</h2>
+          <span class="pal"
+            ><i style="background: #ccff00"></i
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            Half volt, half paper, one hard seam. The pink rider patrols the
+            border.
+          </p>
+        </header>
+        <div class="art a03">
+          <div class="nav"><span>UPPERHAND</span><span>PICK A SIDE</span></div>
+          <h3>HALF ART.<br />HALF ENGINE.</h3>
+          <span class="cta">PICK A SIDE →</span>
+          <span class="seam" aria-hidden="true"></span>
+          <div class="mans" aria-hidden="true">
+            <p><b>ART</b>type · color · wit · nerve</p>
+            <p><b>ENGINE</b>next.js · supabase · 21 days</p>
+          </div>
+          <span class="rider" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t04">
+        <header>
+          <span class="tno">04</span>
+          <h2>Outline</h2>
+          <span class="pal"
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ff2e88"></i
+            ><i style="background: #2ee6ff"></i
+          ></span>
+          <p class="th">
+            Everything drawn, one thing filled. The fill is the whole message.
+          </p>
+        </header>
+        <div class="art a04">
+          <div class="nav"><span>UPPERHAND</span><span>INK PENDING</span></div>
+          <h3>FILL IN<br />THE <span class="fill">BLANK.</span></h3>
+          <span class="cta">FILL IT →</span>
+          <span class="corner" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t05">
+        <header>
+          <span class="tno">05</span>
+          <h2>Checker</h2>
+          <span class="pal"
+            ><i style="background: #ccff00"></i
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #2ee6ff"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            Supercolor as a board: four quadrants, one keeps changing its mind.
+          </p>
+        </header>
+        <div class="art a05">
+          <span class="q q1" aria-hidden="true"></span
+          ><span class="q q2" aria-hidden="true"></span
+          ><span class="q q3" aria-hidden="true"></span
+          ><span class="q q4" aria-hidden="true"></span>
+          <div class="nav"><span>UPPERHAND</span><span>YOUR MOVE</span></div>
+          <h3>EVERY SQUARE<br />DOES WORK.</h3>
+          <span class="cta">YOUR MOVE →</span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t06">
+        <header>
+          <span class="tno">06</span>
+          <h2>Highlight Reel</h2>
+          <span class="pal"
+            ><i style="background: #101012"></i
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            Monochrome footage, marker fluoro. The editor's hand over real work.
+          </p>
+        </header>
+        <div class="art a06">
+          <video
+            class="bgv"
+            muted
+            loop
+            autoplay
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/9736522/9736522-sd_640_360_24fps.mp4"
+          ></video>
+          <div class="wash" aria-hidden="true"></div>
+          <div class="nav">
+            <span>UPPERHAND</span><span>PROOF, CIRCLED</span>
+          </div>
+          <h3>CIRCLE WHAT<br /><span class="circ">MATTERS.</span></h3>
+          <span class="cta">CIRCLE IT →</span>
+          <span class="note" aria-hidden="true">this one ↓</span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t07">
+        <header>
+          <span class="tno">07</span>
+          <h2>Stack</h2>
+          <span class="pal"
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+            ><i style="background: #ff7a1a"></i
+          ></span>
+          <p class="th">
+            The palette as product: paint chips with our names on them.
+          </p>
+        </header>
+        <div class="art a07">
+          <div class="nav">
+            <span>UPPERHAND</span><span>SWATCH BOOK 01</span>
+          </div>
+          <h3>PICK A COLOR.<br />WE BUILD IT.</h3>
+          <span class="cta">PICK ONE →</span>
+          <div class="chips" aria-hidden="true">
+            <span class="chip c1"><b>UH-01 VOLT</b></span>
+            <span class="chip c2"><b>UH-02 SIGNAL</b></span>
+            <span class="chip c3"><b>UH-03 POOL</b></span>
+            <span class="chip c4"><b>UH-04 AMBER</b></span>
+            <span class="chip c5"><b>UH-05 INK</b></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="take rv" id="t08">
+        <header>
+          <span class="tno">08</span>
+          <h2>Punch</h2>
+          <span class="pal"
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #ff2e88"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #2ee6ff"></i
+          ></span>
+          <p class="th">
+            One shape, oversized, breathing. Restraint everywhere else.
+          </p>
+        </header>
+        <div class="art a08">
+          <div class="nav"><span>UPPERHAND</span><span>TO THE POINT</span></div>
+          <h3>ONE BIG POINT.</h3>
+          <span class="cta">MAKE IT →</span>
+          <span class="dot" aria-hidden="true"></span
+          ><span class="sq" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t09">
+        <header>
+          <span class="tno">09</span>
+          <h2>UV</h2>
+          <span class="pal"
+            ><i style="background: #0c0a10"></i
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #b366ff"></i
+            ><i style="background: #ccff00"></i
+          ></span>
+          <p class="th">
+            Blacklight monochrome: ultraviolet glow, volt underline, nothing
+            else.
+          </p>
+        </header>
+        <div class="art a09">
+          <div class="nav"><span>UPPERHAND</span><span>AFTER CLOSE</span></div>
+          <h3>SEEN BEST<br />IN THE <span class="uvw">DARK.</span></h3>
+          <div class="ul" aria-hidden="true"></div>
+          <span class="cta">LIGHTS OFF →</span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t10">
+        <header>
+          <span class="tno">10</span>
+          <h2>Cutout</h2>
+          <a class="fb" href="/cutout">FULL BUILD →</a>
+          <span class="pal"
+            ><i style="background: #ccff00"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            A volt wall with a slit of the real world showing through.
+          </p>
+        </header>
+        <div class="art a10">
+          <div class="nav"><span>UPPERHAND</span><span>WINDOW SEAT</span></div>
+          <h3>LOOK THROUGH<br />THE WORK.</h3>
+          <span class="cta">SEE THROUGH →</span>
+          <span class="win" aria-hidden="true"
+            ><video
+              muted
+              loop
+              autoplay
+              playsinline
+              preload="metadata"
+              src="https://videos.pexels.com/video-files/26744501/11999021_640_360_25fps.mp4"
+            ></video
+          ></span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t11">
+        <header>
+          <span class="tno">11</span>
+          <h2>Tape</h2>
+          <span class="pal"
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+            ><i style="background: #2ee6ff"></i
+          ></span>
+          <p class="th">
+            Pop color as material: three fluoro strips holding the page
+            together.
+          </p>
+        </header>
+        <div class="art a11">
+          <div class="nav"><span>UPPERHAND</span><span>HAND-APPLIED</span></div>
+          <h3>HELD TOGETHER<br />ON PURPOSE.</h3>
+          <span class="cta">STICK WITH US →</span>
+          <span class="strip s1" aria-hidden="true"></span
+          ><span class="strip s2" aria-hidden="true"></span
+          ><span class="strip s3" aria-hidden="true"></span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t12">
+        <header>
+          <span class="tno">12</span>
+          <h2>Ticker</h2>
+          <a class="fb" href="/ticker">FULL BUILD →</a>
+          <span class="pal"
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+            ><i style="background: #131313"></i
+          ></span>
+          <p class="th">
+            The slam framed by two loud wires that never stop talking.
+          </p>
+        </header>
+        <div class="art a12">
+          <div class="bar bt" aria-hidden="true">
+            <span
+              >SHIPPED THIS WEEK: 3 · CLIENTS STUNNED: ALL · SLOTS OPEN: ONE
+              ·&nbsp;SHIPPED THIS WEEK: 3 · CLIENTS STUNNED: ALL · SLOTS OPEN:
+              ONE ·&nbsp;</span
+            >
+          </div>
+          <h3>NEWS:<br />IT SHIPPED.</h3>
+          <span class="cta">READ MORE →</span>
+          <div class="bar bb" aria-hidden="true">
+            <span
+              >BRING US THE PROBLEM THAT WILL NOT LEAVE YOU ALONE · PHASE ONE IN
+              21 DAYS ·&nbsp;BRING US THE PROBLEM THAT WILL NOT LEAVE YOU ALONE
+              · PHASE ONE IN 21 DAYS ·&nbsp;</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="take rv" id="t13">
+        <header>
+          <span class="tno">13</span>
+          <h2>Grid Pop</h2>
+          <span class="pal"
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            Swiss bones, two live cells. Discipline that knows when to spark.
+          </p>
+        </header>
+        <div class="art a13">
+          <span class="cell cv" aria-hidden="true"></span
+          ><span class="cell cp" aria-hidden="true"></span>
+          <span class="cn n1" aria-hidden="true">C-03</span
+          ><span class="cn n2" aria-hidden="true">C-08</span>
+          <div class="nav">
+            <span>UPPERHAND</span><span>4-COL · 2 LIVE</span>
+          </div>
+          <h3>MOSTLY DISCIPLINE.<br />TWO SPARKS.</h3>
+          <span class="cta">BREAK THE GRID →</span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t14">
+        <header>
+          <span class="tno">14</span>
+          <h2>Acid Wash</h2>
+          <a class="fb" href="/acid-wash">FULL BUILD →</a>
+          <span class="pal"
+            ><i style="background: #ccff00"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #8f8d84"></i
+          ></span>
+          <p class="th">
+            The whole world dipped in one fluorescent: footage as volt duotone.
+          </p>
+        </header>
+        <div class="art a14">
+          <video
+            class="bgv"
+            muted
+            loop
+            autoplay
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/9736522/9736522-sd_640_360_24fps.mp4"
+          ></video>
+          <span class="acidwash" aria-hidden="true"></span>
+          <div class="nav"><span>UPPERHAND</span><span>DIP TANK 01</span></div>
+          <h3>DIPPED<br />IN VOLT.</h3>
+          <span class="cta">DIP IN →</span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t15">
+        <header>
+          <span class="tno">15</span>
+          <h2>Night Slam</h2>
+          <span class="pal"
+            ><i style="background: #0e0d11"></i
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #ff2e88"></i
+            ><i style="background: #ccff00"></i
+          ></span>
+          <p class="th">
+            The billboard after hours: bone type, one neon word, a rare flicker.
+          </p>
+        </header>
+        <div class="art a15">
+          <div class="nav"><span>UPPERHAND</span><span>OPEN LATE</span></div>
+          <h3>AFTER HOURS,<br />STILL <span class="neon">LOUD.</span></h3>
+          <div class="tags" aria-hidden="true">
+            <span class="tag">NO SLEEP LOST</span
+            ><span class="tag">YOURS BY FRIDAY</span>
+          </div>
+          <span class="cta">STAY UP →</span>
+        </div>
+      </section>
+      <section class="take rv" id="t16">
+        <header>
+          <span class="tno">16</span>
+          <h2>Full Bleed</h2>
+          <a class="fb" href="/full-bleed">FULL BUILD →</a>
+          <span class="pal"
+            ><i style="background: #131313"></i
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #8f8d84"></i
+          ></span>
+          <p class="th">
+            After 72andSunny: the whole screen is one build and one sentence.
+            Scroll snaps, chapter by chapter.
+          </p>
+        </header>
+        <div class="art a16">
+          <video
+            class="bgv"
+            muted
+            loop
+            autoplay
+            playsinline
+            preload="metadata"
+            src="https://videos.pexels.com/video-files/26744501/11999021_640_360_25fps.mp4"
+          ></video>
+          <div class="wash16" aria-hidden="true"></div>
+          <div class="nav"><span>UPPERHAND</span><span>WORK 03 / 15</span></div>
+          <p class="sent">
+            Built for a drive-in in a cow pasture.<br />Sold out every Saturday
+            since.
+          </p>
+          <span class="chip16">MOO V NIGHT · PRE-SHOW ENGINE</span>
+          <div class="prog" aria-hidden="true">
+            <i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i
+            ><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+      </section>
+
+      <section class="take rv" id="t17">
+        <header>
+          <span class="tno">17</span>
+          <h2>Flood</h2>
+          <span class="pal"
+            ><i style="background: #ccff00"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ff2e88"></i
+            ><i style="background: #e2ff66"></i
+          ></span>
+          <p class="th">
+            After Beans: the whole world wears one color. Every page floods a
+            different one; the next room peeks in from the edge.
+          </p>
+        </header>
+        <div class="art a17">
+          <div class="nav">
+            <span>UPPERHAND</span><span>ROOM 01 · VOLT</span>
+          </div>
+          <span class="obj cyl" aria-hidden="true"></span>
+          <span class="obj cube" aria-hidden="true"></span>
+          <span class="bean" aria-hidden="true"
+            ><i class="sh"></i><i class="sh s2"></i
+          ></span>
+          <h3>Everything we touch<br />turns volt.</h3>
+          <span class="cta">SAY HELLO →</span>
+          <div class="rooms" aria-hidden="true">
+            <p>What we make</p>
+            <p>The journal</p>
+            <p>How it works</p>
+          </div>
+          <span class="peek" aria-hidden="true"><b>NEXT ROOM →</b></span>
+        </div>
+      </section>
+
+      <section class="take rv" id="t18">
+        <header>
+          <span class="tno">18</span>
+          <h2>Woven</h2>
+          <span class="pal"
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #ff2e88"></i
+          ></span>
+          <p class="th">
+            After Dragon Rouge: type too big for the frame, and the mark threads
+            through the letters. One hard color band to close.
+          </p>
+        </header>
+        <div class="art a18">
+          <div class="nav"><span>UPPERHAND</span><span>BRAND DESK</span></div>
+          <div class="slabs" aria-hidden="false">
+            <span class="l1">TAKE THE</span>
+            <span class="arrow" aria-hidden="true"
+              ><i class="tip"></i><i class="stem"></i
+            ></span>
+            <span class="l2">UPPER</span>
+            <span class="l3">HAND.</span>
+          </div>
+          <div class="band" aria-hidden="true">
+            CHICAGO · EST. 2025 · SHIPS WORLDWIDE
+          </div>
+        </div>
+      </section>
+      <section class="take rv" id="t19">
+        <header>
+          <span class="tno">19</span>
+          <h2>Off-Center</h2>
+          <span class="pal"
+            ><i style="background: #0a0a0a"></i
+            ><i style="background: #d1128a"></i
+            ><i style="background: #c9c9cf"></i
+            ><i style="background: #ccff00"></i
+          ></span>
+          <p class="th">
+            After Huge, round one: the statement refuses the center. Media is
+            loud; the words sit low-left and let it burn behind them.
+          </p>
+        </header>
+        <div class="art a19">
+          <div class="field19" aria-hidden="true"></div>
+          <div class="blocknav" aria-hidden="true">
+            <span class="b1">UH</span><span class="b2">MENU</span>
+          </div>
+          <span class="talk">LET’S TALK ↗</span>
+          <p class="ann">— phase one · 21 days</p>
+          <h3>Firsts,<br />done loud.</h3>
+        </div>
+      </section>
+
+      <section class="take rv" id="t20">
+        <header>
+          <span class="tno">20</span>
+          <h2>Void Block</h2>
+          <span class="pal"
+            ><i style="background: #0a0a0a"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #f2f0ea"></i
+            ><i style="background: #d1128a"></i
+          ></span>
+          <p class="th">
+            After Huge, round two: one block on a void, never quite centered.
+            Confidence measured in empty space.
+          </p>
+        </header>
+        <div class="art a20">
+          <div class="nav">
+            <span>UPPERHAND</span><span>A DESIGN AND BUILD COMPANY</span>
+          </div>
+          <span class="block20" aria-hidden="false">UPPER<br />HAND</span>
+          <p class="meta20" aria-hidden="true">
+            EST. 2025 · CHICAGO · SHIPS EVERYWHERE
+          </p>
+        </div>
+      </section>
+
+      <section class="take rv" id="t21">
+        <header>
+          <span class="tno">21</span>
+          <h2>Peek</h2>
+          <span class="pal"
+            ><i style="background: #f0ead8"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ffcf3f"></i
+            ><i style="background: #ffffff"></i
+          ></span>
+          <p class="th">
+            After BEGG: condensed caps with the world showing through the
+            letters, and a handwritten interruption. On the real site, footage
+            peeks through as you scroll.
+          </p>
+        </header>
+        <div class="art a21">
+          <div class="nav">
+            <span>UPPERHAND</span><span>FARM FRESH SOFTWARE</span>
+          </div>
+          <h3 class="peek21">MADE THE<br />HARD WAY</h3>
+          <span class="script21">by hand, on purpose</span>
+          <div class="drip" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+      </section>
+
+      <section class="take rv" id="t22">
+        <header>
+          <span class="tno">22</span>
+          <h2>Stagger</h2>
+          <span class="pal"
+            ><i style="background: #d9d6d0"></i
+            ><i style="background: #1231c9"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ffffff"></i
+          ></span>
+          <p class="th">
+            After Depo: a board of panels that scroll at different speeds. One
+            blue word carries the whole palette.
+          </p>
+        </header>
+        <div class="art a22">
+          <div class="p pw" aria-hidden="false">
+            <h3>We build <em>loud</em><br />that sells.</h3>
+          </div>
+          <div class="p pb" aria-hidden="true">
+            <span class="vert">Upperhand®</span>
+          </div>
+          <div class="p pk" aria-hidden="true">
+            <span>JOHN’S PICK<br />JOHN’S PICK<br />JOHN’S PICK</span>
+          </div>
+          <div class="p pc" aria-hidden="true">
+            <span class="arr">↗</span><b>READY TO WORK · WE TOO</b>
+          </div>
+        </div>
+      </section>
+
+      <section class="take rv" id="t23">
+        <header>
+          <span class="tno">23</span>
+          <h2>Fat Footer</h2>
+          <a class="fb" href="/fat-footer">FULL BUILD →</a>
+          <span class="pal"
+            ><i style="background: #f4f2ec"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #8f8d84"></i
+          ></span>
+          <p class="th">
+            After Rebellion: the footer is the destination. A bordered grid of
+            the essentials, then the name at a size that does not apologize,
+            cropped by the floor.
+          </p>
+        </header>
+        <div class="art a23">
+          <div class="fgrid" aria-hidden="false">
+            <div class="fcell fmark" aria-hidden="true">
+              <span class="glyph"><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="fcell fbrief">
+              <span class="flabel">SEND US A BRIEF</span
+              ><b class="femail">BRIEF@GETUPPERHAND.IO</b>
+              <div class="fsoc">
+                <span>INSTAGRAM</span><span>LINKEDIN</span><span>YOUTUBE</span>
+              </div>
+            </div>
+            <div class="fcell fmeta">
+              <span class="flabel">WE’RE BUILDING</span>
+              <div class="fcols">
+                <p>CHICAGO<br />EVERYWHERE</p>
+                <p>PHASE ONE IN 21 DAYS<br />ONE SLOT OPEN</p>
+              </div>
+            </div>
+          </div>
+          <div class="bigname" aria-hidden="true">UPPERHAND</div>
+          <div class="ftags" aria-hidden="true">
+            <span>©2026 LEGAL &amp; COOKIES</span><span>#BUILDS</span
+            ><span>#BRAND</span><span>#AI</span><span>#SHIPPING</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="take rv" id="t24">
+        <header>
+          <span class="tno">24</span>
+          <h2>Center Stage</h2>
+          <a class="fb" href="/center-stage">FULL BUILD →</a>
+          <span class="pal"
+            ><i style="background: #fbfaf6"></i
+            ><i style="background: #131313"></i
+            ><i style="background: #ccff00"></i
+            ><i style="background: #e8e4da"></i
+          ></span>
+          <p class="th">
+            After the SaveDay nav: everything gathers to the middle. The nav is
+            one centered piece of furniture, the badge vouches, the headline
+            preaches.
+          </p>
+        </header>
+        <div class="art a24">
+          <div class="pillnav" aria-hidden="false">
+            <b class="pl">⬢ UPPERHAND</b
+            ><span class="plinks"><i>Work</i><i>Journal</i><i>Method</i></span
+            ><span class="pcta">START →</span>
+          </div>
+          <span class="badge24" aria-hidden="true"
+            >★ JOHN’S PICK · LANE OF THE DAY</span
+          >
+          <h3>YOUR UNFAIR<br />CREATIVE ADVANTAGE</h3>
+          <p class="sub24">
+            Upperhand builds the thing your competitors will screenshot.
+          </p>
+        </div>
+      </section>
+
+      <footer class="end">
+        <p>
+          PICK 2 OR 3 · WE TAKE THOSE TO FULL PAGE COMPS ·
+          <b>THE MAIN DECK LIVES AT /</b>
+        </p>
+      </footer>
+    </div>
+    <script>
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+      const vio = new IntersectionObserver(
+        (es) =>
+          es.forEach((en) => {
+            if (en.isIntersecting) en.target.play().catch(() => {});
+            else en.target.pause();
+          }),
+        { threshold: 0.15 },
+      );
+      document.querySelectorAll("video").forEach((v) => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          v.removeAttribute("autoplay");
+          v.pause();
+        } else vio.observe(v);
+      });
+    </script>
+  </body>
+</html>

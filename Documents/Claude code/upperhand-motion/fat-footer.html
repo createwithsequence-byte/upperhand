@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upperhand · We Take the Job</title>
+    <meta
+      name="description"
+      content="Upperhand is a small, focused design and build studio in Chicago. Phase one in 21 days."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #131313;
+        --bone: #f4f2ec;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --dim: #55534b;
+        --faint: #8f8d84;
+        --hair: rgba(19, 19, 19, 0.85);
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --disp: "Archivo Black";
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --expo: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bone);
+        color: var(--ink);
+        font-family: var(--body);
+      }
+      .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 clamp(1.2rem, 4vw, 3.4rem);
+      }
+      .rv {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 700ms var(--ease),
+          transform 700ms var(--expo);
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+      /* nav */
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 26px 0;
+      }
+      nav .brand {
+        font-family: var(--disp);
+        font-size: 15px;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      nav .links {
+        display: flex;
+        gap: clamp(14px, 2.4vw, 30px);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+      }
+      nav .links a {
+        text-decoration: none;
+        color: var(--dim);
+      }
+      nav .links a:hover {
+        color: var(--ink);
+        border-bottom: 2px solid var(--volt);
+      }
+      /* hero */
+      .hero {
+        padding: clamp(3rem, 10vh, 7rem) 0 clamp(2.6rem, 7vh, 5rem);
+      }
+      .hero h1 {
+        font-family: var(--disp);
+        font-size: clamp(3rem, 9.4vw, 7.6rem);
+        line-height: 0.9;
+        letter-spacing: -0.015em;
+      }
+      .hero h1 .hl {
+        background: var(--volt);
+        padding: 0 0.1em;
+      }
+      .hero .sub {
+        margin-top: 24px;
+        max-width: 34em;
+        font-weight: 600;
+        font-size: clamp(1rem, 1.7vw, 1.25rem);
+        color: var(--dim);
+        line-height: 1.55;
+      }
+      .hero .meta {
+        margin-top: 26px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: var(--faint);
+      }
+      /* bordered grid sections */
+      .gridbox {
+        border: 1.5px solid var(--hair);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .cellrow {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .cell {
+        padding: clamp(1.4rem, 3vw, 2.4rem);
+        border-left: 1.5px solid var(--hair);
+      }
+      .cell:first-child {
+        border-left: 0;
+      }
+      .cellrow + .cellrow .cell {
+        border-top: 1.5px solid var(--hair);
+      }
+      .lab {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.22em;
+        color: var(--faint);
+        display: block;
+        margin-bottom: 12px;
+      }
+      .cell h3 {
+        font-family: var(--disp);
+        font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+        line-height: 1.25;
+        text-transform: uppercase;
+      }
+      .cell h3 i {
+        font-style: normal;
+        background: var(--volt);
+        padding: 0 4px;
+      }
+      .cell p {
+        margin-top: 12px;
+        color: var(--dim);
+        font-size: 0.94rem;
+        line-height: 1.55;
+      }
+      .cell .eg {
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.08em;
+        color: var(--faint);
+        line-height: 1.9;
+      }
+      .sechead {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin: clamp(3.4rem, 9vh, 6.5rem) 0 22px;
+        flex-wrap: wrap;
+      }
+      .sechead h2 {
+        font-family: var(--disp);
+        font-size: clamp(1.7rem, 4vw, 3rem);
+        letter-spacing: -0.01em;
+      }
+      .sechead .k {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        color: var(--faint);
+      }
+      /* work table */
+      .wtable {
+        border-top: 1.5px solid var(--hair);
+      }
+      .wrow {
+        display: grid;
+        grid-template-columns: 2fr 3fr 1fr;
+        gap: 16px;
+        align-items: baseline;
+        padding: 20px 4px;
+        border-bottom: 1.5px solid var(--hair);
+        text-decoration: none;
+        color: var(--ink);
+        transition:
+          background 160ms var(--ease),
+          padding-left 200ms var(--expo);
+      }
+      .wrow:hover {
+        background: #efecdf;
+        padding-left: 14px;
+      }
+      .wrow b {
+        font-family: var(--disp);
+        font-size: clamp(1rem, 2vw, 1.5rem);
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      .wrow p {
+        color: var(--dim);
+        font-size: 0.94rem;
+      }
+      .wrow .t {
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.16em;
+        color: var(--ink);
+        border: 1.5px solid var(--ink);
+        border-radius: 99px;
+        padding: 4px 10px;
+        justify-self: end;
+        white-space: nowrap;
+      }
+      .wrow:hover .t {
+        background: var(--volt);
+        border-color: var(--volt);
+      }
+      /* the hand (creative mark) */
+      .handcell {
+        display: grid;
+        place-items: center;
+        min-height: 240px;
+      }
+      .fan {
+        position: relative;
+        width: 150px;
+        height: 150px;
+      }
+      .cardx {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 66px;
+        height: 96px;
+        border-radius: 8px;
+        border: 2px solid var(--ink);
+        background: #fffdf4;
+        transform-origin: 50% 115%;
+        box-shadow: 0 3px 0 rgba(19, 19, 19, 0.12);
+      }
+      .cardx i {
+        position: absolute;
+        top: 6px;
+        left: 8px;
+        font-style: normal;
+        font-family: var(--disp);
+        font-size: 13px;
+      }
+      .cardx u {
+        position: absolute;
+        bottom: 6px;
+        right: 8px;
+        text-decoration: none;
+        font-family: var(--disp);
+        font-size: 13px;
+        transform: rotate(180deg);
+      }
+      .c1 {
+        transform: translateX(-50%) rotate(-32deg);
+      }
+      .c2 {
+        transform: translateX(-50%) rotate(-16deg);
+      }
+      .c3 {
+        transform: translateX(-50%) rotate(0deg);
+      }
+      .c4 {
+        transform: translateX(-50%) rotate(16deg);
+      }
+      .c5 {
+        transform: translateX(-50%) rotate(32deg);
+        background: var(--volt);
+        animation: acedeal 6s var(--expo) infinite;
+      }
+      @keyframes acedeal {
+        0%,
+        78%,
+        100% {
+          transform: translateX(-50%) rotate(32deg);
+        }
+        86%,
+        94% {
+          transform: translateX(-50%) rotate(38deg) translateY(-10px);
+        }
+      }
+      .handnote {
+        margin-top: 18px;
+        font-family: var(--mono);
+        font-size: 8.5px;
+        letter-spacing: 0.18em;
+        color: var(--faint);
+        text-align: center;
+      }
+      /* process cells */
+      .pn {
+        font-family: var(--disp);
+        font-size: 2.2rem;
+      }
+      .cell:nth-child(2) .pn {
+        background: var(--volt);
+        padding: 0 8px;
+      }
+      /* CTA strip */
+      .ctastrip {
+        margin: clamp(3.4rem, 9vh, 6.5rem) 0 0;
+        border: 1.5px solid var(--hair);
+        border-radius: 12px;
+        padding: clamp(2rem, 5vw, 3.4rem);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .ctastrip h2 {
+        font-family: var(--disp);
+        font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+      }
+      .ctastrip a {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+        letter-spacing: 0.04em;
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 3px solid var(--volt);
+        padding-bottom: 3px;
+      }
+      .ctastrip a:hover {
+        background: var(--volt);
+      }
+      /* FAT FOOTER */
+      .fat {
+        margin-top: clamp(4rem, 10vh, 7rem);
+      }
+      .fat .fgrid {
+        border: 1.5px solid var(--hair);
+        border-radius: 12px;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr 1.5fr;
+        overflow: hidden;
+      }
+      .fat .fcell {
+        padding: clamp(1.4rem, 3vw, 2.2rem);
+        border-left: 1.5px solid var(--hair);
+      }
+      .fat .fcell:first-child {
+        border-left: 0;
+        display: grid;
+        place-items: center;
+      }
+      .fat .femail {
+        display: inline-block;
+        font-weight: 700;
+        font-size: clamp(1rem, 2vw, 1.5rem);
+        letter-spacing: 0.01em;
+        color: var(--ink);
+        text-decoration: none;
+        border-bottom: 3px solid var(--volt);
+        padding-bottom: 2px;
+      }
+      .fat .femail:hover {
+        background: var(--volt);
+      }
+      .fat .fsoc {
+        display: grid;
+        gap: 4px;
+        margin-top: 18px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.18em;
+        color: var(--dim);
+      }
+      .fat .fcols {
+        display: flex;
+        gap: 10%;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        line-height: 2;
+        color: var(--dim);
+      }
+      .bigname {
+        font-family: var(--disp);
+        font-size: clamp(3.2rem, 10.2vw, 9.6rem);
+        line-height: 0.74;
+        text-align: center;
+        letter-spacing: -0.035em;
+        white-space: nowrap;
+        overflow: hidden;
+        margin-top: clamp(1.6rem, 4vh, 3rem);
+      }
+      .ftags {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 14px 0 26px;
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        color: var(--faint);
+      }
+      @media (max-width: 820px) {
+        .cellrow,
+        .fat .fgrid {
+          grid-template-columns: 1fr;
+        }
+        .cell,
+        .fat .fcell {
+          border-left: 0 !important;
+          border-top: 1.5px solid var(--hair);
+        }
+        .cell:first-child,
+        .fat .fcell:first-child {
+          border-top: 0;
+        }
+        .wrow {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+        .wrow .t {
+          justify-self: start;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .c5 {
+          animation: none;
+        }
+        .rv {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="#top">UPPERHAND</a>
+        <div class="links">
+          <a href="#work">WORK</a><a href="#make">WHAT WE MAKE</a
+          ><a href="#how">HOW</a><a href="#footer">CONTACT</a>
+        </div>
+      </nav>
+
+      <section class="hero" id="top">
+        <h1>WE TAKE<br />THE <span class="hl">JOB.</span></h1>
+        <p class="sub">
+          Upperhand is a small, focused design and build studio in Chicago.
+          Bring us the problem that will not leave you alone; phase one ships in
+          21 days, live, with your name on the door and ours on the invoice.
+        </p>
+        <p class="meta">EST. 2025 · 9 BUILDS LIVE · ONE SLOT OPEN</p>
+      </section>
+
+      <div class="sechead rv" id="make">
+        <h2>WHAT WE MAKE</h2>
+        <span class="k">NAMED AFTER OUTCOMES</span>
+      </div>
+      <div class="gridbox rv">
+        <div class="cellrow">
+          <div class="cell">
+            <span class="lab">01</span>
+            <h3>The thing your <i>customers use</i></h3>
+            <p>
+              Apps, booking engines, member portals, trivia machines. Software
+              people actually open.
+            </p>
+            <p class="eg">FISHERFIT APP · MOO V PRE-SHOW ENGINE</p>
+          </div>
+          <div class="cell">
+            <span class="lab">02</span>
+            <h3>The system that <i>runs your day</i></h3>
+            <p>
+              Ops consoles, case desks, automations. The busywork gets a
+              machine; you get your week back.
+            </p>
+            <p class="eg">TANGIBLE FORMATS DESK · COUNSEL FILES</p>
+          </div>
+          <div class="cell">
+            <span class="lab">03</span>
+            <h3>The presence that <i>sells while you sleep</i></h3>
+            <p>
+              Sites, brands, content engines. Loud where it earns attention,
+              quiet where it earns trust.
+            </p>
+            <p class="eg">MR. D'S STOREFRONT · SHELF LIFE ENGINE</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sechead rv" id="work">
+        <h2>THE WORK</h2>
+        <span class="k">ALL SHIPPED · ALL RUNNING</span>
+      </div>
+      <div class="wtable rv">
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>Tangible Formats</b>
+          <p>
+            Records cut one at a time. A storefront and order desk for a
+            lathe-cut vinyl maker.
+          </p>
+          <span class="t">SITE + OPS</span></a
+        >
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>Moo V Night</b>
+          <p>
+            Outdoor cinema in a cow pasture. Trivia on every phone before the
+            movie starts.
+          </p>
+          <span class="t">PRODUCT</span></a
+        >
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>FisherFit</b>
+          <p>
+            A Highland Park gym in every member's pocket. Goals, streaks,
+            progress photos.
+          </p>
+          <span class="t">MEMBER APP</span></a
+        >
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>Covered</b>
+          <p>
+            Sub plans while teachers sleep. A real curriculum in, a ready
+            classroom out.
+          </p>
+          <span class="t">SAAS</span></a
+        >
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>Counsel</b>
+          <p>
+            A case desk for an attorney with 150 restaurant clients. No file
+            lost, ever.
+          </p>
+          <span class="t">OPS</span></a
+        >
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>Mr. D's</b>
+          <p>
+            A Chicago beef stand gone cinematic. Video hero, grill-born embers,
+            real reviews.
+          </p>
+          <span class="t">SITE</span></a
+        >
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>Shelf Life</b>
+          <p>
+            A content engine for CPG brands. Product photos in, a month of
+            social out.
+          </p>
+          <span class="t">CONTENT</span></a
+        >
+        <a class="wrow" href="mailto:brief@getupperhand.io"
+          ><b>Good Grief</b>
+          <p>
+            An executor portal with a heart: a tribute song where the paperwork
+            ends.
+          </p>
+          <span class="t">PRODUCT</span></a
+        >
+      </div>
+
+      <div class="sechead rv" id="how">
+        <h2>HOW IT WORKS</h2>
+        <span class="k">NO DECKS ABOUT DECKS</span>
+      </div>
+      <div class="gridbox rv">
+        <div class="cellrow">
+          <div class="cell">
+            <span class="pn">01</span>
+            <h3 style="margin-top: 10px">The challenge</h3>
+            <p>
+              Bring us the problem that will not leave you alone. We scope it in
+              one call and put a number on it.
+            </p>
+          </div>
+          <div class="cell">
+            <span class="pn">21</span>
+            <h3 style="margin-top: 10px">Phase one, in days</h3>
+            <p>
+              A running build, not a proposal. Priced flat, shipped live, yours
+              to keep either way.
+            </p>
+          </div>
+          <div class="cell">
+            <span class="pn">03</span>
+            <h3 style="margin-top: 10px">The next move</h3>
+            <p>
+              Each phase earns the next. Stop any time and keep everything,
+              including the source.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sechead rv">
+        <h2>WHO WE ARE</h2>
+        <span class="k">SMALL, FOCUSED · ZERO ACCOUNT MANAGERS</span>
+      </div>
+      <div class="gridbox rv">
+        <div class="cellrow">
+          <div class="cell handcell">
+            <div>
+              <div class="fan" aria-hidden="true">
+                <span class="cardx c1"><i>2</i><u>2</u></span>
+                <span class="cardx c2"><i>5</i><u>5</u></span>
+                <span class="cardx c3"><i>9</i><u>9</u></span>
+                <span class="cardx c4"><i>K</i><u>K</u></span>
+                <span class="cardx c5"><i>A</i><u>A</u></span>
+              </div>
+              <p class="handnote">THE UPPER HAND · PLAYED DAILY</p>
+            </div>
+          </div>
+          <div class="cell">
+            <span class="lab">THE STUDIO</span>
+            <p
+              style="
+                margin-top: 0;
+                font-weight: 600;
+                font-size: 1.05rem;
+                color: var(--ink);
+                line-height: 1.5;
+              "
+            >
+              Greg makes it beautiful. John makes it sell. AI does the heavy
+              lifting like a power tool, not a personality, and every call,
+              pixel, and invoice has a human's name on it.
+            </p>
+          </div>
+          <div class="cell">
+            <span class="lab">THE RECORD</span>
+            <div
+              class="fcols"
+              style="
+                display: flex;
+                gap: 12%;
+                font-family: var(--mono);
+                font-size: 9px;
+                letter-spacing: 0.12em;
+                line-height: 2.1;
+                color: var(--dim);
+              "
+            >
+              <p>
+                BUILDS LIVE: 9<br />PHASE ONES ON TIME: ALL<br />UPTIME: RUDE
+              </p>
+              <p>FOUNDED: 2025<br />BASED: CHICAGO<br />RANGE: EVERYWHERE</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ctastrip rv" id="contact">
+        <h2>ONE SLOT OPEN.</h2>
+        <a href="mailto:brief@getupperhand.io">BRIEF@GETUPPERHAND.IO</a>
+      </div>
+
+      <footer class="fat" id="footer">
+        <div class="fgrid rv">
+          <div class="fcell">
+            <div>
+              <div
+                class="fan"
+                aria-hidden="true"
+                style="width: 120px; height: 120px"
+              >
+                <span class="cardx c1" style="width: 52px; height: 76px"
+                  ><i>2</i></span
+                >
+                <span class="cardx c2" style="width: 52px; height: 76px"
+                  ><i>5</i></span
+                >
+                <span class="cardx c3" style="width: 52px; height: 76px"
+                  ><i>9</i></span
+                >
+                <span class="cardx c4" style="width: 52px; height: 76px"
+                  ><i>K</i></span
+                >
+                <span class="cardx c5" style="width: 52px; height: 76px"
+                  ><i>A</i></span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="fcell">
+            <span class="lab">SEND US A BRIEF</span
+            ><a class="femail" href="mailto:brief@getupperhand.io"
+              >BRIEF@GETUPPERHAND.IO</a
+            >
+            <div class="fsoc">
+              <span>INSTAGRAM</span><span>LINKEDIN</span><span>YOUTUBE</span>
+            </div>
+          </div>
+          <div class="fcell">
+            <span class="lab">WE'RE BUILDING</span>
+            <div class="fcols">
+              <p>CHICAGO<br />EVERYWHERE</p>
+              <p>PHASE ONE IN 21 DAYS<br />ONE SLOT OPEN</p>
+            </div>
+          </div>
+        </div>
+        <div class="bigname" aria-hidden="true">UPPERHAND</div>
+        <div class="ftags">
+          <span>©2026 UPPERHAND LLC · LEGAL &amp; COOKIES</span
+          ><span>#BUILDS</span><span>#BRAND</span><span>#AI</span
+          ><span>#SHIPPING</span>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.08 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

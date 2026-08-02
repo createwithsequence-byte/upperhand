@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upperhand · Nightshift</title>
+    <meta
+      name="description"
+      content="Upperhand is a small, focused design and build studio in Chicago. Phase one live in 21 days."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0e0e10;
+        --bone: #f2f0ea;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --dim: rgba(242, 240, 234, 0.62);
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --disp: "Archivo Black";
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --expo: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--ink);
+        color: var(--bone);
+        font-family: var(--body);
+      }
+      .rv {
+        opacity: 0;
+        transform: translateY(22px);
+        transition:
+          opacity 700ms var(--ease),
+          transform 700ms var(--expo);
+      }
+      .rv.in {
+        opacity: 1;
+        transform: none;
+      }
+      .wire {
+        position: fixed;
+        left: 0;
+        right: 0;
+        z-index: 60;
+        overflow: hidden;
+        white-space: nowrap;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        padding: 8px 0;
+      }
+      .wire.top {
+        top: 0;
+        background: var(--pink);
+        color: #fff;
+      }
+      .wire.bot {
+        bottom: 0;
+        background: var(--volt);
+        color: var(--ink);
+      }
+      .wire span {
+        display: inline-block;
+        animation: crawl 28s linear infinite;
+      }
+      .wire.bot span {
+        animation-duration: 36s;
+      }
+      @keyframes crawl {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .pillnav {
+        position: fixed;
+        top: 44px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: clamp(10px, 1.8vw, 22px);
+        background: rgba(14, 14, 16, 0.8);
+        border: 1px solid rgba(242, 240, 234, 0.22);
+        border-radius: 99px;
+        padding: 9px 12px 9px 20px;
+        backdrop-filter: blur(10px);
+      }
+      .pillnav .brand {
+        font-family: var(--disp);
+        font-size: 13px;
+        color: var(--bone);
+        text-decoration: none;
+      }
+      .pillnav .links {
+        display: flex;
+        gap: clamp(10px, 1.6vw, 18px);
+        font-weight: 600;
+        font-size: 12px;
+      }
+      .pillnav .links a {
+        color: var(--dim);
+        text-decoration: none;
+      }
+      .pillnav .links a:hover {
+        color: var(--volt);
+      }
+      .pillnav .go {
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.1em;
+        padding: 9px 16px;
+        border-radius: 99px;
+        text-decoration: none;
+      }
+      .pillnav .go:hover {
+        background: var(--pink);
+        color: #fff;
+      }
+      .wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 clamp(1.2rem, 4vw, 3rem);
+      }
+      .hero {
+        min-height: 96svh;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        padding: 120px clamp(1.2rem, 4vw, 3rem) 90px;
+        gap: 20px;
+      }
+      h1 {
+        font-family: var(--disp);
+        font-size: clamp(3.4rem, 11.4vw, 10.4rem);
+        line-height: 0.82;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+      }
+      h1 em {
+        font-style: normal;
+        color: var(--volt);
+        text-shadow: 0 0 34px rgba(204, 255, 0, 0.35);
+      }
+      .hero .side {
+        max-width: 21em;
+        padding-bottom: 1.2rem;
+      }
+      .hero .side p {
+        font-weight: 600;
+        line-height: 1.55;
+        color: var(--dim);
+      }
+      .hero .cta {
+        display: inline-block;
+        margin-top: 18px;
+        background: var(--pink);
+        color: #fff;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        padding: 13px 22px;
+        border-radius: 99px;
+        text-decoration: none;
+      }
+      .hero .cta:hover {
+        background: var(--volt);
+        color: var(--ink);
+      }
+      .hero .meta {
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        color: var(--dim);
+      }
+      .mq {
+        overflow: hidden;
+        white-space: nowrap;
+        border-top: 1px solid rgba(242, 240, 234, 0.2);
+        border-bottom: 1px solid rgba(242, 240, 234, 0.2);
+        padding: 12px 0;
+        margin: clamp(2.6rem, 7vh, 4.6rem) 0 26px;
+      }
+      .mq span {
+        display: inline-block;
+        font-family: var(--disp);
+        font-size: clamp(1.2rem, 2.6vw, 2rem);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        animation: crawl 22s linear infinite;
+      }
+      .mq i {
+        font-style: normal;
+        color: var(--pink);
+        padding: 0 0.5em;
+      }
+      .rail {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding: 0 clamp(1.2rem, 4vw, 3rem) 22px;
+        scrollbar-width: none;
+      }
+      .rail::-webkit-scrollbar {
+        display: none;
+      }
+      .railcard {
+        position: relative;
+        flex: 0 0 min(86vw, 980px);
+        height: min(72svh, 620px);
+        border-radius: 16px;
+        overflow: hidden;
+        scroll-snap-align: center;
+        border: 1px solid rgba(242, 240, 234, 0.2);
+      }
+      .railcard video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .railcard .wash {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          10deg,
+          rgba(14, 14, 16, 0.82) 8%,
+          rgba(14, 14, 16, 0.12) 55%
+        );
+      }
+      .railcard .in2 {
+        position: absolute;
+        left: 5%;
+        bottom: 7%;
+        right: 5%;
+        z-index: 2;
+      }
+      .railcard .sent {
+        font-weight: 600;
+        font-size: clamp(1.15rem, 2.2vw, 1.8rem);
+        line-height: 1.3;
+        max-width: 28em;
+        text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+      }
+      .railcard .chip {
+        display: inline-block;
+        margin-top: 12px;
+        background: var(--volt);
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        padding: 5px 10px;
+        border-radius: 3px;
+      }
+      .railcard .case {
+        display: inline-block;
+        margin-left: 12px;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        color: #fff;
+        text-decoration: none;
+        border-bottom: 2px solid var(--pink);
+        padding-bottom: 2px;
+      }
+      .railcard .case:hover {
+        color: var(--pink);
+      }
+      .railcard .no {
+        position: absolute;
+        top: 6%;
+        right: 5%;
+        font-family: var(--disp);
+        font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+        color: rgba(242, 240, 234, 0.35);
+        z-index: 2;
+      }
+      .railhint {
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.24em;
+        color: var(--dim);
+        padding-bottom: 8px;
+      }
+      .bigrow {
+        display: flex;
+        align-items: baseline;
+        gap: 20px;
+        padding: clamp(1.4rem, 3.4vh, 2.4rem) 0;
+        border-bottom: 1px solid rgba(242, 240, 234, 0.16);
+      }
+      .bigrow .no {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--pink);
+        letter-spacing: 0.2em;
+      }
+      .bigrow h3 {
+        font-family: var(--disp);
+        font-size: clamp(1.5rem, 4.4vw, 3.4rem);
+        line-height: 0.95;
+        text-transform: uppercase;
+        flex: 1;
+      }
+      .bigrow:hover h3 {
+        color: var(--volt);
+      }
+      .bigrow p {
+        max-width: 22em;
+        color: var(--dim);
+        font-weight: 600;
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 14px;
+      }
+      .step {
+        border: 1.5px solid var(--volt);
+        border-radius: 14px;
+        padding: clamp(1.3rem, 2.8vw, 2rem);
+        background: rgba(204, 255, 0, 0.04);
+      }
+      .step:nth-child(2) {
+        border-color: var(--pink);
+        background: rgba(255, 46, 136, 0.05);
+      }
+      .step .sno {
+        font-family: var(--disp);
+        font-size: 2rem;
+        color: var(--volt);
+      }
+      .step:nth-child(2) .sno {
+        color: var(--pink);
+      }
+      .step b {
+        display: block;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        margin-top: 10px;
+      }
+      .step p {
+        margin-top: 10px;
+        color: var(--dim);
+        font-size: 0.93rem;
+        line-height: 1.6;
+      }
+      .lrow {
+        display: flex;
+        gap: 16px;
+        align-items: baseline;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(242, 240, 234, 0.14);
+      }
+      .lrow b {
+        font-family: var(--disp);
+        font-size: 0.92rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .lrow span {
+        flex: 1;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dim);
+      }
+      .lrow i {
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        border: 1.5px solid rgba(242, 240, 234, 0.5);
+        border-radius: 99px;
+        padding: 3px 9px;
+        white-space: nowrap;
+      }
+      .duo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+      }
+      .duo .d {
+        border: 1px solid rgba(242, 240, 234, 0.2);
+        border-radius: 14px;
+        padding: clamp(1.3rem, 2.6vw, 1.9rem);
+      }
+      .duo .d .lab {
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: var(--pink);
+      }
+      .duo .d h3 {
+        font-family: var(--disp);
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        margin-top: 10px;
+      }
+      .duo .d p {
+        margin-top: 10px;
+        color: var(--dim);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+      footer {
+        padding: clamp(3rem, 8vh, 5rem) 0 60px;
+        text-align: center;
+      }
+      .femail {
+        display: inline-block;
+        font-family: var(--disp);
+        font-size: clamp(1.3rem, 3.6vw, 2.8rem);
+        color: var(--volt);
+        text-decoration: none;
+        border-bottom: 4px solid var(--pink);
+        padding-bottom: 6px;
+      }
+      .femail:hover {
+        color: var(--pink);
+        border-color: var(--volt);
+      }
+      .fsmall {
+        margin-top: 22px;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        color: var(--dim);
+        line-height: 2.2;
+      }
+      @media (max-width: 760px) {
+        .pillnav .links {
+          display: none;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .wire span,
+        .mq span {
+          animation: none;
+        }
+        .rv {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wire top" aria-hidden="true">
+      <span
+        >OPEN LATE · PHASE ONE IN 21 DAYS · 9 BUILDS LIVE · ONE SLOT OPEN ·
+        CHICAGO + EVERYWHERE ·&nbsp;OPEN LATE · PHASE ONE IN 21 DAYS · 9 BUILDS
+        LIVE · ONE SLOT OPEN · CHICAGO + EVERYWHERE ·&nbsp;</span
+      >
+    </div>
+    <nav class="pillnav">
+      <a class="brand" href="#top">● UPPERHAND</a>
+      <div class="links">
+        <a href="#work">Work</a><a href="#make">What we make</a
+        ><a href="#how">How</a><a href="#record">Record</a>
+      </div>
+      <a class="go" href="#start">START →</a>
+    </nav>
+
+    <header class="hero" id="top">
+      <h1 class="rv">NIGHT<br />SHIFT,<br /><em>SHIPPED.</em></h1>
+      <div class="side rv">
+        <p>
+          Upperhand is a small, focused design and build studio in Chicago.
+          Bring the idea that keeps you up; we race you to the first win while
+          the lights are still on.
+        </p>
+        <a class="cta" href="#start">BRING THE IDEA →</a>
+        <p class="meta">EST. 2025 · CHICAGO + EVERYWHERE · 9 BUILDS LIVE</p>
+      </div>
+    </header>
+
+    <div class="mq" id="work" aria-hidden="true">
+      <span
+        >THE WORK <i>●</i> SWIPE SIDEWAYS <i>●</i> EVERY BUILD LINKS TO ITS CASE
+        STUDY <i>●</i> THE WORK <i>●</i> SWIPE SIDEWAYS <i>●</i> EVERY BUILD
+        LINKS TO ITS CASE STUDY <i>●</i></span
+      >
+    </div>
+    <div class="rail">
+      <div class="railcard">
+        <video
+          muted
+          loop
+          autoplay
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/17722430/17722430-sd_640_360_24fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <span class="no">01</span>
+        <div class="in2">
+          <p class="sent">
+            Records cut one at a time. A storefront people point at, an order
+            desk that keeps the lathe warm.
+          </p>
+          <span class="chip">TANGIBLE FORMATS · SITE + OPS</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+      <div class="railcard">
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/4881730/4881730-sd_960_506_25fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <span class="no">02</span>
+        <div class="in2">
+          <p class="sent">
+            A drive-in in a cow pasture. Trivia on every phone in the field,
+            sold out every Saturday since.
+          </p>
+          <span class="chip">MOO V NIGHT · PRODUCT</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+      <div class="railcard">
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/6980128/6980128-sd_640_338_30fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <span class="no">03</span>
+        <div class="in2">
+          <p class="sent">
+            A Highland Park gym in every member's pocket: goals, streaks,
+            progress photos, zero excuses.
+          </p>
+          <span class="chip">FISHERFIT · MEMBER APP</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+      <div class="railcard">
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          src="https://videos.pexels.com/video-files/8523306/8523306-sd_960_540_30fps.mp4"
+        ></video>
+        <div class="wash"></div>
+        <span class="no">04</span>
+        <div class="in2">
+          <p class="sent">
+            A Chicago beef stand gone cinematic: video hero, grill-born embers,
+            the line out the door.
+          </p>
+          <span class="chip">MR. D'S · SITE</span
+          ><a class="case" href="#record">CASE STUDY →</a>
+        </div>
+      </div>
+    </div>
+    <p class="railhint">DRAG OR SCROLL SIDEWAYS · 01–04</p>
+
+    <div class="mq" id="make" aria-hidden="true">
+      <span
+        >WHAT WE MAKE <i>●</i> NAMED AFTER OUTCOMES <i>●</i> WHAT WE MAKE
+        <i>●</i> NAMED AFTER OUTCOMES <i>●</i> WHAT WE MAKE <i>●</i> NAMED AFTER
+        OUTCOMES <i>●</i></span
+      >
+    </div>
+    <section class="wrap">
+      <div class="bigrow rv">
+        <span class="no">01</span>
+        <h3>The thing your customers use</h3>
+        <p>
+          Storefronts, booking engines, member apps. Designed to be pointed at.
+        </p>
+      </div>
+      <div class="bigrow rv">
+        <span class="no">02</span>
+        <h3>The system that runs your day</h3>
+        <p>
+          Order desks, case files, ops consoles. The machine behind the counter.
+        </p>
+      </div>
+      <div class="bigrow rv">
+        <span class="no">03</span>
+        <h3>The presence that sells while you sleep</h3>
+        <p>Sites and content engines with a pulse, honest enough to close.</p>
+      </div>
+    </section>
+
+    <div class="mq" id="how" aria-hidden="true">
+      <span
+        >HOW IT WORKS <i>●</i> THREE STEPS, NO DECKS ABOUT DECKS <i>●</i> HOW IT
+        WORKS <i>●</i> THREE STEPS, NO DECKS ABOUT DECKS <i>●</i></span
+      >
+    </div>
+    <section class="wrap">
+      <div class="steps">
+        <div class="step rv">
+          <span class="sno">01</span><b>THE CHALLENGE</b>
+          <p>
+            Bring us the problem that will not leave you alone. One call, one
+            flat number, no discovery theater.
+          </p>
+        </div>
+        <div class="step rv">
+          <span class="sno">21</span><b>PHASE ONE · LIVE</b>
+          <p>
+            A running build in 21 days, not a proposal. The first win, shipped,
+            priced flat, yours either way.
+          </p>
+        </div>
+        <div class="step rv">
+          <span class="sno">03</span><b>THE NEXT MOVE</b>
+          <p>
+            Each phase earns the next. Stop any time and keep everything, source
+            included.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="mq" id="record" aria-hidden="true">
+      <span
+        >THE RECORD <i>●</i> ALL RUNNING <i>●</i> THE RECORD <i>●</i> ALL
+        RUNNING <i>●</i> THE RECORD <i>●</i> ALL RUNNING <i>●</i> THE RECORD
+        <i>●</i> ALL RUNNING <i>●</i></span
+      >
+    </div>
+    <section class="wrap">
+      <div class="rv">
+        <div class="lrow">
+          <b>Tangible Formats</b><span>vinyl storefront + order desk</span
+          ><i>SITE + OPS</i>
+        </div>
+        <div class="lrow">
+          <b>Moo V Night</b><span>drive-in trivia on every phone</span
+          ><i>PRODUCT</i>
+        </div>
+        <div class="lrow">
+          <b>FisherFit</b><span>the gym in every member's pocket</span
+          ><i>APP</i>
+        </div>
+        <div class="lrow">
+          <b>Covered</b><span>sub plans while teachers sleep</span><i>SAAS</i>
+        </div>
+        <div class="lrow">
+          <b>Counsel</b><span>a case desk that loses nothing</span><i>TOOL</i>
+        </div>
+        <div class="lrow">
+          <b>Mr. D's</b><span>a beef stand gone cinematic</span><i>SITE</i>
+        </div>
+        <div class="lrow">
+          <b>Shelf Life</b><span>one shoot, a month of social</span
+          ><i>ENGINE</i>
+        </div>
+        <div class="lrow">
+          <b>Good Grief</b><span>paperwork that ends in a song</span
+          ><i>PORTAL</i>
+        </div>
+      </div>
+      <div class="duo" style="margin-top: 34px">
+        <div class="d rv">
+          <span class="lab">GREG</span>
+          <h3>Makes it beautiful</h3>
+          <p>
+            Design, motion, and the details people screenshot. The reason the
+            work gets pointed at.
+          </p>
+        </div>
+        <div class="d rv">
+          <span class="lab">JOHN</span>
+          <h3>Makes it sell</h3>
+          <p>
+            Strategy, positioning, and the words that close. The reason the work
+            pays for itself.
+          </p>
+        </div>
+        <div class="d rv">
+          <span class="lab">THE RACE</span>
+          <h3>First win in 21 days</h3>
+          <p>
+            We bring ideas and businesses to life, then keep them moving.
+            Momentum is the whole point.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer id="start">
+      <div class="wrap rv">
+        <a class="femail" href="mailto:brief@getupperhand.io"
+          >BRIEF@GETUPPERHAND.IO</a
+        >
+        <p class="fsmall">
+          EST. 2025 · CHICAGO + EVERYWHERE · ONE SLOT OPEN<br />©2026 UPPERHAND
+          LLC
+        </p>
+      </div>
+    </footer>
+    <div class="wire bot" aria-hidden="true">
+      <span
+        >BRING US THE PROBLEM THAT WILL NOT LEAVE YOU ALONE · PHASE ONE IN 21
+        DAYS ·&nbsp;BRING US THE PROBLEM THAT WILL NOT LEAVE YOU ALONE · PHASE
+        ONE IN 21 DAYS ·&nbsp;</span
+      >
+    </div>
+
+    <script>
+      const io = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12 },
+      );
+      document.querySelectorAll(".rv").forEach((el) => io.observe(el));
+      const vio = new IntersectionObserver(
+        (es) =>
+          es.forEach((en) => {
+            if (en.isIntersecting) en.target.play().catch(() => {});
+            else en.target.pause();
+          }),
+        { threshold: 0.2 },
+      );
+      document.querySelectorAll("video").forEach((v) => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          v.removeAttribute("autoplay");
+          v.pause();
+        } else vio.observe(v);
+      });
+    </script>
+  </body>
+</html>

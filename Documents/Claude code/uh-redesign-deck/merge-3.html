@@ -351,7 +351,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        scale: 1.18;
+        scale: 1.35;
         filter: grayscale(1) contrast(1.05) brightness(1.75);
       }
       .band .dip {
@@ -952,9 +952,27 @@
       section.blk .wrap { padding-inline: clamp(1.2rem, 4vw, 3rem); }
       .ldot.down { background: var(--pink); }
       .sweepline { font-family: var(--mono); font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; color: #9a968a; margin-top: 12px; }
+      .wipe { position: fixed; inset: 0; background: var(--blue); z-index: 200; transform: translateY(101%); pointer-events: none; }
+      .flood { position: fixed; inset: 0; background: var(--blue); z-index: 300; }
+      .wipe .wm { position: absolute; top: 50%; left: 0; width: 100%; text-align: center; transform: translateY(-50%) translateX(-10%); font-family: var(--disp); font-size: 13vw; letter-spacing: -0.02em; color: rgba(255, 255, 255, 0.95); white-space: nowrap; }
+      #cur { position: fixed; top: 0; left: 0; z-index: 400; width: 48px; height: 48px; border-radius: 99px; background: var(--volt); border: 1.5px solid var(--ink); display: none; align-items: center; justify-content: center; pointer-events: none; font-family: var(--mono); font-weight: 700; font-size: 9px; letter-spacing: 0.08em; color: var(--ink); }
+      #cur span { opacity: 0; }
+      @media (hover: hover) and (pointer: fine) and (min-width: 861px) {
+        body, a, button { cursor: none; }
+        #cur { display: flex; }
+      }
 </style>
   </head>
   <body>
+    <div class="flood" aria-hidden="true"></div>
+    <script>
+      setTimeout(() => {
+        const f = document.querySelector(".flood");
+        if (f && !f.dataset.armed) f.remove();
+      }, 2200);
+    </script>
+    <div class="wipe" aria-hidden="true"><span class="wm">UPPERHAND®</span></div>
+    <div id="cur" aria-hidden="true"><span></span></div>
     <aside class="spine" aria-label="Site"><a class="sbrand" href="#top">UPPERHAND®</a><span aria-hidden="true">Upperhand® · The Next Level of Your Business</span><a class="sgo" href="/brief">START →</a><span style="display:none"
       ><i class="spineprog" aria-hidden="true"></i>
     </aside>
@@ -1191,7 +1209,7 @@
       </section>
 
       <section class="blk wrap" id="record">
-        <span class="kick rv">THE RECORD · 8 BUILDS LIVE · ALL RUNNING</span>
+        <span class="kick rv">THE RECORD · <span id="bcount">8</span> BUILDS LIVE · ALL RUNNING</span>
         <div class="two">
           <div class="rv">
             <a class="lrow" data-k="tf" href="/case-tangible-formats">
@@ -1403,6 +1421,7 @@
         gsap.registerPlugin(ScrollTrigger);
 
         const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 1 });
+        window.__uhLenis = lenis;
         lenis.on("scroll", ScrollTrigger.update);
         gsap.ticker.add((t) => lenis.raf(t * 1000));
         gsap.ticker.lagSmoothing(0);
@@ -1571,9 +1590,9 @@
             if (v)
               gsap.fromTo(
                 v,
-                { yPercent: -8 },
+                { yPercent: -16 },
                 {
-                  yPercent: 8,
+                  yPercent: 16,
                   ease: "none",
                   scrollTrigger: {
                     trigger: b,
@@ -1586,9 +1605,9 @@
             if (c)
               gsap.fromTo(
                 c,
-                { y: 34 },
+                { y: 60 },
                 {
-                  y: -12,
+                  y: -26,
                   ease: "none",
                   scrollTrigger: {
                     trigger: b,
@@ -1640,13 +1659,7 @@
           ScrollTrigger.batch(rows, {
             start: "top 90%",
             onEnter: (els) =>
-              gsap.from(els, {
-                y: 18,
-                opacity: 0,
-                duration: 0.5,
-                ease: "power2.out",
-                stagger: 0.05,
-              }),
+              gsap.from(els, { x: (i) => (i % 2 ? 130 : -130), y: 20, opacity: 0, duration: 0.6, ease: "power3.out", stagger: 0.06 }),
             once: true,
           });
 
@@ -1723,6 +1736,204 @@
         };
         sweep();
         setInterval(sweep, 60000);
+      })();
+    </script>
+    <script>
+      (() => {
+        const w = document.querySelector(".wipe");
+        if (!w) return;
+        const rm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        try {
+          if (sessionStorage.getItem("uhwipe")) {
+            sessionStorage.removeItem("uhwipe");
+            window.__wiped = true;
+            if (!rm) {
+              w.style.transform = "translateY(0)";
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => {
+                  w.style.transition = "transform 620ms cubic-bezier(0.65, 0, 0.35, 1)";
+                  w.style.transform = "translateY(-101%)";
+                  const wm = w.querySelector(".wm");
+                  if (wm) {
+                    wm.style.transition = "transform 620ms cubic-bezier(0.65, 0, 0.35, 1)";
+                    wm.style.transform = "translateY(-50%) translateX(14%)";
+                  }
+                }),
+              );
+              setTimeout(() => w.remove(), 1000);
+            } else w.remove();
+          }
+        } catch (err) {
+          console.warn("[WIPE] arrival", err);
+        }
+        if (rm) return;
+        document.querySelectorAll('a[href^="/case-"], a[href="/brief"], a[href="/merge-3"], a[href^="/merge-3#"]').forEach((a) => {
+          a.addEventListener("click", (e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+            const href = a.getAttribute("href");
+            e.preventDefault();
+            try { sessionStorage.setItem("uhwipe", "1"); } catch (err) { console.warn("[WIPE] flag", err); }
+            w.style.transition = "transform 480ms cubic-bezier(0.65, 0, 0.35, 1)";
+            w.style.transform = "translateY(0)";
+            const wm = w.querySelector(".wm");
+            if (wm) {
+              wm.style.transition = "transform 480ms cubic-bezier(0.65, 0, 0.35, 1)";
+              wm.style.transform = "translateY(-50%) translateX(2%)";
+            }
+            setTimeout(() => { location.href = href; }, 500);
+          });
+        });
+      })();
+    </script>
+    <script>
+      (() => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!window.gsap || !window.__uhLenis) return;
+        const isMob = matchMedia("(max-width: 860px)").matches;
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero kinetic exit: headline lines fan out at staggered speeds.
+        Promise.race([
+          document.fonts ? document.fonts.ready : Promise.resolve(),
+          new Promise((r) => setTimeout(r, 1700)),
+        ]).then(() =>
+          setTimeout(() => {
+            const h1 = document.querySelector(".hero h1");
+            if (!h1) return;
+            const masks = [...h1.querySelectorAll("span")].filter(
+              (s) => s.style && s.style.overflow === "hidden",
+            );
+            if (!masks.length) return;
+            const lines = new Map();
+            masks.forEach((m) => {
+              const top = Math.round(m.getBoundingClientRect().top / 10);
+              if (!lines.has(top)) lines.set(top, []);
+              lines.get(top).push(m);
+            });
+            [...lines.values()].forEach((ms, i) => {
+              gsap.to(ms, { y: -(i * (isMob ? 70 : 120)), x: (i % 2 ? 1 : -1) * (isMob ? 26 : 70), ease: "none",
+                scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+            });
+            gsap.to(".herotxt .sub, .herotxt .cta, .herotxt .meta", { y: 100, ease: "none",
+              scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+          }, 60),
+        );
+
+        // Scroll-velocity skew: the page leans into speed.
+        const skews = gsap.utils
+          .toArray(".band, .heropane")
+          .map((el) => gsap.quickTo(el, "skewY", { duration: 0.45, ease: "power3.out" }));
+        window.__uhLenis.on("scroll", (e) => {
+          const s = gsap.utils.clamp(isMob ? -3 : -4.5, isMob ? 3 : 4.5, (e.velocity || 0) * 0.085);
+          skews.forEach((fn) => fn(s));
+        });
+
+        // Pointer tilt: the hero pane is alive under the mouse.
+        const hero = document.querySelector(".hero");
+        const pane = document.querySelector(".heropane");
+        if (hero && pane && !isMob) {
+          gsap.set(pane, { transformPerspective: 900 });
+          const rx = gsap.quickTo(pane, "rotationX", { duration: 0.55, ease: "power2.out" });
+          const ry = gsap.quickTo(pane, "rotationY", { duration: 0.55, ease: "power2.out" });
+          hero.addEventListener("mousemove", (e) => {
+            const r = hero.getBoundingClientRect();
+            ry(gsap.utils.clamp(-6, 6, ((e.clientX - r.left) / r.width - 0.5) * 12));
+            rx(gsap.utils.clamp(-6, 6, -((e.clientY - r.top) / r.height - 0.5) * 12));
+          });
+          hero.addEventListener("mouseleave", () => { rx(0); ry(0); });
+        }
+
+        // Footer curtain: the blue wall rises to meet you.
+        gsap.fromTo("footer", { clipPath: "inset(58% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", ease: "none",
+          scrollTrigger: { trigger: "footer", start: "top bottom", end: "top 30%", scrub: true } });
+        gsap.fromTo("footer .wrap", { y: 150 }, { y: 0, ease: "none",
+          scrollTrigger: { trigger: "footer", start: "top bottom", end: "top 40%", scrub: true } });
+      })();
+    </script>
+    <script>
+      (() => {
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const flood = document.querySelector(".flood");
+        if (flood && (reduced || window.__wiped || !window.gsap)) flood.remove();
+        if (reduced || !window.gsap || !window.__uhLenis) return;
+        const isMob = matchMedia("(max-width: 860px)").matches;
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ACT 0 · the spine deploys the page
+        if (flood && flood.parentNode) {
+          flood.dataset.armed = "1";
+          gsap.set(flood, { transformOrigin: isMob ? "center top" : "left center" });
+          gsap.to(flood, {
+            [isMob ? "scaleY" : "scaleX"]: isMob ? 48 / window.innerHeight : 76 / window.innerWidth,
+            duration: 0.85,
+            ease: "power4.inOut",
+            delay: 0.2,
+            onComplete: () => flood.remove(),
+          });
+        }
+
+
+        // ACT 3 · print registration: headlines snap into register
+        Promise.race([
+          document.fonts ? document.fonts.ready : Promise.resolve(),
+          new Promise((r) => setTimeout(r, 1700)),
+        ]).then(() =>
+          setTimeout(() => {
+            document.querySelectorAll("main section.blk h2").forEach((h) => {
+              gsap.fromTo(
+                h,
+                { filter: "drop-shadow(14px 14px 0 rgba(18,49,201,0.9)) drop-shadow(-14px -14px 0 rgba(255,46,136,0.85))" },
+                {
+                  filter: "drop-shadow(0px 0px 0 rgba(18,49,201,0)) drop-shadow(0px 0px 0 rgba(255,46,136,0))",
+                  duration: 0.85,
+                  ease: "power4.out",
+                  scrollTrigger: { trigger: h, start: "top 82%", once: true },
+                  onComplete: () => gsap.set(h, { clearProps: "filter" }),
+                },
+              );
+            });
+          }, 80),
+        );
+
+        // ACT 4 · the ledger counts itself in
+        const bc = document.getElementById("bcount");
+        if (bc) {
+          const obj = { n: 0 };
+          ScrollTrigger.create({
+            trigger: "#record",
+            start: "top 75%",
+            once: true,
+            onEnter: () =>
+              gsap.to(obj, {
+                n: 8,
+                duration: 1.1,
+                ease: "power2.out",
+                onUpdate: () => { bc.textContent = Math.round(obj.n); },
+              }),
+          });
+        }
+
+        // the volt cursor
+        const cur = document.getElementById("cur");
+        if (cur && !isMob && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          const label = cur.querySelector("span");
+          gsap.set(cur, { xPercent: -50, yPercent: -50, scale: 0.28 });
+          const qx = gsap.quickTo(cur, "x", { duration: 0.25, ease: "power2.out" });
+          const qy = gsap.quickTo(cur, "y", { duration: 0.25, ease: "power2.out" });
+          const qs = gsap.quickTo(cur, "scale", { duration: 0.3, ease: "power3.out" });
+          document.addEventListener("mousemove", (e) => { qx(e.clientX); qy(e.clientY); });
+          document.addEventListener("mouseover", (e) => {
+            const t = e.target.closest("a, button");
+            if (!t) { qs(0.28); gsap.to(label, { opacity: 0, duration: 0.15 }); return; }
+            const href = t.getAttribute("href") || "";
+            let txt = "";
+            if (href.includes("/brief") || t.classList.contains("go") || t.classList.contains("cta") || t.classList.contains("fbtn") || t.classList.contains("sgo")) txt = "START";
+            else if (href.startsWith("/case-") || t.classList.contains("lrow") || t.classList.contains("case") || t.classList.contains("nextcase")) txt = "VIEW";
+            label.textContent = txt;
+            qs(txt ? 1 : 0.55);
+            gsap.to(label, { opacity: txt ? 1 : 0, duration: 0.2 });
+          });
+        }
       })();
     </script>
     <script defer src="/_vercel/insights/script.js"></script>

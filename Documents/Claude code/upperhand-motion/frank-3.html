@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upperhand · The Dip</title>
+    <meta
+      name="description"
+      content="Upperhand is a small, focused design and build studio in Chicago. Phase one live in 21 days."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #131313;
+        --bone: #f2f0ea;
+        --volt: #ccff00;
+        --pink: #ff2e88;
+        --cyan: #2ee6ff;
+        --mono: "JetBrains Mono", monospace;
+        --body: "Hanken Grotesk", sans-serif;
+        --disp: "Archivo Black";
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--ink);
+        color: var(--ink);
+        font-family: var(--body);
+      }
+      /* slides */
+      .sl {
+        position: relative;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: clamp(4.4rem, 10vh, 6rem) clamp(1.4rem, 5vw, 4.4rem);
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        overflow: hidden;
+      }
+      .sl.volt {
+        background: var(--volt);
+      }
+      .sl.inkw {
+        background: var(--ink);
+        color: var(--bone);
+      }
+      .sl.pinkw {
+        background: var(--pink);
+        color: #fff;
+      }
+      .sl.bonew {
+        background: var(--bone);
+      }
+      .sl.cyanw {
+        background: var(--cyan);
+      }
+      .kick {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.26em;
+        opacity: 0.65;
+      }
+      .sl h1,
+      .sl h2 {
+        font-family: var(--disp);
+        text-transform: uppercase;
+        letter-spacing: -0.015em;
+        line-height: 0.88;
+        margin-top: 16px;
+      }
+      .sl h1 {
+        font-size: clamp(3rem, 10.5vw, 9.4rem);
+      }
+      .sl h2 {
+        font-size: clamp(2.2rem, 7vw, 6rem);
+      }
+      .sl .sub {
+        margin-top: 20px;
+        max-width: 34em;
+        font-weight: 600;
+        font-size: clamp(1rem, 1.8vw, 1.3rem);
+        line-height: 1.55;
+        opacity: 0.85;
+      }
+      .sl .cta {
+        display: inline-block;
+        width: fit-content;
+        margin-top: 26px;
+        background: var(--ink);
+        color: var(--volt);
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        padding: 14px 24px;
+        border-radius: 99px;
+        text-decoration: none;
+      }
+      .sl.inkw .cta {
+        background: var(--volt);
+        color: var(--ink);
+      }
+      .sl.pinkw .cta {
+        background: #fff;
+        color: var(--pink);
+      }
+      .sl .cta:hover {
+        transform: rotate(-1deg);
+      }
+      .slno {
+        position: absolute;
+        top: clamp(1rem, 2.6vh, 1.8rem);
+        right: clamp(1.4rem, 5vw, 4.4rem);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.22em;
+        opacity: 0.6;
+      }
+      .brand {
+        position: fixed;
+        top: clamp(1rem, 2.6vh, 1.8rem);
+        left: clamp(1.4rem, 5vw, 4.4rem);
+        z-index: 50;
+        font-family: var(--disp);
+        font-size: 13px;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+        mix-blend-mode: difference;
+        -webkit-text-fill-color: var(--bone);
+      }
+      /* dots nav (right side) */
+      .dots {
+        position: fixed;
+        right: clamp(0.9rem, 2vw, 1.6rem);
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 50;
+        display: grid;
+        gap: 10px;
+      }
+      .dots a {
+        width: 9px;
+        height: 9px;
+        border-radius: 99px;
+        background: rgba(128, 128, 128, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      .dots a.on {
+        background: var(--pink);
+      }
+      /* big list slides */
+      .biglist {
+        margin-top: 26px;
+      }
+      .biglist .row {
+        display: flex;
+        align-items: baseline;
+        gap: 18px;
+        padding: clamp(0.9rem, 2.4vh, 1.5rem) 0;
+        border-bottom: 2px solid rgba(19, 19, 19, 0.25);
+      }
+      .sl.inkw .biglist .row {
+        border-color: rgba(242, 240, 234, 0.22);
+      }
+      .biglist .no {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        opacity: 0.6;
+      }
+      .biglist h3 {
+        font-family: var(--disp);
+        font-size: clamp(1.3rem, 3.6vw, 2.8rem);
+        text-transform: uppercase;
+        line-height: 0.95;
+        flex: 1;
+      }
+      .biglist p {
+        max-width: 20em;
+        font-weight: 600;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        opacity: 0.75;
+      }
+      /* steps slide */
+      .stepline {
+        display: flex;
+        align-items: center;
+        gap: clamp(0.8rem, 2vw, 1.6rem);
+        flex-wrap: wrap;
+        margin-top: 30px;
+      }
+      .stepbox {
+        flex: 1 1 240px;
+        background: rgba(255, 255, 255, 0.16);
+        border: 2px solid #fff;
+        border-radius: 16px;
+        padding: clamp(1.2rem, 2.6vw, 2rem);
+      }
+      .stepbox .sno {
+        font-family: var(--disp);
+        font-size: 2.4rem;
+      }
+      .stepbox b {
+        display: block;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        margin-top: 8px;
+      }
+      .stepbox p {
+        margin-top: 10px;
+        font-size: 0.92rem;
+        font-weight: 600;
+        line-height: 1.55;
+        opacity: 0.92;
+      }
+      /* dipped work slides */
+      .sl.work video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(1) contrast(1.05) brightness(1.65);
+      }
+      .sl.work .dip {
+        position: absolute;
+        inset: 0;
+        mix-blend-mode: multiply;
+      }
+      .sl.work.dv .dip {
+        background: var(--volt);
+      }
+      .sl.work.dp .dip {
+        background: var(--pink);
+      }
+      .sl.work.dc .dip {
+        background: var(--cyan);
+      }
+      .sl.work .win {
+        position: relative;
+        z-index: 3;
+        margin-top: auto;
+        max-width: 34em;
+      }
+      .sl.work .sent {
+        font-weight: 600;
+        font-size: clamp(1.3rem, 2.8vw, 2.3rem);
+        line-height: 1.25;
+        color: #fff;
+        text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+      }
+      .sl.work .chip {
+        display: inline-block;
+        margin-top: 14px;
+        background: var(--ink);
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        padding: 6px 11px;
+        border-radius: 3px;
+      }
+      .sl.work .case {
+        display: inline-block;
+        margin-left: 12px;
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        color: #fff;
+        border-bottom: 2px solid #fff;
+        padding-bottom: 2px;
+        text-decoration: none;
+      }
+      .sl.work .case:hover {
+        opacity: 0.7;
+      }
+      /* record slide */
+      .lrow {
+        display: flex;
+        gap: 14px;
+        align-items: baseline;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(19, 19, 19, 0.18);
+      }
+      .lrow b {
+        font-family: var(--disp);
+        font-size: 0.88rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .lrow span {
+        flex: 1;
+        font-weight: 600;
+        font-size: 0.88rem;
+        opacity: 0.7;
+      }
+      .lrow i {
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        border: 1.5px solid rgba(19, 19, 19, 0.45);
+        border-radius: 99px;
+        padding: 3px 9px;
+      }
+      .duoline {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 26px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        opacity: 0.8;
+      }
+      /* final slide */
+      .femail {
+        display: inline-block;
+        margin-top: 26px;
+        font-family: var(--disp);
+        font-size: clamp(1.4rem, 4.4vw, 3.6rem);
+        color: var(--ink);
+        text-decoration: none;
+        background: var(--volt);
+        padding: 0.2em 0.4em;
+        border-radius: 10px;
+        transform: rotate(-1deg);
+      }
+      .femail:hover {
+        transform: rotate(1deg);
+        background: #fff;
+      }
+      .bigend {
+        font-family: var(--disp);
+        font-size: clamp(2.6rem, 12.5vw, 11rem);
+        line-height: 0.8;
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: -0.12em;
+        color: rgba(255, 255, 255, 0.92);
+        white-space: nowrap;
+      }
+      @media (max-width: 760px) {
+        .dots {
+          display: none;
+        }
+        .bigend {
+          white-space: normal;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-snap-type: none;
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="brand" href="#s1">● UPPERHAND</a>
+    <nav class="dots" aria-label="Slides">
+      <a href="#s1" class="on"></a><a href="#s2"></a><a href="#s3"></a
+      ><a href="#s4"></a><a href="#s5"></a><a href="#s6"></a><a href="#s7"></a
+      ><a href="#s8"></a><a href="#s9"></a>
+    </nav>
+
+    <section class="sl volt" id="s1">
+      <span class="slno">01 / 09</span>
+      <p class="kick">UPPERHAND · A DESIGN AND BUILD STUDIO · CHICAGO</p>
+      <h1>EVERY BUILD<br />GETS THE DIP.</h1>
+      <p class="sub">
+        One conviction, applied to everything we touch: bold, sleek, alive, and
+        live in 21 days. Scroll; each screen is one idea.
+      </p>
+      <a class="cta" href="#s9">DIP IN →</a>
+    </section>
+
+    <section class="sl inkw" id="s2">
+      <span class="slno">02 / 09</span>
+      <p class="kick">WHAT WE MAKE · NAMED AFTER OUTCOMES</p>
+      <div class="biglist">
+        <div class="row">
+          <span class="no">01</span>
+          <h3>The thing your customers use</h3>
+          <p>
+            Storefronts, booking engines, member apps. Designed to be pointed
+            at.
+          </p>
+        </div>
+        <div class="row">
+          <span class="no">02</span>
+          <h3>The system that runs your day</h3>
+          <p>
+            Order desks, case files, ops consoles. The machine behind the
+            counter.
+          </p>
+        </div>
+        <div class="row">
+          <span class="no">03</span>
+          <h3>The presence that sells while you sleep</h3>
+          <p>Sites and content engines with a pulse, honest enough to close.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sl pinkw" id="s3">
+      <span class="slno">03 / 09</span>
+      <p class="kick">HOW IT WORKS</p>
+      <h2>Three steps. No decks<br />about decks.</h2>
+      <div class="stepline">
+        <div class="stepbox">
+          <span class="sno">01</span><b>THE CHALLENGE</b>
+          <p>
+            Bring us the problem that will not leave you alone. One call, one
+            flat number.
+          </p>
+        </div>
+        <div class="stepbox">
+          <span class="sno">21</span><b>PHASE ONE · LIVE</b>
+          <p>
+            A running build in 21 days, not a proposal. The first win, shipped,
+            yours either way.
+          </p>
+        </div>
+        <div class="stepbox">
+          <span class="sno">03</span><b>THE NEXT MOVE</b>
+          <p>
+            Each phase earns the next. Stop any time, keep everything, source
+            included.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sl work dv" id="s4">
+      <video
+        muted
+        loop
+        autoplay
+        playsinline
+        preload="metadata"
+        src="https://videos.pexels.com/video-files/17722430/17722430-sd_640_360_24fps.mp4"
+      ></video>
+      <span class="dip" aria-hidden="true"></span>
+      <span class="slno" style="color: #fff; z-index: 3"
+        >04 / 09 · THE WORK</span
+      >
+      <div class="win">
+        <p class="sent">
+          Records cut one at a time. A storefront people point at, an order desk
+          that keeps the lathe warm.
+        </p>
+        <span class="chip">TANGIBLE FORMATS · SITE + OPS</span
+        ><a class="case" href="#s8">CASE STUDY →</a>
+      </div>
+    </section>
+
+    <section class="sl work dp" id="s5">
+      <video
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        src="https://videos.pexels.com/video-files/4881730/4881730-sd_960_506_25fps.mp4"
+      ></video>
+      <span class="dip" aria-hidden="true"></span>
+      <span class="slno" style="color: #fff; z-index: 3"
+        >05 / 09 · THE WORK</span
+      >
+      <div class="win">
+        <p class="sent">
+          A drive-in in a cow pasture. Trivia on every phone in the field, sold
+          out every Saturday since.
+        </p>
+        <span class="chip">MOO V NIGHT · PRODUCT</span
+        ><a class="case" href="#s8">CASE STUDY →</a>
+      </div>
+    </section>
+
+    <section class="sl work dc" id="s6">
+      <video
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        src="https://videos.pexels.com/video-files/6980128/6980128-sd_640_338_30fps.mp4"
+      ></video>
+      <span class="dip" aria-hidden="true"></span>
+      <span class="slno" style="color: #fff; z-index: 3"
+        >06 / 09 · THE WORK</span
+      >
+      <div class="win">
+        <p class="sent">
+          A Highland Park gym in every member's pocket: goals, streaks, progress
+          photos, zero excuses.
+        </p>
+        <span class="chip">FISHERFIT · MEMBER APP</span
+        ><a class="case" href="#s8">CASE STUDY →</a>
+      </div>
+    </section>
+
+    <section class="sl work dv" id="s7">
+      <video
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        src="https://videos.pexels.com/video-files/8523306/8523306-sd_960_540_30fps.mp4"
+      ></video>
+      <span class="dip" aria-hidden="true"></span>
+      <span class="slno" style="color: #fff; z-index: 3"
+        >07 / 09 · THE WORK</span
+      >
+      <div class="win">
+        <p class="sent">
+          A Chicago beef stand gone cinematic: video hero, grill-born embers,
+          the line out the door.
+        </p>
+        <span class="chip">MR. D'S · SITE</span
+        ><a class="case" href="#s8">CASE STUDY →</a>
+      </div>
+    </section>
+
+    <section class="sl bonew" id="s8">
+      <span class="slno">08 / 09</span>
+      <p class="kick">THE RECORD · ALL RUNNING</p>
+      <div style="margin-top: 20px">
+        <div class="lrow">
+          <b>Tangible Formats</b><span>vinyl storefront + order desk</span
+          ><i>SITE + OPS</i>
+        </div>
+        <div class="lrow">
+          <b>Moo V Night</b><span>drive-in trivia on every phone</span
+          ><i>PRODUCT</i>
+        </div>
+        <div class="lrow">
+          <b>FisherFit</b><span>the gym in every member's pocket</span
+          ><i>APP</i>
+        </div>
+        <div class="lrow">
+          <b>Covered</b><span>sub plans while teachers sleep</span><i>SAAS</i>
+        </div>
+        <div class="lrow">
+          <b>Counsel</b><span>a case desk that loses nothing</span><i>TOOL</i>
+        </div>
+        <div class="lrow">
+          <b>Mr. D's</b><span>a beef stand gone cinematic</span><i>SITE</i>
+        </div>
+        <div class="lrow">
+          <b>Shelf Life</b><span>one shoot, a month of social</span
+          ><i>ENGINE</i>
+        </div>
+        <div class="lrow">
+          <b>Good Grief</b><span>paperwork that ends in a song</span
+          ><i>PORTAL</i>
+        </div>
+      </div>
+      <div class="duoline">
+        <span>GREG · MAKES IT BEAUTIFUL</span><span>·</span
+        ><span>JOHN · MAKES IT SELL</span><span>·</span
+        ><span>THE RACE · FIRST WIN IN 21 DAYS</span>
+      </div>
+    </section>
+
+    <section class="sl pinkw" id="s9">
+      <span class="slno">09 / 09</span>
+      <p class="kick">ONE SLOT OPEN THIS MONTH</p>
+      <h2>Your build is<br />the next dip.</h2>
+      <a class="femail" href="mailto:brief@getupperhand.io"
+        >BRIEF@GETUPPERHAND.IO</a
+      >
+      <div class="bigend">UPPERHAND</div>
+    </section>
+
+    <script>
+      const dots = document.querySelectorAll(".dots a");
+      const slides = document.querySelectorAll(".sl");
+      const so = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              const i = [...slides].indexOf(e.target);
+              dots.forEach((d, j) => d.classList.toggle("on", j === i));
+            }
+          }),
+        { threshold: 0.55 },
+      );
+      slides.forEach((s) => so.observe(s));
+      const vio = new IntersectionObserver(
+        (es) =>
+          es.forEach((en) => {
+            if (en.isIntersecting) en.target.play().catch(() => {});
+            else en.target.pause();
+          }),
+        { threshold: 0.2 },
+      );
+      document.querySelectorAll("video").forEach((v) => {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          v.removeAttribute("autoplay");
+          v.pause();
+        } else vio.observe(v);
+      });
+    </script>
+  </body>
+</html>
