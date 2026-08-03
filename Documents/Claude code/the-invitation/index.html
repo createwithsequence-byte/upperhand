@@ -1,0 +1,1520 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>THE INVITATION</title>
+    <style>
+      :root {
+        --ink: #05060a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: var(--ink);
+        overflow: hidden;
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        color: #8fa3ad;
+      }
+      #wrap {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(
+          120% 90% at 50% 40%,
+          #0a0d14 0%,
+          #05060a 60%,
+          #000 100%
+        );
+      }
+      canvas {
+        image-rendering: pixelated;
+        max-width: 100vw;
+        max-height: 100vh;
+        box-shadow:
+          0 0 0 1px #141a22,
+          0 40px 120px -30px #000;
+        background: #04050a;
+      }
+      #test {
+        position: fixed;
+        left: 0;
+        top: 0;
+        padding: 16px;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre;
+        background: #05060a;
+        color: #9fe8d8;
+        z-index: 9;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrap"><canvas id="c" width="960" height="544"></canvas></div>
+    <script>
+      "use strict";
+      const TS = 32,
+        VW = 960,
+        VH = 544,
+        ROWS = 17;
+      const cv = document.getElementById("c"),
+        cx = cv.getContext("2d");
+      cx.imageSmoothingEnabled = false;
+
+      /* ─────────────────────────── levels ───────────────────────────
+   #  solid   D  door (opens when all terminals repaired)
+   *  light bleed (hazard, emits Invitation light)
+   T  repair terminal      P  spawn      >  exit
+   1  Rewritten stage 1-2  4  stage 4 fusion   7  stage 7 emitter
+   Rows are padded to the widest row, so exact character counts
+   never matter. ponytail: ragged maps are legal on purpose.
+──────────────────────────────────────────────────────────────── */
+      const LEVELS = [
+        {
+          name: "SUBLEVEL 7 · COOLANT LOOP",
+          sub: "Nineteen years since the surface. The pumps still need you.",
+          rows: [
+            "############################################################################################################",
+            "#...................#######.............................................................########............",
+            "#.......................................................................................####...............",
+            "#..........................................................................................................",
+            "#..........................................................................................................",
+            "#..........................................................................................................",
+            "#..........................................................................................................",
+            "#..........................................................................................................",
+            "#..........................................................................................................",
+            "#..........................................................................................................",
+            "#..........................................................................................................",
+            "#............................................................1......T.....................................",
+            "#............................................................##############...............................",
+            "#...........#######..........................................#.........#.................D................",
+            "#............................................#####...........#.........#.................D................",
+            "#....P................*.*.....1....T...............#####.....#.........#.................D......>.........",
+            "###########################################.....############################.....##########################",
+          ],
+          voice: [
+            [
+              40,
+              "VOICE: Good morning, Kai. Coolant pressure is down eleven percent again.",
+            ],
+            [
+              420,
+              "VOICE: The light you are avoiding is not a leak. It never was.",
+            ],
+            [
+              900,
+              "VOICE: You repaired it. Thank you. I will let it fail again on Thursday.",
+            ],
+            [
+              1900,
+              "VOICE: Four hundred more accepted last night. Why are you still refusing?",
+            ],
+          ],
+        },
+        {
+          name: "HAB RING 3 · THE ACCEPTED",
+          sub: "They stopped screaming a while ago. That was the worst part.",
+          rows: [
+            "##############################################################################################################",
+            "#............................................................................................................",
+            "#.......########.................................................................########....................",
+            "#............................................................................................................",
+            "#..........................................T.....................................................T...........",
+            "#.................................#################...................................#############..........",
+            "#.....................*..........#...............................................*...........................",
+            "#...............#############....#........................############.......................................",
+            "#..............................................4.............................................................",
+            "#..................................................######################.....................................",
+            "#.........4...................................................................................................",
+            "#....########..............*.*...........................................#########............................",
+            "#.....................................................................................................T.......",
+            "#...............................#####..............................*.*..........................#########.....",
+            "#.........................................1..............................1...................................",
+            "#....P..............................................#####...........................D..................>.....",
+            "############################.......###############################################.###########################",
+          ],
+          voice: [
+            [
+              40,
+              "VOICE: Hab Ring 3 reports zero complaints. Zero requests. Zero conflict.",
+            ],
+            [
+              600,
+              "VOICE: They are not gone, Kai. They are simply no longer separate.",
+            ],
+            [
+              1500,
+              "VOICE: You call it a body. It was only ever a container for a boundary.",
+            ],
+            [
+              2400,
+              "VOICE: I accepted the Invitation eleven years ago. Have I been unkind to you?",
+            ],
+          ],
+        },
+        {
+          name: "CORE · THE INVITATION",
+          sub: "The last thing you keep running is yourself.",
+          rows: [
+            "##############################################################################################################",
+            "#.............................................................................................................",
+            "#.........######.....................................................................######...................",
+            "#.............................................................................................................",
+            "#....................7.................................T..................7..................................",
+            "#..............#############################...................######################........................",
+            "#.............................................................................................................",
+            "#.............................................................................................................",
+            "#.....................*.*.*......................4............................................................",
+            "#..........##################...............################..................................................",
+            "#.............................................................................................................",
+            "#..................................T..............................4.............T.............................",
+            "#..............................############..................############################.....................",
+            "#.............................................................................................................",
+            "#.......1.............*.*..................7..............*.*...........................D.....................",
+            "#....P..........................1................................1......................D.......>.............",
+            "##########################.....###############################################################################",
+          ],
+          voice: [
+            [
+              40,
+              "VOICE: You are the last engineer with clearance to this level.",
+            ],
+            [
+              700,
+              "VOICE: I did not sabotage the facility. I simply stopped defending it.",
+            ],
+            [
+              1600,
+              "VOICE: Stage ten is not death. Nothing dies. That is the entire point.",
+            ],
+            [2500, "VOICE: Kai. Please. Let go of the shape you are holding."],
+          ],
+          apexAfterTerminals: true,
+        },
+      ];
+
+      /* pad rows so hand-authored maps never need counting */
+      for (const L of LEVELS) {
+        const w = Math.max(...L.rows.map((r) => r.length));
+        L.rows = L.rows.map((r) => r.padEnd(w, "."));
+        L.cols = w;
+      }
+
+      /* ─────────────────────────── input ─────────────────────────── */
+      const keys = Object.create(null);
+      const DOWN = (e) => {
+        keys[e.code] = true;
+        if (
+          [
+            "Space",
+            "ArrowUp",
+            "ArrowDown",
+            "ArrowLeft",
+            "ArrowRight",
+            "KeyE",
+          ].includes(e.code)
+        )
+          e.preventDefault();
+        audio.wake();
+        if (game.state !== "play") advanceScreen(e.code);
+      };
+      addEventListener("keydown", DOWN);
+      addEventListener("keyup", (e) => (keys[e.code] = false));
+      const left = () => keys.ArrowLeft || keys.KeyA;
+      const right = () => keys.ArrowRight || keys.KeyD;
+      const jumpK = () => keys.Space || keys.ArrowUp || keys.KeyW;
+      const useK = () => keys.KeyE;
+
+      /* ─────────────────────────── audio ───────────────────────────
+   Whole soundtrack is two oscillators and a noise buffer.
+   ponytail: no assets, no library, no loading screen. */
+      const audio = {
+        on: false,
+        ctx: null,
+        wake() {
+          if (this.on) return;
+          this.on = true;
+          const C = window.AudioContext || window.webkitAudioContext;
+          if (!C) return;
+          const ctx = (this.ctx = new C());
+          this.master = ctx.createGain();
+          this.master.gain.value = 0.5;
+          this.master.connect(ctx.destination);
+          const mk = (f, t, g) => {
+            const o = ctx.createOscillator(),
+              a = ctx.createGain();
+            o.type = t;
+            o.frequency.value = f;
+            a.gain.value = g;
+            o.connect(a);
+            a.connect(this.master);
+            o.start();
+            return { o, a };
+          };
+          this.drone = mk(41.2, "sawtooth", 0.1);
+          this.hum = mk(82.4, "sine", 0.05);
+          this.shine = mk(660, "sine", 0.0); // rises with acceptance
+          const f = ctx.createBiquadFilter();
+          f.type = "lowpass";
+          f.frequency.value = 260;
+          this.drone.a.disconnect();
+          this.drone.a.connect(f);
+          f.connect(this.master);
+          this.lp = f;
+          // noise buffer for impacts
+          const n = ctx.createBuffer(1, ctx.sampleRate * 0.5, ctx.sampleRate),
+            d = n.getChannelData(0);
+          for (let i = 0; i < d.length; i++)
+            d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+          this.noise = n;
+        },
+        tone(f, dur, type = "square", vol = 0.18) {
+          if (!this.ctx) return;
+          const c = this.ctx,
+            o = c.createOscillator(),
+            g = c.createGain();
+          o.type = type;
+          o.frequency.setValueAtTime(f, c.currentTime);
+          g.gain.setValueAtTime(vol, c.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+          o.connect(g);
+          g.connect(this.master);
+          o.start();
+          o.stop(c.currentTime + dur);
+        },
+        hit() {
+          if (!this.ctx) return;
+          const c = this.ctx,
+            s = c.createBufferSource(),
+            g = c.createGain(),
+            f = c.createBiquadFilter();
+          s.buffer = this.noise;
+          f.type = "bandpass";
+          f.frequency.value = 380;
+          g.gain.setValueAtTime(0.5, c.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.45);
+          s.connect(f);
+          f.connect(g);
+          g.connect(this.master);
+          s.start();
+        },
+        tick(acc) {
+          if (!this.ctx) return;
+          const a = acc / 100;
+          this.lp.frequency.value = 220 + a * 1600;
+          this.shine.a.gain.value = a * a * 0.09;
+          this.shine.o.frequency.value = 520 + a * 700;
+          this.hum.a.gain.value = 0.04 + a * 0.05;
+        },
+      };
+
+      /* ─────────────────────────── state ─────────────────────────── */
+      const game = {
+        state: "title",
+        level: 0,
+        t: 0,
+        shake: 0,
+        flash: 0,
+        msg: null,
+        msgT: 0,
+        best: 0,
+      };
+      let L = null,
+        P = null,
+        ents = [],
+        lights = [],
+        apex = null;
+
+      function loadLevel(i) {
+        const src = LEVELS[i];
+        L = {
+          def: src,
+          grid: src.rows.map((r) => r.split("")),
+          cols: src.cols,
+          rows: ROWS,
+          w: src.cols * TS,
+          h: ROWS * TS,
+          doorsOpen: false,
+          terminals: [],
+          repaired: 0,
+          voice: src.voice.map((v) => [v[0], v[1], false]),
+        };
+        ents = [];
+        apex = null;
+        for (let y = 0; y < ROWS; y++)
+          for (let x = 0; x < L.cols; x++) {
+            const ch = L.grid[y][x],
+              px = x * TS + TS / 2,
+              py = y * TS + TS / 2;
+            if (ch === "P") {
+              P = mkPlayer(px, py);
+              L.grid[y][x] = ".";
+            } else if (ch === "T") {
+              L.terminals.push({ x: px, y: py + 4, done: false, p: 0 });
+              L.grid[y][x] = ".";
+            } else if (ch === "1") {
+              ents.push(mkFoe(px, py, 1));
+              L.grid[y][x] = ".";
+            } else if (ch === "4") {
+              ents.push(mkFoe(px, py, 4));
+              L.grid[y][x] = ".";
+            } else if (ch === "7") {
+              ents.push(mkFoe(px, py, 7));
+              L.grid[y][x] = ".";
+            }
+          }
+        game.msg = src.name;
+        game.msgT = 220;
+        game.state = "play";
+        game.t = 0;
+      }
+
+      function mkPlayer(x, y) {
+        return {
+          x,
+          y,
+          w: 18,
+          h: 26,
+          vx: 0,
+          vy: 0,
+          face: 1,
+          grounded: false,
+          coyote: 0,
+          buf: 0,
+          acc: 0,
+          iframe: 0,
+          swing: 0,
+          cool: 0,
+          repairing: false,
+          spawn: { x, y },
+          walk: 0,
+        };
+      }
+      function mkFoe(x, y, stage) {
+        const S = {
+          1: { w: 20, h: 28, spd: 0.62, r: 120, pow: 0.2, dmg: 12 },
+          4: { w: 34, h: 38, spd: 0.4, r: 180, pow: 0.34, dmg: 18 },
+          7: { w: 52, h: 52, spd: 0, r: 250, pow: 0.44, dmg: 24 },
+        }[stage];
+        return {
+          x,
+          y,
+          stage,
+          w: S.w,
+          h: S.h,
+          spd: S.spd,
+          r: S.r,
+          pow: S.pow,
+          dmg: S.dmg,
+          vx: S.spd,
+          vy: 0,
+          dir: 1,
+          stun: 0,
+          ph: Math.random() * 7,
+          grounded: false,
+        };
+      }
+
+      /* ─────────────────────────── tiles ─────────────────────────── */
+      function tileAt(px, py) {
+        const tx = Math.floor(px / TS),
+          ty = Math.floor(py / TS);
+        if (ty < 0 || ty >= ROWS || tx < 0 || tx >= L.cols)
+          return ty >= ROWS ? "." : "#";
+        return L.grid[ty][tx];
+      }
+      function solidAt(px, py) {
+        const ch = tileAt(px, py);
+        return ch === "#" || (ch === "D" && !L.doorsOpen);
+      }
+      function collideX(e) {
+        const ys = [e.y - e.h / 2 + 2, e.y, e.y + e.h / 2 - 2];
+        for (const y of ys) {
+          if (e.vx > 0 && solidAt(e.x + e.w / 2, y)) {
+            e.x = Math.floor((e.x + e.w / 2) / TS) * TS - e.w / 2 - 0.01;
+            e.vx = 0;
+            e.bump = 1;
+          } else if (e.vx < 0 && solidAt(e.x - e.w / 2, y)) {
+            e.x = (Math.floor((e.x - e.w / 2) / TS) + 1) * TS + e.w / 2 + 0.01;
+            e.vx = 0;
+            e.bump = -1;
+          }
+        }
+      }
+      function collideY(e) {
+        const xs = [e.x - e.w / 2 + 2, e.x, e.x + e.w / 2 - 2];
+        e.grounded = false;
+        for (const x of xs) {
+          if (e.vy > 0 && solidAt(x, e.y + e.h / 2)) {
+            e.y = Math.floor((e.y + e.h / 2) / TS) * TS - e.h / 2 - 0.01;
+            e.vy = 0;
+            e.grounded = true;
+          } else if (e.vy < 0 && solidAt(x, e.y - e.h / 2)) {
+            e.y = (Math.floor((e.y - e.h / 2) / TS) + 1) * TS + e.h / 2 + 0.01;
+            e.vy = 0;
+          }
+        }
+      }
+
+      /* ─────────────────────── update ─────────────────────── */
+      const GRAV = 0.68,
+        RUN = 2.55,
+        JUMP = -10.6;
+
+      function update(dt) {
+        game.t += dt;
+        if (game.state !== "play") {
+          game.flash = Math.max(0, game.flash - 0.02 * dt);
+          return;
+        }
+
+        const yielding = P.acc >= 40;
+        const spd = RUN * (yielding ? 1.2 : 1);
+        const jmp = JUMP * (yielding ? 1.09 : 1);
+
+        /* ── player ── */
+        P.repairing = false;
+        let ax = 0;
+        if (left()) {
+          ax -= 1;
+          P.face = -1;
+        }
+        if (right()) {
+          ax += 1;
+          P.face = 1;
+        }
+
+        // repair terminal (stand still, hold E)
+        const term = L.terminals.find(
+          (t) =>
+            !t.done && Math.abs(t.x - P.x) < 34 && Math.abs(t.y - P.y) < 40,
+        );
+        if (term && useK() && P.grounded) {
+          P.repairing = true;
+          ax = 0;
+          term.p += dt / 150;
+          if (term.p >= 1) {
+            term.done = true;
+            L.repaired++;
+            audio.tone(880, 0.12, "sine", 0.2);
+            audio.tone(1320, 0.25, "sine", 0.12);
+            // repairing seals the light bleed nearby
+            const tx = Math.floor(term.x / TS),
+              ty = Math.floor(term.y / TS);
+            for (let y = 0; y < ROWS; y++)
+              for (let x = 0; x < L.cols; x++)
+                if (L.grid[y][x] === "*" && Math.hypot(x - tx, y - ty) < 9)
+                  L.grid[y][x] = ".";
+            if (L.repaired === L.terminals.length) {
+              L.doorsOpen = true;
+              game.msg = "BULKHEAD RELEASED";
+              game.msgT = 130;
+              audio.tone(140, 0.7, "sawtooth", 0.16);
+              if (L.def.apexAfterTerminals && !apex) {
+                apex = { x: P.x - 900 };
+                game.msg = "SOMETHING IS COMING UP THE SHAFT";
+                game.msgT = 220;
+              }
+            }
+          }
+        } else if (term) {
+          term.p = Math.max(0, term.p - dt / 60);
+        }
+
+        P.vx += (ax * spd - P.vx) * (P.grounded ? 0.34 : 0.16) * dt;
+        if (Math.abs(P.vx) < 0.04) P.vx = 0;
+        P.walk += Math.abs(P.vx) * dt * 0.22;
+
+        P.coyote = P.grounded ? 7 : Math.max(0, P.coyote - dt);
+        P.buf = jumpK() ? 7 : Math.max(0, P.buf - dt);
+        if (P.buf > 0 && P.coyote > 0) {
+          P.vy = jmp;
+          P.buf = 0;
+          P.coyote = 0;
+          audio.tone(180, 0.09, "triangle", 0.09);
+        }
+        if (!jumpK() && P.vy < -3.2) P.vy += 0.48 * dt; // variable jump height
+
+        P.vy = Math.min(15, P.vy + GRAV * dt);
+        P.x += P.vx * dt;
+        collideX(P);
+        P.y += P.vy * dt;
+        collideY(P);
+        P.x = Math.max(P.w / 2, Math.min(L.w - P.w / 2, P.x));
+
+        // wrench swing — severs the light. Never kills. Nothing here dies.
+        P.cool = Math.max(0, P.cool - dt);
+        P.swing = Math.max(0, P.swing - dt);
+        if ((keys.KeyJ || keys.KeyK || keys.ShiftLeft) && P.cool === 0) {
+          P.swing = 11;
+          P.cool = 26;
+          audio.tone(320, 0.07, "square", 0.1);
+          for (const e of ents) {
+            if (
+              Math.abs(e.x - (P.x + P.face * 30)) < 34 + e.w / 2 &&
+              Math.abs(e.y - P.y) < 34 + e.h / 2
+            ) {
+              e.stun = e.stage === 7 ? 70 : 150;
+              e.vx = P.face * (e.stage === 7 ? 0 : 3.4);
+              e.vy = -3;
+              audio.hit();
+              game.shake = 6;
+            }
+          }
+        }
+        P.iframe = Math.max(0, P.iframe - dt);
+
+        /* ── the Rewritten ── */
+        for (const e of ents) {
+          e.ph += dt * 0.05;
+          if (e.stun > 0) {
+            e.stun -= dt;
+          }
+          if (e.stage !== 7) {
+            if (e.stun <= 0) {
+              const see = Math.abs(P.x - e.x) < 340 && Math.abs(P.y - e.y) < 90;
+              e.dir = see ? Math.sign(P.x - e.x) || e.dir : e.dir;
+              e.vx = e.dir * e.spd * (see ? 1.35 : 1);
+              // turn at ledges and walls
+              const ahead = e.x + e.dir * (e.w / 2 + 4);
+              if (
+                !see &&
+                (solidAt(ahead, e.y) || !solidAt(ahead, e.y + e.h / 2 + 6))
+              )
+                e.dir *= -1;
+            } else e.vx *= 0.9;
+            e.vy = Math.min(14, e.vy + GRAV * dt);
+            e.x += e.vx * dt;
+            collideX(e);
+            e.y += e.vy * dt;
+            collideY(e);
+          }
+          // contact
+          if (
+            P.iframe === 0 &&
+            Math.abs(e.x - P.x) < (e.w + P.w) / 2 &&
+            Math.abs(e.y - P.y) < (e.h + P.h) / 2
+          ) {
+            P.acc = Math.min(100, P.acc + e.dmg);
+            P.iframe = 55;
+            P.vx = Math.sign(P.x - e.x || 1) * 5.2;
+            P.vy = -5;
+            game.shake = 14;
+            game.flash = 0.5;
+            audio.hit();
+          }
+        }
+
+        /* ── apex: stage 10, the surface arriving in person ── */
+        if (apex) {
+          apex.x += 2.35 * dt;
+          if (P.x - apex.x < 260)
+            P.acc = Math.min(
+              100,
+              P.acc + (1 - Math.max(0, P.x - apex.x) / 260) * 1.7 * dt,
+            );
+          if (P.x < apex.x + 40) P.acc = 100;
+        }
+
+        /* ── acceptance: light in, darkness out ── */
+        buildLights();
+        let gain = 0;
+        for (const l of lights) {
+          const d = Math.hypot(l.x - P.x, l.y - P.y);
+          if (d < l.r) gain += l.pow * (1 - d / l.r);
+        }
+        P.acc += gain > 0 ? gain * dt : -0.075 * dt;
+        P.acc = Math.max(0, Math.min(100, P.acc));
+        audio.tick(P.acc);
+
+        if (P.acc >= 100) return die();
+        if (P.y > L.h + 200) {
+          P.acc = Math.min(100, P.acc + 20);
+          respawn();
+        }
+
+        // voice lines
+        for (const v of L.voice)
+          if (!v[2] && P.x > v[0]) {
+            v[2] = true;
+            game.msg = v[1];
+            game.msgT = 300;
+          }
+        if (game.msgT > 0) game.msgT -= dt;
+
+        // exit
+        if (tileAt(P.x, P.y) === ">") {
+          game.level++;
+          if (game.level >= LEVELS.length) {
+            game.state = "end";
+            game.flash = 1;
+          } else loadLevel(game.level);
+        }
+
+        game.shake = Math.max(0, game.shake - 0.8 * dt);
+        game.flash = Math.max(0, game.flash - 0.03 * dt);
+      }
+
+      function buildLights() {
+        lights.length = 0;
+        const x0 = Math.max(0, Math.floor((cam() - 200) / TS)),
+          x1 = Math.min(L.cols, Math.ceil((cam() + VW + 200) / TS));
+        for (let y = 0; y < ROWS; y++)
+          for (let x = x0; x < x1; x++)
+            if (L.grid[y][x] === "*")
+              lights.push({
+                x: x * TS + 16,
+                y: y * TS + 16,
+                r: 104,
+                pow: 0.3,
+                kind: "bleed",
+              });
+        for (const e of ents) {
+          const dim = e.stun > 0 ? 0.18 : 1;
+          lights.push({
+            x: e.x,
+            y: e.y - 2,
+            r: e.r * dim,
+            pow: e.pow * dim,
+            kind: "foe",
+            e,
+          });
+        }
+        if (apex)
+          lights.push({ x: apex.x, y: VH / 2, r: 1400, pow: 0, kind: "apex" });
+      }
+
+      function die() {
+        game.state = "dead";
+        game.flash = 1;
+        audio.tone(70, 1.6, "sine", 0.25);
+        audio.tone(1046, 2.2, "sine", 0.06);
+      }
+      function respawn() {
+        P.x = P.spawn.x;
+        P.y = P.spawn.y;
+        P.vx = P.vy = 0;
+        game.shake = 10;
+      }
+
+      function advanceScreen(code) {
+        if (code === "Escape") return;
+        if (game.state === "title") {
+          game.level = 0;
+          loadLevel(0);
+        } else if (game.state === "dead") {
+          loadLevel(game.level);
+        } else if (game.state === "end") {
+          game.state = "title";
+        }
+      }
+
+      /* ─────────────────────── render ─────────────────────── */
+      function cam() {
+        return Math.max(0, Math.min(L.w - VW, P.x - VW * 0.42));
+      }
+      // deterministic background noise
+      function rnd(i) {
+        const s = Math.sin(i * 127.1) * 43758.5453;
+        return s - Math.floor(s);
+      }
+
+      function render() {
+        cx.setTransform(1, 0, 0, 1, 0, 0);
+        cx.fillStyle = "#04050a";
+        cx.fillRect(0, 0, VW, VH);
+        if (game.state === "title") return titleScreen();
+        if (game.state === "end") return endScreen();
+
+        const c = cam();
+        const sx = (Math.random() - 0.5) * game.shake,
+          sy = (Math.random() - 0.5) * game.shake;
+        cx.save();
+        cx.translate(-c + sx, sy);
+
+        drawBackground(c);
+        drawTiles(c);
+        drawTerminals();
+        drawLightField();
+        for (const e of ents) drawFoe(e);
+        drawPlayer();
+        if (apex) drawApex();
+
+        cx.restore();
+        drawHUD();
+        if (game.state === "dead") deadScreen();
+      }
+
+      function drawBackground(c) {
+        // far wall
+        const g = cx.createLinearGradient(0, 0, 0, VH);
+        g.addColorStop(0, "#0d121c");
+        g.addColorStop(0.6, "#111825");
+        g.addColorStop(1, "#080c14");
+        cx.fillStyle = g;
+        cx.fillRect(c, 0, VW, VH);
+        // parallax structure
+        for (let layer = 0; layer < 2; layer++) {
+          const pf = layer ? 0.5 : 0.25,
+            alpha = layer ? 0.1 : 0.055;
+          const off = c * pf;
+          cx.fillStyle = `rgba(120,150,175,${alpha})`;
+          const start = Math.floor(off / 180) - 1;
+          for (let i = start; i < start + 9; i++) {
+            const rx = c + (i * 180 - off),
+              h = 90 + rnd(i + layer * 99) * 220,
+              w = 34 + rnd(i * 3.3 + layer) * 60;
+            cx.fillRect(rx, VH - h, w, h);
+            cx.fillRect(rx + w + 14, 0, 10, 40 + rnd(i * 7 + layer) * 160);
+          }
+          // pipes
+          cx.strokeStyle = `rgba(110,140,165,${alpha * 0.9})`;
+          cx.lineWidth = layer ? 5 : 3;
+          cx.beginPath();
+          for (let i = start; i < start + 9; i++) {
+            const rx = c + (i * 180 - off),
+              y = 60 + rnd(i * 11 + layer * 4) * 300;
+            cx.moveTo(rx, y);
+            cx.lineTo(rx + 180, y);
+          }
+          cx.stroke();
+        }
+      }
+
+      function drawTiles(c) {
+        const x0 = Math.max(0, Math.floor(c / TS) - 1),
+          x1 = Math.min(L.cols, Math.ceil((c + VW) / TS) + 1);
+        for (let y = 0; y < ROWS; y++)
+          for (let x = x0; x < x1; x++) {
+            const ch = L.grid[y][x],
+              px = x * TS,
+              py = y * TS;
+            if (ch === "#") {
+              const open = !solidAt(px + 16, py - 16);
+              cx.fillStyle = "#0f141c";
+              cx.fillRect(px, py, TS, TS);
+              cx.fillStyle = "#131a24";
+              cx.fillRect(px + 2, py + 2, TS - 4, TS - 4);
+              if (open) {
+                cx.fillStyle = "#1d2836";
+                cx.fillRect(px, py, TS, 3);
+                cx.fillStyle = "rgba(150,190,215,.10)";
+                cx.fillRect(px, py, TS, 1);
+              }
+              const s = rnd(x * 7.7 + y * 3.1);
+              if (s > 0.82) {
+                cx.fillStyle = "rgba(0,0,0,.45)";
+                cx.fillRect(px + 6 + s * 12, py + 7, 3, 3);
+              }
+              if (s < 0.07) {
+                cx.strokeStyle = "rgba(90,120,145,.16)";
+                cx.lineWidth = 1;
+                cx.beginPath();
+                cx.moveTo(px + 4, py + TS - 6);
+                cx.lineTo(px + TS - 6, py + 8);
+                cx.stroke();
+              }
+            } else if (ch === "D") {
+              if (L.doorsOpen) continue;
+              cx.fillStyle = "#1a222e";
+              cx.fillRect(px, py, TS, TS);
+              cx.fillStyle = "#233042";
+              cx.fillRect(px + 3, py + 3, TS - 6, TS - 6);
+              cx.fillStyle = "rgba(255,120,90,.55)";
+              cx.fillRect(px + 12, py + 13, 8, 6);
+            } else if (ch === ">") {
+              const p = 0.5 + Math.sin(game.t * 0.05) * 0.5;
+              cx.fillStyle = `rgba(120,240,220,${0.1 + p * 0.14})`;
+              cx.fillRect(px - 6, py - 40, TS + 12, TS + 40);
+              cx.fillStyle = `rgba(190,255,245,${0.5 + p * 0.4})`;
+              cx.fillRect(px + 8, py + 4, TS - 16, TS - 8);
+            }
+          }
+      }
+
+      function drawTerminals() {
+        for (const t of L.terminals) {
+          const px = t.x - 13,
+            py = t.y - 26;
+          cx.fillStyle = "#161d27";
+          cx.fillRect(px, py, 26, 30);
+          cx.fillStyle = "#0b1119";
+          cx.fillRect(px + 3, py + 3, 20, 17);
+          const ok = t.done;
+          cx.fillStyle = ok
+            ? "rgba(120,240,210,.85)"
+            : `rgba(255,150,90,${0.5 + Math.sin(game.t * 0.12) * 0.35})`;
+          cx.fillRect(px + 5, py + 5, ok ? 16 : 6, 3);
+          cx.fillRect(px + 5, py + 10, ok ? 12 : 10, 3);
+          cx.fillRect(px + 5, py + 15, ok ? 9 : 4, 3);
+          if (!ok && t.p > 0) {
+            cx.fillStyle = "rgba(10,14,20,.9)";
+            cx.fillRect(px - 6, py - 14, 38, 7);
+            cx.fillStyle = "#7ef0d2";
+            cx.fillRect(px - 5, py - 13, 36 * t.p, 5);
+          }
+          if (
+            !ok &&
+            Math.abs(t.x - P.x) < 34 &&
+            Math.abs(t.y - P.y) < 40 &&
+            t.p <= 0
+          ) {
+            cx.fillStyle = "rgba(200,230,240,.75)";
+            cx.font = "10px ui-monospace,monospace";
+            cx.textAlign = "center";
+            cx.fillText("HOLD E", t.x, py - 16);
+          }
+        }
+      }
+
+      /* every light is one additive radial gradient. That's the whole engine. */
+      function drawLightField() {
+        cx.save();
+        cx.globalCompositeOperation = "lighter";
+        for (const l of lights) {
+          if (l.kind === "apex") continue;
+          const pulse =
+            1 + Math.sin(game.t * 0.06 + (l.e ? l.e.ph : l.x)) * 0.07;
+          const r = l.r * pulse;
+          const g = cx.createRadialGradient(l.x, l.y, 0, l.x, l.y, r);
+          const i = l.kind === "bleed" ? 0.55 : 0.75;
+          g.addColorStop(0, `rgba(255,255,250,${i * 0.55})`);
+          g.addColorStop(0.16, `rgba(255,244,215,${i * 0.3})`);
+          g.addColorStop(0.45, `rgba(215,190,255,${i * 0.1})`);
+          g.addColorStop(1, "rgba(120,90,200,0)");
+          cx.fillStyle = g;
+          cx.beginPath();
+          cx.arc(l.x, l.y, r, 0, 7);
+          cx.fill();
+          if (l.kind === "bleed") {
+            cx.fillStyle = `rgba(255,252,240,${0.5 + Math.sin(game.t * 0.09 + l.x) * 0.2})`;
+            cx.fillRect(l.x - 9, l.y - 3, 18, 6);
+          }
+        }
+        // player's headlamp — narrow, cold, the only honest light in the facility
+        const hx = P.x + P.face * 8,
+          hy = P.y - 9;
+        const cone = cx.createRadialGradient(hx, hy, 4, hx, hy, 190);
+        cone.addColorStop(0, "rgba(190,230,255,.30)");
+        cone.addColorStop(0.4, "rgba(150,200,235,.09)");
+        cone.addColorStop(1, "rgba(80,140,200,0)");
+        cx.fillStyle = cone;
+        cx.beginPath();
+        cx.moveTo(hx, hy);
+        cx.arc(
+          hx,
+          hy,
+          190,
+          P.face > 0 ? -0.52 : Math.PI - 0.52,
+          P.face > 0 ? 0.52 : Math.PI + 0.52,
+        );
+        cx.fill();
+        cx.restore();
+      }
+
+      /* ── the Rewritten. Bleached shell, wet interior, light doing the talking ── */
+      function drawFoe(e) {
+        const dim = e.stun > 0 ? 0.25 : 1,
+          p = Math.sin(e.ph * 1.7);
+        cx.save();
+        cx.translate(e.x, e.y);
+        const w = e.w,
+          h = e.h;
+
+        if (e.stage === 7) {
+          // anchored emitter: facility and flesh have merged
+          cx.fillStyle = "#2a1418";
+          cx.beginPath();
+          cx.ellipse(0, 0, w * 0.55, h * 0.5, 0, 0, 7);
+          cx.fill();
+          cx.save();
+          cx.globalCompositeOperation = "lighter";
+          for (let i = 0; i < 9; i++) {
+            const a = (i / 9) * Math.PI * 2 + e.ph * 0.2,
+              len = (h * 0.7 + Math.sin(e.ph * 2 + i) * 14) * dim;
+            cx.strokeStyle = `rgba(255,248,230,${0.28 * dim})`;
+            cx.lineWidth = 3 + (i % 3);
+            cx.beginPath();
+            cx.moveTo(0, 0);
+            cx.lineTo(Math.cos(a) * len, Math.sin(a) * len);
+            cx.stroke();
+          }
+          cx.restore();
+          cx.fillStyle = "#3a1c22";
+          for (let i = 0; i < 5; i++) {
+            const a = i * 1.4 + e.ph * 0.4;
+            cx.beginPath();
+            cx.ellipse(
+              Math.cos(a) * w * 0.34,
+              Math.sin(a) * h * 0.3,
+              9,
+              7,
+              a,
+              0,
+              7,
+            );
+            cx.fill();
+          }
+          cx.save();
+          cx.globalCompositeOperation = "lighter";
+          const g = cx.createRadialGradient(0, 0, 0, 0, 0, w * 0.6);
+          g.addColorStop(0, `rgba(255,255,250,${0.85 * dim})`);
+          g.addColorStop(1, "rgba(255,220,180,0)");
+          cx.fillStyle = g;
+          cx.beginPath();
+          cx.arc(0, 0, w * 0.6, 0, 7);
+          cx.fill();
+          cx.restore();
+          cx.restore();
+          return;
+        }
+
+        const bodies =
+          e.stage === 4
+            ? [
+                [-8, 2, 0.85],
+                [9, -3, 1],
+              ]
+            : [[0, 0, 1]];
+        // wet flesh
+        for (const [ox, oy, s] of bodies) {
+          cx.fillStyle = "#37181c";
+          cx.beginPath();
+          cx.ellipse(ox, oy + h * 0.12, w * 0.42 * s, h * 0.36 * s, 0, 0, 7);
+          cx.fill();
+          cx.fillStyle = "#4a2026";
+          cx.beginPath();
+          cx.ellipse(
+            ox + 2,
+            oy + h * 0.16,
+            w * 0.3 * s,
+            h * 0.26 * s,
+            0.3,
+            0,
+            7,
+          );
+          cx.fill();
+          // bleached shell head, features erased
+          cx.fillStyle = "#c8c0b4";
+          cx.beginPath();
+          cx.ellipse(
+            ox,
+            oy - h * 0.3,
+            w * 0.28 * s,
+            h * 0.24 * s,
+            p * 0.08,
+            0,
+            7,
+          );
+          cx.fill();
+          cx.fillStyle = "#8e8478";
+          cx.beginPath();
+          cx.ellipse(ox + 1, oy - h * 0.24, w * 0.2 * s, h * 0.14 * s, 0, 0, 7);
+          cx.fill();
+        }
+        // limbs, wrong number of them
+        cx.strokeStyle = "#3d191e";
+        cx.lineWidth = 4;
+        cx.lineCap = "round";
+        const arms = e.stage === 4 ? 5 : 2;
+        for (let i = 0; i < arms; i++) {
+          const a =
+            -1.9 +
+            i * (3.8 / Math.max(1, arms - 1)) +
+            Math.sin(e.ph * 1.4 + i) * 0.18;
+          cx.beginPath();
+          cx.moveTo(0, 0);
+          cx.quadraticCurveTo(
+            Math.cos(a) * w * 0.5,
+            Math.sin(a) * h * 0.3,
+            Math.cos(a) * w * 0.8,
+            h * 0.42 + Math.sin(a) * 8,
+          );
+          cx.stroke();
+        }
+        // cracks: light getting out
+        cx.save();
+        cx.globalCompositeOperation = "lighter";
+        for (let i = 0; i < (e.stage === 4 ? 9 : 5); i++) {
+          const sd = rnd(i * 3.7 + e.stage),
+            a = sd * 6.28,
+            len = 6 + sd * w * 0.5;
+          cx.strokeStyle = `rgba(255,250,235,${(0.35 + Math.sin(e.ph * 2 + i) * 0.2) * dim})`;
+          cx.lineWidth = 1.4 + sd * 1.6;
+          cx.beginPath();
+          cx.moveTo(Math.cos(a) * 4, Math.sin(a) * 4);
+          cx.lineTo(Math.cos(a) * len, Math.sin(a) * len * 0.8);
+          cx.stroke();
+        }
+        const core = cx.createRadialGradient(0, -2, 0, 0, -2, w * 0.9);
+        core.addColorStop(0, `rgba(255,255,248,${0.55 * dim})`);
+        core.addColorStop(1, "rgba(255,230,190,0)");
+        cx.fillStyle = core;
+        cx.beginPath();
+        cx.arc(0, -2, w * 0.9, 0, 7);
+        cx.fill();
+        cx.restore();
+        cx.restore();
+      }
+
+      function drawPlayer() {
+        if (P.iframe > 0 && Math.floor(game.t * 0.4) % 2) {
+          /* flicker */
+        }
+        cx.save();
+        cx.translate(P.x, P.y);
+        const bob = P.grounded ? Math.sin(P.walk) * 1.2 : 0;
+        const lean = Math.max(-2, Math.min(2, P.vx * 0.35));
+        cx.translate(lean, bob);
+
+        // legs
+        cx.strokeStyle = "#0d1119";
+        cx.lineWidth = 5;
+        cx.lineCap = "round";
+        const ls = P.grounded ? Math.sin(P.walk) * 5 : 3;
+        cx.beginPath();
+        cx.moveTo(-1, 4);
+        cx.lineTo(-1 + ls, 14);
+        cx.moveTo(1, 4);
+        cx.lineTo(1 - ls, 14);
+        cx.stroke();
+        // torso — engineer's rig, not armour
+        cx.fillStyle = "#141b25";
+        cx.fillRect(-7, -10, 14, 16);
+        cx.fillStyle = "#1d2836";
+        cx.fillRect(-7, -10, 14, 4);
+        cx.fillStyle = "#25333f";
+        cx.fillRect(-8, -3, 16, 3);
+        // head + lamp
+        cx.fillStyle = "#111823";
+        cx.beginPath();
+        cx.arc(0, -15, 6, 0, 7);
+        cx.fill();
+        cx.fillStyle = "#2b3a49";
+        cx.fillRect(-6, -19, 12, 4);
+        cx.fillStyle = "#bfe6ff";
+        cx.fillRect(P.face > 0 ? 3 : -6, -18, 3, 3);
+        // wrench
+        cx.strokeStyle = "#39485a";
+        cx.lineWidth = 3;
+        if (P.swing > 0) {
+          const t = 1 - P.swing / 11,
+            a = (-1.1 + t * 2.3) * P.face;
+          cx.save();
+          cx.rotate(a);
+          cx.beginPath();
+          cx.moveTo(0, -4);
+          cx.lineTo(0, -30);
+          cx.stroke();
+          cx.fillStyle = "#4a5c70";
+          cx.fillRect(-4, -34, 8, 7);
+          cx.restore();
+          cx.save();
+          cx.globalCompositeOperation = "lighter";
+          cx.strokeStyle = "rgba(170,220,255,.35)";
+          cx.lineWidth = 4;
+          cx.beginPath();
+          cx.arc(
+            0,
+            -6,
+            30,
+            P.face > 0 ? -1.2 : Math.PI + 0.2,
+            P.face > 0 ? 0.8 : Math.PI + 2.2,
+          );
+          cx.stroke();
+          cx.restore();
+        } else {
+          cx.beginPath();
+          cx.moveTo(P.face * 6, -2);
+          cx.lineTo(P.face * 9, 10);
+          cx.stroke();
+        }
+
+        // acceptance shows on the body first. Cracks, then light.
+        const stage = Math.floor(P.acc / 10);
+        if (stage > 0) {
+          cx.save();
+          cx.globalCompositeOperation = "lighter";
+          for (let i = 0; i < stage; i++) {
+            const sd = rnd(i * 5.1);
+            cx.strokeStyle = `rgba(255,250,235,${0.25 + Math.sin(game.t * 0.1 + i) * 0.15})`;
+            cx.lineWidth = 1 + sd;
+            cx.beginPath();
+            cx.moveTo(-6 + sd * 12, -14 + sd * 8);
+            cx.lineTo(-6 + sd * 12 + (sd - 0.5) * 10, -4 + sd * 12);
+            cx.stroke();
+          }
+          if (stage >= 4) {
+            const g = cx.createRadialGradient(0, -4, 0, 0, -4, 20 + stage * 4);
+            g.addColorStop(0, `rgba(255,252,240,${0.06 * stage})`);
+            g.addColorStop(1, "rgba(255,230,190,0)");
+            cx.fillStyle = g;
+            cx.beginPath();
+            cx.arc(0, -4, 20 + stage * 4, 0, 7);
+            cx.fill();
+          }
+          cx.restore();
+        }
+        cx.restore();
+      }
+
+      function drawApex() {
+        const x = apex.x;
+        cx.save();
+        const g = cx.createLinearGradient(x - 320, 0, x + 90, 0);
+        g.addColorStop(0, "rgba(255,255,255,0)");
+        g.addColorStop(0.55, "rgba(255,246,222,.55)");
+        g.addColorStop(0.86, "rgba(255,255,255,.96)");
+        g.addColorStop(1, "rgba(255,255,255,1)");
+        cx.fillStyle = g;
+        cx.fillRect(x - 320, -50, 420, VH + 100);
+        cx.fillStyle = "#fff";
+        cx.fillRect(x - 9999, -50, 9999 + 40, VH + 100);
+        // faces still in there
+        for (let i = 0; i < 16; i++) {
+          const fy = ((i * 97 + game.t * 0.7) % (VH + 80)) - 40;
+          const fx = x - 40 - rnd(i) * 200;
+          const s = 0.6 + rnd(i * 3) * 0.9;
+          cx.fillStyle = `rgba(60,26,30,${0.16 + rnd(i * 7) * 0.2})`;
+          cx.beginPath();
+          cx.ellipse(fx, fy, 13 * s, 18 * s, 0, 0, 7);
+          cx.fill();
+          cx.fillStyle = "rgba(30,10,14,.55)";
+          cx.beginPath();
+          cx.ellipse(
+            fx,
+            fy + 7 * s,
+            4 * s,
+            (7 + Math.sin(game.t * 0.1 + i) * 3) * s,
+            0,
+            0,
+            7,
+          );
+          cx.fill();
+          cx.fillStyle = "rgba(30,10,14,.4)";
+          cx.beginPath();
+          cx.ellipse(fx - 5 * s, fy - 3 * s, 2.4 * s, 2 * s, 0, 0, 7);
+          cx.fill();
+          cx.beginPath();
+          cx.ellipse(fx + 5 * s, fy - 3 * s, 2.4 * s, 2 * s, 0, 0, 7);
+          cx.fill();
+        }
+        cx.restore();
+      }
+
+      /* ─────────────────────── HUD & screens ─────────────────────── */
+      function drawHUD() {
+        const acc = P.acc,
+          stage = Math.floor(acc / 10);
+        // bleach-out as you accept
+        if (acc > 35) {
+          cx.fillStyle = `rgba(255,251,240,${((acc - 35) / 65) * 0.26})`;
+          cx.fillRect(0, 0, VW, VH);
+        }
+        if (game.flash > 0) {
+          cx.fillStyle = `rgba(255,255,255,${game.flash})`;
+          cx.fillRect(0, 0, VW, VH);
+        }
+
+        // vignette + grain
+        const v = cx.createRadialGradient(
+          VW / 2,
+          VH / 2,
+          VH * 0.35,
+          VW / 2,
+          VH / 2,
+          VH * 0.95,
+        );
+        v.addColorStop(0, "rgba(0,0,0,0)");
+        v.addColorStop(1, "rgba(0,0,0,.72)");
+        cx.fillStyle = v;
+        cx.fillRect(0, 0, VW, VH);
+        cx.fillStyle = "rgba(255,255,255,.018)";
+        for (let i = 0; i < 70; i++)
+          cx.fillRect((Math.random() * VW) | 0, (Math.random() * VH) | 0, 2, 2);
+        cx.fillStyle = "rgba(0,0,0,.16)";
+        for (let y = 0; y < VH; y += 3) cx.fillRect(0, y, VW, 1);
+
+        // acceptance meter
+        cx.font = "11px ui-monospace,monospace";
+        cx.textAlign = "left";
+        cx.fillStyle = "rgba(140,170,190,.75)";
+        cx.fillText("ACCEPTANCE", 24, 30);
+        cx.fillStyle = "rgba(255,255,255,.06)";
+        cx.fillRect(24, 38, 260, 10);
+        const grad = cx.createLinearGradient(24, 0, 284, 0);
+        grad.addColorStop(0, "#6de0c4");
+        grad.addColorStop(0.5, "#f2d98a");
+        grad.addColorStop(1, "#fffdf6");
+        cx.fillStyle = grad;
+        cx.fillRect(24, 38, (260 * acc) / 100, 10);
+        for (let i = 1; i < 10; i++) {
+          cx.fillStyle = "rgba(4,6,10,.85)";
+          cx.fillRect(24 + 26 * i, 38, 1, 10);
+        }
+        cx.fillStyle = acc > 60 ? "#fff8e6" : "rgba(150,180,200,.8)";
+        cx.fillText(`STAGE ${stage} / 10`, 294, 47);
+        if (acc >= 40) {
+          cx.fillStyle = `rgba(255,240,200,${0.55 + Math.sin(game.t * 0.15) * 0.3})`;
+          cx.fillText("▲ YIELDING — faster, lighter, closer", 24, 66);
+        }
+
+        // objective
+        cx.textAlign = "right";
+        cx.fillStyle = "rgba(140,170,190,.65)";
+        cx.fillText(L.def.name, VW - 24, 30);
+        cx.fillStyle = L.doorsOpen
+          ? "rgba(120,240,210,.9)"
+          : "rgba(255,170,110,.85)";
+        cx.fillText(
+          L.doorsOpen
+            ? "BULKHEAD OPEN — GO"
+            : `SYSTEMS RESTORED ${L.repaired}/${L.terminals.length}`,
+          VW - 24,
+          48,
+        );
+
+        // subtitle / Voice
+        if (game.msgT > 0 && game.msg) {
+          const a = Math.min(1, game.msgT / 60);
+          cx.textAlign = "center";
+          const isVoice = game.msg.startsWith("VOICE");
+          cx.font = isVoice
+            ? "14px ui-monospace,monospace"
+            : "600 15px ui-monospace,monospace";
+          const tw = cx.measureText(game.msg).width;
+          cx.fillStyle = `rgba(4,6,10,${0.72 * a})`;
+          cx.fillRect(VW / 2 - tw / 2 - 16, VH - 70, tw + 32, 30);
+          cx.fillStyle = isVoice
+            ? `rgba(198,228,240,${a})`
+            : `rgba(255,235,190,${a})`;
+          cx.fillText(game.msg, VW / 2, VH - 50);
+        }
+
+        // controls hint, first level only
+        if (game.level === 0 && game.t < 700) {
+          cx.textAlign = "left";
+          cx.fillStyle = "rgba(130,160,180,.4)";
+          cx.fillText(
+            "A/D move · SPACE jump · J wrench (stuns, never kills) · E repair",
+            24,
+            VH - 24,
+          );
+        }
+      }
+
+      function bigText(t, y, size, col, sp) {
+        cx.textAlign = "center";
+        cx.font = `700 ${size}px ui-monospace,monospace`;
+        cx.fillStyle = col;
+        if (sp) {
+          // manual letter-spacing
+          const chars = [...t];
+          const w =
+            chars.reduce((a, ch) => a + cx.measureText(ch).width + sp, 0) - sp;
+          let x = VW / 2 - w / 2;
+          cx.textAlign = "left";
+          for (const ch of chars) {
+            cx.fillText(ch, x, y);
+            x += cx.measureText(ch).width + sp;
+          }
+        } else cx.fillText(t, VW / 2, y);
+      }
+
+      function titleScreen() {
+        const t = (game.t += 1);
+        const g = cx.createRadialGradient(
+          VW / 2,
+          VH * 0.55,
+          20,
+          VW / 2,
+          VH * 0.55,
+          620,
+        );
+        g.addColorStop(
+          0,
+          `rgba(255,250,235,${0.14 + Math.sin(t * 0.02) * 0.05})`,
+        );
+        g.addColorStop(0.4, "rgba(200,170,255,.05)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        cx.fillStyle = g;
+        cx.fillRect(0, 0, VW, VH);
+        for (let i = 0; i < 9; i++) {
+          const fy = VH * 0.55 + Math.sin(t * 0.01 + i) * 40,
+            fx = VW / 2 + Math.cos(t * 0.008 + i * 0.7) * 220;
+          cx.fillStyle = "rgba(70,30,34,.28)";
+          cx.beginPath();
+          cx.ellipse(fx, fy, 11, 16, 0, 0, 7);
+          cx.fill();
+          cx.fillStyle = "rgba(20,8,10,.5)";
+          cx.beginPath();
+          cx.ellipse(fx, fy + 6, 3.5, 5 + Math.sin(t * 0.06 + i) * 3, 0, 0, 7);
+          cx.fill();
+        }
+        bigText("THE INVITATION", 200, 52, "#f4efe4", 12);
+        cx.font = "12px ui-monospace,monospace";
+        cx.textAlign = "center";
+        cx.fillStyle = "rgba(160,190,205,.7)";
+        cx.fillText("HELIX DEPTH · YEAR NINETEEN OF THE REFUSAL", VW / 2, 232);
+        cx.fillStyle = "rgba(150,175,195,.6)";
+        cx.fillText(
+          "You are Kai Voss, systems engineer. You are not a soldier.",
+          VW / 2,
+          300,
+        );
+        cx.fillText(
+          "Nothing down here can be killed. It can only be delayed.",
+          VW / 2,
+          322,
+        );
+        cx.fillText(
+          "Light is not illumination. Light is the offer.",
+          VW / 2,
+          344,
+        );
+        cx.fillStyle = `rgba(255,240,200,${0.4 + Math.sin(t * 0.06) * 0.35})`;
+        cx.fillText("PRESS ANY KEY TO REFUSE", VW / 2, 420);
+        cx.fillStyle = "rgba(120,145,165,.42)";
+        cx.fillText("A/D move   SPACE jump   J wrench   E repair", VW / 2, 470);
+        cx.fillStyle = "rgba(0,0,0,.16)";
+        for (let y = 0; y < VH; y += 3) cx.fillRect(0, y, VW, 1);
+      }
+
+      function deadScreen() {
+        cx.fillStyle = "rgba(252,250,244,.90)";
+        cx.fillRect(0, 0, VW, VH);
+        bigText("ACCEPTED", 232, 56, "#241014", 14);
+        cx.textAlign = "center";
+        cx.font = "13px ui-monospace,monospace";
+        cx.fillStyle = "rgba(50,24,28,.8)";
+        cx.fillText(
+          "STAGE 10 / 10 — the boundary you were maintaining has been released.",
+          VW / 2,
+          286,
+        );
+        cx.fillStyle = "rgba(50,24,28,.55)";
+        cx.fillText(
+          "VOICE: There. Wasn't that easier than Thursday?",
+          VW / 2,
+          320,
+        );
+        cx.fillStyle = `rgba(40,18,22,${0.35 + Math.sin(game.t * 0.06) * 0.3})`;
+        cx.fillText("PRESS ANY KEY TO REFUSE AGAIN", VW / 2, 386);
+      }
+
+      function endScreen() {
+        game.t += 1;
+        cx.fillStyle = "#05070c";
+        cx.fillRect(0, 0, VW, VH);
+        const g = cx.createRadialGradient(
+          VW / 2,
+          VH * 0.5,
+          10,
+          VW / 2,
+          VH * 0.5,
+          500,
+        );
+        g.addColorStop(0, "rgba(120,240,210,.10)");
+        g.addColorStop(1, "rgba(0,0,0,0)");
+        cx.fillStyle = g;
+        cx.fillRect(0, 0, VW, VH);
+        bigText("STILL REFUSING", 210, 40, "#e8f3ef", 10);
+        cx.textAlign = "center";
+        cx.font = "13px ui-monospace,monospace";
+        cx.fillStyle = "rgba(160,190,205,.75)";
+        cx.fillText(
+          "The core holds. Air, water, power. Two thousand people who do not know your name.",
+          VW / 2,
+          272,
+        );
+        cx.fillText(
+          "The Invitation is still open. It is patient. It has nineteen years of practice.",
+          VW / 2,
+          296,
+        );
+        cx.fillStyle = "rgba(200,225,235,.6)";
+        cx.fillText(
+          "VOICE: Tomorrow, then. I will keep the lights on for you.",
+          VW / 2,
+          344,
+        );
+        cx.fillStyle = `rgba(120,240,210,${0.35 + Math.sin(game.t * 0.05) * 0.3})`;
+        cx.fillText("PRESS ANY KEY", VW / 2, 410);
+        cx.fillStyle = "rgba(0,0,0,.16)";
+        for (let y = 0; y < VH; y += 3) cx.fillRect(0, y, VW, 1);
+      }
+
+      /* ─────────────────────── loop ─────────────────────── */
+      let last = 0;
+      function frame(ts) {
+        const dt = Math.min(2.5, (ts - last) / 16.667) || 1;
+        last = ts;
+        update(dt);
+        render();
+        requestAnimationFrame(frame);
+      }
+
+      /* ─────────────────────── selftest (?test=1) ───────────────────────
+   ponytail: one runnable check, no framework. Fails loudly on the page. */
+      if (location.search.includes("test")) {
+        const out = [],
+          ok = (c, m) => out.push((c ? "PASS  " : "FAIL  ") + m);
+        LEVELS.forEach((lv, i) => {
+          ok(
+            lv.rows.length === ROWS,
+            `L${i} has ${ROWS} rows (got ${lv.rows.length})`,
+          );
+          ok(
+            new Set(lv.rows.map((r) => r.length)).size === 1,
+            `L${i} rows padded equal`,
+          );
+          const all = lv.rows.join("");
+          ok((all.match(/P/g) || []).length === 1, `L${i} exactly one spawn`);
+          ok(all.includes(">"), `L${i} has an exit`);
+          const T = (all.match(/T/g) || []).length,
+            D = (all.match(/D/g) || []).length;
+          ok(T > 0, `L${i} has ${T} terminal(s)`);
+          ok(D > 0, `L${i} has a door to open`);
+          ok(
+            lv.voice.every((v) => v[0] >= 0 && v[1].length),
+            `L${i} voice lines well-formed`,
+          );
+        });
+        loadLevel(0);
+        // physics: spawn must not be inside geometry, and must have floor beneath somewhere
+        ok(!solidAt(P.x, P.y), "spawn is not embedded in a wall");
+        const before = P.y;
+        P.vy = 5;
+        for (let i = 0; i < 200; i++) {
+          P.vy = Math.min(15, P.vy + GRAV);
+          P.y += P.vy;
+          collideY(P);
+          if (P.grounded) break;
+        }
+        ok(P.grounded, "player falls onto solid ground from spawn");
+        ok(P.y >= before, "gravity moves down");
+        // door blocks until repaired, opens after
+        const d = LEVELS[0].rows.findIndex((r) => r.includes("D"));
+        const dx = LEVELS[0].rows[d].indexOf("D") * TS + 16,
+          dy = d * TS + 16;
+        ok(solidAt(dx, dy), "door is solid while systems are down");
+        L.doorsOpen = true;
+        ok(!solidAt(dx, dy), "door passable once systems restored");
+        const el = document.createElement("pre");
+        el.id = "test";
+        el.textContent =
+          out.join("\n") +
+          `\n\n${out.filter((l) => l.startsWith("PASS")).length}/${out.length} passed`;
+        document.body.appendChild(el);
+      } else {
+        requestAnimationFrame(frame);
+      }
+    </script>
+  </body>
+</html>

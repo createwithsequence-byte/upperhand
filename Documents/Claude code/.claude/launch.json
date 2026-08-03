@@ -1,0 +1,586 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mr-ds",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4896",
+        "--directory",
+        "/Users/gugumax/Documents/Claude code/mr-ds-site"
+      ],
+      "port": 4896
+    },
+    {
+      "name": "trails-wedge",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4174",
+        "--directory",
+        "/Users/gugumax/Documents/Claude code/trails-wedge"
+      ],
+      "port": 4174
+    },
+    {
+      "name": "visionbox-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8090",
+        "--directory",
+        "/Users/gugumax/Documents/Claude code/visionbox"
+      ],
+      "port": 8090
+    },
+    {
+      "name": "mission-control",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/civ-world-monitor",
+        "run",
+        "dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "civvy-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/Users/gugumax/Documents/Claude code/civvy",
+        "dev",
+        "--port",
+        "3001"
+      ],
+      "port": 3001
+    },
+    {
+      "name": "noodle-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Downloads/Code-Projects/misc/noodle",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5173"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "doppl-quiz",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "-l",
+        "3456",
+        "/Users/gugumax/Desktop/doppl-quiz"
+      ],
+      "port": 3456
+    },
+    {
+      "name": "curriculum",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/afro-brazilian-curriculum",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3002"
+      ],
+      "port": 3002
+    },
+    {
+      "name": "upperhand",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/Documents/Claude code/upperhand' && exec /opt/homebrew/opt/node@22/bin/node node_modules/.bin/next dev --port 3003"
+      ],
+      "port": 3003
+    },
+    {
+      "name": "signal-ar",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/signal-ar",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3004"
+      ],
+      "port": 3004
+    },
+    {
+      "name": "hunter-jordan",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/hunter-jordan",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3005"
+      ],
+      "port": 3005
+    },
+    {
+      "name": "fireside",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/remotion-videos",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3006"
+      ],
+      "port": 3006
+    },
+    {
+      "name": "vintager-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/Users/gugumax/Documents/Claude code/mp4-vintager",
+        "dev",
+        "--port",
+        "3217"
+      ],
+      "port": 3217
+    },
+    {
+      "name": "coinspire-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/COINSPIRE",
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "3007"
+      ],
+      "port": 3007
+    },
+    {
+      "name": "wya-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/Users/gugumax/dev/wya",
+        "dev",
+        "--port",
+        "3008"
+      ],
+      "port": 3008
+    },
+    {
+      "name": "instant-song-2",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/Documents/Claude code/instant-song-2' && exec npm run dev -- --port 3010"
+      ],
+      "port": 3010
+    },
+    {
+      "name": "legacy-song",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/Documents/Claude code/legacy-song' && exec /opt/homebrew/opt/node@22/bin/node node_modules/.bin/next dev --port 3210"
+      ],
+      "port": 3210
+    },
+    {
+      "name": "goodgrief-song",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/Documents/Claude code/goodgrief-song' && exec /opt/homebrew/opt/node@22/bin/node node_modules/.bin/next dev --port 3211"
+      ],
+      "port": 3211
+    },
+    {
+      "name": "instant-song-2-staging",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/Documents/Claude code/instant-song-2-staging' && exec npm run dev -- --port 3011"
+      ],
+      "port": 3011
+    },
+    {
+      "name": "song-checker",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/song-checker",
+        "run",
+        "dev"
+      ],
+      "port": 3030
+    },
+    {
+      "name": "artist-scout-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "/Users/gugumax/Documents/Claude code/artist-scout",
+        "dev",
+        "--port",
+        "3011"
+      ],
+      "port": 3011
+    },
+    {
+      "name": "twinleaf-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/twinleaf-redesign",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3012"
+      ],
+      "port": 3012
+    },
+    {
+      "name": "creatiful",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/creatiful/dashboard",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3013"
+      ],
+      "port": 3013
+    },
+    {
+      "name": "bella-roma",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/ai-receptionist",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3014"
+      ],
+      "port": 3014
+    },
+    {
+      "name": "content-pipeline",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/songfinch-content-pipeline",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3000"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "concierge",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/songfinch-concierge/dashboard",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3016"
+      ],
+      "port": 3016
+    },
+    {
+      "name": "dear-medley",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/code/dear-refrain' && exec /opt/homebrew/opt/node@22/bin/node node_modules/.bin/next dev --port 3020"
+      ],
+      "port": 3020
+    },
+    {
+      "name": "opus48-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "-l",
+        "4848",
+        "/Users/gugumax/Documents/Claude code"
+      ],
+      "port": 4848
+    },
+    {
+      "name": "loreforge-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/Documents/Claude code/loreforge",
+        "run",
+        "dev",
+        "--",
+        "-p",
+        "3789"
+      ],
+      "port": 3789
+    },
+    {
+      "name": "wya4",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/dev/wya4",
+        "run",
+        "start",
+        "--",
+        "-p",
+        "4040"
+      ],
+      "port": 4040
+    },
+    {
+      "name": "ag-flow",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "-l",
+        "4870",
+        "/Users/gugumax/Documents/Claude code/ag-card-music-flow"
+      ],
+      "port": 4870
+    },
+    {
+      "name": "the-ledger",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "serve",
+        "-l",
+        "4321",
+        "/Users/gugumax/Documents/Claude code/the-ledger"
+      ],
+      "port": 4321
+    },
+    {
+      "name": "ag-live",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/Documents/Claude code/ag-card-music-flow' && exec /opt/homebrew/opt/node@22/bin/node server.mjs"
+      ],
+      "port": 4880
+    },
+    {
+      "name": "wya6",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/dev/wya6",
+        "run",
+        "start",
+        "--",
+        "-p",
+        "4060"
+      ],
+      "port": 4060
+    },
+    {
+      "name": "uh-site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4892",
+        "--directory",
+        "/Users/gugumax/Downloads/upperhand-site"
+      ],
+      "port": 4892
+    },
+    {
+      "name": "uh-brand-kit",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4891",
+        "--directory",
+        "/Users/gugumax/Downloads/upperhand-brand-kit"
+      ],
+      "port": 4891
+    },
+    {
+      "name": "tf-feature-sheet",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4890",
+        "--directory",
+        "/Users/gugumax/code/tangible-formats/feature-sheet"
+      ],
+      "port": 4890
+    },
+    {
+      "name": "assembly",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd '/Users/gugumax/code/assembly' && exec npm run dev -- -p 3050"
+      ],
+      "port": 3050
+    },
+    {
+      "name": "wya7",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/dev/wya7",
+        "run",
+        "start",
+        "--",
+        "-p",
+        "4070"
+      ],
+      "port": 4070
+    },
+    {
+      "name": "moo-v-night",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd /Users/gugumax/code/moo-v-night && exec npm run dev -- -p 3300"
+      ],
+      "port": 3300
+    },
+    {
+      "name": "glyphsmith",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4893",
+        "--directory",
+        "/Users/gugumax/code/glyphsmith"
+      ],
+      "port": 4893
+    },
+    {
+      "name": "fisherfit",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd /Users/gugumax/code/fisherfit-hub && exec npm run dev -- -p 3400"
+      ],
+      "port": 3400
+    },
+    {
+      "name": "covered-dev",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd /Users/gugumax/code/covered && npx next start -p 3123"
+      ],
+      "port": 3123
+    },
+    {
+      "name": "proposal-engine",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd /Users/gugumax/code/proposal-engine && exec npm run dev -- -p 3500"
+      ],
+      "port": 3500
+    },
+    {
+      "name": "fisherfit-site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4895",
+        "--directory",
+        "/Users/gugumax/code/fisherfit-site"
+      ],
+      "port": 4895
+    },
+    {
+      "name": "jobforce",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "/Users/gugumax/code/jobforce", "run", "dev"],
+      "port": 3000
+    },
+    {
+      "name": "stack-crawler",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5599",
+        "--directory",
+        "/Users/gugumax/Documents/Claude code/stack-crawler"
+      ],
+      "port": 5599
+    },
+    {
+      "name": "stack-crawler-2",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd /Users/gugumax/code/stack-crawler-2 && exec npm run dev"
+      ],
+      "port": 5177
+    },
+    {
+      "name": "cantor",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5602",
+        "--directory",
+        "/Users/gugumax/Documents/Claude code/cantor"
+      ],
+      "port": 5602
+    },
+    {
+      "name": "the-invitation",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5601",
+        "--directory",
+        "/Users/gugumax/Documents/Claude code/the-invitation"
+      ],
+      "port": 5601
+    }
+  ]
+}
