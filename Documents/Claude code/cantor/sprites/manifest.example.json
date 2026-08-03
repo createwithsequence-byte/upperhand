@@ -1,0 +1,91 @@
+{
+  "_comment": "Rename to manifest.json once the PNGs exist. Any asset whose file is missing just falls back to procedural art, so you can add them one at a time.",
+  "palette": [
+    "#07090c",
+    "#0d0709",
+    "#40151a",
+    "#6d2226",
+    "#8e1f24",
+    "#a89c86",
+    "#e6dcc6"
+  ],
+  "assets": {
+    "reed_torso": {
+      "file": "reed_torso.png",
+      "frameW": 66,
+      "frameH": 73,
+      "frames": 1,
+      "anchor": [24, 55]
+    },
+    "reed_torso_cut": {
+      "file": "reed_torso_cut.png",
+      "frameW": 66,
+      "frameH": 73,
+      "frames": 1,
+      "anchor": [24, 55]
+    },
+    "reed_arm": {
+      "file": "reed_arm.png",
+      "frameW": 54,
+      "frameH": 12,
+      "frames": 1,
+      "anchor": [2, 6]
+    },
+    "reed_leg": {
+      "file": "reed_leg.png",
+      "frameW": 63,
+      "frameH": 14,
+      "frames": 1,
+      "anchor": [2, 7]
+    },
+    "bellows_torso": {
+      "file": "bellows_torso.png",
+      "frameW": 140,
+      "frameH": 148,
+      "frames": 1,
+      "anchor": [52, 113]
+    },
+    "bellows_torso_cut": {
+      "file": "bellows_torso_cut.png",
+      "frameW": 140,
+      "frameH": 148,
+      "frames": 1,
+      "anchor": [52, 113]
+    },
+    "bellows_arm": {
+      "file": "bellows_arm.png",
+      "frameW": 104,
+      "frameH": 21,
+      "frames": 1,
+      "anchor": [3, 10]
+    },
+    "bellows_leg": {
+      "file": "bellows_leg.png",
+      "frameW": 112,
+      "frameH": 25,
+      "frames": 1,
+      "anchor": [3, 12]
+    },
+    "cantor_body": {
+      "file": "cantor_body.png",
+      "frameW": 110,
+      "frameH": 400,
+      "frames": 8,
+      "anchor": [55, 200]
+    },
+    "wren_idle": {
+      "file": "wren_idle.png",
+      "frameW": 26,
+      "frameH": 74,
+      "frames": 4,
+      "anchor": [13, 37]
+    },
+    "wren_walk": {
+      "file": "wren_walk.png",
+      "frameW": 26,
+      "frameH": 74,
+      "frames": 8,
+      "anchor": [13, 37]
+    }
+  }
+}

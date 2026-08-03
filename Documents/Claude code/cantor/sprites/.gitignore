@@ -1,0 +1,3 @@
+# generated art is large and regenerable; the spec + example manifest are not
+*.png
+manifest.json
