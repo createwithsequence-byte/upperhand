@@ -92,118 +92,47 @@
       const CH = [
         {
           id: "I",
-          name: "ANECHOIC",
-          place: "DECK 4 · ACOUSTIC ISOLATION",
-          open: "You slept in the only room on this station that does not echo.\nThat is the entire reason you are awake to read this.",
+          name: "CANTOR",
+          place: "DEEP-SPACE LISTENING POST",
+          open: "Forty seconds of signal, eleven months ago.\nThe crew wrote it down. Writing it down is what started it.",
           rows: [
-            "############################################################################",
-            "#..........................................................................#",
-            "#.....................................T.H..................................#",
-            "#....~~~..........................######H##########........................#",
-            "#.......................................H..................................#",
-            "#.......................................H..................................#",
-            "#.......................................H..................................#",
-            "#...................H.........+.........H.....r............................#",
-            "#.............######H##################################....................#",
-            "#...................H......................................................#",
-            "#...................H......................................................#",
-            "#...................H......................................................#",
-            "#...................H......................................................#",
-            "#...P.............r.H...f...................T.............r............>...#",
-            "##############################..############################################",
+            "########################################################################################################################################################################################################################################",
+            "#......................................................................................................................................................................................................................................#",
+            "#..................................................................................................................................~...~...~...~...~...~...............................................................................#",
+            "#......................................................................................................................................................................................................................................#",
+            "#..########...........................................................H.........T.......................................................................................r...T...H.r....................................................#",
+            "#.............................................................########H################.......................+...H.................................................############H######................................................#",
+            "#...................~~~~..............................................H.................................##########H######.......................................................H......................................................#",
+            "#.....................................................................H...........................................H.............................................................H......................................................#",
+            "#.......H...T...............................................H...+.....H...........................................H...............................................H...r.....r...H...r.....b.................................H...T......#",
+            "#.######H########...............H...f...................####H#########H####.........................T.H.....r.....H.r.....f.............H...r.....H...........####H#############H##########...........H.+.......r.......####H########..#",
+            "#.......H.................######H############...............H.....................................####H###########H##########.......####H#########H####...........H...............................####H############.........H..........#",
+            "#.......H.......................H...........................H.........................................H.................................H.........H...............H...................................H.....................H..........#",
+            "#.......H.......................H...........................H.........................................H.................................H.........H...............H...................................H.....................H..........#",
+            "#...P...H.......................H.....r.........T.........r.H.....r.......r.........r.....r.........r.H...r.....b.....r.....r.........r.H.....r...H...r.....f.r...H.r.....r.....r.....r.....r.......r.H.....c...............H.......>..#",
+            "##############################################################################..################################################################..######################################################################################",
           ],
           terms: {
             0: "MAINT LOG · W. ADEYEMI · 14 MAR\nRealigned the primary horn. Sidelobe suppression down to -31 dB.\nBest ears in the fleet now. Kofi bought me a drink about it.",
             1: "CREW BULLETIN · 22 MAR\nTranscription session 3 tonight, mess hall, everyone welcome.\nBring an instrument if you have one. Kofi has the chart.",
+            2: "MEDICAL · 04 APR\nSix crew, identical findings. Tympanic rupture with no pressure\nevent. New tissue in the chest cavity — hollow, ribbed.\nThey are not in distress. They keep asking us to be quiet\nso they can hear themselves.",
+            3: "TRANSCRIPTION · SESSION 7\nIt is not a message. No carrier, no repeat, no primes.\nIt is a chord. Six voices. It does not resolve.\nThe ones who have it keep opening their mouths to let it out.\nCut the throat and the voice stops. Nothing else stops it.",
+            4: "K. ADEYEMI — PERSONAL, UNSENT\nWren. If you are reading this you went to the chamber and I did\nnot. Do not come looking. Whatever answers to my name down here\nlearned it off eleven months of comms traffic and it does not\nknow what a name is for. It only knows it is what you say to me.",
+            5: "ARRAY LOG · AUTO\n14 MAR 03:12 — PRIMARY HORN REALIGNED (ADEYEMI, W.)\n14 MAR 03:40 — TRANSMIT WINDOW OPEN. 40s. BEARING 291.4 / -6.2\n11 APR 19:55 — RETURN DETECTED. BEARING 291.4 / -6.2\n\nThe bearing is the same. Both directions.",
           },
           script: [
-            [180, "WREN: The chamber door was shut. That is the only reason."],
-            [
-              900,
-              "WREN: They're blind. Whatever it did to them, it took the eyes first.",
-            ],
-            [1700, "WREN: Body shots do nothing. Cut the parts that are lit."],
-          ],
-        },
-        {
-          id: "II",
-          name: "THE HOLD",
-          place: "DECK 2 · CARGO & TRANSCRIPTION",
-          open: "Forty seconds of signal. The crew wrote it down.\nWriting it down is what started it.",
-          rows: [
-            "##############################################################################################",
-            "#............................................................................................#",
-            "#............................................................................................#",
-            "#.................................H.............T............................................#",
-            "#.........................########H################################...~~~~...................#",
-            "#.................................H..........................................................#",
-            "#.................................H..........................................................#",
-            "#.................................H..........................................................#",
-            "#.............H.....T.........r...H.........................H.....b.........+................#",
-            "#.......######H##########################.............######H##########################......#",
-            "#.............H.............................................H................................#",
-            "#.............H.............................................H................................#",
-            "#.............H.............................................H................................#",
-            "#...P.........H...........f...................r...........c.H.................r..........>...#",
-            "####################################..##############################..########################",
-          ],
-          terms: {
-            0: "TRANSCRIPTION · SESSION 7\nIt is not a message. There is no carrier, no repeat, no primes.\nIt is a chord. Six voices. It does not resolve.\nKofi keeps humming it in the corridor and will not stop.",
-            1: "MEDICAL · 04 APR\nSix crew presenting identical findings. Tympanic rupture with no\npressure event. New tissue in the chest cavity, hollow, ribbed.\nThey are not in distress. They keep asking us to be quiet so\nthey can hear themselves.",
-          },
-          script: [
-            [
-              200,
-              "WREN: Something down here is holding a note. It hasn't stopped for eleven months.",
-            ],
-            [
-              1400,
-              "WREN: That's Kofi's voice. That's my name in Kofi's voice.",
-            ],
-            [
-              2600,
-              "WREN: It doesn't want to catch me. It wants me to hold still and listen.",
-            ],
-          ],
-        },
-        {
-          id: "III",
-          name: "THE ARRAY",
-          place: "DECK 0 · ANTENNA CONTROL",
-          open: "Point it away. Shut it down. Eleven months late.",
-          rows: [
-            "################################################################################################",
-            "#..............................................................................................#",
-            "#...................................................H.....T....................................#",
-            "#.......................................############H##################........................#",
-            "#...................................................H..........................................#",
-            "#.........................b.H.....+.................H.......r..................................#",
-            "#...................########H##############################################...~~~~~............#",
-            "#...........................H..................................................................#",
-            "#...........................H..................................................................#",
-            "#...........H.....T.........H.......r...........................b...H..........................#",
-            "#.....######H################################.............##########H######################....#",
-            "#...........H.......................................................H..........................#",
-            "#...........H.......................................................H..........................#",
-            "#...P.......H.......f...................r.............c.............H.......r..............>...#",
-            "##############################..##############################..################################",
-          ],
-          terms: {
-            0: "ARRAY LOG · AUTO\n14 MAR 03:12 — PRIMARY HORN REALIGNED (ADEYEMI, W.)\n14 MAR 03:40 — TRANSMIT WINDOW OPEN. 40s. BEARING 291.4 / -6.2\n11 APR 19:55 — RETURN DETECTED. BEARING 291.4 / -6.2\n\nThe bearing is the same. Both directions.",
-            1: "WREN — you already know what this says.\nWe did not hear anything. We SENT.\nForty seconds, eleven months ago, on the alignment you cut.\nThe chord is the echo. Something at four light-hours\nlearned it, and it is closer now than the echo is.",
-          },
-          script: [
-            [
-              200,
-              "WREN: Bearing two nine one point four. That's my alignment. That's the number I cut.",
-            ],
-            [1500, "WREN: We didn't receive anything. We answered something."],
-            [
-              3000,
-              "WREN: Shutting the array down does nothing. It already knows where we are.",
-            ],
+            [200, "WREN: The chamber door was shut. That is the only reason I am awake."],
+            [1500, "WREN: It hasn't heard me. They only move for sound."],
+            [2100, "WREN: Body shots do nothing. Cut what's lit."],
+            [3000, "WREN: If I run down here, everything in the corridor gets my position."],
+            [4700, "WREN: The big one is calling. Take its throat or take all of them."],
+            [6300, "WREN: Lights are out this side. I can only see what's glowing."],
+            [7600, "WREN: Too many. I don't have the charge. Nobody has the charge."],
+            [9300, "WREN: That's Kofi's voice. That's my name in Kofi's voice."],
+            [10500, "WREN: Bearing two nine one point four. We didn't receive anything. We answered something."],
           ],
           finale: true,
+          dark: [6240, 7350],
         },
       ];
       for (const c of CH) {
@@ -374,6 +303,14 @@
           this.burst(v.hurt * 1.3, 0.9, v.q * 0.8, 0.3, v.die);
           this.tone(v.f, 1.4, "sawtooth", 0.16, v.die * 0.55);
           if (type === "bellows") this.tone(41, 1.8, "sine", 0.22, 28);
+        },
+        creatureCall(type) {
+          // the summons. Long, tonal, and unmistakably not an attack sound —
+          // you should learn to dread this specific noise.
+          const v = this.voiceOf(type);
+          this.tone(v.f * 0.5, 1.5, "sawtooth", 0.16, v.f * 0.78);
+          this.tone(v.f * 0.75, 1.3, "square", 0.07, v.f * 1.02);
+          this.burst(v.hurt * 0.8, 1.1, 1.4, 0.14, v.hurt * 1.5);
         },
         creatureStep(type) {
           if (type === "bellows") this.burst(90, 0.2, 1.2, 0.13);
@@ -945,6 +882,8 @@
         const s = 0.86 + Math.random() * 0.34;
         return {
           type: "reed",
+          state: "dormant", // set before the first update, or a fresh spawn
+          //                   reads as awake for one frame
           x,
           y: y - 22 * s,
           w: 38 * s,
@@ -1024,6 +963,8 @@
         const s = 0.94 + Math.random() * 0.2;
         return {
           type: "bellows",
+          state: "dormant", // set before the first update, or a fresh spawn
+          //                   reads as awake for one frame
           x,
           y: y - 70 * s,
           w: 92 * s,
@@ -1418,33 +1359,80 @@
           }
         }
 
-        /* ── the Voiced ── */
+        /* ── the Voiced ──
+           Three states, and the whole stealth game lives in the gap between
+           them. DORMANT bodies are furniture: still, dim, silent, no voice in
+           the chord. They only exist as a threat if you make them one.
+
+           A hunting Voiced with a live throat CALLS. A call hands your
+           position to everything within earshot and drags them up a state.
+           That is what makes one loud second cascade, what makes "cut the
+           throat first" a rule you work out rather than one I tell you, and
+           what makes the chord swell when you have made a mistake — because
+           only awake throats sing. */
         let liveThroats = 0;
+        const calls = [];
         for (const e of foes) {
           if (e.dead) {
             e.gib += dt;
             continue;
           }
           poseParts(e, dt);
-          if (e.parts.find((p) => p.id === "throat").alive) liveThroats++;
           e.hurt = Math.max(0, e.hurt - dt);
+          e.callCd = (e.callCd || 0) - dt;
 
           const src = loudest(e);
           if (src) {
             e.tgt = { x: src.x, y: src.y };
-            e.alert = Math.min(180, e.alert + dt * 4);
-          } else e.alert = Math.max(0, e.alert - dt * 0.7);
+            e.alert = Math.min(200, e.alert + dt * 5);
+          } else e.alert = Math.max(0, e.alert - dt * 0.22); // ~15s to forget
 
-          const legs = e.parts.filter(
-            (p) => p.role === "drive" && p.alive,
-          ).length;
+          const wasState = e.state;
+          e.state = e.alert > 70 ? "hunting" : e.alert > 12 ? "stirring" : "dormant";
+          if (wasState === "dormant" && e.state !== "dormant") {
+            // waking is an event, and it must be audible from off-screen
+            A.creatureHurt(e.type);
+            A.tone(e.type === "bellows" ? 70 : 300, 0.5, "sawtooth", 0.09);
+          }
+
+          const throat = e.parts.find((p) => p.id === "throat");
+          if (throat.alive && e.state !== "dormant") liveThroats++;
+
+          /* Only a Bellows summons. Reeds hunt what they personally heard
+             and forget it in about fifteen seconds.
+
+             When Reeds could call too, every alarm chained across the whole
+             level and never came down — one mistake meant being hunted
+             forever, which is a death spiral rather than tension, and it
+             made cutting the big one's throat pointless because the small
+             ones sustained the alert on their own.
+
+             With the Bellows as the sole relay: a mistake near a Reed is a
+             local problem you can walk away from, a mistake near a Bellows
+             keeps the room up until you take its throat. That is the rule
+             the player is meant to work out, and now it is true. */
+          if (
+            e.type === "bellows" &&
+            e.state === "hunting" &&
+            throat.alive &&
+            e.callCd <= 0
+          ) {
+            e.callCd = 150;
+            calls.push({ x: e.x, y: e.y, r: 1800, power: 200, tgt: e.tgt });
+            A.creatureCall(e.type);
+          }
+
+          const legs = e.parts.filter((p) => p.role === "drive" && p.alive).length;
           const mob = legs === 2 ? 1 : legs === 1 ? 0.45 : 0.12;
 
-          if (e.tgt && e.alert > 10) {
+          if (e.state === "dormant") {
+            e.vx *= 0.82; // bodies at rest stay at rest
+          } else if (e.tgt) {
             const dx = e.tgt.x - e.x;
+            const chase = e.state === "hunting" ? 1 : 0.42;
             if (Math.abs(dx) > 26) {
               e.face = Math.sign(dx);
-              e.vx = Math.sign(dx) * e.spd * mob;
+              e.vx = Math.sign(dx) * e.spd * mob * chase;
             } else e.vx *= 0.8;
           } else e.vx *= 0.9;
 
@@ -1454,20 +1442,25 @@
           e.y += e.vy * dt;
           moveY(e);
 
-          // strike
-          const reach = e.parts.filter(
-            (p) => p.role === "reach" && p.alive,
-          ).length;
+          const reach = e.parts.filter((p) => p.role === "reach" && p.alive).length;
           if (
             reach > 0 &&
+            e.state !== "dormant" &&
             W.iframe === 0 &&
-            Math.abs(e.x - W.x) <
-              (e.w + W.w) / 2 + (e.type === "bellows" ? 26 : 8) &&
+            Math.abs(e.x - W.x) < (e.w + W.w) / 2 + (e.type === "bellows" ? 26 : 8) &&
             Math.abs(e.y - W.y) < (e.h + W.h) / 2 - 12
-          ) {
+          )
             hurtWren(e.type === "bellows" ? 2 : 1, Math.sign(W.x - e.x || 1));
-          }
         }
+        // resolve calls after the pass, so a call this frame reaches everyone
+        for (const c of calls)
+          for (const e of foes) {
+            if (e.dead) continue;
+            const d = Math.hypot(e.x - c.x, e.y - c.y);
+            if (d > c.r) continue;
+            e.alert = Math.min(200, e.alert + c.power * (1 - d / c.r));
+            if (c.tgt) e.tgt = { x: c.tgt.x, y: c.tgt.y };
+          }
         A.setVoices(Math.min(6, liveThroats));
 
         /* ── the Cantor ── */
@@ -1903,6 +1896,7 @@
         drawBits();
         drawLightWash();
 
+        drawDark();
         cx.restore();
         drawOverlay();
         drawCrosshair();
@@ -2161,6 +2155,9 @@
         const alpha = e.dead ? Math.max(0, 1 - (e.gib - 140) / 60) : 1;
         if (alpha <= 0) return;
         const flash = e.hurt > 0 ? Math.min(1, e.hurt / 18) : 0;
+        // organ brightness IS the alert readout. No bar, no icon: a body
+        // that is barely glowing has not heard you yet.
+        e.lit = e.dead ? 0 : 0.22 + Math.min(1, (e.alert || 0) / 90) * 0.78;
         const big = e.type === "bellows";
         const s = e.scale || 1,
           f = e.face,
@@ -2379,7 +2376,7 @@
             continue;
           }
           const locked = p.role === "core" && coreLocked(e);
-          organ(nx, ny, ww, p.hp / p.max, e.cyc * 1.7 + p.py, locked);
+          organ(nx, ny, ww, (p.hp / p.max) * (e.lit == null ? 1 : e.lit), e.cyc * 1.7 + p.py, locked);
         }
       }
 
@@ -2814,15 +2811,58 @@
         for (const e of foes) {
           if (e.dead) continue;
           const n = e.parts.filter((p) => p.alive).length;
-          if (!n) continue;
+          if (!n || (e.lit || 0) < 0.3) continue;
           const r = (e.type === "bellows" ? 300 : 180) * (n / 6 + 0.35);
           const g = cx.createRadialGradient(e.x, e.y - 20, 0, e.x, e.y - 20, r);
-          g.addColorStop(0, `rgba(255,168,88,${0.11 * (n / 6) + 0.03})`);
+          g.addColorStop(0, `rgba(255,168,88,${(0.11 * (n / 6) + 0.03) * e.lit})`);
           g.addColorStop(1, "rgba(255,120,50,0)");
           cx.fillStyle = g;
           cx.beginPath();
           cx.arc(e.x, e.y - 20, r, 0, 7);
           cx.fill();
+        }
+        cx.restore();
+      }
+
+      /* Lights out. Everything already drawn gets buried under near-black
+         except a soft pool around Wren; the additive organ glow and her
+         headlamp are painted back on top, so the only things you can see
+         are the things that are lit — which in this station means the
+         things that are awake. */
+      function drawDark() {
+        const dk = CH[G.ch].dark;
+        if (!dk) return;
+        const into = (W.x - dk[0]) / 240,
+          outof = (dk[1] - W.x) / 240;
+        const k = Math.max(0, Math.min(1, Math.min(into, outof)));
+        if (k <= 0) return;
+        cx.save();
+        cx.globalCompositeOperation = "multiply";
+        const g = cx.createRadialGradient(W.x, W.y - 10, 40, W.x, W.y - 10, 300);
+        const f = 1 - k * 0.94;
+        g.addColorStop(0, `rgba(255,255,255,${0.55 + f * 0.45})`);
+        g.addColorStop(1, `rgba(${(f * 255) | 0},${(f * 255) | 0},${(f * 255) | 0},1)`);
+        cx.fillStyle = g;
+        cx.fillRect(cx_ - 40, cy_ - 40, VW + 80, VH + 80);
+        cx.restore();
+        // repaint the light sources over the darkness
+        cx.save();
+        cx.globalCompositeOperation = "lighter";
+        for (const e of foes) {
+          if (e.dead || (e.lit || 0) < 0.05) continue;
+          for (const p of e.parts) {
+            if (!p.alive) continue;
+            const ox = p.kind === "node" ? p.ax : (p.ax + p.bx) / 2,
+              oy = p.kind === "node" ? p.ay : (p.ay + p.by) / 2;
+            const rr = (p.wwid || p.wid) * 2.4;
+            const og = cx.createRadialGradient(ox, oy, 0, ox, oy, rr);
+            og.addColorStop(0, `rgba(255,190,120,${0.5 * e.lit * k})`);
+            og.addColorStop(1, "rgba(255,140,60,0)");
+            cx.fillStyle = og;
+            cx.beginPath();
+            cx.arc(ox, oy, rr, 0, 7);
+            cx.fill();
+          }
         }
         cx.restore();
       }
@@ -3510,6 +3550,56 @@
           noiseReach(0) < 100 && noiseReach(100) > 700,
           `noise reach ${noiseReach(0) | 0}px .. ${noiseReach(100) | 0}px`,
         );
+
+        /* The mechanical thesis. If these three stop being true the game is
+           a shooter with a gimmick, so they are gates, not observations. */
+        (function stealth() {
+          const settle = (opts) => {
+            loadChapter(0);
+            W.x = (opts.atBellows ? 112 : 60) * TS;
+            W.y = 672 - W.h / 2 - 1;
+            W.vy = 0;
+            W.hp = 99;
+            W.maxhp = 99;
+            const bel = foes.find(
+              (e) => e.type === "bellows" && Math.abs(e.x - W.x) < 1500,
+            );
+            if (opts.cut && bel)
+              bel.parts.find((p) => p.id === "throat").alive = false;
+            for (let i = 0; i < (opts.loudFrames || 0); i++) {
+              W.vx = 0;
+              W.noise = 100;
+              update(1);
+            }
+            const peak = foes.filter(
+              (e) => !e.dead && Math.abs(e.x - W.x) < 1500 && e.state !== "dormant",
+            ).length;
+            for (let i = 0; i < 25 * 60; i++) {
+              W.vx = 0;
+              W.noise = 0;
+              update(1);
+            }
+            return {
+              peak,
+              after: foes.filter(
+                (e) => !e.dead && Math.abs(e.x - W.x) < 1500 && e.state !== "dormant",
+              ).length,
+            };
+          };
+          const quiet = settle({ loudFrames: 0 });
+          ok(quiet.peak === 0, "a silent Wren wakes nothing at all");
+          const reeds = settle({ loudFrames: 60 });
+          ok(reeds.peak > 0 && reeds.peak <= 5,
+             `a mistake near Reeds stays local (${reeds.peak} woke, no chain)`);
+          const alive = settle({ loudFrames: 60, atBellows: true });
+          const cut = settle({ loudFrames: 60, atBellows: true, cut: true });
+          ok(alive.peak > reeds.peak,
+             `a Bellows relays the alarm (${alive.peak} vs ${reeds.peak} woke)`);
+          ok(cut.after < alive.after,
+             `cutting the Bellows throat lets the room settle (${cut.after} vs ${alive.after} still up after 25s)`);
+          W.maxhp = 5;
+          W.hp = 5;
+        })();
 
         // the optional-asset contract: missing art and missing audio must
         // degrade to the procedural/synth path, never throw. Both layers
