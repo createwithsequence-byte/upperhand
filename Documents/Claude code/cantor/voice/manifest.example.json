@@ -1,0 +1,86 @@
+{
+ "_comment": "Rename to manifest.json once the audio exists. Missing files fall back to the synth, so partial sets are fine. Deliver DRY \u2014 the engine adds the hull.",
+ "lines": {
+  "cantor_name_1": {
+   "file": "cantor_name_1.mp3",
+   "speaker": "cantor",
+   "voice": "vbft9J9LMpt65czIyxvw",
+   "text": "Wren."
+  },
+  "cantor_name_2": {
+   "file": "cantor_name_2.mp3",
+   "speaker": "cantor",
+   "voice": "vbft9J9LMpt65czIyxvw",
+   "text": "Wren. Adeyemi."
+  },
+  "cantor_name_3": {
+   "file": "cantor_name_3.mp3",
+   "speaker": "cantor",
+   "voice": "vbft9J9LMpt65czIyxvw",
+   "text": "Wren, it's me."
+  },
+  "cantor_name_4": {
+   "file": "cantor_name_4.mp3",
+   "speaker": "cantor",
+   "voice": "vbft9J9LMpt65czIyxvw",
+   "text": "Wren. Come and hear it."
+  },
+  "cantor_name_5": {
+   "file": "cantor_name_5.mp3",
+   "speaker": "cantor",
+   "voice": "vbft9J9LMpt65czIyxvw",
+   "text": "It's only the one note, Wren."
+  },
+  "cantor_name_6": {
+   "file": "cantor_name_6.mp3",
+   "speaker": "cantor",
+   "voice": "vbft9J9LMpt65czIyxvw",
+   "text": "You tuned it. You should hear it."
+  },
+  "wren_ch0_0": {
+   "file": "wren_ch0_0.mp3",
+   "speaker": "wren",
+   "text": "The chamber door was shut. That is the only reason."
+  },
+  "wren_ch0_1": {
+   "file": "wren_ch0_1.mp3",
+   "speaker": "wren",
+   "text": "They're blind. Whatever it did to them, it took the eyes first."
+  },
+  "wren_ch0_2": {
+   "file": "wren_ch0_2.mp3",
+   "speaker": "wren",
+   "text": "Body shots do nothing. Cut the parts that are lit."
+  },
+  "wren_ch1_0": {
+   "file": "wren_ch1_0.mp3",
+   "speaker": "wren",
+   "text": "Something down here is holding a note. It hasn't stopped for eleven months."
+  },
+  "wren_ch1_1": {
+   "file": "wren_ch1_1.mp3",
+   "speaker": "wren",
+   "text": "That's Kofi's voice. That's my name in Kofi's voice."
+  },
+  "wren_ch1_2": {
+   "file": "wren_ch1_2.mp3",
+   "speaker": "wren",
+   "text": "It doesn't want to catch me. It wants me to hold still and listen."
+  },
+  "wren_ch2_0": {
+   "file": "wren_ch2_0.mp3",
+   "speaker": "wren",
+   "text": "Bearing two nine one point four. That's my alignment. That's the number I cut."
+  },
+  "wren_ch2_1": {
+   "file": "wren_ch2_1.mp3",
+   "speaker": "wren",
+   "text": "We didn't receive anything. We answered something."
+  },
+  "wren_ch2_2": {
+   "file": "wren_ch2_2.mp3",
+   "speaker": "wren",
+   "text": "Shutting the array down does nothing. It already knows where we are."
+  }
+ }
+}

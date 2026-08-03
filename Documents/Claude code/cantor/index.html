@@ -275,6 +275,7 @@
           for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
           this.nb = n;
           this.hb = 0;
+          VO.flush();
         },
         setVoices(n) {
           this.want = n;
@@ -355,30 +356,30 @@
           o.stop(a.currentTime + dur + 0.02);
         },
         // Each creature owns a register. A Reed is a reed: thin, high, nasal.
-  // A Bellows is a bellows: low, wide, and it moves air. You should be able
-  // to tell what is in the room with your eyes shut — that is the whole
-  // premise of the game, so it cannot be one shared sound effect.
-  voiceOf(type) {
-    return type === "bellows"
-      ? { f: 96, q: 1.1, hurt: 150, die: 62 }
-      : { f: 430, q: 5.5, hurt: 620, die: 210 };
-  },
-  creatureHurt(type) {
-    const v = this.voiceOf(type);
-    this.burst(v.hurt, 0.26, v.q, 0.24, v.hurt * 0.42);
-    this.tone(v.f, 0.2, "sawtooth", 0.1, v.f * 0.8);
-  },
-  creatureDie(type) {
-    const v = this.voiceOf(type);
-    this.burst(v.hurt * 1.3, 0.9, v.q * 0.8, 0.3, v.die);
-    this.tone(v.f, 1.4, "sawtooth", 0.16, v.die * 0.55);
-    if (type === "bellows") this.tone(41, 1.8, "sine", 0.22, 28);
-  },
-  creatureStep(type) {
-    if (type === "bellows") this.burst(90, 0.2, 1.2, 0.13);
-    else this.burst(300, 0.06, 3, 0.05);
-  },
-  cut() {
+        // A Bellows is a bellows: low, wide, and it moves air. You should be able
+        // to tell what is in the room with your eyes shut — that is the whole
+        // premise of the game, so it cannot be one shared sound effect.
+        voiceOf(type) {
+          return type === "bellows"
+            ? { f: 96, q: 1.1, hurt: 150, die: 62 }
+            : { f: 430, q: 5.5, hurt: 620, die: 210 };
+        },
+        creatureHurt(type) {
+          const v = this.voiceOf(type);
+          this.burst(v.hurt, 0.26, v.q, 0.24, v.hurt * 0.42);
+          this.tone(v.f, 0.2, "sawtooth", 0.1, v.f * 0.8);
+        },
+        creatureDie(type) {
+          const v = this.voiceOf(type);
+          this.burst(v.hurt * 1.3, 0.9, v.q * 0.8, 0.3, v.die);
+          this.tone(v.f, 1.4, "sawtooth", 0.16, v.die * 0.55);
+          if (type === "bellows") this.tone(41, 1.8, "sine", 0.22, 28);
+        },
+        creatureStep(type) {
+          if (type === "bellows") this.burst(90, 0.2, 1.2, 0.13);
+          else this.burst(300, 0.06, 3, 0.05);
+        },
+        cut() {
           this.burst(2600, 0.14, 7, 0.22, 300);
           this.tone(1400, 0.1, "square", 0.06, 240);
         },
@@ -409,8 +410,17 @@
           this.burst(320, 0.3, 1.2, 0.3, 70);
           this.tone(90, 0.5, "sawtooth", 0.14, 42);
         },
-        // the Cantor saying your name, formant-ish
+        // The Cantor saying your name. A real recording if one exists — this
+        // is the single line in the game most worth putting a human on.
         say() {
+          if (VO.ready) {
+            const id = VO.pick("cantor_name");
+            if (id && VO.play(id, { vol: 0.95, band: 760, q: 0.9, slap: 0.17 }))
+              return;
+          }
+          this.saySynth();
+        },
+        saySynth() {
           if (!this.ctx) return;
           const a = this.ctx;
           const seq = [
@@ -517,6 +527,93 @@
         cantor = null,
         pickups = [],
         ghosts = [];
+
+      /* ══════════════════ VOICE ══════════════════
+         Optional VO, same contract as the sprites: if voice/manifest.json
+         exists we play real recordings, otherwise the synth stands in and
+         nothing breaks.
+
+         Every line plays back through the hull, never clean. A narrow band
+         plus one slap delay is the difference between "an audio file" and
+         "something in the next compartment" — the Cantor is never in the
+         room with you when it says your name, so it must never sound like
+         it is. */
+      const VO = {
+        buf: {},
+        meta: {},
+        ready: false,
+        _pending: [],
+        load() {
+          fetch("voice/manifest.json")
+            .then((r) => (r.ok ? r.json() : null))
+            .then((m) => {
+              if (!m || !m.lines) return;
+              this.meta = m.lines;
+              for (const [id, l] of Object.entries(m.lines)) {
+                fetch("voice/" + l.file)
+                  .then((r) =>
+                    r.ok ? r.arrayBuffer() : Promise.reject(l.file),
+                  )
+                  .then((ab) => {
+                    const go = () =>
+                      A.ctx.decodeAudioData(
+                        ab,
+                        (b) => {
+                          this.buf[id] = b;
+                          this.ready = true;
+                        },
+                        () => console.warn(`[CANTOR] VO decode failed: ${id}`),
+                      );
+                    if (A.ctx) go();
+                    else this._pending.push(go);
+                  })
+                  .catch((f) => console.warn(`[CANTOR] VO missing: ${f}`));
+              }
+            })
+            .catch((e) =>
+              console.warn("[CANTOR] no VO manifest, using synth:", e.message),
+            );
+        },
+        flush() {
+          this._pending.forEach((fn) => fn());
+          this._pending = [];
+        },
+        /* false if the line is absent, so every caller can fall back */
+        play(id, opts) {
+          const b = this.buf[id];
+          if (!b || !A.ctx) return false;
+          const o = opts || {},
+            c = A.ctx;
+          const src = c.createBufferSource(),
+            g = c.createGain();
+          src.buffer = b;
+          g.gain.value = o.vol == null ? 0.9 : o.vol;
+          if (o.dry) src.connect(g);
+          else {
+            const f = c.createBiquadFilter();
+            f.type = "bandpass";
+            f.frequency.value = o.band || 900;
+            f.Q.value = o.q || 1.1;
+            const dl = c.createDelay();
+            dl.delayTime.value = o.slap || 0.13;
+            const dg = c.createGain();
+            dg.gain.value = 0.34;
+            src.connect(f);
+            f.connect(g);
+            f.connect(dl);
+            dl.connect(dg);
+            dg.connect(g);
+          }
+          g.connect(A.out);
+          src.start();
+          return true;
+        },
+        pick(prefix) {
+          const ids = Object.keys(this.buf).filter((k) => k.startsWith(prefix));
+          return ids.length ? ids[(Math.random() * ids.length) | 0] : null;
+        },
+      };
+      VO.load();
 
       /* ══════════════════ SPRITES ══════════════════
          Optional art layer. If sprites/manifest.json exists we load the PNGs
@@ -1418,6 +1515,13 @@
             s[2] = true;
             G.sub = s[1];
             G.subT = 330;
+            // Wren is inside a helmet, so her own voice is close and dry —
+            // the opposite treatment to anything out in the station.
+            if (VO.ready)
+              VO.play(`wren_ch${G.ch}_${M.script.indexOf(s)}`, {
+                vol: 0.85,
+                dry: true,
+              });
           }
         if (G.subT > 0) G.subT -= dt;
 
@@ -1512,8 +1616,16 @@
           for (let d = 8; d < Math.min(dWall, 760); d += 6) {
             const px = ox + dx * d,
               py = oy + dy * d;
-            if (Math.abs(px - g.x) < g.w / 2 + 16 && Math.abs(py - g.y) < g.h / 2)
-              return { kind: "ghost", ghost: g, dist: dWall, pt: { x: ox + dx * dWall, y: oy + dy * dWall } };
+            if (
+              Math.abs(px - g.x) < g.w / 2 + 16 &&
+              Math.abs(py - g.y) < g.h / 2
+            )
+              return {
+                kind: "ghost",
+                ghost: g,
+                dist: dWall,
+                pt: { x: ox + dx * dWall, y: oy + dy * dWall },
+              };
           }
         let bestD = Infinity,
           bodyD = Infinity,
@@ -1562,12 +1674,17 @@
           if (bestD !== Infinity && canD !== Infinity) break;
         }
         let kind, dist;
-        if (canD < bestD && canD < Infinity) (kind = "cantor"), (dist = canD);
-        else if (bestD < Infinity) (kind = "part"), (dist = bestD);
+        if (canD < bestD && canD < Infinity) ((kind = "cantor"), (dist = canD));
+        else if (bestD < Infinity) ((kind = "part"), (dist = bestD));
         else if (bodyD < Infinity)
-          (kind = "body"), (dist = bodyD), (hit = { e: bodyHit, p: null });
-        else (kind = "wall"), (dist = dWall);
-        return { kind, hit, dist, pt: { x: ox + dx * dist, y: oy + dy * dist } };
+          ((kind = "body"), (dist = bodyD), (hit = { e: bodyHit, p: null }));
+        else ((kind = "wall"), (dist = dWall));
+        return {
+          kind,
+          hit,
+          dist,
+          pt: { x: ox + dx * dist, y: oy + dy * dist },
+        };
       }
 
       /* what a shot right now would do — drives the reticle, costs nothing */
@@ -1629,7 +1746,14 @@
         });
         A.cut();
         const say = (t, col) =>
-          sparks.push({ kind: "label", x: hitPt.x, y: hitPt.y, t, life: 66, col });
+          sparks.push({
+            kind: "label",
+            x: hitPt.x,
+            y: hitPt.y,
+            t,
+            life: 66,
+            col,
+          });
 
         if (r.kind === "ghost") {
           ghosts.splice(ghosts.indexOf(r.ghost), 1);
@@ -1656,7 +1780,10 @@
           } else if (!orientOK(p, G.vert)) {
             A.glance();
             puff(hitPt.x, hitPt.y, 5, "#dfe9f0");
-            say(G.vert ? "WRONG PLANE — PRESS Q" : "WRONG PLANE — PRESS Q", "#cfe6f4");
+            say(
+              G.vert ? "WRONG PLANE — PRESS Q" : "WRONG PLANE — PRESS Q",
+              "#cfe6f4",
+            );
           } else {
             p.hp--;
             e.hurt = 18;
@@ -2129,7 +2256,7 @@
               p.hp / p.max,
               e.cyc + p.px,
             );
-                  }
+          }
         };
         drawLimbs(true); // far side
 
@@ -2582,9 +2709,12 @@
         const t = G.target;
         if (!t || t.kind !== "part" || !t.hit) return;
         const p = t.hit.p;
-        const good = !(p.role === "core" && coreLocked(t.hit.e)) && orientOK(p, G.vert);
+        const good =
+          !(p.role === "core" && coreLocked(t.hit.e)) && orientOK(p, G.vert);
         cx.save();
-        cx.strokeStyle = good ? "rgba(255,196,120,.75)" : "rgba(232,194,106,.5)";
+        cx.strokeStyle = good
+          ? "rgba(255,196,120,.75)"
+          : "rgba(232,194,106,.5)";
         cx.lineWidth = 1.6;
         cx.setLineDash(good ? [] : [4, 4]);
         if (p.kind === "node") {
@@ -2605,7 +2735,9 @@
           const mx2 = (p.ax + p.bx) / 2,
             my2 = (p.ay + p.by) / 2;
           cx.setLineDash([]);
-          cx.strokeStyle = good ? "rgba(255,235,200,.85)" : "rgba(232,194,106,.55)";
+          cx.strokeStyle = good
+            ? "rgba(255,235,200,.85)"
+            : "rgba(232,194,106,.55)";
           cx.lineWidth = 2;
           cx.beginPath();
           if (G.vert) {
@@ -3134,14 +3266,23 @@
             // needs solid under her feet and clear headroom for her body
             if (!solid(px, (y + 1) * TS + 2)) continue;
             const cy = (y + 1) * TS - 37;
-            if (solid(px, cy) || solid(px, cy - 30) || solid(px, cy + 30)) continue;
+            if (solid(px, cy) || solid(px, cy - 30) || solid(px, cy + 30))
+              continue;
             out.push({ x: px, y: cy, ladder: false });
           }
         return out;
       }
       // one action held for `frames`, using the real physics
       function simStep(st, act, frames) {
-        const e = { x: st.x, y: st.y, w: 26, h: 74, vx: 0, vy: 0, grounded: true };
+        const e = {
+          x: st.x,
+          y: st.y,
+          w: 26,
+          h: 74,
+          vx: 0,
+          vy: 0,
+          grounded: true,
+        };
         let onLadder = !!st.ladder;
         for (let f = 0; f < frames; f++) {
           const onL =
@@ -3225,7 +3366,8 @@
         let ex = null;
         for (let y = 0; y < ROWS; y++)
           for (let x = 0; x < M.cols; x++)
-            if (M.g[y][x] === ">") ex = { x: x * TS + TS / 2, y: y * TS + TS / 2 };
+            if (M.g[y][x] === ">")
+              ex = { x: x * TS + TS / 2, y: y * TS + TS / 2 };
         // the exit tile is walked INTO, so accept any reachable spot on it
         let hit = false,
           nearest = 1e9;
@@ -3236,7 +3378,13 @@
           if (d < 40) hit = true;
         }
         G.ch = keep;
-        return { ok: hit, nodes: set.size, nearestToExit: Math.round(nearest), exit: ex, set };
+        return {
+          ok: hit,
+          nodes: set.size,
+          nearestToExit: Math.round(nearest),
+          exit: ex,
+          set,
+        };
       }
 
       /* ═══════════════════════════ SELFTEST ═══════════════════════════ */
@@ -3274,7 +3422,10 @@
            shipped broken once — CH1 gave the player 8 reachable tiles. */
         CH.forEach((c, i) => {
           const r = chapterWalkable(i);
-          ok(r.ok, `CH${i} exit is reachable on foot (${r.nodes} nodes explored)`);
+          ok(
+            r.ok,
+            `CH${i} exit is reachable on foot (${r.nodes} nodes explored)`,
+          );
           const near = (px, py) => {
             for (const k of r.set) {
               const [kx, ky] = k.split(",").map(Number);
@@ -3285,13 +3436,22 @@
           const miss = [];
           for (let y = 0; y < ROWS; y++)
             for (let x = 0; x < c.rows[y].length; x++)
-              if ("T+f".includes(c.rows[y][x]) && !near(x * TS + TS / 2, y * TS + TS / 2))
+              if (
+                "T+f".includes(c.rows[y][x]) &&
+                !near(x * TS + TS / 2, y * TS + TS / 2)
+              )
                 miss.push(`${c.rows[y][x]}@${x},${y}`);
-          ok(miss.length === 0, `CH${i} every terminal/pickup reachable${miss.length ? " — orphaned: " + miss.join(" ") : ""}`);
+          ok(
+            miss.length === 0,
+            `CH${i} every terminal/pickup reachable${miss.length ? " — orphaned: " + miss.join(" ") : ""}`,
+          );
         });
         // the jump has to clear a 2-tile ledge or the level vocabulary dies
         const apex = (JUMP * JUMP) / (2 * GRAV);
-        ok(apex > TS * 2 + 8, `jump apex ${Math.round(apex)}px clears a 2-tile ledge`);
+        ok(
+          apex > TS * 2 + 8,
+          `jump apex ${Math.round(apex)}px clears a 2-tile ledge`,
+        );
 
         loadChapter(0);
         ok(!solid(W.x, W.y), "spawn not inside geometry");
@@ -3350,6 +3510,16 @@
           noiseReach(0) < 100 && noiseReach(100) > 700,
           `noise reach ${noiseReach(0) | 0}px .. ${noiseReach(100) | 0}px`,
         );
+
+        // the optional-asset contract: missing art and missing audio must
+        // degrade to the procedural/synth path, never throw. Both layers
+        // ship absent by default, so this is the normal case, not the edge.
+        ok(typeof spr === "function" && spr("no_such_sprite", 0, 0, 0, 1) === false,
+           "a missing sprite reports false so the caller falls back");
+        ok(VO.play("no_such_line") === false,
+           "a missing VO line reports false so the synth takes over");
+        ok(typeof A.saySynth === "function",
+           "the Cantor keeps a synth understudy for its name-call");
 
         // the doubt system: it must lie, vary its lies, shut up during a real
         // fight, and never actually hurt her

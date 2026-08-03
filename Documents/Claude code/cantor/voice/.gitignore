@@ -1,0 +1,4 @@
+# generated audio is large and regenerable; the script + example manifest are not
+*.mp3
+*.wav
+manifest.json
