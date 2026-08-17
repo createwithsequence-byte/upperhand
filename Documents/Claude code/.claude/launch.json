@@ -581,6 +581,65 @@
         "/Users/gugumax/Documents/Claude code/the-invitation"
       ],
       "port": 5601
+    },
+    {
+      "name": "abm-recipe-lab",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd /Users/gugumax/code/abm-recipe-lab && exec npm run dev -- -p 3070"
+      ],
+      "port": 3070
+    },
+    {
+      "name": "kali-pitch",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4921",
+        "--directory",
+        "/Users/gugumax/code/kali-audio-pitch"
+      ],
+      "port": 4921
+    },
+    {
+      "name": "kali-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/kali-audio-site",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4930"
+      ],
+      "port": 4930
+    },
+    {
+      "name": "kali-sessions",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4933",
+        "--directory",
+        "/Users/gugumax/code/kali-audio-sessions"
+      ],
+      "port": 4933
+    },
+    {
+      "name": "kali-concepts",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4935",
+        "--directory",
+        "/Users/gugumax/code/kali-audio-concepts"
+      ],
+      "port": 4935
     }
   ]
 }
