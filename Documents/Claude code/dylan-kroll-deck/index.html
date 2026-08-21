@@ -1,0 +1,2237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Stems, Not Songs — Dylan Kroll × #paid</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <style>
+      :root {
+        --bg: #08080a;
+        --bg-2: #0d0d11;
+        --line: #1e1e24;
+        --line-2: #2a2a33;
+        --ink: #f5f5f7;
+        --ink-2: #9b9ba6;
+        --ink-3: #5c5c66;
+        --cyan: #22d3ee;
+        --violet: #8b5cf6;
+        --amber: #f59e0b;
+        --rose: #f43f5e;
+        --pad: clamp(28px, 4.4vw, 84px);
+        --display:
+          "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--display);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      body.ready {
+        opacity: 1;
+      }
+
+      /* ---------- three.js field + atmosphere ---------- */
+      #gl {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        display: block;
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.16;
+        mix-blend-mode: overlay;
+      }
+      #vig {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: radial-gradient(
+          125% 92% at 50% 42%,
+          transparent 38%,
+          rgba(0, 0, 0, 0.62) 100%
+        );
+      }
+
+      /* ---------- deck chrome ---------- */
+      #deck {
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: var(--pad);
+        padding-bottom: calc(var(--pad) + 34px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .slide.on {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .inner {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* rail */
+      #rail {
+        position: fixed;
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 26px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #ticks {
+        flex: 1;
+        display: flex;
+        gap: 3px;
+        height: 2px;
+      }
+      .tick {
+        flex: 1;
+        background: var(--line-2);
+        transition:
+          background 0.45s ease,
+          transform 0.45s ease;
+        transform-origin: bottom;
+      }
+      .tick.done {
+        background: var(--ink-3);
+      }
+      .tick.now {
+        background: var(--cyan);
+        transform: scaleY(3);
+      }
+      #brand {
+        position: fixed;
+        top: 26px;
+        right: var(--pad);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #brand b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* ---------- typography ---------- */
+      .kicker {
+        font-family: var(--mono);
+        font-size: clamp(9px, 0.78vw, 11px);
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+      .kicker .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--cyan);
+        flex: 0 0 auto;
+      }
+      .kicker .num {
+        color: var(--ink-2);
+      }
+      h1 {
+        font-size: clamp(46px, 8.4vw, 132px);
+        font-weight: 700;
+        line-height: 0.88;
+        letter-spacing: -0.035em;
+        text-wrap: balance;
+      }
+      h2 {
+        font-size: clamp(30px, 4.5vw, 66px);
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -0.028em;
+        text-wrap: balance;
+        max-width: 19ch;
+      }
+      h3 {
+        font-size: clamp(17px, 1.55vw, 23px);
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.012em;
+      }
+      .lede {
+        font-size: clamp(15px, 1.35vw, 20px);
+        line-height: 1.55;
+        color: var(--ink-2);
+        max-width: 60ch;
+        font-weight: 300;
+      }
+      p,
+      li {
+        font-size: clamp(13px, 1.02vw, 15.5px);
+        line-height: 1.62;
+        color: var(--ink-2);
+        font-weight: 300;
+      }
+      strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      em {
+        font-style: normal;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .w {
+        display: inline-block;
+        will-change: transform, opacity;
+      }
+
+      /* ---------- layout atoms ---------- */
+      .cols {
+        display: grid;
+        gap: clamp(18px, 2.2vw, 40px);
+        margin-top: clamp(24px, 3vw, 48px);
+      }
+      .c2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .c3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .c4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: clamp(28px, 4vw, 72px);
+        align-items: center;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: clamp(15px, 1.5vw, 24px);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.028),
+          rgba(255, 255, 255, 0.006)
+        );
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--ch, var(--line-2));
+      }
+      .card .lbl {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ch, var(--ink-3));
+        margin-bottom: 11px;
+        display: block;
+      }
+      .card h3 {
+        margin-bottom: 9px;
+      }
+      .ch-c {
+        --ch: var(--cyan);
+      }
+      .ch-v {
+        --ch: var(--violet);
+      }
+      .ch-a {
+        --ch: var(--amber);
+      }
+      .ch-r {
+        --ch: var(--rose);
+      }
+
+      ul {
+        list-style: none;
+      }
+      ul li {
+        position: relative;
+        padding-left: 19px;
+        margin-bottom: 9px;
+      }
+      ul li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.62em;
+        width: 7px;
+        height: 1px;
+        background: var(--ink-3);
+      }
+      ol {
+        list-style: none;
+        counter-reset: n;
+      }
+      ol li {
+        counter-increment: n;
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 13px;
+      }
+      ol li::before {
+        content: counter(n, decimal-leading-zero);
+        position: absolute;
+        left: 0;
+        top: 0.1em;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ch, var(--ink-3));
+        letter-spacing: 0.08em;
+      }
+
+      .rule {
+        height: 1px;
+        background: var(--line);
+        margin: clamp(20px, 2.6vw, 38px) 0;
+      }
+      .tag {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 5px 10px;
+        border: 1px solid var(--line-2);
+        border-radius: 2px;
+        color: var(--ink-2);
+        margin: 0 6px 6px 0;
+      }
+      .tag.hot {
+        border-color: var(--cyan);
+        color: var(--cyan);
+      }
+
+      /* stat */
+      .stat .n {
+        font-size: clamp(38px, 5.6vw, 84px);
+        font-weight: 700;
+        line-height: 0.9;
+        letter-spacing: -0.045em;
+        color: var(--ch, var(--ink));
+        font-variant-numeric: tabular-nums;
+      }
+      .stat .n small {
+        font-size: 0.42em;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+      .stat .cap {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 12px;
+        line-height: 1.6;
+      }
+
+      /* ---------- cover ---------- */
+      #s0 .inner {
+        max-width: 1400px;
+      }
+      .cover-meta {
+        display: flex;
+        gap: clamp(20px, 3vw, 52px);
+        flex-wrap: wrap;
+        margin-top: clamp(30px, 3.6vw, 54px);
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .cover-meta b {
+        display: block;
+        color: var(--ink);
+        font-weight: 500;
+        margin-top: 7px;
+        letter-spacing: 0.1em;
+      }
+      .spectrum {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 30px;
+      }
+      .spectrum i {
+        height: 3px;
+        width: 44px;
+        border-radius: 2px;
+        display: block;
+      }
+
+      /* ---------- interactive: stem assembler ---------- */
+      .asm {
+        display: grid;
+        grid-template-columns: 0.85fr 1.15fr;
+        gap: clamp(22px, 3vw, 56px);
+        align-items: start;
+      }
+      .qs {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .q .qlbl {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 8px;
+        display: block;
+      }
+      .opts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .opt {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        padding: 7px 12px;
+        border-radius: 2px;
+        border: 1px solid var(--line-2);
+        background: transparent;
+        color: var(--ink-2);
+        cursor: pointer;
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .opt:hover {
+        border-color: var(--ink-3);
+        color: var(--ink);
+      }
+      .opt.sel {
+        border-color: var(--ch);
+        color: #08080a;
+        background: var(--ch);
+        font-weight: 500;
+      }
+      .lyr {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: clamp(20px, 2.3vw, 34px);
+        background: rgba(10, 10, 13, 0.62);
+        backdrop-filter: blur(10px);
+      }
+      .lyr .hd {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 20px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .lyr .line {
+        font-size: clamp(15px, 1.5vw, 22px);
+        line-height: 1.85;
+        font-weight: 300;
+        color: var(--ink-3);
+      }
+      .lyr .sec {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        color: var(--ink-3);
+        margin: 18px 0 8px;
+        text-transform: uppercase;
+      }
+      .lyr .sec:first-of-type {
+        margin-top: 0;
+      }
+      .st {
+        color: var(--ink-2);
+      }
+      .sw {
+        color: var(--ch);
+        font-weight: 500;
+        position: relative;
+        display: inline-block;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+      }
+      .sw::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -3px;
+        height: 1px;
+        background: var(--ch);
+        opacity: 0.42;
+      }
+      .legend {
+        display: flex;
+        gap: 20px;
+        margin-top: 22px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .legend span {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .legend i {
+        width: 16px;
+        height: 2px;
+        display: block;
+      }
+
+      /* ---------- interactive: prioritization ---------- */
+      .mx {
+        margin-top: clamp(18px, 2.2vw, 34px);
+      }
+      .modes {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 26px;
+      }
+      .mode {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        padding: 9px 16px;
+        border: 1px solid var(--line-2);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--ink-3);
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+      .mode:hover {
+        color: var(--ink-2);
+        border-color: var(--ink-3);
+      }
+      .mode.on {
+        background: var(--ink);
+        color: #08080a;
+        border-color: var(--ink);
+        font-weight: 500;
+      }
+      .rows {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: clamp(150px, 15vw, 220px) 1fr clamp(
+            52px,
+            5vw,
+            74px
+          );
+        align-items: center;
+        gap: clamp(12px, 1.6vw, 26px);
+        transition: transform 0.6s cubic-bezier(0.34, 1.2, 0.44, 1);
+      }
+      .row .name {
+        font-size: clamp(13px, 1.05vw, 16px);
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .row .name span {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 5px;
+        font-weight: 400;
+      }
+      .bar {
+        height: 34px;
+        background: rgba(255, 255, 255, 0.032);
+        border-radius: 2px;
+        overflow: hidden;
+        position: relative;
+      }
+      .bar i {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0;
+        background: var(--ch);
+        border-radius: 2px;
+        transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .row .sc {
+        font-family: var(--mono);
+        font-size: clamp(15px, 1.5vw, 21px);
+        font-weight: 700;
+        text-align: right;
+        color: var(--ch);
+        font-variant-numeric: tabular-nums;
+      }
+      .verdict {
+        margin-top: 24px;
+        padding: 16px 20px;
+        border-left: 2px solid var(--cyan);
+        background: rgba(34, 211, 238, 0.045);
+        font-size: clamp(13px, 1.05vw, 16px);
+        line-height: 1.6;
+        color: var(--ink-2);
+      }
+      .verdict b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      /* ---------- timeline ---------- */
+      .tl {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        margin-top: clamp(22px, 2.8vw, 42px);
+      }
+      .tl > div {
+        background: var(--bg-2);
+        padding: clamp(18px, 2vw, 30px);
+      }
+      .tl .d {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: var(--ch);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      .tl h3 {
+        margin-bottom: 11px;
+      }
+
+
+      /* ---------- hero number: Apple grammar, the money stat alone ---------- */
+      .hero-num{display:grid;grid-template-columns:auto 1fr;gap:clamp(24px,3.4vw,64px);
+        align-items:center;margin-top:clamp(16px,2.4vw,36px)}
+      .hn{font-size:clamp(96px,19vw,286px);font-weight:700;line-height:.82;letter-spacing:-.055em;
+        color:var(--cyan);font-variant-numeric:tabular-nums;white-space:nowrap}
+      .hn small{font-size:.36em;font-weight:500;letter-spacing:-.02em}
+      .hn-side{max-width:34ch;border-left:1px solid var(--line);padding-left:clamp(18px,2.2vw,34px)}
+      .hn-lbl{font-family:var(--mono);font-size:clamp(10px,.95vw,12px);letter-spacing:.19em;
+        text-transform:uppercase;color:var(--ink-3);line-height:1.7}
+      .hn-vs{margin-top:14px;font-size:clamp(14px,1.25vw,19px);line-height:1.55;color:var(--ink-2)}
+      .hn-vs b{color:var(--rose);font-weight:600}
+
+      /* ---------- diagnoses: typographic, not another card grid ---------- */
+      .diag{display:grid;grid-template-columns:repeat(2,1fr);gap:0 clamp(28px,4vw,72px);
+        margin-top:clamp(18px,2.2vw,32px)}
+      .dg{display:grid;grid-template-columns:auto 1fr;gap:clamp(14px,1.6vw,24px);
+        align-items:baseline;padding:clamp(14px,1.7vw,22px) 0;border-top:1px solid var(--line)}
+      .dg .dn{font-family:var(--mono);font-size:clamp(20px,2.4vw,34px);font-weight:700;
+        color:var(--ch);letter-spacing:-.02em;line-height:1}
+      .dg h3{margin-bottom:7px}
+      @media (max-width:1020px){.hero-num,.diag{grid-template-columns:1fr}
+        .hn-side{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:18px}}
+
+      /* ---------- overview grid ---------- */
+      #ov {
+        position: fixed;
+        inset: 0;
+        z-index: 9;
+        background: rgba(6, 6, 8, 0.965);
+        backdrop-filter: blur(18px);
+        padding: var(--pad);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+        overflow-y: auto;
+      }
+      #ov.on {
+        opacity: 1;
+        visibility: visible;
+      }
+      #ovg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 10px;
+        margin-top: 26px;
+      }
+      .ovc {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 15px;
+        cursor: pointer;
+        background: var(--bg-2);
+        transition: all 0.22s ease;
+        min-height: 96px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .ovc:hover {
+        border-color: var(--cyan);
+        transform: translateY(-2px);
+      }
+      .ovc.now {
+        border-color: var(--cyan);
+        background: rgba(34, 211, 238, 0.06);
+      }
+      .ovc .n {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        color: var(--ink-3);
+        letter-spacing: 0.16em;
+      }
+      .ovc .t {
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1.32;
+        color: var(--ink);
+        margin-top: 9px;
+      }
+
+      /* ---------- help ---------- */
+      #help {
+        position: fixed;
+        bottom: 62px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      #help.on {
+        opacity: 1;
+      }
+      kbd {
+        border: 1px solid var(--line-2);
+        border-radius: 2px;
+        padding: 2px 6px;
+        color: var(--ink-2);
+        margin: 0 2px;
+      }
+
+      /* ---------- responsive ---------- */
+      @media (max-width: 1020px) {
+        .split,
+        .asm {
+          grid-template-columns: 1fr;
+          gap: 26px;
+        }
+        .c3,
+        .c4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .tl {
+          grid-template-columns: 1fr;
+        }
+        .row {
+          grid-template-columns: 130px 1fr 48px;
+        }
+        .slide {
+          justify-content: flex-start;
+          padding-top: calc(var(--pad) + 30px);
+          overflow-y: auto;
+        }
+      }
+      @media (max-width: 680px) {
+        .c2,
+        .c3,
+        .c4 {
+          grid-template-columns: 1fr;
+        }
+        .cover-meta {
+          gap: 18px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      @media print {
+        html,
+        body {
+          overflow: visible;
+          height: auto;
+          background: #fff;
+          color: #000;
+        }
+        #gl,
+        #grain,
+        #vig,
+        #rail,
+        #brand,
+        #help,
+        #ov {
+          display: none;
+        }
+        .slide {
+          position: relative;
+          opacity: 1 !important;
+          visibility: visible !important;
+          page-break-after: always;
+          min-height: 100vh;
+          color: #000;
+        }
+        h1,
+        h2,
+        h3,
+        strong,
+        em {
+          color: #000;
+        }
+        p,
+        li,
+        .lede {
+          color: #333;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gl"></canvas>
+    <svg id="grain">
+      <filter id="n">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency=".82"
+          numOctaves="4"
+          stitchTiles="stitch"
+        />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#n)" />
+    </svg>
+    <div id="vig"></div>
+
+    <div id="brand"><b>Dylan Kroll</b> · AI Enablement Engineer · #paid</div>
+
+    <div id="deck">
+      <!-- 00 COVER -->
+      <section class="slide" data-t="Stems, Not Songs">
+        <div class="inner">
+          <div class="spectrum">
+            <i style="background: var(--cyan)"></i
+            ><i style="background: var(--violet)"></i>
+            <i style="background: var(--amber)"></i
+            ><i style="background: var(--rose)"></i>
+          </div>
+          <h1 data-split>Stems,<br />not songs.</h1>
+          <p class="lede" style="margin-top: clamp(22px, 2.6vw, 38px)">
+            How I diagnose, sequence, and measure AI work. One idea, four
+            questions, and the receipts from a system that shipped 150,000
+            units.
+          </p>
+          <div class="cover-meta">
+            <div>Presented by<b>Dylan Kroll</b></div>
+            <div>Role<b>AI Enablement Engineer</b></div>
+            <div>Panel<b>#paid</b></div>
+            <div>Runtime<b>20 minutes</b></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 01 THESIS -->
+      <section class="slide" data-t="A song is not atomic">
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">00</span
+              ><span>The idea everything else hangs on</span>
+            </div>
+            <h2 data-split>A song is not atomic.</h2>
+            <p class="lede" style="margin-top: 26px">
+              In 2023 I helped build a product that hands a customer a
+              personalized song in about eight seconds. Not by generating it. By
+              <em>assembling</em> it.
+            </p>
+            <p style="margin-top: 18px">
+              Artists recorded the parts that never change and, separately,
+              every version of the parts that do. We called the variable parts
+              <strong>stems</strong>. A customer's answers select which stems
+              play. Human-made, machine-assembled, instant.
+            </p>
+            <p style="margin-top: 14px">
+              The reason that worked is the reason most AI rollouts fail. The
+              team wasn't asking for a whole song.
+            </p>
+          </div>
+          <div>
+            <div class="card ch-c">
+              <span class="lbl">The move</span>
+              <h3>Decompose the job before you automate it.</h3>
+              <p style="margin-top: 10px">
+                Find the smallest unit that is reusable and checkable. Hand the
+                machine that. Keep the human in the seat where judgment actually
+                lives.
+              </p>
+            </div>
+            <div class="card ch-v" style="margin-top: 14px">
+              <span class="lbl">Why it transfers</span>
+              <h3>Every failed rollout I have seen asked for a song.</h3>
+              <p style="margin-top: 10px">
+                "Write our proposals." "Handle onboarding." Too big to verify,
+                too vague to trust, too far from the work to survive a week.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02 ASSEMBLER (interactive) -->
+      <section class="slide" data-t="The mechanic, live">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">00.1</span
+            ><span>Try it · click any answer</span>
+          </div>
+          <h2 data-split style="max-width:30ch;font-size:clamp(24px,3.1vw,44px)">Four questions. Eight seconds. Nothing generated.</h2>
+          <div class="asm" style="margin-top: 6px">
+            <div class="qs" id="qs"></div>
+            <div>
+              <div class="lyr">
+                <div class="hd">
+                  <span>Assembled output</span
+                  ><span id="combo">— combinations</span>
+                </div>
+                <div id="out"></div>
+                <div class="legend">
+                  <span
+                    ><i style="background: var(--ink-2)"></i>Static · recorded
+                    once</span
+                  >
+                  <span
+                    ><i style="background: var(--cyan)"></i>Stem · selected at
+                    runtime</span
+                  >
+                </div>
+              </div>
+              <p style="margin-top: 16px; font-size: 13px">
+                Four questions. Four artists. The catalogue is finite and every
+                piece of it was sung by a person. Nothing here is generated at
+                request time, which is exactly why it is fast, cheap, on-brand,
+                and legally clean.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03 THE LENS -->
+      <section class="slide" data-t="The lens on all four questions">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">00.2</span
+            ><span>How I will use it</span>
+          </div>
+          <h2 data-split>Four questions. One lens.</h2>
+          <div class="cols c4">
+            <div class="card ch-c">
+              <span class="lbl">Scenario 01</span>
+              <h3>"Claude isn't helping my team."</h3>
+              <p style="margin-top: 10px">
+                They are asking for a song. I go find the stems.
+              </p>
+            </div>
+            <div class="card ch-v">
+              <span class="lbl">Scenario 02</span>
+              <h3>Three requests, one sprint.</h3>
+              <p style="margin-top: 10px">
+                Sequence by evidence, not by value.
+              </p>
+            </div>
+            <div class="card ch-a">
+              <span class="lbl">Scenario 03</span>
+              <h3>Tried once, never again.</h3>
+              <p style="margin-top: 10px">
+                I shipped a song. They needed a stem.
+              </p>
+            </div>
+            <div class="card ch-r">
+              <span class="lbl">Deep dive</span>
+              <h3>Instant Song.</h3>
+              <p style="margin-top: 10px">
+                The system this all came from, including what broke.
+              </p>
+            </div>
+          </div>
+          <p
+            class="lede"
+            style="margin-top: clamp(24px, 3vw, 42px); max-width: 78ch"
+          >
+            Each of these stands on its own. The lens is not a trick to make
+            them rhyme, it is the reason my answers are the same shape every
+            time:
+            <strong
+              >diagnose the altitude, ship the smallest verifiable unit, measure
+              before you scale.</strong
+            >
+          </p>
+        </div>
+      </section>
+
+      <!-- 04 SCENARIO 1 -->
+      <section class="slide" data-t="S1 · The five questions">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Scenario 01</span><span>Discovery</span></div>
+          <h2 data-split>"Claude isn't helping my team."</h2>
+          <p class="lede" style="margin-top:18px">First: I do not defend the tool and I do not offer training. Both are the same mistake, which is treating a symptom as the problem. A VP saying this is handing me a free diagnostic. I ask five questions.</p>
+          <div class="cols c2" style="margin-top:clamp(16px,2vw,28px)">
+            <ol class="ch-c">
+              <li><strong>Walk me through the last time someone tried and it didn't work.</strong><br>A specific incident beats a general complaint. General complaints have no failure point in them.</li>
+              <li><strong>What did they expect to get back?</strong><br>This is where I find out whether they asked for a whole song.</li>
+              <li><strong>What do they do on the days they don't use it?</strong><br>That is the real workflow, and the baseline I will measure against.</li>
+            </ol>
+            <ol class="ch-a" style="counter-reset:n 3">
+              <li><strong>Which part of this would you not trust a machine with?</strong><br>Finds the trust boundary. Human review belongs there and nowhere else.</li>
+              <li><strong>If it worked perfectly, what would your team stop doing?</strong><br>The outcome, in their words and their numbers. Not mine.</li>
+            </ol>
+          </div>
+          <div class="verdict"><b>What I commit to on that call:</b> a baseline agreed before I build anything. If we cannot name the number today, we are not ready to build tomorrow.</div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="S1 · The four diagnoses">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Scenario 01 · cont</span><span>Diagnosis · Measurable outcomes</span></div>
+          <h2 data-split>It is almost always one of four.</h2>
+          <div class="diag">
+            <div class="dg ch-c"><span class="dn">01</span><div><h3>Wrong altitude</h3><p>The ask is a whole song. Nobody can verify a whole song, so nobody trusts it.</p></div></div>
+            <div class="dg ch-v"><span class="dn">02</span><div><h3>No context</h3><p>The model has never seen the brand book, the past campaigns, or the account history. It is guessing, competently.</p></div></div>
+            <div class="dg ch-a"><span class="dn">03</span><div><h3>No verdict</h3><p>Output arrives with no way to tell good from bad, so checking costs more than doing.</p></div></div>
+            <div class="dg ch-r"><span class="dn">04</span><div><h3>Wrong seat</h3><p>The person holding the tool is not the person who feels the pain.</p></div></div>
+          </div>
+          <div class="verdict">Then: one recurring task, decomposed, with the two most boring and most checkable stems handed back <b>inside the tool they already use</b>, by the end of the week. Not a training session. A shipped stem.</div>
+        </div>
+      </section>
+
+      <!-- 05 SCENARIO 2 -->
+      <section class="slide" data-t="S2 · Three requests, one sprint">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">Scenario 02</span
+            ><span>Impact · Adoption · Alignment · ROI</span>
+          </div>
+          <h2 data-split style="max-width: 26ch">
+            Three requests. One sprint.
+          </h2>
+          <div class="mx">
+            <div class="modes">
+              <button class="mode on" data-m="value">
+                Score by business value
+              </button>
+              <button class="mode" data-m="eviq">
+                Score by time to evidence
+              </button>
+            </div>
+            <div class="rows" id="rows"></div>
+            <div class="verdict" id="pv"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 SCENARIO 2b -->
+      <section class="slide" data-t="S2 · What the other two get">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">Scenario 02 · cont</span
+            ><span>The part that decides whether I get a second sprint</span>
+          </div>
+          <h2 data-split>Saying no is half the job.</h2>
+          <p class="lede" style="margin-top: 20px">
+            A silent "later" is how enablement loses the room. Nobody gets a no.
+            Everybody gets a date and a reason.
+          </p>
+          <div class="cols c3">
+            <div class="card ch-a">
+              <span class="lbl">Finance · this sprint</span>
+              <h3>Invoice categorization ships.</h3>
+              <p style="margin-top: 10px">
+                Objectively checkable against a ledger, zero adoption
+                resistance, one sprint to a defensible number. That number funds
+                everything after it.
+              </p>
+            </div>
+            <div class="card ch-c">
+              <span class="lbl">Sales · one day of my sprint</span>
+              <h3>Instrumented, not built.</h3>
+              <p style="margin-top: 10px">
+                I spend a day measuring where proposal time actually goes. When
+                Sales gets its sprint, it gets built against a baseline instead
+                of a guess. Highest value deserves the best-prepared build.
+              </p>
+            </div>
+            <div class="card ch-v">
+              <span class="lbl"
+                >Customer Success · next sprint, in writing</span
+              >
+              <h3>A date and the reason.</h3>
+              <p style="margin-top: 10px">
+                Onboarding is high value and high adoption risk, because the CS
+                voice <em>is</em> the product. It needs the trust that sprint
+                one buys.
+              </p>
+            </div>
+          </div>
+          <div class="rule"></div>
+          <div class="split">
+            <div>
+              <h3>If the VP of Sales pulls rank</h3>
+              <p style="margin-top: 10px">
+                That is a real dynamic and I do not fight it. There is a
+                zero-cost version of proposal automation: the current best
+                proposal, the brand context, and a shared prompt, shipped in an
+                afternoon. It is not the build. It is discovery that happens to
+                be useful, and its usage data tells me what the real build
+                should be.
+              </p>
+            </div>
+            <div>
+              <h3>What I am actually optimizing in sprint one</h3>
+              <p style="margin-top: 10px">
+                Not ROI. <strong>Evidence.</strong> Sprint one buys the
+                credibility that makes sprints two through ten possible. Picking
+                the highest-value request first and shipping something
+                unverifiable is the most common way this role stalls out in its
+                first quarter.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07 SCENARIO 3 -->
+      <section class="slide" data-t="S3 · Tried once, never again">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Scenario 03</span><span>The adoption cliff</span></div>
+          <h2 data-split>They tried it once. That is good news.</h2>
+          <p class="lede" style="margin-top:16px">Rejection is never trying. One try means the pitch worked and the product didn't, so something specific happened on that first run. There is a failure point and it has a location.</p>
+          <div class="cols c4" style="margin-top:clamp(16px,2vw,28px)">
+            <div class="card ch-r"><span class="lbl">Most likely</span><h3>It broke on a real input</h3><p style="margin-top:8px">It worked on the demo case. Theirs had a 40-page PDF or an apostrophe in a client name. Nobody files a bug for an internal tool. They just stop.</p></div>
+            <div class="card ch-a"><span class="lbl">Very likely</span><h3>It lives in the wrong place</h3><p style="margin-top:8px">I built a tool. Their work happens in Slack, the CRM, a spreadsheet. Every context switch is a tax, and the tax exceeded the saving.</p></div>
+            <div class="card ch-v"><span class="lbl">Common</span><h3>Checking cost more than doing</h3><p style="margin-top:8px">They cannot tell if the output is right without redoing it. So they redo it.</p></div>
+            <div class="card ch-c"><span class="lbl">Quietly common</span><h3>I saved the wrong 20 minutes</h3><p style="margin-top:8px">I automated the part that was fun to build, not the part that was slow and hated.</p></div>
+          </div>
+          <div class="cols c2" style="margin-top:clamp(14px,1.8vw,24px)">
+            <div><h3>How I find out</h3><ul style="margin-top:10px">
+              <li><strong>Not a survey.</strong> People cannot tell you why they stopped. They will say they have been busy.</li>
+              <li><strong>The logs.</strong> Where did the last session end? That step is the bug.</li>
+              <li><strong>Watch three people do it the old way.</strong> Forty-five minutes, and I will see the workaround they never mentioned.</li>
+            </ul></div>
+            <div><h3>Then I rebuild smaller</h3><ul style="margin-top:10px">
+              <li>One stem, inside the surface they already have open, with verification in the output.</li>
+              <li>Three people, not thirty. Adoption is earned per person before it is announced.</li>
+              <li>And I say the true sentence: <em>I built the wrong thing, here is the smaller thing.</em> That buys more credibility than a working v1.</li>
+            </ul></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 08 DEEP DIVE TITLE -->
+      <section class="slide" data-t="Deep dive · Instant Song">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">Part 2</span
+            ><span>Deep dive · Songfinch, 2022 to 2025</span>
+          </div>
+          <h1 data-split style="font-size: clamp(40px, 7vw, 110px)">
+            Instant Song.
+          </h1>
+          <p class="lede" style="margin-top: 26px; max-width: 70ch">
+            I was on the Innovation and Artist Operations team through the
+            company's growth from $4M to $36M. This is the build I am proudest
+            of, and it is the one that taught me the thing I lead with.
+          </p>
+          <div class="cols c4" style="margin-top: clamp(28px, 3.4vw, 50px)">
+            <div class="stat ch-c">
+              <div class="n">7 days</div>
+              <div class="cap">Turnaround<br />before</div>
+            </div>
+            <div class="stat ch-v">
+              <div class="n">~8 sec</div>
+              <div class="cap">Turnaround<br />after</div>
+            </div>
+            <div class="stat ch-a">
+              <div class="n">300<small>+</small></div>
+              <div class="cap">Creators onboarded<br />into the system</div>
+            </div>
+            <div class="stat ch-r">
+              <div class="n">150k<small>+</small></div>
+              <div class="cap">Units sold<br />in two years</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 09 THE WALL -->
+      <section class="slide" data-t="The wall">
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">Deep dive · 01</span
+              ><span>The problem</span>
+            </div>
+            <h2 data-split>
+              The funnel had a wall, and the obvious fix was the wrong one.
+            </h2>
+            <p style="margin-top: 20px">
+              Songfinch sold one thing: an original song written for you by a
+              real artist. Around $200, about a week to deliver. It converted
+              under two percent. Most people who wanted a song could not accept
+              the price or the wait.
+            </p>
+            <p style="margin-top: 14px">
+              The obvious answer in 2023 was to generate the songs. We did not,
+              and I would make that call again.
+            </p>
+          </div>
+          <div>
+            <div class="card ch-r">
+              <span class="lbl">Why generation was a non-starter</span>
+              <ul style="margin-top: 12px">
+                <li>
+                  <strong>It kills the promise.</strong> The entire product is
+                  "a real artist wrote this for you." There is no version of
+                  that sentence that survives.
+                </li>
+                <li>
+                  <strong>The artists walk.</strong> A supply network of
+                  hundreds of musicians was the actual asset. Announcing a
+                  generator burns it in a week.
+                </li>
+                <li>
+                  <strong>Nobody could sign off on the rights.</strong> In 2023,
+                  and honestly still.
+                </li>
+              </ul>
+            </div>
+            <div class="card ch-c" style="margin-top: 14px">
+              <span class="lbl">The reframe</span>
+              <h3>
+                The song did not need to be written on demand. It needed to be
+                assembled on demand.
+              </h3>
+              <p style="margin-top: 10px">
+                Which turned an unsolvable AI problem into a solvable operations
+                problem. That reframe is most of the job.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 THE ARCHITECTURE -->
+      <section class="slide" data-t="What I actually built">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 02</span><span>The part that was mine</span></div>
+          <h2 data-split>The hard problem was never the audio. It was making 300 musicians produce machine-readable output.</h2>
+          <div class="cols c3" style="margin-top:clamp(18px,2.2vw,30px)">
+            <div class="card ch-c"><span class="lbl">01 · The protocol</span><h3>A recording spec artists would actually follow</h3><p style="margin-top:9px">Step-by-step instructions, session templates for Logic Pro X and Pro Tools with a track per required region, a test-track gate before anyone recorded the full set, and a review loop with named turnaround times. Musicians are not going to read a schema. They will follow a session template.</p></div>
+            <div class="card ch-v"><span class="lbl">02 · The filename is the API</span><h3>Structure encoded where it cannot get lost</h3><p class="mono" style="margin-top:9px;font-size:clamp(10px,.95vw,12.5px);color:var(--violet)">10.1.1.1_V1.S1.L1_DATINGAPP</p><p style="margin-top:8px">Bar.beat.division.tick, then song section, stanza and line, then the answer the stem satisfies. Every file self-describes its position and the customer answer it belongs to. Get this wrong and the system is manual forever, at any scale.</p></div>
+            <div class="card ch-a"><span class="lbl">03 · The economics</span><h3>A model artists opted into</h3><p style="margin-top:9px">$500 guaranteed on approved delivery, then $1 per song sold against recoupment. It made the ask legible: this is more work than a normal song, here is what it pays, here is the upside. Supply-side adoption is a compensation design problem, not a communication problem.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="The layer that made it feel personal">
+        <div class="inner split">
+          <div>
+            <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 02b</span><span>Where it stopped being a trick</span></div>
+            <h2 data-split>Swapping a line is a trick. Saying your name is the moment.</h2>
+            <p style="margin-top:18px">We built a name dictionary using Synthesizer V, mapped every song's blueprint down to the syllable so we knew exactly which phrase we were replacing and how many syllables it had to absorb, and recorded vocal model templates capturing vowel, consonant, and performance data from each artist. The same line, tracked roughly sixteen times, to catch the range of cadence and phrasing.</p>
+          </div>
+          <div class="card ch-r"><span class="lbl">The unglamorous middle</span><h3>And the volume work under all of it</h3><p style="margin-top:10px">Batch processing across 2,000+ audio assets: FFmpeg pipelines for cleanup and versioning, naming enforcement, QA passes, delivery prep.</p><p style="margin-top:12px">That is the unglamorous middle of every enablement job. If the batch layer is not automated, the clever layer above it never gets used, because someone is always three days behind on files.</p></div>
+        </div>
+      </section>
+
+      <!-- 11 RECEIPTS -->
+      <section class="slide" data-t="The number that decided it">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 03</span><span>What happened</span></div>
+          <div class="hero-num">
+            <div class="hn">7.65<small>%</small></div>
+            <div class="hn-side">
+              <p class="hn-lbl">Instant Song conversion, launch window</p>
+              <p class="hn-vs">against <b>under 2%</b> on the Original Song sitting right next to it. Same site, same traffic, same weeks.</p>
+            </div>
+          </div>
+          <div class="verdict" style="margin-top:clamp(20px,2.6vw,36px)">256 units is a small number and I want to be honest that it is small. <b>The ratio is what made it a green light, not the volume.</b> Roughly four times the conversion of the product beside it, measured against a baseline we had years of history on.</div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Then two years happened">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 03b</span><span>What it became</span></div>
+          <h2 data-split>Launch week told us. Two years proved it.</h2>
+          <div class="cols c3" style="margin-top:clamp(20px,2.6vw,40px)">
+            <div class="stat ch-a"><div class="n">150k<small>+</small></div><div class="cap">Instant Songs sold<br>in the two years after</div></div>
+            <div class="stat ch-c"><div class="n">2,000<small>+</small></div><div class="cap">Audio assets<br>batch-processed</div></div>
+            <div class="stat ch-v"><div class="n">300<small>+</small></div><div class="cap">Creators onboarded<br>into the system</div></div>
+          </div>
+          <div class="rule"></div>
+          <div class="split">
+            <div><h3>Why the early ratio was trustworthy</h3><p style="margin-top:10px">Same site, same audience, same period, against an existing baseline with years of history behind it. The comparison was designed in before launch, so the launch produced a decision instead of a debate.</p></div>
+            <div><h3>What I take from it</h3><p style="margin-top:10px">A clean comparison you set up in advance is worth more than a big number you have to explain afterwards. That is the whole argument for instrumenting first, and it is the thing I would bring here on day one.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 WHAT BROKE -->
+      <section class="slide" data-t="What broke">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">Deep dive · 04</span
+            ><span>The honest part</span>
+          </div>
+          <h2 data-split>
+            The assembly worked on day one. The instrumentation did not.
+          </h2>
+          <div class="cols c2" style="margin-top: clamp(20px, 2.4vw, 34px)">
+            <div>
+              <p
+                class="mono"
+                style="
+                  font-size: 10px;
+                  letter-spacing: 0.2em;
+                  text-transform: uppercase;
+                  color: var(--ink-3);
+                  margin-bottom: 14px;
+                "
+              >
+                From our own post-launch review
+              </p>
+              <ul>
+                <li>
+                  <strong>103 support tickets</strong> from customers who had
+                  already paid and hit a problem.
+                </li>
+                <li>
+                  <strong>Previews would not load.</strong> Spinning wheels and
+                  error messages at the exact moment of highest intent.
+                </li>
+                <li>
+                  <strong>256 sold in Amplitude. 307 in Admin.</strong> We could
+                  not agree on how many songs we had sold.
+                </li>
+                <li>
+                  <strong>Duplicate charges, stuck orders</strong> that never
+                  appeared in the system while the charge sat in Stripe.
+                </li>
+                <li>
+                  <strong
+                    >The relationship categories did not fit real
+                    people.</strong
+                  >
+                  We shipped romantic first and everyone else bounced off the
+                  form.
+                </li>
+              </ul>
+            </div>
+            <div>
+              <div class="card ch-r">
+                <span class="lbl">The lesson I lead with now</span>
+                <h3>
+                  The songs-sold discrepancy was the worst one, and it was not
+                  the audio.
+                </h3>
+                <p style="margin-top: 10px">
+                  A working product you cannot count is a product you cannot
+                  fund, prioritize, or defend. We spent the first weeks after a
+                  genuinely successful launch doing reconciliation instead of
+                  iteration, because the counting was built after the thing
+                  instead of into it.
+                </p>
+              </div>
+              <div class="card ch-c" style="margin-top: 14px">
+                <span class="lbl">What I would do differently</span>
+                <h3>
+                  Instrument on day zero, and make the funnel legible before the
+                  launch, not after.
+                </h3>
+                <p style="margin-top: 10px">
+                  Every one of those failures was findable in a log on day one.
+                  Nobody was looking at a dashboard, because there wasn't one.
+                  That is the first thing I would build anywhere, including
+                  here.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 FIRST 90 -->
+      <section class="slide" data-t="First 90 days at #paid">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Forward</span><span>What I would do here</span></div>
+          <h2 data-split>You cannot enable what you cannot count.</h2>
+          <div class="tl">
+            <div class="ch-c"><div class="d">Days 01 — 30 · Instrument</div><h3>Find out what is actually happening.</h3><p style="margin-top:10px">Stand up usage reporting against the Claude Enterprise analytics API. Not seat counts. Which teams, which recurring jobs, which sessions start and never finish. Then sit with three teams and take the baselines by hand, because the API tells me what people <em>did</em> and only a person tells me what it <em>cost them</em>.</p></div>
+            <div class="ch-v"><div class="d">Days 31 — 60 · Ship one stem</div><h3>One team, one job, one verifiable unit.</h3><p style="margin-top:10px">Pick the highest-frequency, most-checkable job in the instrumentation. Decompose it. Ship the stem into the surface that team already lives in. Three users first, then the team. A measured before-and-after, published whether it is good or not.</p></div>
+            <div class="ch-a"><div class="d">Days 61 — 90 · The dashboard</div><h3>Make adoption a number leadership sees weekly.</h3><p style="margin-top:10px">Flow fingerprinting, cost per outcome, abandonment, and hours returned. The instrument that turns Scenario 3 from an archaeological dig into a Tuesday-afternoon glance.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="The four metrics">
+        <div class="inner">
+          <div class="kicker"><i class="dot"></i><span class="num">Forward · cont</span><span>What the dashboard actually shows</span></div>
+          <h2 data-split>Four numbers, and one honest caveat.</h2>
+          <div class="cols c4" style="margin-top:clamp(18px,2.2vw,32px)">
+            <div class="card ch-c"><span class="lbl">Metric 01</span><h3>Flow fingerprinting</h3><p style="margin-top:8px">Cluster sessions by shape, not content. Answers the question nobody can answer today: what jobs are people actually doing with this?</p></div>
+            <div class="card ch-v"><span class="lbl">Metric 02</span><h3>Cost per outcome</h3><p style="margin-top:8px">Token spend per brief drafted, per proposal, per creator matched. Cost per seat is a procurement number. Cost per outcome is an enablement number.</p></div>
+            <div class="card ch-a"><span class="lbl">Metric 03</span><h3>Abandonment</h3><p style="margin-top:8px">Sessions that start and do not finish, ranked by frequency. This is the broken-stem list, and it writes my roadmap for me.</p></div>
+            <div class="card ch-r"><span class="lbl">Metric 04</span><h3>Hours returned</h3><p style="margin-top:8px">Baseline × volume. And I will say it on the slide: this is a <em>modeled</em> number, not a measured one.</p></div>
+          </div>
+          <div class="verdict">The assumption ships visible on the chart. <b>Enablement leads who hide that assumption get caught in the first finance review</b>, and then every other number they present gets discounted too.</div>
+        </div>
+      </section>
+
+      <!-- 14 META -->
+      <section class="slide" data-t="This deck">
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">One more thing</span
+              ><span>About this deck</span>
+            </div>
+            <h2 data-split>The brief said two hours.</h2>
+            <p class="lede" style="margin-top: 22px">
+              So I should tell you how this was made, because it is more
+              relevant than anything on it.
+            </p>
+            <p style="margin-top: 16px">
+              One HTML file. Three.js and GSAP vendored locally so it does not
+              need the internet in this room. Written with Claude Code, deployed
+              to Vercel. Inside the time limit.
+            </p>
+            <p style="margin-top: 14px">
+              I am not showing you this because it is nice to look at. I am
+              showing you because
+              <strong
+                >this is what two hours looks like when the workflow is
+                decomposed properly</strong
+              >, and that gap is the entire value of the role you are hiring
+              for.
+            </p>
+          </div>
+          <div>
+            <div class="card ch-c">
+              <span class="lbl">The workflow, as stems</span>
+              <ol class="ch-c" style="margin-top: 12px">
+                <li>
+                  <strong>Brief in, structure out.</strong> The panel brief told
+                  me exactly what is being scored. That became the outline
+                  before a word was written.
+                </li>
+                <li>
+                  <strong>Source material parsed, not retyped.</strong> Four
+                  decks and two reports read and pulled apart programmatically.
+                </li>
+                <li>
+                  <strong>Argument first, pixels second.</strong> The scenario
+                  answers were drafted and attacked before any design existed.
+                </li>
+                <li>
+                  <strong>Assembly.</strong> One file, one render loop, one
+                  deploy.
+                </li>
+              </ol>
+            </div>
+            <p style="margin-top: 16px; font-size: 13px">
+              Same shape as Instant Song. Decompose, make each piece verifiable
+              on its own, assemble at the end. If I get this job that is the
+              shape I will bring to every team that asks me for help.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 QUESTIONS -->
+      <section class="slide" data-t="Questions for you">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">Q&amp;A</span
+            ><span>The brief says this is my chance to ask</span>
+          </div>
+          <h2 data-split>Five things I want to know.</h2>
+          <div class="cols c2" style="margin-top: clamp(20px, 2.4vw, 36px)">
+            <div>
+              <ol class="ch-c">
+                <li>
+                  <strong
+                    >When a team says an AI tool is not working, who hears it
+                    first today, and what happens next?</strong
+                  >
+                  I want to know if there is a path or if it dies in a Slack
+                  thread.
+                </li>
+                <li>
+                  <strong
+                    >What is the honest answer to "how many people at #paid used
+                    Claude last week"?</strong
+                  >
+                  If it is a guess, I know what I am building in month one.
+                </li>
+                <li>
+                  <strong
+                    >#paid publishes AI principles. Where has that actually
+                    constrained a build somebody wanted?</strong
+                  >
+                  Principles that have never cost anything are marketing. I
+                  would like to hear the time it cost something.
+                </li>
+              </ol>
+            </div>
+            <div>
+              <ol start="4" class="ch-a" style="counter-reset: n 3">
+                <li>
+                  <strong
+                    >Is this seat measured on adoption, on hours returned, or on
+                    workflows shipped?</strong
+                  >
+                  Those are three different jobs and I would rather know which
+                  one I am doing.
+                </li>
+                <li>
+                  <strong
+                    >What is the workflow everyone here has quietly given up on
+                    automating?</strong
+                  >
+                  That is usually the most interesting problem in the building,
+                  and it is usually a decomposition problem.
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 CLOSE -->
+      <section class="slide" data-t="Close">
+        <div class="inner" style="text-align: left">
+          <div class="spectrum">
+            <i style="background: var(--cyan)"></i
+            ><i style="background: var(--violet)"></i
+            ><i style="background: var(--amber)"></i
+            ><i style="background: var(--rose)"></i>
+          </div>
+          <h1 data-split>Stems,<br />not songs.</h1>
+          <p class="lede" style="margin-top: 26px; max-width: 56ch">
+            Decompose the job. Ship the smallest verifiable unit. Count it
+            before you scale it.
+          </p>
+          <div class="cover-meta">
+            <div>Thank you<b>Dylan Kroll</b></div>
+            <div>Contact<b>dylankroll@ymail.com</b></div>
+            <div>·<b>linkedin.com/in/dylanjkroll</b></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="rail">
+      <span id="idx">01</span>
+      <div id="ticks"></div>
+      <span id="ttl"></span>
+    </div>
+    <div id="help">
+      <kbd>←</kbd><kbd>→</kbd> navigate <kbd>esc</kbd> overview
+      <kbd>?</kbd> hide
+    </div>
+    <div id="ov">
+      <div class="kicker">
+        <i class="dot"></i><span>Overview · click to jump</span>
+      </div>
+      <div id="ovg"></div>
+    </div>
+
+    <script src="vendor/gsap.min.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.js" } }
+    </script>
+    <script type="module">
+      import * as THREE from "three";
+
+      const CH = ["#22D3EE", "#8B5CF6", "#F59E0B", "#F43F5E"];
+      const slides = [...document.querySelectorAll(".slide")];
+      const N = slides.length;
+      let cur = 0;
+
+      /* ══════════════ 1. THREE.JS — the stem field ══════════════
+   One InstancedMesh of ~440 bars living in two states:
+   scattered (raw material) and assembled (a waveform).
+   Slide index scrubs between them. The concept, ambient. */
+      const canvas = document.getElementById("gl");
+      let renderer,
+        scene,
+        cam,
+        mesh,
+        bars = [],
+        raf = 0,
+        hasGL = true;
+      const state = { assembly: 0, spread: 1, lift: 0, focus: -1, dimT: 0 };
+      const COUNT = window.innerWidth < 760 ? 220 : 440;
+
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        });
+      } catch (e) {
+        hasGL = false;
+      }
+      if (!renderer || !renderer.getContext()) hasGL = false;
+
+      if (hasGL) {
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.setSize(innerWidth, innerHeight);
+
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x08080a, 0.034);
+
+        cam = new THREE.PerspectiveCamera(
+          46,
+          innerWidth / innerHeight,
+          0.1,
+          220,
+        );
+        cam.position.set(0, 1.6, 30);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        const key = new THREE.DirectionalLight(0xffffff, 1.15);
+        key.position.set(-9, 14, 12);
+        scene.add(key);
+        // rim light in the accent — what makes the bars read as objects, not shapes
+        const rim = new THREE.DirectionalLight(0x22d3ee, 2.1);
+        rim.position.set(11, -5, -10);
+        scene.add(rim);
+        const fill = new THREE.PointLight(0x8b5cf6, 26, 60);
+        fill.position.set(-13, 5, 7);
+        scene.add(fill);
+
+        // a stem: a thin, tall, slightly rounded bar. the brand object.
+        const geo = new THREE.CylinderGeometry(0.16, 0.16, 1, 6, 1);
+        const mat = new THREE.MeshStandardMaterial({
+          roughness: 0.36,
+          metalness: 0.16,
+        });
+        mesh = new THREE.InstancedMesh(geo, mat, COUNT);
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        scene.add(mesh);
+
+        // Assembled layout = a waveform ribbon. Scattered = a loose volume.
+        // Each bar remembers both homes and lerps between them.
+        const COLS = Math.ceil(COUNT / 4);
+        for (let i = 0; i < COUNT; i++) {
+          const col = i % COLS,
+            row = (i / COLS) | 0;
+          const x = (col / (COLS - 1) - 0.5) * 52;
+          // waveform envelope: two overlapping sines, decaying at the edges
+          const env = Math.cos((col / COLS - 0.5) * Math.PI) ** 0.7;
+          const amp =
+            (Math.sin(col * 0.34) * 0.5 + Math.sin(col * 0.11 + 1.7) * 0.5) *
+            env;
+          bars.push({
+            home: new THREE.Vector3(x, amp * 5.2, -row * 3.6 + 5),
+            wild: new THREE.Vector3(
+              (Math.random() - 0.5) * 96,
+              (Math.random() - 0.5) * 52,
+              (Math.random() - 0.5) * 74,
+            ),
+            hi: Math.abs(amp) * 8 + 0.7,
+            lo: Math.random() * 2.4 + 0.35,
+            ch: i % 4,
+            ph: Math.random() * Math.PI * 2,
+            sp: 0.5 + Math.random() * 1.3,
+            spin: (Math.random() - 0.5) * 2.4,
+          });
+          mesh.setColorAt(i, new THREE.Color(CH[i % 4]));
+        }
+        mesh.instanceColor.needsUpdate = true;
+
+        const dummy = new THREE.Object3D();
+        const pos = new THREE.Vector3();
+        const clock = new THREE.Clock();
+        const col = new THREE.Color();
+        const dim = new THREE.Color();
+        let lastFocus = -2,
+          lastDim = -1;
+
+        function frame() {
+          raf = requestAnimationFrame(frame);
+          const t = clock.getElapsedTime();
+          const a = state.assembly;
+          const ease = a * a * (3 - 2 * a); // smoothstep — assembly should feel like it settles
+
+          for (let i = 0; i < COUNT; i++) {
+            const b = bars[i];
+            pos.copy(b.wild).lerp(b.home, ease);
+            pos.x *= 1 + (1 - ease) * (state.spread - 1) * 0.35;
+            pos.y +=
+              Math.sin(t * b.sp + b.ph) * (0.35 + (1 - ease) * 1.5) +
+              state.lift;
+
+            dummy.position.copy(pos);
+            // scattered bars tumble; assembled bars stand up straight
+            dummy.rotation.set(
+              (1 - ease) * b.spin * 2,
+              (1 - ease) * b.spin + t * 0.05 * (1 - ease),
+              (1 - ease) * b.spin * 1.4,
+            );
+            // and they breathe on the beat once assembled
+            const beat = 1 + Math.sin(t * 1.9 + b.ph) * 0.12 * ease;
+            dummy.scale.set(1, (b.lo + (b.hi - b.lo) * ease) * beat, 1);
+            dummy.updateMatrix();
+            mesh.setMatrixAt(i, dummy.matrix);
+
+          }
+          mesh.instanceMatrix.needsUpdate = true;
+
+          // focus: when a slide owns a channel, the other three recede.
+          // only re-upload the colour buffer while that is actually changing —
+          // doing it every frame costs a full 440-entry GPU upload for nothing.
+          if (state.focus !== lastFocus || state.dimT !== lastDim) {
+            for (let i = 0; i < COUNT; i++) {
+              const b = bars[i];
+              col.set(CH[b.ch]);
+              if (state.focus >= 0 && b.ch !== state.focus)
+                col.lerp(dim.set(0x1b1b22), 0.82 * state.dimT);
+              mesh.setColorAt(i, col);
+            }
+            mesh.instanceColor.needsUpdate = true;
+            lastFocus = state.focus;
+            lastDim = state.dimT;
+          }
+
+          cam.position.x += (Math.sin(t * 0.11) * 2.4 - cam.position.x) * 0.014;
+          cam.position.y +=
+            (1.6 + Math.cos(t * 0.09) * 1.1 - cam.position.y) * 0.014;
+          cam.lookAt(0, 0, -6);
+          renderer.render(scene, cam);
+        }
+        frame();
+
+        addEventListener("resize", () => {
+          cam.aspect = innerWidth / innerHeight;
+          cam.updateProjectionMatrix();
+          renderer.setSize(innerWidth, innerHeight);
+        });
+      } else {
+        // designed fallback, not a blank box
+        canvas.style.background =
+          "radial-gradient(70% 55% at 22% 32%, rgba(34,211,238,.16), transparent 62%)," +
+          "radial-gradient(62% 50% at 78% 68%, rgba(139,92,246,.14), transparent 60%)," +
+          "radial-gradient(48% 44% at 60% 22%, rgba(245,158,11,.10), transparent 58%), #08080A";
+      }
+
+      /* per-slide camera + field state. the field IS the argument. */
+      const FIELD = [
+        { assembly: 0.06, spread: 1.5, lift: 0,    focus: -1, z: 30 }, // 00 cover: raw material
+        { assembly: 0.55, spread: 1.1, lift: 0,    focus: -1, z: 34 }, // 01 thesis: coming together
+        { assembly: 0.96, spread: 1,   lift: -1,   focus: 0,  z: 40 }, // 02 assembler: locked
+        { assembly: 0.82, spread: 1,   lift: -2,   focus: -1, z: 44 }, // 03 lens: all four channels
+        { assembly: 0.66, spread: 1.1, lift: -2,   focus: 0,  z: 42 }, // 04 S1 questions
+        { assembly: 0.72, spread: 1.1, lift: -2,   focus: 0,  z: 43 }, // 05 S1 diagnoses
+        { assembly: 0.70, spread: 1.1, lift: -2,   focus: 1,  z: 42 }, // 06 S2 matrix
+        { assembly: 0.74, spread: 1.1, lift: -2,   focus: 1,  z: 43 }, // 07 S2 the other two
+        { assembly: 0.34, spread: 1.35, lift: -2,  focus: 2,  z: 41 }, // 08 S3: it fell apart
+        { assembly: 0.90, spread: 1,   lift: 0,    focus: 3,  z: 32 }, // 09 deep dive title
+        { assembly: 0.26, spread: 1.45, lift: -2,  focus: -1, z: 44 }, // 10 the wall
+        { assembly: 0.88, spread: 1,   lift: -2,   focus: -1, z: 46 }, // 11 architecture
+        { assembly: 0.93, spread: 1,   lift: -2,   focus: 3,  z: 44 }, // 12 the personal layer
+        { assembly: 1,    spread: 1,   lift: -1,   focus: 0,  z: 34 }, // 13 the money number
+        { assembly: 1,    spread: 1,   lift: -1,   focus: -1, z: 38 }, // 14 two years
+        { assembly: 0.58, spread: 1.25, lift: -2,  focus: 3,  z: 44 }, // 14 what broke
+        { assembly: 0.92, spread: 1,   lift: -2,   focus: -1, z: 45 }, // 15 first 90 days
+        { assembly: 0.95, spread: 1,   lift: -2,   focus: -1, z: 45 }, // 16 four metrics
+        { assembly: 0.86, spread: 1,   lift: -1,   focus: 0,  z: 42 }, // 17 meta
+        { assembly: 0.80, spread: 1,   lift: -2,   focus: -1, z: 43 }, // 18 questions
+        { assembly: 1,    spread: 1,   lift: 0,    focus: -1, z: 28 }, // 19 close
+      ];
+
+      /* ══════════════ 2. SLIDE ENGINE ══════════════ */
+      // word-level split only. never chars — chars-splitting is what breaks words mid-word.
+      document.querySelectorAll("[data-split]").forEach((el) => {
+        el.innerHTML = el.innerHTML
+          .split(/(<br\s*\/?>)/i)
+          .map((part) =>
+            /^<br/i.test(part)
+              ? part
+              : part
+                  .split(/(\s+)/)
+                  .map((w) => (w.trim() ? `<span class="w">${w}</span>` : w))
+                  .join(""),
+          )
+          .join("");
+      });
+
+      const ticks = document.getElementById("ticks");
+      slides.forEach(() =>
+        ticks.insertAdjacentHTML("beforeend", '<i class="tick"></i>'),
+      );
+      const tickEls = [...ticks.children];
+
+      const ovg = document.getElementById("ovg");
+      slides.forEach((s, i) => {
+        ovg.insertAdjacentHTML(
+          "beforeend",
+          `<div class="ovc" data-i="${i}"><div class="n">${String(i + 1).padStart(2, "0")}</div><div class="t">${s.dataset.t}</div></div>`,
+        );
+      });
+      ovg.addEventListener("click", (e) => {
+        const c = e.target.closest(".ovc");
+        if (!c) return;
+        go(+c.dataset.i);
+        toggleOv(false);
+      });
+
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let entrance = null;
+
+      // Background tabs throttle requestAnimationFrame, which GSAP is driven by.
+      // Without this, alt-tabbing mid-talk and coming back leaves the slide
+      // frozen half-faded. lagSmoothing(0) makes tweens catch up on real time,
+      // and the visibility handler snaps anything still in flight to its end.
+      gsap.ticker.lagSmoothing(0);
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden || !entrance) return;
+        entrance.progress(1);
+      });
+
+      function go(n, dir = 1) {
+        n = Math.max(0, Math.min(N - 1, n));
+        if (n === cur && slides[n].classList.contains("on")) return;
+        const prev = slides[cur],
+          next = slides[n];
+        cur = n;
+
+        if (prev !== next) {
+          gsap.to(prev, {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => prev.classList.remove("on"),
+          });
+        }
+        next.classList.add("on");
+
+        if (entrance) entrance.progress(1);
+        const tl = (entrance = gsap.timeline());
+        tl.fromTo(
+          next,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.42, ease: "power2.out" },
+          0,
+        );
+
+        if (!reduced) {
+          const words = next.querySelectorAll(".w");
+          if (words.length)
+            tl.fromTo(
+              words,
+              { yPercent: 108, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.78,
+                stagger: 0.028,
+                ease: "expo.out",
+              },
+              0.06,
+            );
+
+          const blocks = next.querySelectorAll(
+            ".card, .stat, .row, ol li, ul li, .lede, .tl > div, .cover-meta > div",
+          );
+          if (blocks.length)
+            tl.fromTo(
+              blocks,
+              { y: 22, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.58,
+                stagger: 0.022,
+                ease: "power3.out",
+              },
+              0.16,
+            );
+        }
+
+        // scrub the field
+        const f = FIELD[n] || FIELD[0];
+        gsap.to(state, {
+          assembly: f.assembly,
+          spread: f.spread,
+          lift: f.lift,
+          duration: 1.25,
+          ease: "power2.inOut",
+        });
+        state.focus = f.focus;
+        gsap.to(state, {
+          dimT: f.focus >= 0 ? 1 : 0,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+        if (hasGL)
+          gsap.to(cam.position, {
+            z: f.z,
+            duration: 1.5,
+            ease: "power2.inOut",
+          });
+
+        tickEls.forEach((t, i) => {
+          t.className = "tick" + (i < n ? " done" : i === n ? " now" : "");
+        });
+        document.getElementById("idx").textContent =
+          String(n + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+        document.getElementById("ttl").textContent = next.dataset.t;
+        [...ovg.children].forEach((c, i) => c.classList.toggle("now", i === n));
+        history.replaceState(null, "", n ? "#" + (n + 1) : "./");
+      }
+
+      const ov = document.getElementById("ov");
+      const toggleOv = (on) =>
+        ov.classList.toggle("on", on ?? !ov.classList.contains("on"));
+
+      addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur - 1, -1);
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          toggleOv();
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(N - 1);
+        else if (e.key === "?")
+          document.getElementById("help").classList.toggle("on");
+      });
+
+      // touch: swipe through
+      let tx = 0;
+      addEventListener(
+        "touchstart",
+        (e) => (tx = e.changedTouches[0].clientX),
+        { passive: true },
+      );
+      addEventListener(
+        "touchend",
+        (e) => {
+          const d = e.changedTouches[0].clientX - tx;
+          if (Math.abs(d) > 55) go(cur + (d < 0 ? 1 : -1));
+        },
+        { passive: true },
+      );
+
+      /* ══════════════ 3. INTERACTIVE — the stem assembler ══════════════
+   Real content from the American Greetings × Songfinch concept deck.
+   Static text stays grey; every swapped stem lights in its channel colour. */
+      const QS = [
+        {
+          lbl: "Q1 · Who are we celebrating?",
+          k: "name",
+          ch: 0,
+          o: [
+            ["Elizabeth", "Elizabeth"],
+            ["Danny", "Danny"],
+            ["Marcus", "Marcus"],
+          ],
+        },
+        {
+          lbl: "Q2 · How old are they turning?",
+          k: "age",
+          ch: 1,
+          o: [
+            ["23", "you're 23"],
+            ["8", "you're 8 years old"],
+            ["29 again", "you're 29 again"],
+          ],
+        },
+        {
+          lbl: "Q3 · One thing you really like about them",
+          k: "trait",
+          ch: 2,
+          o: [
+            [
+              "Life of the party",
+              "You always bring the fun<br>With you, every party&rsquo;s top notch",
+            ],
+            [
+              "Brings joy to everyone",
+              "You bring a spark of joy<br>To every heart that you touch",
+            ],
+            [
+              "So thoughtful",
+              "You think of everyone first<br>It&rsquo;s just the way that you are",
+            ],
+          ],
+        },
+        {
+          lbl: "Q4 · Send them a birthday wish",
+          k: "wish",
+          ch: 3,
+          o: [
+            ["Take the day off", "Take the day off, have some fun"],
+            [
+              "Another trip around the sun",
+              "Cheers to another trip around the sun",
+            ],
+            ["One year wiser", "One year older, one year wiser"],
+          ],
+        },
+      ];
+      const CHC = ["ch-c", "ch-v", "ch-a", "ch-r"];
+      const pick = { name: 0, age: 0, trait: 0, wish: 0 };
+      const qsEl = document.getElementById("qs");
+
+      QS.forEach((q, qi) => {
+        qsEl.insertAdjacentHTML(
+          "beforeend",
+          `<div class="q ${CHC[q.ch]}"><span class="qlbl">${q.lbl}</span><div class="opts">` +
+            q.o
+              .map(
+                (o, oi) =>
+                  `<button class="opt${oi === 0 ? " sel" : ""}" data-q="${qi}" data-o="${oi}">${o[0]}</button>`,
+              )
+              .join("") +
+            `</div></div>`,
+        );
+      });
+
+      function render() {
+        const s = (i) =>
+          `<span class="sw ${CHC[QS[i].ch]}" style="color:var(--${["cyan", "violet", "amber", "rose"][QS[i].ch]})">${QS[i].o[pick[QS[i].k]][1]}</span>`;
+        document.getElementById("out").innerHTML =
+          `<div class="sec">Chorus</div><div class="line">` +
+          `<span class="st">Happy Birthday,</span> ${s(0)}<span class="st">,</span> ${s(1)}<br>` +
+          `<span class="st">It&rsquo;s time to celebrate</span><br>${s(3)}<br>` +
+          `<span class="st">And know you&rsquo;re loved in every way</span></div>` +
+          `<div class="sec">Verse</div><div class="line">${s(2)}<br>` +
+          `<span class="st">And I&rsquo;m so grateful for<br>The special bond that we&rsquo;ve got</span></div>`;
+        if (!reduced)
+          gsap.fromTo(
+            "#out .sw",
+            { opacity: 0, y: 7 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.34,
+              stagger: 0.04,
+              ease: "power2.out",
+            },
+          );
+      }
+      qsEl.addEventListener("click", (e) => {
+        const b = e.target.closest(".opt");
+        if (!b) return;
+        const qi = +b.dataset.q;
+        b.parentElement
+          .querySelectorAll(".opt")
+          .forEach((x) => x.classList.remove("sel"));
+        b.classList.add("sel");
+        pick[QS[qi].k] = +b.dataset.o;
+        render();
+      });
+      render();
+      // real catalogue math: 3^4 answer combos × 4 artists × 2 arrangements
+      document.getElementById("combo").textContent =
+        (3 ** 4 * 4 * 2).toLocaleString() + " combinations · 0 generated";
+
+      /* ══════════════ 4. INTERACTIVE — the prioritization flip ══════════════
+   The whole point of Scenario 2 in one control: the ranking inverts
+   depending on whether sprint one is buying value or buying evidence. */
+      const REQ = [
+        {
+          n: "Proposal automation",
+          t: "Sales",
+          ch: "ch-c",
+          value: 92,
+          eviq: 34,
+          vw: "Highest revenue leverage in the building.",
+          ew: "Subjective output, ego-owned, 4 to 6 weeks to a number anyone believes.",
+        },
+        {
+          n: "Onboarding assistant",
+          t: "Customer Success",
+          ch: "ch-v",
+          value: 74,
+          eviq: 41,
+          vw: "Retention compounds and the pain is real.",
+          ew: "The CS voice is the product. High adoption risk, slow to verify.",
+        },
+        {
+          n: "Invoice categorization",
+          t: "Finance",
+          ch: "ch-a",
+          value: 38,
+          eviq: 96,
+          vw: "Cost saving, not revenue. Smallest headline.",
+          ew: "Every answer is right or wrong against a ledger. Nobody defends their invoice coding. One sprint.",
+        },
+      ];
+      const rowsEl = document.getElementById("rows");
+      REQ.forEach((r, i) =>
+        rowsEl.insertAdjacentHTML(
+          "beforeend",
+          `<div class="row ${r.ch}" data-i="${i}"><div class="name">${r.n}<span>${r.t}</span></div>` +
+            `<div class="bar"><i></i></div><div class="sc">0</div></div>`,
+        ),
+      );
+
+      let mode = "value";
+      function paint() {
+        const order = [...REQ.keys()].sort(
+          (a, b) => REQ[b][mode] - REQ[a][mode],
+        );
+        order.forEach((ri, rank) => {
+          const el = rowsEl.querySelector(`[data-i="${ri}"]`);
+          el.style.order = rank;
+          el.querySelector(".bar i").style.width = REQ[ri][mode] + "%";
+          const sc = el.querySelector(".sc");
+          gsap.to(
+            { v: +sc.textContent },
+            {
+              v: REQ[ri][mode],
+              duration: 0.8,
+              ease: "power2.out",
+              onUpdate() {
+                sc.textContent = Math.round(this.targets()[0].v);
+              },
+            },
+          );
+        });
+        const w = REQ[order[0]];
+        document.getElementById("pv").innerHTML =
+          mode === "value"
+            ? `<b>Rank by value and Sales wins</b>, and this is the answer that stalls the role in its first quarter. It is the highest-value request and also the slowest to produce a number anybody outside the team believes. Ship it first and I spend six weeks with nothing to show. <em>${w.vw}</em>`
+            : `<b>Rank by time to defensible evidence and Finance wins.</b> ${w.ew} In sprint one I am not buying ROI, I am buying the credibility that funds sprints two through ten. Sequencing is the skill. Ranking is not.`;
+      }
+      document.querySelectorAll(".mode").forEach((b) =>
+        b.addEventListener("click", () => {
+          document
+            .querySelectorAll(".mode")
+            .forEach((x) => x.classList.remove("on"));
+          b.classList.add("on");
+          mode = b.dataset.m;
+          paint();
+        }),
+      );
+      paint();
+
+      /* ══════════════ 5. BOOT ══════════════ */
+
+      // A presentation runs on a screen we have never seen. Rather than trust a
+      // fixed layout, measure each slide and scale it down if it would overflow.
+      // Cheap, runs on resize + once fonts settle (font swap changes metrics).
+      function fitAll() {
+        const s0 = document.querySelector(".slide");
+        const pad = parseFloat(getComputedStyle(s0).paddingTop);
+        const avail = innerHeight - pad * 2 - 34;
+        if (innerWidth <= 1020) {
+          document.querySelectorAll(".inner").forEach((n) => (n.style.transform = ""));
+          return; // narrow viewports scroll instead
+        }
+        document.querySelectorAll(".slide").forEach((sl) => {
+          const inner = sl.querySelector(".inner");
+          inner.style.transform = "";
+          const h = inner.getBoundingClientRect().height;
+          const k = Math.min(1, avail / h);
+          inner.style.transform = k < 0.999 ? `scale(${k.toFixed(4)})` : "";
+        });
+      }
+      addEventListener("resize", fitAll);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+
+      const start = location.hash
+        ? Math.max(0, (+location.hash.slice(1) || 1) - 1)
+        : 0;
+      document.body.classList.add("ready");
+      fitAll();
+      go(start);
+      setTimeout(
+        () => document.getElementById("help").classList.add("on"),
+        900,
+      );
+      setTimeout(
+        () => document.getElementById("help").classList.remove("on"),
+        6500,
+      );
+    </script>
+  </body>
+</html>
