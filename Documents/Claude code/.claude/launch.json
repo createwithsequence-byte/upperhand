@@ -6,6 +6,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "4321", "--directory", "dylan-kroll-deck"],
       "port": 4321
+    },
+    {
+      "name": "dylan-deepdive",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4322", "--directory", "dylan-kroll-deepdive"],
+      "port": 4322
     }
   ]
 }

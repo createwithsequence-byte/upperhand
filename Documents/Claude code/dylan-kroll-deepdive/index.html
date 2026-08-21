@@ -1,0 +1,2893 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dylan Kroll · Deep Dive · Saying the Name</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <style>
+      :root {
+        --bg: #08080a;
+        --bg-2: #0d0d11;
+        --line: #1e1e24;
+        --line-2: #2a2a33;
+        --ink: #f5f5f7;
+        --ink-2: #9ea0aa;
+        --ink-3: #63656f;
+        --cyan: #22d3ee;
+        --violet: #8b5cf6;
+        --amber: #f59e0b;
+        --rose: #f43f5e;
+        --pad: clamp(28px, 4.2vw, 78px);
+        --display:
+          "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--display);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      body.ready {
+        opacity: 1;
+      }
+
+      #gl {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        display: block;
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.14;
+        mix-blend-mode: overlay;
+      }
+      #vig {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: radial-gradient(
+          125% 92% at 50% 42%,
+          transparent 34%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      }
+
+      #deck {
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: var(--pad);
+        padding-bottom: calc(var(--pad) + 34px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .slide.on {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .inner {
+        width: 100%;
+        max-width: 1360px;
+        margin: 0 auto;
+      }
+
+      #rail {
+        position: fixed;
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 26px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #ticks {
+        flex: 1;
+        display: flex;
+        gap: 3px;
+        height: 2px;
+      }
+      .tick {
+        flex: 1;
+        background: var(--line-2);
+        transition:
+          background 0.45s ease,
+          transform 0.45s ease;
+        transform-origin: bottom;
+      }
+      .tick.b1 {
+        background: #26343b;
+      }
+      .tick.b2 {
+        background: #332b47;
+      }
+      .tick.b3 {
+        background: #3d3327;
+      }
+      .tick.done {
+        background: var(--ink-3);
+      }
+      .tick.now {
+        background: var(--cyan);
+        transform: scaleY(3);
+      }
+      #brand {
+        position: fixed;
+        top: 26px;
+        right: var(--pad);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #brand b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      .kicker {
+        font-family: var(--mono);
+        font-size: clamp(9px, 0.78vw, 11px);
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .kicker .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--cyan);
+        flex: 0 0 auto;
+      }
+      .kicker .num {
+        color: var(--ink-2);
+      }
+      h1 {
+        font-size: clamp(44px, 7.8vw, 124px);
+        font-weight: 700;
+        line-height: 0.88;
+        letter-spacing: -0.035em;
+        text-wrap: balance;
+      }
+      h2 {
+        font-size: clamp(28px, 4.1vw, 60px);
+        font-weight: 600;
+        line-height: 1.02;
+        letter-spacing: -0.028em;
+        text-wrap: balance;
+        max-width: 20ch;
+      }
+      h3 {
+        font-size: clamp(16px, 1.5vw, 22px);
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.012em;
+      }
+      .lede {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.55;
+        color: var(--ink-2);
+        max-width: 62ch;
+        font-weight: 300;
+      }
+      p,
+      li {
+        font-size: clamp(12.5px, 1vw, 15px);
+        line-height: 1.62;
+        color: var(--ink-2);
+        font-weight: 300;
+      }
+      strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      em {
+        font-style: normal;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .w {
+        display: inline-block;
+        will-change: transform, opacity;
+      }
+
+      .cols {
+        display: grid;
+        gap: clamp(16px, 2vw, 36px);
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .c2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .c3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .c4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: clamp(26px, 3.6vw, 64px);
+        align-items: center;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: clamp(14px, 1.4vw, 22px);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(255, 255, 255, 0.007)
+        );
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--ch, var(--line-2));
+      }
+      .card .lbl {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ch, var(--ink-3));
+        margin-bottom: 10px;
+        display: block;
+      }
+      .card h3 {
+        margin-bottom: 8px;
+      }
+      .ch-c {
+        --ch: var(--cyan);
+      }
+      .ch-v {
+        --ch: var(--violet);
+      }
+      .ch-a {
+        --ch: var(--amber);
+      }
+      .ch-r {
+        --ch: var(--rose);
+      }
+
+      ul {
+        list-style: none;
+      }
+      ul li {
+        position: relative;
+        padding-left: 19px;
+        margin-bottom: 8px;
+      }
+      ul li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.62em;
+        width: 7px;
+        height: 1px;
+        background: var(--ink-3);
+      }
+      ol {
+        list-style: none;
+        counter-reset: n;
+      }
+      ol li {
+        counter-increment: n;
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 12px;
+      }
+      ol li::before {
+        content: counter(n, decimal-leading-zero);
+        position: absolute;
+        left: 0;
+        top: 0.1em;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ch, var(--ink-3));
+        letter-spacing: 0.08em;
+      }
+      .rule {
+        height: 1px;
+        background: var(--line);
+        margin: clamp(18px, 2.2vw, 32px) 0;
+      }
+
+      .qbox {
+        border: 1px solid var(--line-2);
+        border-left: 2px solid var(--ch, var(--cyan));
+        border-radius: 3px;
+        padding: clamp(14px, 1.6vw, 22px) clamp(16px, 1.8vw, 26px);
+        background: rgba(255, 255, 255, 0.022);
+        margin-bottom: clamp(16px, 2vw, 28px);
+      }
+      .qbox .qt {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ch, var(--cyan));
+        margin-bottom: 10px;
+        display: block;
+      }
+      .qbox p {
+        font-size: clamp(15px, 1.55vw, 23px);
+        line-height: 1.42;
+        color: var(--ink);
+        font-weight: 400;
+      }
+      .qbox .sub {
+        font-size: clamp(11.5px, 0.95vw, 13.5px);
+        color: var(--ink-3);
+        margin-top: 10px;
+        line-height: 1.6;
+      }
+      .qbox .sub b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      .pdiv .eyebrow {
+        font-family: var(--mono);
+        font-size: clamp(10px, 1vw, 13px);
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-bottom: 20px;
+      }
+      .qlist {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        margin-top: clamp(24px, 3vw, 44px);
+      }
+      .qlist > div {
+        background: rgba(10, 10, 13, 0.72);
+        padding: clamp(16px, 1.9vw, 26px);
+      }
+      .qlist .n {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: var(--ch);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .qlist p {
+        font-size: clamp(12.5px, 1.05vw, 15.5px);
+        color: var(--ink);
+        line-height: 1.48;
+        font-weight: 400;
+      }
+
+      .photo {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+      }
+      .photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(0.55) contrast(1.08) brightness(0.5);
+      }
+      .photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          100deg,
+          rgba(8, 8, 10, 0.96) 0%,
+          rgba(8, 8, 10, 0.84) 40%,
+          rgba(8, 8, 10, 0.44) 74%,
+          rgba(8, 8, 10, 0.74) 100%
+        );
+      }
+      .credit {
+        position: absolute;
+        right: var(--pad);
+        bottom: calc(var(--pad) + 6px);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.28);
+      }
+
+      .beats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 clamp(28px, 4vw, 68px);
+        margin-top: clamp(18px, 2.2vw, 32px);
+      }
+      .bt {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: clamp(14px, 1.6vw, 22px);
+        align-items: baseline;
+        padding: clamp(12px, 1.5vw, 18px) 0;
+        border-top: 1px solid var(--line);
+      }
+      .bt .yr {
+        font-family: var(--mono);
+        font-size: clamp(10px, 0.92vw, 12px);
+        color: var(--ch);
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+      }
+      .bt h3 {
+        margin-bottom: 5px;
+      }
+
+      .stat .n {
+        font-size: clamp(34px, 5vw, 74px);
+        font-weight: 700;
+        line-height: 0.9;
+        letter-spacing: -0.045em;
+        color: var(--ch, var(--ink));
+        font-variant-numeric: tabular-nums;
+      }
+      .stat .n small {
+        font-size: 0.42em;
+        font-weight: 500;
+      }
+      .stat .cap {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 11px;
+        line-height: 1.6;
+      }
+
+      .hero-num {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: clamp(24px, 3.4vw, 64px);
+        align-items: center;
+        margin-top: clamp(14px, 2.2vw, 32px);
+      }
+      .hn {
+        font-size: clamp(92px, 18vw, 272px);
+        font-weight: 700;
+        line-height: 0.82;
+        letter-spacing: -0.055em;
+        color: var(--cyan);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .hn small {
+        font-size: 0.36em;
+        font-weight: 500;
+      }
+      .hn-side {
+        max-width: 34ch;
+        border-left: 1px solid var(--line);
+        padding-left: clamp(18px, 2.2vw, 32px);
+      }
+      .hn-lbl {
+        font-family: var(--mono);
+        font-size: clamp(10px, 0.95vw, 12px);
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        line-height: 1.7;
+      }
+      .hn-vs {
+        margin-top: 13px;
+        font-size: clamp(13px, 1.2vw, 18px);
+        line-height: 1.55;
+        color: var(--ink-2);
+      }
+      .hn-vs b {
+        color: var(--rose);
+        font-weight: 600;
+      }
+
+      .diag {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 clamp(26px, 3.6vw, 64px);
+        margin-top: clamp(16px, 2vw, 28px);
+      }
+      .dg {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: clamp(13px, 1.5vw, 22px);
+        align-items: baseline;
+        padding: clamp(12px, 1.5vw, 20px) 0;
+        border-top: 1px solid var(--line);
+      }
+      .dg .dn {
+        font-family: var(--mono);
+        font-size: clamp(18px, 2.2vw, 30px);
+        font-weight: 700;
+        color: var(--ch);
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .dg h3 {
+        margin-bottom: 6px;
+      }
+
+      .verdict {
+        margin-top: clamp(16px, 2vw, 26px);
+        padding: 15px 19px;
+        border-left: 2px solid var(--cyan);
+        background: rgba(34, 211, 238, 0.05);
+        font-size: clamp(12.5px, 1.02vw, 15.5px);
+        line-height: 1.6;
+        color: var(--ink-2);
+      }
+      .verdict b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .asm {
+        display: grid;
+        grid-template-columns: 0.82fr 1.18fr;
+        gap: clamp(20px, 2.8vw, 48px);
+        align-items: start;
+        margin-top: 6px;
+      }
+      .qs {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+      }
+      .q .qlbl {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 7px;
+        display: block;
+      }
+      .opts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .opt {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        padding: 6px 11px;
+        border-radius: 2px;
+        border: 1px solid var(--line-2);
+        background: transparent;
+        color: var(--ink-2);
+        cursor: pointer;
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .opt:hover {
+        border-color: var(--ink-3);
+        color: var(--ink);
+      }
+      .opt.sel {
+        border-color: var(--ch);
+        color: #08080a;
+        background: var(--ch);
+        font-weight: 500;
+      }
+      .lyr {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: clamp(18px, 2.1vw, 30px);
+        background: rgba(10, 10, 13, 0.66);
+      }
+      .lyr .hd {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 16px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .lyr .line {
+        font-size: clamp(14px, 1.4vw, 20px);
+        line-height: 1.8;
+        font-weight: 300;
+        color: var(--ink-3);
+      }
+      .lyr .sec {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        color: var(--ink-3);
+        margin: 15px 0 7px;
+        text-transform: uppercase;
+      }
+      .lyr .sec:first-of-type {
+        margin-top: 0;
+      }
+      .st {
+        color: var(--ink-2);
+      }
+      .sw {
+        font-weight: 500;
+        position: relative;
+        display: inline-block;
+      }
+      .sw::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -3px;
+        height: 1px;
+        background: currentColor;
+        opacity: 0.4;
+      }
+      .legend {
+        display: flex;
+        gap: 18px;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .legend span {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .legend i {
+        width: 16px;
+        height: 2px;
+        display: block;
+      }
+
+      .modes {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .mode {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        padding: 9px 15px;
+        border: 1px solid var(--line-2);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--ink-3);
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+      .mode:hover {
+        color: var(--ink-2);
+        border-color: var(--ink-3);
+      }
+      .mode.on {
+        background: var(--ink);
+        color: #08080a;
+        border-color: var(--ink);
+        font-weight: 500;
+      }
+      .rows {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: clamp(148px, 15vw, 214px) 1fr clamp(
+            50px,
+            5vw,
+            70px
+          );
+        align-items: center;
+        gap: clamp(12px, 1.6vw, 24px);
+        transition: transform 0.6s cubic-bezier(0.34, 1.2, 0.44, 1);
+      }
+      .row .name {
+        font-size: clamp(12.5px, 1.02vw, 15.5px);
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .row .name span {
+        display: block;
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 4px;
+        font-weight: 400;
+      }
+      .bar {
+        height: 31px;
+        background: rgba(255, 255, 255, 0.034);
+        border-radius: 2px;
+        overflow: hidden;
+        position: relative;
+      }
+      .bar i {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0;
+        background: var(--ch);
+        border-radius: 2px;
+        transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .row .sc {
+        font-family: var(--mono);
+        font-size: clamp(14px, 1.4vw, 20px);
+        font-weight: 700;
+        text-align: right;
+        color: var(--ch);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .tl {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        margin-top: clamp(18px, 2.4vw, 34px);
+      }
+      .tl > div {
+        background: var(--bg-2);
+        padding: clamp(15px, 1.8vw, 26px);
+      }
+      .tl .d {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        color: var(--ch);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .tl h3 {
+        margin-bottom: 9px;
+      }
+
+      #ov {
+        position: fixed;
+        inset: 0;
+        z-index: 9;
+        background: rgba(6, 6, 8, 0.965);
+        backdrop-filter: blur(18px);
+        padding: var(--pad);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+        overflow-y: auto;
+      }
+      #ov.on {
+        opacity: 1;
+        visibility: visible;
+      }
+      #ovg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+        gap: 9px;
+        margin-top: 22px;
+      }
+      .ovc {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 13px;
+        cursor: pointer;
+        background: var(--bg-2);
+        transition: all 0.22s ease;
+        min-height: 88px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .ovc:hover {
+        border-color: var(--cyan);
+        transform: translateY(-2px);
+      }
+      .ovc.now {
+        border-color: var(--cyan);
+        background: rgba(34, 211, 238, 0.06);
+      }
+      .ovc.part {
+        background: rgba(255, 255, 255, 0.045);
+        border-color: var(--line-2);
+      }
+      .ovc .n {
+        font-family: var(--mono);
+        font-size: 9px;
+        color: var(--ink-3);
+        letter-spacing: 0.16em;
+      }
+      .ovc .t {
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.3;
+        color: var(--ink);
+        margin-top: 8px;
+      }
+
+      #help {
+        position: fixed;
+        bottom: 62px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      #help.on {
+        opacity: 1;
+      }
+      kbd {
+        border: 1px solid var(--line-2);
+        border-radius: 2px;
+        padding: 2px 6px;
+        color: var(--ink-2);
+        margin: 0 2px;
+      }
+
+      @media (max-width: 1020px) {
+        .split,
+        .asm,
+        .hero-num,
+        .diag,
+        .beats {
+          grid-template-columns: 1fr;
+          gap: 22px;
+        }
+        .c3,
+        .c4,
+        .qlist,
+        .tl {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .row {
+          grid-template-columns: 128px 1fr 46px;
+        }
+        .slide {
+          justify-content: flex-start;
+          padding-top: calc(var(--pad) + 28px);
+          overflow-y: auto;
+        }
+        .hn-side {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          padding-left: 0;
+          padding-top: 16px;
+        }
+      }
+      @media (max-width: 680px) {
+        .c2,
+        .c3,
+        .c4,
+        .qlist,
+        .tl {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+      @media print {
+        html,
+        body {
+          overflow: visible;
+          height: auto;
+          background: #fff;
+          color: #000;
+        }
+        #gl,
+        #grain,
+        #vig,
+        #rail,
+        #brand,
+        #help,
+        #ov {
+          display: none;
+        }
+        .slide {
+          position: relative;
+          opacity: 1 !important;
+          visibility: visible !important;
+          page-break-after: always;
+          min-height: 97vh;
+          color: #000;
+        }
+        .inner {
+          transform: none !important;
+        }
+        h1,
+        h2,
+        h3,
+        strong,
+        em,
+        .qbox p,
+        .qlist p {
+          color: #000;
+        }
+        p,
+        li,
+        .lede {
+          color: #333;
+        }
+      }
+
+      .c1 {
+        grid-template-columns: 1fr;
+      }
+      .demo {
+        display: grid;
+        grid-template-columns: 0.78fr 1.22fr;
+        gap: clamp(20px, 2.8vw, 44px);
+        align-items: start;
+        margin-top: clamp(14px, 1.8vw, 26px);
+      }
+      .dm-lbl {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 9px;
+      }
+      .dm-prompt {
+        font-size: clamp(14px, 1.35vw, 19px);
+        line-height: 1.45;
+        color: var(--ink);
+        font-weight: 400;
+        border-left: 2px solid var(--line-2);
+        padding-left: 15px;
+      }
+      .dm-note {
+        margin-top: 18px;
+        font-size: clamp(12px, 0.98vw, 14.5px);
+        line-height: 1.6;
+        color: var(--ink-2);
+        font-weight: 300;
+      }
+      .dm-note b {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .demo-r {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: clamp(16px, 1.9vw, 26px);
+        background: rgba(10, 10, 13, 0.66);
+      }
+      .dm-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 15px;
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.19em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .dm-head span:last-child {
+        color: var(--ch, var(--ink-3));
+      }
+      .dm-body {
+        font-size: clamp(13px, 1.08vw, 16px);
+        line-height: 1.66;
+        color: var(--ink-3);
+        font-weight: 300;
+      }
+      .dm-row {
+        display: grid;
+        grid-template-columns: clamp(94px, 9vw, 124px) 1fr;
+        gap: 14px;
+        padding: 9px 0;
+        border-top: 1px solid var(--line);
+        align-items: baseline;
+      }
+      .dm-row:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+      .dm-row .k {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ch, var(--cyan));
+      }
+      .dm-row .v {
+        font-size: clamp(12.5px, 1.02vw, 15px);
+        line-height: 1.5;
+        color: var(--ink-2);
+      }
+      .dm-row .v b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      @media (max-width: 1020px) {
+        .demo {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .cover {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: clamp(28px, 4vw, 76px);
+        align-items: center;
+      }
+      .cv-role {
+        font-family: var(--mono);
+        font-size: clamp(11px, 1.12vw, 15px);
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-top: 18px;
+      }
+      .cv-contact {
+        font-family: var(--mono);
+        font-size: clamp(9.5px, 0.82vw, 11px);
+        letter-spacing: 0.11em;
+        color: var(--ink-3);
+        margin-top: clamp(24px, 3vw, 40px);
+        line-height: 1.9;
+      }
+      .agenda {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: rgba(10, 10, 13, 0.6);
+        padding: clamp(16px, 1.9vw, 26px);
+      }
+      .ag-t {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        padding-bottom: 15px;
+      }
+      .ag-r {
+        display: grid;
+        grid-template-columns: clamp(52px, 5vw, 68px) 1fr auto;
+        gap: 14px;
+        align-items: baseline;
+        padding: 13px 0;
+        border-top: 1px solid var(--line);
+      }
+      .ag-r .k {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--cyan);
+      }
+      .ag-r .v {
+        font-size: clamp(12.5px, 1.02vw, 15px);
+        color: var(--ink);
+        font-weight: 400;
+        line-height: 1.42;
+      }
+      .ag-r .m {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+      }
+      @media (max-width: 1020px) {
+        .cover {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* the cover keeps a live field, but never at the cost of the name on it */
+      .cover-slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(
+          96deg,
+          rgba(8, 8, 10, 0.94) 0%,
+          rgba(8, 8, 10, 0.86) 30%,
+          rgba(8, 8, 10, 0.34) 58%,
+          rgba(8, 8, 10, 0.05) 78%,
+          transparent 100%
+        );
+      }
+      .agenda {
+        backdrop-filter: blur(9px);
+      }
+
+      /* ---------- name -> rhythm demo ---------- */
+      .nm {
+        display: grid;
+        grid-template-columns: 0.72fr 1.28fr;
+        gap: clamp(20px, 2.8vw, 46px);
+        align-items: start;
+        margin-top: clamp(14px, 1.8vw, 24px);
+      }
+      .nm-btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .nm-btns button {
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 7px 12px;
+        border-radius: 2px;
+        border: 1px solid var(--line-2);
+        background: transparent;
+        color: var(--ink-2);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .nm-btns button:hover {
+        border-color: var(--ink-3);
+        color: var(--ink);
+      }
+      .nm-btns button.on {
+        background: var(--cyan);
+        border-color: var(--cyan);
+        color: #08080a;
+        font-weight: 500;
+      }
+      .nm-trap {
+        margin-top: 16px;
+        font-size: clamp(12px, 0.98vw, 14.5px);
+        line-height: 1.6;
+        color: var(--ink-2);
+        font-weight: 300;
+        min-height: 60px;
+      }
+      .nm-trap.hot {
+        border-left: 2px solid var(--rose);
+        padding-left: 14px;
+      }
+      .nm-trap b {
+        color: var(--rose);
+        font-weight: 600;
+      }
+      .nm-r {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: clamp(16px, 1.9vw, 26px);
+        background: rgba(10, 10, 13, 0.66);
+      }
+      .nm-row {
+        display: grid;
+        grid-template-columns: clamp(84px, 8.4vw, 116px) 1fr;
+        gap: 15px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        align-items: center;
+      }
+      .nm-row:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+      .nk {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .nv {
+        font-size: clamp(12.5px, 1.02vw, 15px);
+        color: var(--ink-2);
+        line-height: 1.5;
+      }
+      .nv b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .ph {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        padding: 4px 7px;
+        margin: 2px 3px 2px 0;
+        border-radius: 2px;
+        border: 1px solid var(--line-2);
+        color: var(--ink-3);
+      }
+      .ph.vow {
+        border-color: var(--cyan);
+        color: var(--cyan);
+        background: rgba(34, 211, 238, 0.08);
+      }
+      .beats {
+        display: flex;
+        gap: 5px;
+      }
+      .bt-c {
+        flex: 1;
+        height: 42px;
+        border: 1px solid var(--line-2);
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--ink-3);
+        transition: all 0.3s ease;
+      }
+      .bt-c.fill {
+        background: rgba(139, 92, 246, 0.15);
+        border-color: var(--violet);
+        color: var(--violet);
+      }
+      .bt-c.over {
+        background: rgba(244, 63, 94, 0.15);
+        border-color: var(--rose);
+        color: var(--rose);
+      }
+      /* ---------- pipeline ---------- */
+      .pipe {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1px;
+        background: var(--line);
+        border: 1px solid var(--line);
+        margin-top: clamp(18px, 2.3vw, 32px);
+      }
+      .pp {
+        background: var(--bg-2);
+        padding: clamp(13px, 1.5vw, 20px);
+        position: relative;
+      }
+      .pp .pn {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.18em;
+        color: var(--ch);
+        display: block;
+        margin-bottom: 10px;
+      }
+      .pp h3 {
+        font-size: clamp(13px, 1.12vw, 17px);
+        margin-bottom: 7px;
+      }
+      .pp p {
+        font-size: clamp(11px, 0.9vw, 13px);
+        line-height: 1.5;
+      }
+      /* ---------- rounds ---------- */
+      .rounds {
+        display: flex;
+        flex-direction: column;
+      }
+      .rd {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: clamp(13px, 1.5vw, 20px);
+        align-items: baseline;
+        padding: clamp(11px, 1.4vw, 17px) 0;
+        border-top: 1px solid var(--line);
+      }
+      .rd .rn {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ch);
+        white-space: nowrap;
+      }
+      .rd h3 {
+        margin-bottom: 5px;
+      }
+      @media (max-width: 1020px) {
+        .nm {
+          grid-template-columns: 1fr;
+        }
+        .pipe {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 680px) {
+        .pipe {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gl"></canvas>
+    <svg id="grain">
+      <filter id="n">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency=".82"
+          numOctaves="4"
+          stitchTiles="stitch"
+        />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#n)" />
+    </svg>
+    <div id="vig"></div>
+    <div id="brand"><b>Dylan Kroll</b> · Deep Dive · Saying the Name</div>
+
+    <div id="deck">
+      <section class="slide cover-slide" data-t="Cover" data-p="0">
+        <div class="inner cover">
+          <div>
+            <div style="display: flex; gap: 4px; margin-bottom: 26px">
+              <i
+                style="
+                  background: var(--cyan);
+                  height: 3px;
+                  width: 44px;
+                  display: block;
+                "
+              ></i>
+              <i
+                style="
+                  background: var(--violet);
+                  height: 3px;
+                  width: 44px;
+                  display: block;
+                "
+              ></i>
+              <i
+                style="
+                  background: var(--amber);
+                  height: 3px;
+                  width: 44px;
+                  display: block;
+                "
+              ></i>
+              <i
+                style="
+                  background: var(--rose);
+                  height: 3px;
+                  width: 44px;
+                  display: block;
+                "
+              ></i>
+            </div>
+            <h1 data-split>Dylan Kroll</h1>
+            <p class="cv-role">Deep Dive · Part 2</p>
+            <p class="lede" style="margin-top: 22px; max-width: 46ch">
+              How we taught a synthetic voice to sing 2,000 first names in a
+              specific artist's voice, and shipped it in a year. A machine
+              learning problem that turned out to be an operations problem.
+            </p>
+            <p class="cv-contact">
+              dylankroll@ymail.com &nbsp;·&nbsp; linkedin.com/in/dylanjkroll
+              &nbsp;·&nbsp; Songfinch, Innovation &amp; Artist Operations
+            </p>
+          </div>
+          <div class="agenda">
+            <div class="ag-t">Structure · 20 minutes</div>
+            <div class="ag-r">
+              <span class="k">01</span
+              ><span class="v">The problem: a name is not a string</span
+              ><span class="m">4 min</span>
+            </div>
+            <div class="ag-r">
+              <span class="k">02</span
+              ><span class="v">What we inherited, and what was missing</span
+              ><span class="m">3 min</span>
+            </div>
+            <div class="ag-r">
+              <span class="k">03</span
+              ><span class="v">The pipeline, layer by layer</span
+              ><span class="m">9 min</span>
+            </div>
+            <div class="ag-r">
+              <span class="k">04</span
+              ><span class="v">What shipped, what broke, what transfers</span
+              ><span class="m">4 min</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide"
+        data-t="Footnote · what Instant Song is"
+        data-p="0"
+      >
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">Footnote</span
+            ><span
+              >Context only · 60 seconds · not the subject of this talk</span
+            >
+          </div>
+          <h2 data-split style="font-size: clamp(24px, 3.2vw, 44px)">
+            The product this lives inside, in one slide.
+          </h2>
+          <div class="cols c4" style="margin-top: clamp(16px, 2vw, 30px)">
+            <div class="card ch-c">
+              <span class="lbl">The company</span>
+              <h3>Songfinch sold one thing.</h3>
+              <p style="margin-top: 8px">
+                An original song written for you by a real artist. Around $200,
+                about a week. It converted under two percent.
+              </p>
+            </div>
+            <div class="card ch-v">
+              <span class="lbl">The product</span>
+              <h3>Instant Song assembles instead of generating.</h3>
+              <p style="margin-top: 8px">
+                Artists record the lines that never change, plus every version
+                of the lines that do. A customer's answers select which pieces
+                play. Seconds, not a week.
+              </p>
+            </div>
+            <div class="card ch-a">
+              <span class="lbl">The constraint</span>
+              <h3>We were not allowed to generate songs.</h3>
+              <p style="margin-top: 8px">
+                The promise is that a real artist wrote it. Generation kills the
+                promise and the artist network walks. That constraint is why the
+                rest of this is interesting.
+              </p>
+            </div>
+            <div class="card ch-r">
+              <span class="lbl">The outcome</span>
+              <h3>It worked.</h3>
+              <p style="margin-top: 8px">
+                Roughly 4x the conversion of the product beside it at launch,
+                and 150,000+ units over the two years that followed.
+              </p>
+            </div>
+          </div>
+          <div class="verdict">
+            That is all the context you need.
+            <b
+              >Everything from here is about one feature inside it: getting the
+              song to say the recipient's name.</b
+            >
+            It was the hardest thing we built and the only part customers
+            reliably cried at.
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="The trigger" data-p="1">
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">01 · The problem</span
+              ><span>Why we started</span>
+            </div>
+            <h2 data-split>
+              Nobody cried at the personalized lyric. They cried at their name.
+            </h2>
+            <p style="margin-top: 18px">
+              Instant Song already swapped lines based on customer answers.
+              "You're always the life of the party." Nice, on-brand, and
+              customers described it as clever.
+            </p>
+            <p style="margin-top: 14px">
+              Clever is not the reaction we were selling. The reaction we were
+              selling happens about four seconds in, when a stranger's voice
+              sings <em>your</em> name back at you.
+            </p>
+            <p style="margin-top: 14px; color: var(--ink-3)">
+              So the question became: can the song say any name, in the artist's
+              own voice, without us recording every artist saying 2,000 names?
+            </p>
+          </div>
+          <div class="card ch-r">
+            <span class="lbl">Why it could not be brute-forced</span>
+            <h3>
+              2,000 names × every artist is not a recording session. It is a
+              career.
+            </h3>
+            <p style="margin-top: 10px">
+              The name list came from a 2,000-name catalogue. Multiply by the
+              artists in round one, by the syllable and cadence variants each
+              name needs, and you are asking working musicians for tens of
+              thousands of takes.
+            </p>
+            <p style="margin-top: 12px">
+              No artist agrees to that, and if they did, the audio would be
+              inconsistent across sessions.
+              <strong
+                >The brute-force version of this product does not exist at any
+                budget.</strong
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="A name is not a string" data-p="1">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">01 · The problem</span
+            ><span>The reframe the whole build sits on</span>
+          </div>
+          <h2 data-split>A name is not a string. It is a rhythm.</h2>
+          <div class="cols c3" style="margin-top: clamp(16px, 2vw, 30px)">
+            <div class="card ch-c">
+              <span class="lbl">Text has no sound</span>
+              <h3>Spelling does not tell you how a name is said.</h3>
+              <p style="margin-top: 8px">
+                "Sean" is one syllable. "Siobhan" is two. "Nguyen" is one.
+                Letter-to-sound rules get all three wrong, and a name pronounced
+                wrong is worse than no name at all.
+              </p>
+            </div>
+            <div class="card ch-v">
+              <span class="lbl">Sung is not spoken</span>
+              <h3>In singing, vowels carry the note.</h3>
+              <p style="margin-top: 8px">
+                Consonants are transients. Vowels hold pitch and duration. So a
+                name's <em>vowel nuclei</em> are what have to land on beats, and
+                that is a different problem from pronouncing it.
+              </p>
+            </div>
+            <div class="card ch-a">
+              <span class="lbl">The slot is fixed</span>
+              <h3>The melody has a budget.</h3>
+              <p style="margin-top: 8px">
+                The name sits in one line of the chorus with a set number of
+                beats. One syllable and three syllables cannot occupy that
+                budget the same way. The music has to bend, or the name breaks.
+              </p>
+            </div>
+          </div>
+          <div class="verdict">
+            Once we framed it that way, the work stopped being "make a voice say
+            a name" and became
+            <b
+              >"map an arbitrary name onto a fixed musical slot, in a specific
+              person's voice, and prove it before it ships."</b
+            >
+            Four separate engineering problems, only one of which is machine
+            learning.
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="The demo · name to rhythm" data-p="1">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i
+            ><span class="num">01 · The problem, demonstrated</span
+            ><span>Pick a name</span>
+          </div>
+          <h2 data-split style="font-size: clamp(21px, 2.7vw, 37px)">
+            Same slot. Same melody. Every name behaves differently.
+          </h2>
+          <div class="nm">
+            <div class="nm-l">
+              <p class="dm-lbl">The name a customer typed</p>
+              <div class="nm-btns" id="nmb"></div>
+              <div id="nmtrap" class="nm-trap"></div>
+            </div>
+            <div class="nm-r">
+              <div class="dm-head">
+                <span>Pipeline trace</span><span id="nmtag"></span>
+              </div>
+              <div class="nm-row">
+                <span class="nk">Dictionary</span>
+                <div class="nv" id="nmph"></div>
+              </div>
+              <div class="nm-row">
+                <span class="nk">Vowel nuclei</span>
+                <div class="nv" id="nmsyl"></div>
+              </div>
+              <div class="nm-row">
+                <span class="nk">Slot · CH.L1</span>
+                <div class="nv"><div class="beats" id="nmbeat"></div></div>
+              </div>
+              <div class="nm-row">
+                <span class="nk">Take variant</span>
+                <div class="nv" id="nmtake"></div>
+              </div>
+            </div>
+          </div>
+          <p
+            style="
+              margin-top: 12px;
+              color: var(--ink-3);
+              font-size: clamp(11px, 0.92vw, 13px);
+            "
+          >
+            Phoneme strings are standard Arpabet with stress digits. Syllables
+            are counted from vowel nuclei, not from letters, which is the only
+            way that works.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" data-t="What we inherited" data-p="1">
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">02 · The inheritance</span
+              ><span>Where the project was when we got it</span>
+            </div>
+            <h2 data-split>
+              The research had existed for years. The product had not.
+            </h2>
+            <p style="margin-top: 18px">
+              A machine learning specialist had been working this problem inside
+              the company for a long time before our team touched it. The hard
+              science was real and it was good: the voice synthesis worked, the
+              approach was sound.
+            </p>
+            <p style="margin-top: 14px">
+              What did not exist was everything around it. No dictionary anyone
+              could trust at scale. No way for an artist to contribute their
+              voice without a researcher sitting next to them. No QA gate. No
+              throughput. No path from "this works in a session" to "this runs
+              when a stranger types a name at 2am."
+            </p>
+            <p style="margin-top: 14px">
+              <strong
+                >The music and innovation team picked it up and had it live
+                within a year.</strong
+              >
+            </p>
+          </div>
+          <div>
+            <div class="card ch-a">
+              <span class="lbl">What that says about the job</span>
+              <h3>
+                Research to product is a different discipline, not a later phase
+                of the same one.
+              </h3>
+              <p style="margin-top: 10px">
+                Nothing was wrong with the work we inherited. It was solving the
+                modelling problem, and the modelling problem was genuinely
+                solved.
+              </p>
+              <p style="margin-top: 12px">
+                Shipping it required a different set of skills: artist
+                operations, naming conventions, QA design, batch processing, and
+                a compensation conversation.
+                <strong
+                  >None of those are machine learning, and all of them were the
+                  reason it had not shipped.</strong
+                >
+              </p>
+            </div>
+            <p style="margin-top: 16px; color: var(--ink-3)">
+              This is the part of the story I would want to be asked about,
+              because it is the closest thing I have done to the job being
+              described.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="The pipeline" data-p="2">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">03 · The build</span
+            ><span>What a name passes through</span>
+          </div>
+          <h2 data-split style="font-size: clamp(24px, 3.2vw, 44px)">
+            Six layers, one of which is the model.
+          </h2>
+          <div class="pipe">
+            <div class="pp ch-c">
+              <span class="pn">01</span>
+              <h3>Dictionary</h3>
+              <p>
+                Name to phonemes, curated and human-verified. Modified Arpabet.
+              </p>
+            </div>
+            <div class="pp ch-v">
+              <span class="pn">02</span>
+              <h3>Blueprint</h3>
+              <p>
+                Which line, which slot, how many beats, how many syllables it
+                can absorb.
+              </p>
+            </div>
+            <div class="pp ch-a">
+              <span class="pn">03</span>
+              <h3>Voice model</h3>
+              <p>
+                The artist's captured vowel, consonant and performance data.
+              </p>
+            </div>
+            <div class="pp ch-r">
+              <span class="pn">04</span>
+              <h3>Synthesis</h3>
+              <p>
+                Synthesizer V renders the name onto the melody in that voice.
+              </p>
+            </div>
+            <div class="pp ch-c">
+              <span class="pn">05</span>
+              <h3>Blend</h3>
+              <p>
+                Synthesized name masked into the artist's real recorded line.
+              </p>
+            </div>
+            <div class="pp ch-v">
+              <span class="pn">06</span>
+              <h3>QA gate</h3>
+              <p>Human listen, pass or fail, per name, per artist.</p>
+            </div>
+          </div>
+          <div class="verdict">
+            Layer 4 is the machine learning.
+            <b>Layers 1, 2, 3, 5 and 6 are operations</b>, and every one of them
+            was a reason the feature had not shipped before. That ratio is the
+            whole reason I am interested in enablement work rather than
+            modelling work.
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Layer 1 · the dictionary" data-p="2">
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">03 · Layer 1</span
+              ><span>The dictionary</span>
+            </div>
+            <h2 data-split>
+              You cannot generate a pronunciation dictionary for names.
+            </h2>
+            <p style="margin-top: 18px">
+              Grapheme-to-phoneme conversion works acceptably on common English
+              words because English spelling is irregular but statistically
+              learnable. Names are the exact population where that breaks: they
+              come from every language, they are deliberately variant-spelled,
+              and two people spelling their name identically may say it
+              differently.
+            </p>
+            <p style="margin-top: 14px">
+              So the dictionary was built and verified rather than predicted.
+              Modified Arpabet, extended to cover sounds the standard set does
+              not carry cleanly, and adjusted for sung rather than spoken
+              articulation.
+            </p>
+          </div>
+          <div>
+            <div class="card ch-c">
+              <span class="lbl">The work, honestly described</span>
+              <h3>We listened to a lot of names.</h3>
+              <p style="margin-top: 9px">
+                Collect the list. Decide which names are in scope for round one.
+                Listen to each one. Write the phoneme string. Have someone else
+                check it. Flag the ones with more than one legitimate
+                pronunciation, because those need a product decision, not a
+                phonetic one.
+              </p>
+            </div>
+            <div class="card ch-r" style="margin-top: 12px">
+              <span class="lbl">The decision that saved us</span>
+              <h3>Ambiguous names get excluded, not guessed.</h3>
+              <p style="margin-top: 9px">
+                If a name has two common pronunciations and we cannot tell which
+                one a customer means, the correct product behaviour is to fall
+                back to the general line, not to guess.
+                <strong>A wrong name is worse than no name.</strong> That rule
+                made the QA gate binary and made the whole thing shippable.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide"
+        data-t="Layer 3 · the vocal model template"
+        data-p="2"
+      >
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">03 · Layer 3</span
+            ><span>The capture instrument</span>
+          </div>
+          <h2 data-split>
+            We needed phonetic coverage from people who hate phonetics.
+          </h2>
+          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 26px)">
+            <div>
+              <p class="lede">
+                To synthesize any name in an artist's voice, the model needs
+                that artist producing every vowel and consonant sound, across
+                registers, with real performance data attached. Full coverage,
+                not a nice sample.
+              </p>
+              <p style="margin-top: 14px">
+                The naive version of that ask is a phonetically-balanced script,
+                which is a document that makes a working musician want to leave.
+                So we did not send a script. We sent a game.
+              </p>
+              <p style="margin-top: 14px; color: var(--ink-3)">
+                Internally we called it the Sonic Olympics. Three rounds, in
+                this order, because the order matters as much as the content.
+              </p>
+            </div>
+            <div>
+              <div class="rounds">
+                <div class="rd ch-c">
+                  <span class="rn">Round 1</span>
+                  <div>
+                    <h3>Wild Warm Ups</h3>
+                    <p>
+                      Loosen the voice and get them past self-consciousness.
+                      Nothing here is precious, and that is the point.
+                    </p>
+                  </div>
+                </div>
+                <div class="rd ch-v">
+                  <span class="rn">Round 2</span>
+                  <div>
+                    <h3>Meticulous Melodies</h3>
+                    <p>
+                      The controlled material. Sustained vowels, clean
+                      articulation, consistent pitch. This is where the usable
+                      vowel data comes from.
+                    </p>
+                  </div>
+                </div>
+                <div class="rd ch-a">
+                  <span class="rn">Round 3</span>
+                  <div>
+                    <h3>Freaky Phrases</h3>
+                    <p>
+                      Deliberately awkward consonant clusters and sound
+                      combinations that never appear in a normal lyric, but do
+                      appear in names.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="verdict">
+            <b>The template is the product.</b> An artist could sit down with
+            it, record their session unsupervised, and send back something the
+            pipeline could actually use. That is the difference between a
+            research technique that needs its inventor in the room and a system
+            that scales across a roster.
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide"
+        data-t="Layer 2 · the blueprint and the 16 takes"
+        data-p="2"
+      >
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">03 · Layer 2</span
+              ><span>Where the name goes</span>
+            </div>
+            <h2 data-split>Every song got a blueprint down to the syllable.</h2>
+            <p style="margin-top: 18px">
+              For each Instant Song we mapped the exact line the name lands in,
+              usually the first line of the chorus, and documented the slot: how
+              many beats it occupies, how many syllables it can absorb, where
+              the stress has to fall for the phrase to still sound like music.
+            </p>
+            <p style="margin-top: 14px">
+              Then the artist tracked that same line roughly
+              <strong>sixteen times</strong>, covering the range of syllable
+              counts and cadences a name might need.
+            </p>
+          </div>
+          <div class="card ch-v">
+            <span class="lbl">Why sixteen takes and not one</span>
+            <h3>The synth should place a name, not stretch one.</h3>
+            <p style="margin-top: 10px">
+              If you have one recording of the line and force every name into
+              it, the model has to time-stretch, and stretching is exactly where
+              synthetic voices announce themselves. A four-syllable name crammed
+              into a one-syllable pocket sounds like software.
+            </p>
+            <p style="margin-top: 12px">
+              With sixteen real human performances of the same line, a name gets
+              dropped into a pocket a person actually sang at that length.
+              <strong
+                >The realism came from the recording plan, not from the
+                model.</strong
+              >
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide"
+        data-t="Layers 4 and 5 · synthesis and blend"
+        data-p="2"
+      >
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">03 · Layers 4 and 5</span
+            ><span>Making it sound like them</span>
+          </div>
+          <h2 data-split>
+            The trick is that most of what you hear was never synthesized.
+          </h2>
+          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 26px)">
+            <div class="card ch-r">
+              <span class="lbl">Layer 4 · Synthesis</span>
+              <h3>Synthesizer V renders the name onto the melody.</h3>
+              <p style="margin-top: 9px">
+                Phonemes from the dictionary, note and duration from the
+                blueprint, timbre from the artist's captured voice model. The
+                output is the name, sung, in something close to that artist's
+                voice.
+              </p>
+              <p style="margin-top: 11px">
+                Close is not good enough on its own. In isolation a synthesized
+                name is convincing. Dropped into a real recording it is
+                immediately audible, because the surrounding audio is a real
+                human in a real room.
+              </p>
+            </div>
+            <div class="card ch-c">
+              <span class="lbl">Layer 5 · Blend</span>
+              <h3>The name is masked into the artist's real line.</h3>
+              <p style="margin-top: 9px">
+                The rest of the line is the artist's actual recorded
+                performance. Only the name is synthetic, and it is blended into
+                the take so the seam is not perceptible: matched to the room,
+                the breath, the processing chain, and the take's own dynamics.
+              </p>
+              <p style="margin-top: 11px">
+                <strong
+                  >A listener hears an artist singing a line. The synthetic
+                  portion is a fraction of a second inside it.</strong
+                >
+                That is why it sounds like them, and it is also why it sits
+                comfortably inside a promise that a real artist made this.
+              </p>
+            </div>
+          </div>
+          <div class="verdict">
+            This is the architectural decision I am proudest of.
+            <b>The minimum viable amount of the output is synthetic</b>, which
+            simultaneously solved the realism problem, the cost problem, and the
+            ethics problem. The artist is still the performer. We are inserting
+            a word, not manufacturing a singer.
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide"
+        data-t="Layer 6 · QA at dictionary scale"
+        data-p="2"
+      >
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">03 · Layer 6</span
+              ><span>The unglamorous gate</span>
+            </div>
+            <h2 data-split>
+              Every name, every artist, listened to by a person.
+            </h2>
+            <p style="margin-top: 18px">
+              There is no automated metric for "does this sound like a mistake."
+              Formant distance and spectral similarity tell you the synthesis
+              matched the model. They do not tell you the result is
+              embarrassing, and embarrassing is the failure mode that costs a
+              customer.
+            </p>
+            <p style="margin-top: 14px">
+              So the gate was human and binary: pass, or fail with a reason.
+              Failures went to one of three buckets:
+              <em>wrong pronunciation</em> back to the dictionary,
+              <em>wrong pocket</em> back to the blueprint,
+              <em>wrong voice</em> back to the model.
+            </p>
+            <p style="margin-top: 14px; color: var(--ink-3)">
+              Routing a failure to the right layer is most of what made the loop
+              converge instead of thrash.
+            </p>
+          </div>
+          <div class="card ch-a">
+            <span class="lbl">The number that made it finite</span>
+            <h3>
+              Names are Zipf-distributed, and that is the whole reason this
+              shipped.
+            </h3>
+            <p style="margin-top: 10px">
+              A small fraction of first names covers a large majority of real
+              customers. So the work was never "2,000 names perfect before
+              launch." It was: rank by real frequency, gate the top of that list
+              to a high standard, and fall back gracefully on the long tail.
+            </p>
+            <p style="margin-top: 12px">
+              <strong
+                >Coverage of customers, not coverage of the dictionary.</strong
+              >
+              Same insight as prioritizing any AI rollout: find the head of the
+              distribution and make that part excellent.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Throughput" data-p="2">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">03 · Making it a product</span
+            ><span>Speed and engineering</span>
+          </div>
+          <h2 data-split>
+            A feature that takes a person a day is a demo, not a product.
+          </h2>
+          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 26px)">
+            <div>
+              <h3 style="color: var(--cyan)">Refining the audio processing</h3>
+              <p style="margin-top: 10px">
+                Early on, producing one artist's name set was a manual pass:
+                render, import, align, match levels, apply the chain, bounce,
+                name the file, check it. Multiply by names and by artists and
+                the arithmetic kills you before the model ever does.
+              </p>
+              <p style="margin-top: 12px">
+                Most of my time went into collapsing that: batch rendering, a
+                fixed processing chain applied programmatically instead of by
+                hand, enforced naming so nothing needed a human to identify it,
+                and FFmpeg pipelines doing the cleanup and versioning across
+                thousands of assets. The same batch discipline the wider Instant
+                Song build already ran on.
+              </p>
+            </div>
+            <div>
+              <h3 style="color: var(--amber)">Working with engineering</h3>
+              <p style="margin-top: 10px">
+                The music and innovation team owned the pipeline that produced
+                the assets. Engineering owned what happened when a customer
+                typed a name at 2am: lookup, selection, assembly, delivery.
+              </p>
+              <p style="margin-top: 12px">
+                The interface between us was the thing that mattered, and it was
+                mostly a naming contract. Every asset self-described which
+                artist, which song, which line, which slot and which name it
+                satisfied, so the backend could select without anyone
+                interpreting anything.
+              </p>
+              <p style="margin-top: 12px; color: var(--ink-3)">
+                The fallback logic was negotiated in the same conversation: what
+                the product does when a name is not in the dictionary, which is
+                play the general line and say nothing about it.
+              </p>
+            </div>
+          </div>
+          <div class="verdict">
+            <b
+              >Nobody outside the team ever saw any of this layer, and it is the
+              layer that turned a working technique into a shipping feature.</b
+            >
+            It is also the work I am most confident transfers, because every
+            company has a version of it and almost nobody staffs it
+            deliberately.
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Training the artists" data-p="2">
+        <div class="inner split">
+          <div>
+            <div class="kicker">
+              <i class="dot"></i><span class="num">03 · The hardest layer</span
+              ><span>Consent, training, trust</span>
+            </div>
+            <h2 data-split>
+              We asked musicians for their voice data in the worst year to ask.
+            </h2>
+            <p style="margin-top: 18px">
+              2023 and 2024 were peak AI panic in the music industry. The ask on
+              paper was: let us capture your vowels, consonants and performance
+              characteristics so software can produce sounds you did not
+              personally sing.
+            </p>
+            <p style="margin-top: 14px">
+              That sentence ends most conversations, and it should. If the
+              supply side of a marketplace decides you are a threat, you do not
+              have a product, you have a lawsuit and an empty roster.
+            </p>
+          </div>
+          <div>
+            <div class="card ch-v">
+              <span class="lbl">What actually worked</span>
+              <ul style="margin-top: 11px">
+                <li>
+                  <strong>Scope stated precisely.</strong> Their voice model
+                  produces names, inside their own songs, on this product. Not a
+                  general-purpose voice. Not licensed out.
+                </li>
+                <li>
+                  <strong>Pay attached to the ask.</strong> A guarantee for the
+                  session plus a royalty on songs sold. It is more work than a
+                  normal song and the compensation said so.
+                </li>
+                <li>
+                  <strong>The template did the training.</strong> Artists did
+                  not need to understand phonemes. They needed a session
+                  template and three rounds of instructions they could follow
+                  alone.
+                </li>
+                <li>
+                  <strong>Opt-in, per artist, round by round.</strong> We
+                  started with a small group who wanted in, and let it spread on
+                  their word rather than ours.
+                </li>
+              </ul>
+            </div>
+            <p style="margin-top: 14px; color: var(--ink-3)">
+              Every technical decision upstream was constrained by whether this
+              conversation would go well. That is not a values slide. It
+              determined the architecture.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="What shipped" data-p="3">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">04 · Outcome</span
+            ><span>What it became</span>
+          </div>
+          <h2 data-split>
+            From a years-old research project to a live feature in about a year.
+          </h2>
+          <div class="cols c4" style="margin-top: clamp(18px, 2.4vw, 36px)">
+            <div class="stat ch-c">
+              <div class="n">~1<small>yr</small></div>
+              <div class="cap">
+                From picking it up<br />to live in the product
+              </div>
+            </div>
+            <div class="stat ch-v">
+              <div class="n">2,000</div>
+              <div class="cap">Name catalogue<br />in scope</div>
+            </div>
+            <div class="stat ch-a">
+              <div class="n">~16</div>
+              <div class="cap">
+                Takes of the name line,<br />per artist, per song
+              </div>
+            </div>
+            <div class="stat ch-r">
+              <div class="n">1</div>
+              <div class="cap">
+                Synthetic word<br />inside a human performance
+              </div>
+            </div>
+          </div>
+          <div class="verdict">
+            The feature that made customers react was a fraction of a second of
+            audio, sitting inside a real recording, selected by a naming
+            convention, verified by a person, and delivered by a pipeline nobody
+            ever saw. <b>Almost none of the work was the model.</b>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="What broke" data-p="3">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">04 · Outcome</span
+            ><span>The honest part</span>
+          </div>
+          <h2 data-split>
+            Three things I got wrong, and one I would do differently on day one.
+          </h2>
+          <div class="cols c3" style="margin-top: clamp(16px, 2vw, 28px)">
+            <div class="card ch-r">
+              <span class="lbl">01</span>
+              <h3>We scoped round one to romantic relationships.</h3>
+              <p style="margin-top: 9px">
+                Which meant the wider product's category list did not fit real
+                customers, and people bounced off the form trying to describe a
+                friend, a parent, a kid. Starting with the narrowest emotional
+                case made the engineering cleaner and the product worse.
+              </p>
+            </div>
+            <div class="card ch-a">
+              <span class="lbl">02</span>
+              <h3>QA effort was estimated per name, not per artist.</h3>
+              <p style="margin-top: 9px">
+                The same name in a new voice is a new asset needing a new
+                listen. Effort scaled with names multiplied by artists, not
+                added to them, and we felt that late.
+              </p>
+            </div>
+            <div class="card ch-v">
+              <span class="lbl">03</span>
+              <h3>
+                Ambiguous pronunciations arrived as a product question dressed
+                as a phonetics question.
+              </h3>
+              <p style="margin-top: 9px">
+                We treated it as a dictionary problem for too long before
+                deciding the answer was a fallback rule.
+              </p>
+            </div>
+          </div>
+          <div class="verdict">
+            <b
+              >The day-one fix, and it is the same one from the wider launch:</b
+            >
+            instrument first. We could not easily answer which names were
+            actually being requested, which were falling back, or which artists
+            had the weakest coverage. All three were sitting in logs nobody was
+            reading, and each one would have redirected the QA effort weeks
+            earlier.
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="What transfers" data-p="3">
+        <div class="inner">
+          <div class="kicker">
+            <i class="dot"></i><span class="num">04 · Close</span
+            ><span>Why I told you this one</span>
+          </div>
+          <h2 data-split>The model was never the bottleneck.</h2>
+          <p class="lede" style="margin-top: 16px">
+            It had already worked for years when we picked it up. What was
+            missing was every operational layer around it, and building those is
+            the job I am describing to you.
+          </p>
+          <div class="cols c4" style="margin-top: clamp(16px, 2vw, 30px)">
+            <div class="card ch-c">
+              <span class="lbl">Transfers 01</span>
+              <h3>Find the layer that is actually blocking.</h3>
+              <p style="margin-top: 8px">
+                It is rarely the model. Here it was a dictionary, a recording
+                protocol, a QA gate and a naming contract.
+              </p>
+            </div>
+            <div class="card ch-v">
+              <span class="lbl">Transfers 02</span>
+              <h3>Make the human contribution unsupervised.</h3>
+              <p style="margin-top: 8px">
+                A technique that needs its inventor in the room does not scale.
+                A template that a musician can run alone does.
+              </p>
+            </div>
+            <div class="card ch-a">
+              <span class="lbl">Transfers 03</span>
+              <h3>Head of the distribution first.</h3>
+              <p style="margin-top: 8px">
+                Cover the customers, not the catalogue, and fall back gracefully
+                on the tail.
+              </p>
+            </div>
+            <div class="card ch-r">
+              <span class="lbl">Transfers 04</span>
+              <h3>The supply side has a veto.</h3>
+              <p style="margin-top: 8px">
+                In any marketplace, the people supplying the value can walk.
+                Scope, pay and honesty upstream of the build, or there is no
+                build.
+              </p>
+            </div>
+          </div>
+          <div class="verdict" style="margin-top: 20px">
+            Happy to go deeper on any layer. <b>Dylan Kroll</b> ·
+            dylankroll@ymail.com · linkedin.com/in/dylanjkroll
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="rail">
+      <span id="idx">01</span>
+      <div id="ticks"></div>
+      <span id="ttl"></span>
+    </div>
+    <div id="help">
+      <kbd>←</kbd><kbd>→</kbd> navigate <kbd>esc</kbd> overview
+      <kbd>?</kbd> hide
+    </div>
+    <div id="ov">
+      <div class="kicker">
+        <i class="dot"></i><span>Overview · click to jump</span>
+      </div>
+      <div id="ovg"></div>
+    </div>
+
+    <script src="vendor/gsap.min.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.js" } }
+    </script>
+    <script type="module">
+      import * as THREE from "three";
+
+      const CH = ["#22D3EE", "#8B5CF6", "#F59E0B", "#F43F5E"];
+      const slides = [...document.querySelectorAll(".slide")];
+      const N = slides.length;
+      let cur = 0;
+
+      /* ═══ THREE.JS — the stem field ═══
+   One InstancedMesh between two states: scattered (raw material) and
+   assembled (a waveform). Slide index scrubs between them.
+   `int` is the important one: the field performs on the cover, the part
+   dividers and the payoff number, and goes near-silent behind argument
+   slides, where motion just competes with the thing being read. */
+      const canvas = document.getElementById("gl");
+      const vig = document.getElementById("vig");
+      let renderer,
+        scene,
+        cam,
+        mesh,
+        bars = [],
+        hasGL = true;
+      const state = {
+        assembly: 0,
+        spread: 1,
+        lift: 0,
+        focus: -1,
+        dimT: 0,
+        intensity: 1,
+      };
+      const COUNT = window.innerWidth < 760 ? 200 : 400;
+
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+        });
+      } catch (e) {
+        hasGL = false;
+      }
+      if (!renderer || !renderer.getContext()) hasGL = false;
+
+      if (hasGL) {
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.setSize(innerWidth, innerHeight);
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x08080a, 0.034);
+        cam = new THREE.PerspectiveCamera(
+          46,
+          innerWidth / innerHeight,
+          0.1,
+          220,
+        );
+        cam.position.set(0, 1.6, 30);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        const key = new THREE.DirectionalLight(0xffffff, 1.15);
+        key.position.set(-9, 14, 12);
+        scene.add(key);
+        const rim = new THREE.DirectionalLight(0x22d3ee, 2.1);
+        rim.position.set(11, -5, -10);
+        scene.add(rim);
+        const fill = new THREE.PointLight(0x8b5cf6, 26, 60);
+        fill.position.set(-13, 5, 7);
+        scene.add(fill);
+
+        const geo = new THREE.CylinderGeometry(0.16, 0.16, 1, 6, 1);
+        const mat = new THREE.MeshStandardMaterial({
+          roughness: 0.36,
+          metalness: 0.16,
+        });
+        mesh = new THREE.InstancedMesh(geo, mat, COUNT);
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        scene.add(mesh);
+
+        const COLS = Math.ceil(COUNT / 4);
+        for (let i = 0; i < COUNT; i++) {
+          const col = i % COLS,
+            row = (i / COLS) | 0;
+          const x = (col / (COLS - 1) - 0.5) * 52;
+          const env = Math.cos((col / COLS - 0.5) * Math.PI) ** 0.7;
+          const amp =
+            (Math.sin(col * 0.34) * 0.5 + Math.sin(col * 0.11 + 1.7) * 0.5) *
+            env;
+          bars.push({
+            home: new THREE.Vector3(x, amp * 5.2, -row * 3.6 + 5),
+            wild: new THREE.Vector3(
+              (Math.random() - 0.5) * 96,
+              (Math.random() - 0.5) * 52,
+              (Math.random() - 0.5) * 74,
+            ),
+            hi: Math.abs(amp) * 8 + 0.7,
+            lo: Math.random() * 2.4 + 0.35,
+            ch: i % 4,
+            ph: Math.random() * Math.PI * 2,
+            sp: 0.5 + Math.random() * 1.3,
+            spin: (Math.random() - 0.5) * 2.4,
+          });
+          mesh.setColorAt(i, new THREE.Color(CH[i % 4]));
+        }
+        mesh.instanceColor.needsUpdate = true;
+
+        const dummy = new THREE.Object3D(),
+          pos = new THREE.Vector3();
+        const col = new THREE.Color(),
+          dim = new THREE.Color(),
+          clock = new THREE.Clock();
+        let lastFocus = -2,
+          lastDim = -1;
+
+        renderer.setAnimationLoop(() => {
+          const t = clock.getElapsedTime();
+          const a = state.assembly;
+          const ease = a * a * (3 - 2 * a);
+          const I = state.intensity; // motion scales with intensity, not just opacity
+
+          for (let i = 0; i < COUNT; i++) {
+            const b = bars[i];
+            pos.copy(b.wild).lerp(b.home, ease);
+            pos.x *= 1 + (1 - ease) * (state.spread - 1) * 0.35;
+            pos.y +=
+              Math.sin(t * b.sp + b.ph) * (0.35 + (1 - ease) * 1.5) * I +
+              state.lift;
+            dummy.position.copy(pos);
+            dummy.rotation.set(
+              (1 - ease) * b.spin * 2,
+              (1 - ease) * b.spin + t * 0.05 * (1 - ease) * I,
+              (1 - ease) * b.spin * 1.4,
+            );
+            const beat = 1 + Math.sin(t * 1.9 + b.ph) * 0.12 * ease * I;
+            dummy.scale.set(1, (b.lo + (b.hi - b.lo) * ease) * beat, 1);
+            dummy.updateMatrix();
+            mesh.setMatrixAt(i, dummy.matrix);
+          }
+          mesh.instanceMatrix.needsUpdate = true;
+
+          if (state.focus !== lastFocus || state.dimT !== lastDim) {
+            for (let i = 0; i < COUNT; i++) {
+              const b = bars[i];
+              col.set(CH[b.ch]);
+              if (state.focus >= 0 && b.ch !== state.focus)
+                col.lerp(dim.set(0x1b1b22), 0.82 * state.dimT);
+              mesh.setColorAt(i, col);
+            }
+            mesh.instanceColor.needsUpdate = true;
+            lastFocus = state.focus;
+            lastDim = state.dimT;
+          }
+
+          cam.position.x +=
+            (Math.sin(t * 0.11) * 2.4 * I - cam.position.x) * 0.014;
+          cam.position.y +=
+            (1.6 + Math.cos(t * 0.09) * 1.1 * I - cam.position.y) * 0.014;
+          cam.lookAt(0, 0, -6);
+          renderer.render(scene, cam);
+        });
+
+        addEventListener("resize", () => {
+          cam.aspect = innerWidth / innerHeight;
+          cam.updateProjectionMatrix();
+          renderer.setSize(innerWidth, innerHeight);
+        });
+      } else {
+        canvas.style.background =
+          "radial-gradient(70% 55% at 22% 32%,rgba(34,211,238,.16),transparent 62%)," +
+          "radial-gradient(62% 50% at 78% 68%,rgba(139,92,246,.14),transparent 60%),#08080A";
+      }
+
+      /* per-slide field state. int: 1 = performs, .08 = texture behind argument. */
+      const FIELD = [
+        { a: 0.06, s: 1.5, l: 0, f: -1, z: 30, int: 1.0 },
+        { a: 0.24, s: 1.3, l: -2, f: -1, z: 44, int: 0.1 },
+        { a: 0.4, s: 1.2, l: -1, f: 3, z: 40, int: 0.16 },
+        { a: 0.52, s: 1.15, l: -2, f: 0, z: 44, int: 0.12 },
+        { a: 0.58, s: 1.1, l: -2, f: 1, z: 45, int: 0.06 },
+        { a: 0.34, s: 1.3, l: -2, f: -1, z: 44, int: 0.14 },
+        { a: 0.8, s: 1.0, l: -1, f: -1, z: 38, int: 0.3 },
+        { a: 0.84, s: 1.0, l: -2, f: 0, z: 45, int: 0.08 },
+        { a: 0.86, s: 1.0, l: -2, f: 2, z: 45, int: 0.1 },
+        { a: 0.88, s: 1.0, l: -2, f: 1, z: 45, int: 0.1 },
+        { a: 0.94, s: 1.0, l: -1, f: 3, z: 42, int: 0.22 },
+        { a: 0.9, s: 1.0, l: -2, f: 1, z: 45, int: 0.08 },
+        { a: 0.92, s: 1.0, l: -2, f: -1, z: 46, int: 0.08 },
+        { a: 0.95, s: 1.0, l: -2, f: 2, z: 44, int: 0.12 },
+        { a: 1.0, s: 1.0, l: -1, f: 0, z: 33, int: 1.0 },
+        { a: 0.6, s: 1.2, l: -2, f: 3, z: 44, int: 0.1 },
+        { a: 1.0, s: 1.0, l: 0, f: -1, z: 30, int: 0.85 },
+      ];
+
+      /* ═══ SLIDE ENGINE ═══ */
+      // word-level split only — splitting to chars is what breaks words mid-word
+      document.querySelectorAll("[data-split]").forEach((el) => {
+        el.innerHTML = el.innerHTML
+          .split(/(<br\s*\/?>)/i)
+          .map((part) =>
+            /^<br/i.test(part)
+              ? part
+              : part
+                  .split(/(\s+)/)
+                  .map((w) => (w.trim() ? `<span class="w">${w}</span>` : w))
+                  .join(""),
+          )
+          .join("");
+      });
+
+      const ticks = document.getElementById("ticks");
+      slides.forEach((s) =>
+        ticks.insertAdjacentHTML(
+          "beforeend",
+          `<i class="tick b${s.dataset.p}"></i>`,
+        ),
+      );
+      const tickEls = [...ticks.children];
+
+      const ovg = document.getElementById("ovg");
+      slides.forEach((s, i) =>
+        ovg.insertAdjacentHTML(
+          "beforeend",
+          `<div class="ovc${s.classList.contains("pdiv") ? " part" : ""}" data-i="${i}"><div class="n">${String(i + 1).padStart(2, "0")}</div><div class="t">${s.dataset.t}</div></div>`,
+        ),
+      );
+      ovg.addEventListener("click", (e) => {
+        const c = e.target.closest(".ovc");
+        if (!c) return;
+        go(+c.dataset.i);
+        toggleOv(false);
+      });
+
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let entrance = null;
+
+      // Background tabs throttle rAF and GSAP rides rAF. Without this, alt-tabbing
+      // mid-talk and coming back leaves a slide frozen half-faded.
+      gsap.ticker.lagSmoothing(0);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && entrance) entrance.progress(1);
+      });
+
+      function go(n) {
+        n = Math.max(0, Math.min(N - 1, n));
+        if (n === cur && slides[n].classList.contains("on")) return;
+        const prev = slides[cur],
+          next = slides[n];
+        cur = n;
+
+        if (prev !== next)
+          gsap.to(prev, {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => prev.classList.remove("on"),
+          });
+        next.classList.add("on");
+
+        if (entrance) entrance.progress(1);
+        const tl = (entrance = gsap.timeline());
+        tl.fromTo(
+          next,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.42, ease: "power2.out" },
+          0,
+        );
+
+        if (!reduced) {
+          const words = next.querySelectorAll(".w");
+          if (words.length)
+            tl.fromTo(
+              words,
+              { yPercent: 108, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.78,
+                stagger: 0.028,
+                ease: "expo.out",
+              },
+              0.06,
+            );
+          const blocks = next.querySelectorAll(
+            ".card, .stat, .row, ol li, ul li, .lede, .tl > div, .qbox, .qlist > div, .bt, .dg, .verdict",
+          );
+          if (blocks.length)
+            tl.fromTo(
+              blocks,
+              { y: 20, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.56,
+                stagger: 0.02,
+                ease: "power3.out",
+              },
+              0.16,
+            );
+        }
+
+        const f = FIELD[n] || FIELD[0];
+        gsap.to(state, {
+          assembly: f.a,
+          spread: f.s,
+          lift: f.l,
+          intensity: f.int,
+          duration: 1.25,
+          ease: "power2.inOut",
+        });
+        state.focus = f.f;
+        gsap.to(state, {
+          dimT: f.f >= 0 ? 1 : 0,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+        if (hasGL)
+          gsap.to(cam.position, {
+            z: f.z,
+            duration: 1.5,
+            ease: "power2.inOut",
+          });
+        gsap.to(canvas, {
+          opacity: 0.08 + f.int * 0.92,
+          duration: 1.1,
+          ease: "power2.inOut",
+        });
+        gsap.to(vig, {
+          opacity: 1 - f.int * 0.4,
+          duration: 1.1,
+          ease: "power2.inOut",
+        });
+
+        tickEls.forEach((t, i) => {
+          t.className =
+            "tick b" +
+            slides[i].dataset.p +
+            (i < n ? " done" : i === n ? " now" : "");
+        });
+        document.getElementById("idx").textContent =
+          String(n + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+        document.getElementById("ttl").textContent = next.dataset.t;
+        [...ovg.children].forEach((c, i) => c.classList.toggle("now", i === n));
+        history.replaceState(null, "", n ? "#" + (n + 1) : "./");
+      }
+
+      const ov = document.getElementById("ov");
+      const toggleOv = (on) =>
+        ov.classList.toggle("on", on ?? !ov.classList.contains("on"));
+
+      addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur - 1);
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          toggleOv();
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(N - 1);
+        else if (e.key === "?")
+          document.getElementById("help").classList.toggle("on");
+      });
+
+      let tx = 0;
+      addEventListener(
+        "touchstart",
+        (e) => (tx = e.changedTouches[0].clientX),
+        { passive: true },
+      );
+      addEventListener(
+        "touchend",
+        (e) => {
+          const d = e.changedTouches[0].clientX - tx;
+          if (Math.abs(d) > 55) go(cur + (d < 0 ? 1 : -1));
+        },
+        { passive: true },
+      );
+
+      /* ═══ INTERACTIVE — a name is not a string ═══
+         Real Arpabet. Syllables counted from vowel nuclei (phonemes carrying a
+         stress digit), which is the only counting rule that survives contact
+         with names. The beat grid is the slot budget in CH.L1. */
+      const NAMES = [
+        { n: "Dan", ph: ["D", "AE1", "N"] },
+        { n: "Danny", ph: ["D", "AE1", "N", "IY0"] },
+        { n: "Marcus", ph: ["M", "AA1", "R", "K", "AH0", "S"] },
+        {
+          n: "Elizabeth",
+          ph: ["IH0", "L", "IH1", "Z", "AH0", "B", "AH0", "TH"],
+        },
+        {
+          n: "Alexander",
+          ph: ["AE2", "L", "AH0", "G", "Z", "AE1", "N", "D", "ER0"],
+        },
+        {
+          n: "Sean",
+          ph: ["SH", "AO1", "N"],
+          naive: 2,
+          trap: "Four letters, two vowel graphemes, <b>one syllable</b>. Letter-to-sound rules predict \u201cSEE-an\u201d.",
+        },
+        {
+          n: "Siobhan",
+          ph: ["SH", "IH0", "V", "AO1", "N"],
+          naive: 3,
+          trap: "Seven letters and nothing in them maps to <b>\u201cshiv-AWN\u201d</b>. A generator gets this wrong every single time.",
+        },
+        {
+          n: "Nguyen",
+          ph: ["W", "IH1", "N"],
+          naive: 2,
+          trap: "<b>One syllable.</b> Among the most common surnames on earth, and the most reliably mangled string in any English pronunciation system.",
+        },
+        {
+          n: "Aoife",
+          ph: ["IY1", "F", "AH0"],
+          naive: 3,
+          trap: "<b>\u201cEE-fa\u201d.</b> The spelling is not merely unhelpful here, it points the wrong way.",
+        },
+      ];
+      const isVowel = (p) => /\d$/.test(p);
+      const TAKE = ["A", "B", "C", "D"];
+      const nmb = document.getElementById("nmb");
+      NAMES.forEach((x, i) =>
+        nmb.insertAdjacentHTML(
+          "beforeend",
+          `<button data-n="${i}"${i === 0 ? ' class="on"' : ""}>${x.n}</button>`,
+        ),
+      );
+
+      function paintName(i) {
+        const x = NAMES[i];
+        const vows = x.ph.filter(isVowel);
+        const syl = vows.length;
+        document.getElementById("nmph").innerHTML = x.ph
+          .map((p) => `<span class="ph${isVowel(p) ? " vow" : ""}">${p}</span>`)
+          .join("");
+        document.getElementById("nmsyl").innerHTML =
+          `<b>${syl}</b> &nbsp;<span style="color:var(--ink-3)">${vows.join(" · ")}</span>`;
+        document.getElementById("nmbeat").innerHTML =
+          Array.from({ length: 4 }, (_, b) =>
+            b < syl
+              ? `<div class="bt-c fill">${vows[b]}</div>`
+              : `<div class="bt-c">&mdash;</div>`,
+          ).join("") +
+          (syl > 4 ? `<div class="bt-c over">+${syl - 4}</div>` : "");
+        document.getElementById("nmtake").innerHTML =
+          syl <= 4
+            ? `Take <b>${TAKE[syl - 1]}</b> &nbsp;<span style="color:var(--ink-3)">the ${syl}-syllable performance of CH.L1</span>`
+            : `<span style="color:var(--rose)"><b>No pocket fits.</b> Needs melodic accommodation or a fallback to the general line.</span>`;
+        const tag = document.getElementById("nmtag");
+        tag.textContent = x.trap ? "spelling misleads" : "spelling agrees";
+        tag.style.color = x.trap ? "var(--rose)" : "var(--ink-3)";
+        const t = document.getElementById("nmtrap");
+        t.className = "nm-trap" + (x.trap ? " hot" : "");
+        t.innerHTML = x.trap
+          ? `Letter rules predict <b>${x.naive} syllables</b>. It is ${syl}. ${x.trap}`
+          : `<span style="color:var(--ink-3)">Spelling and sound agree here, which is exactly why a dictionary built only on names like this one gives false confidence.</span>`;
+        if (!reduced)
+          gsap.fromTo(
+            "#nmph .ph, #nmbeat .bt-c",
+            { opacity: 0, y: 6 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.3,
+              stagger: 0.022,
+              ease: "power2.out",
+            },
+          );
+      }
+      nmb.addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        nmb.querySelectorAll("button").forEach((x) => x.classList.remove("on"));
+        b.classList.add("on");
+        paintName(+b.dataset.n);
+      });
+      paintName(0);
+
+      /* ═══ FIT + BOOT ═══ */
+      // A presentation runs on a screen nobody has seen. Measure and scale rather
+      // than trust a fixed layout against an unknown projector.
+      function fitAll() {
+        if (innerWidth <= 1020) {
+          document
+            .querySelectorAll(".inner")
+            .forEach((n) => (n.style.transform = ""));
+          return;
+        }
+        const pad = parseFloat(getComputedStyle(slides[0]).paddingTop);
+        const avail = innerHeight - pad * 2 - 34;
+        slides.forEach((sl) => {
+          const inner = sl.querySelector(".inner");
+          inner.style.transform = "";
+          const k = Math.min(1, avail / inner.getBoundingClientRect().height);
+          inner.style.transform = k < 0.999 ? `scale(${k.toFixed(4)})` : "";
+        });
+      }
+      addEventListener("resize", fitAll);
+      if (document.fonts && document.fonts.ready)
+        document.fonts.ready.then(fitAll);
+
+      document.body.classList.add("ready");
+      fitAll();
+      go(location.hash ? Math.max(0, (+location.hash.slice(1) || 1) - 1) : 0);
+      setTimeout(
+        () => document.getElementById("help").classList.add("on"),
+        900,
+      );
+      setTimeout(
+        () => document.getElementById("help").classList.remove("on"),
+        6500,
+      );
+    </script>
+  </body>
+</html>
