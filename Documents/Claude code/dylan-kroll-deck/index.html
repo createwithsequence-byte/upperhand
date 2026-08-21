@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -983,1232 +983,495 @@
           color: #333;
         }
       }
-    </style>
+    
+      .c1 { grid-template-columns: 1fr; }
+      .demo { display: grid; grid-template-columns: .78fr 1.22fr;
+        gap: clamp(20px,2.8vw,44px); align-items: start; margin-top: clamp(14px,1.8vw,26px); }
+      .dm-lbl { font-family: var(--mono); font-size: 9.5px; letter-spacing: .2em;
+        text-transform: uppercase; color: var(--ink-3); margin-bottom: 9px; }
+      .dm-prompt { font-size: clamp(14px,1.35vw,19px); line-height: 1.45; color: var(--ink);
+        font-weight: 400; border-left: 2px solid var(--line-2); padding-left: 15px; }
+      .dm-note { margin-top: 18px; font-size: clamp(12px,.98vw,14.5px); line-height: 1.6;
+        color: var(--ink-2); font-weight: 300; }
+      .dm-note b { color: var(--ink); font-weight: 500; }
+      .demo-r { border: 1px solid var(--line); border-radius: 3px;
+        padding: clamp(16px,1.9vw,26px); background: rgba(10,10,13,.66); }
+      .dm-head { display: flex; justify-content: space-between; align-items: baseline;
+        margin-bottom: 15px; font-family: var(--mono); font-size: 9.5px; letter-spacing: .19em;
+        text-transform: uppercase; color: var(--ink-3); }
+      .dm-head span:last-child { color: var(--ch, var(--ink-3)); }
+      .dm-body { font-size: clamp(13px,1.08vw,16px); line-height: 1.66; color: var(--ink-3);
+        font-weight: 300; }
+      .dm-row { display: grid; grid-template-columns: clamp(94px,9vw,124px) 1fr;
+        gap: 14px; padding: 9px 0; border-top: 1px solid var(--line); align-items: baseline; }
+      .dm-row:first-child { border-top: 0; padding-top: 0; }
+      .dm-row .k { font-family: var(--mono); font-size: 9px; letter-spacing: .16em;
+        text-transform: uppercase; color: var(--ch, var(--cyan)); }
+      .dm-row .v { font-size: clamp(12.5px,1.02vw,15px); line-height: 1.5; color: var(--ink-2); }
+      .dm-row .v b { color: var(--ink); font-weight: 600; }
+      @media (max-width: 1020px) { .demo { grid-template-columns: 1fr; } }
+</style>
   </head>
   <body>
     <canvas id="gl"></canvas>
-    <svg id="grain">
-      <filter id="n">
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency=".82"
-          numOctaves="4"
-          stitchTiles="stitch"
-        />
-        <feColorMatrix type="saturate" values="0" />
-      </filter>
-      <rect width="100%" height="100%" filter="url(#n)" />
-    </svg>
+    <svg id="grain"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
     <div id="vig"></div>
     <div id="brand"><b>Dylan Kroll</b> · AI Enablement Engineer · #paid</div>
 
     <div id="deck">
-      <!-- ═══════ INTRODUCTION (5 min) ═══════ -->
+<!-- ═══ INTRODUCTION (5 min) ═══ -->
 
-      <section class="slide" data-t="Cover" data-p="0">
-        <div class="inner">
-          <div style="display: flex; gap: 4px; margin-bottom: 28px">
-            <i
-              style="
-                background: var(--cyan);
-                height: 3px;
-                width: 44px;
-                display: block;
-              "
-            ></i>
-            <i
-              style="
-                background: var(--violet);
-                height: 3px;
-                width: 44px;
-                display: block;
-              "
-            ></i>
-            <i
-              style="
-                background: var(--amber);
-                height: 3px;
-                width: 44px;
-                display: block;
-              "
-            ></i>
-            <i
-              style="
-                background: var(--rose);
-                height: 3px;
-                width: 44px;
-                display: block;
-              "
-            ></i>
-          </div>
-          <p
-            class="mono"
-            style="
-              font-size: clamp(10px, 1vw, 13px);
-              letter-spacing: 0.3em;
-              text-transform: uppercase;
-              color: var(--ink-3);
-              margin-bottom: 22px;
-            "
-          >
-            AI Enablement Engineer · Panel Project
-          </p>
-          <h1 data-split>Dylan Kroll</h1>
-          <p class="lede" style="margin-top: 26px">
-            Introduction, three scenarios, one deep dive, and five questions for
-            you.
-          </p>
-          <div
-            style="
-              display: flex;
-              gap: clamp(20px, 3vw, 48px);
-              flex-wrap: wrap;
-              margin-top: clamp(28px, 3.4vw, 50px);
-              font-family: var(--mono);
-              font-size: 10.5px;
-              letter-spacing: 0.16em;
-              text-transform: uppercase;
-              color: var(--ink-3);
-            "
-          >
-            <div>
-              Prepared for<b
-                style="
-                  display: block;
-                  color: var(--ink);
-                  font-weight: 500;
-                  margin-top: 7px;
-                  letter-spacing: 0.1em;
-                "
-                >#paid</b
-              >
-            </div>
-            <div>
-              Part 1<b
-                style="
-                  display: block;
-                  color: var(--ink);
-                  font-weight: 500;
-                  margin-top: 7px;
-                  letter-spacing: 0.1em;
-                "
-                >3 Scenarios · 20 min</b
-              >
-            </div>
-            <div>
-              Part 2<b
-                style="
-                  display: block;
-                  color: var(--ink);
-                  font-weight: 500;
-                  margin-top: 7px;
-                  letter-spacing: 0.1em;
-                "
-                >Deep Dive · 20 min</b
-              >
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="Who I am" data-p="0">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Introduction</span
-            ><span>90 seconds</span>
-          </div>
-          <h2 data-split>
-            I make AI work land with people who did not ask for it.
-          </h2>
-          <div class="beats">
-            <div class="bt ch-c">
-              <span class="yr">2022—2025</span>
-              <div>
-                <h3>Songfinch · Innovation &amp; Artist Operations</h3>
-                <p>
-                  Artist ops and process improvement through the company's
-                  growth from $4M to $36M. Onboarding, training, documentation,
-                  QA and dashboards for 300+ creators, and batch processing
-                  across 2,000+ audio assets.
-                </p>
-              </div>
-            </div>
-            <div class="bt ch-v">
-              <span class="yr">2025—2026</span>
-              <div>
-                <h3>Creative Circle · AI Audio Workflow Engineer</h3>
-                <p>
-                  Designed an AI-assisted narration pipeline for industrial
-                  e-learning: voice output, audio cleanup, file versioning, QA
-                  review, delivery prep, and the SOPs that let a team run it
-                  without me.
-                </p>
-              </div>
-            </div>
-            <div class="bt ch-a">
-              <span class="yr">2026—now</span>
-              <div>
-                <h3>M. Holland / Ravago · Process Improvement</h3>
-                <p>
-                  Purchasing and logistics workflows. Document ingestion and
-                  parsing out of PDFs, unit-conversion and sanity-check tooling,
-                  and an automation map across email chains, spreadsheets and
-                  comms.
-                </p>
-              </div>
-            </div>
-            <div class="bt ch-r">
-              <span class="yr">2026—now</span>
-              <div>
-                <h3>Upperhand AI · Consulting</h3>
-                <p>
-                  Finding high-value automation opportunities for clients and
-                  turning ambiguous goals into practical pipelines, balancing
-                  technical feasibility, data quality and whether anyone will
-                  actually adopt it.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="verdict">
-            Different industries, same job:
-            <b
-              >find the manual thing that repeats, break it into pieces a
-              machine can do reliably, and make the decomposition survive after
-              I leave.</b
-            >
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="How I work" data-p="0">
-        <div class="inner split">
-          <div>
-            <div class="kicker">
-              <i class="dot"></i><span class="num">Introduction</span
-              ><span>The principle behind all four answers</span>
-            </div>
-            <h2 data-split>Stems, not songs.</h2>
-            <p class="lede" style="margin-top: 20px">
-              At Songfinch we built a product that hands a customer a
-              personalized song in seconds. Not by generating it. By assembling
-              it out of parts real artists recorded. The parts are called
-              <em>stems</em>.
-            </p>
-            <p style="margin-top: 16px">
-              That constraint taught me the thing I bring to every AI problem: a
-              team almost never needs a whole song. They need one piece of the
-              job done reliably, and they need to be able to tell whether it
-              came back right.
-            </p>
-            <p style="margin-top: 14px; color: var(--ink-3)">
-              I use this lens on all three scenarios. In Part 2 I will show you
-              exactly where it came from, and what it cost us.
-            </p>
-          </div>
-          <div>
-            <div class="card ch-c" style="margin-bottom: 12px">
-              <span class="lbl">01</span>
-              <h3>Decompose before you automate</h3>
-              <p style="margin-top: 8px">
-                Find the smallest unit of the job that stands on its own and
-                repeats.
-              </p>
-            </div>
-            <div class="card ch-v" style="margin-bottom: 12px">
-              <span class="lbl">02</span>
-              <h3>Ship what is checkable</h3>
-              <p style="margin-top: 8px">
-                If they cannot tell right from wrong at a glance, reviewing
-                costs more than doing and they will quietly stop.
-              </p>
-            </div>
-            <div class="card ch-a">
-              <span class="lbl">03</span>
-              <h3>Count it before you scale it</h3>
-              <p style="margin-top: 8px">
-                A baseline agreed up front is what turns a launch into a
-                decision instead of an argument.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══════ PART 1 — SCENARIOS (20 min) ═══════ -->
-
-      <section class="slide pdiv" data-t="Part 1 — Scenarios" data-p="1">
-        <div class="inner">
-          <div class="eyebrow">Part 1 of 2 · 20 minutes</div>
-          <h1 data-split style="font-size: clamp(38px, 6.4vw, 98px)">
-            Three scenarios.
-          </h1>
-          <div class="qlist">
-            <div class="ch-c">
-              <div class="n">Scenario 01</div>
-              <p>
-                A VP says: "Claude isn't helping my team." How do you respond?
-              </p>
-            </div>
-            <div class="ch-v">
-              <div class="n">Scenario 02</div>
-              <p>
-                Three requests, one sprint. Walk us through your prioritization.
-              </p>
-            </div>
-            <div class="ch-a">
-              <div class="n">Scenario 03</div>
-              <p>
-                You built an AI workflow. People tried it once and no one uses
-                it anymore. What do you do?
-              </p>
-            </div>
-          </div>
-          <p class="lede" style="margin-top: clamp(20px, 2.6vw, 36px)">
-            In order. Each one gets the same three beats:
-            <strong>what I ask</strong>, <strong>what I do</strong>,
-            <strong>what I measure</strong>.
-          </p>
-        </div>
-      </section>
-
-      <section class="slide" data-t="S1 · The question" data-p="1">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Scenario 01</span
-            ><span>Beat 1 · What I ask</span>
-          </div>
-          <div class="qbox ch-c">
-            <span class="qt">The question</span>
-            <p>
-              A VP says: "Claude isn't helping my team." How do you respond?
-            </p>
-            <p class="sub">
-              Looking for:
-              <b
-                >discovery questions · diagnosing workflow problems ·
-                identifying measurable outcomes</b
-              >
-            </p>
-          </div>
-          <div class="split">
-            <div>
-              <h2 data-split style="font-size: clamp(23px, 3.1vw, 42px)">
-                I do not defend the tool and I do not offer training.
-              </h2>
-              <p style="margin-top: 16px">
-                Both are the same mistake: treating a symptom as the problem.
-                Training assumes the team is the broken part, and the team is
-                almost never the broken part.
-              </p>
-            </div>
-            <div>
-              <p class="lede">
-                A VP saying this out loud is handing me a free diagnostic.
-                Somebody had a specific bad experience on a specific day, and
-                the entire answer is downstream of finding out what it was.
-              </p>
-              <p style="margin-top: 14px; color: var(--ink-3)">
-                So I stop talking about Claude and start asking about the work.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="S1 · Five discovery questions" data-p="1">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Scenario 01</span
-            ><span>Beat 1 · The five questions I actually ask</span>
-          </div>
-          <h2 data-split>Five questions, in this order.</h2>
-          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 26px)">
-            <ol class="ch-c">
-              <li>
-                <strong
-                  >"Walk me through the last time someone tried and it didn't
-                  work."</strong
-                ><br />A specific incident beats a general complaint. General
-                complaints contain no failure point.
-              </li>
-              <li>
-                <strong>"What did they expect to get back?"</strong><br />This
-                is where I find out whether they asked for a whole song.
-              </li>
-              <li>
-                <strong>"What do they do on the days they don't use it?"</strong
-                ><br />That is the real workflow, and it is the baseline I will
-                measure against later.
-              </li>
-            </ol>
-            <ol class="ch-a" style="counter-reset: n 3">
-              <li>
-                <strong
-                  >"Which part of this would you not trust a machine
-                  with?"</strong
-                ><br />Finds the trust boundary. Human review belongs exactly
-                there and nowhere else.
-              </li>
-              <li>
-                <strong
-                  >"If this worked perfectly, what would your team stop
-                  doing?"</strong
-                ><br />The measurable outcome, in the VP's words and the VP's
-                numbers. Not mine.
-              </li>
-            </ol>
-          </div>
-          <div class="verdict">
-            Question five is the one that matters.
-            <b
-              >If we cannot finish that sentence together on the call, we are
-              not ready to build anything</b
-            >, and I would rather say so than ship something neither of us can
-            evaluate.
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="S1 · Diagnosis and outcome" data-p="1">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Scenario 01</span
-            ><span>Beats 2 and 3 · What I do · What I measure</span>
-          </div>
-          <h2 data-split>It is almost always one of four.</h2>
-          <div class="diag">
-            <div class="dg ch-c">
-              <span class="dn">01</span>
-              <div>
-                <h3>Wrong altitude</h3>
-                <p>
-                  The ask is a whole song. Nobody can verify a whole song, so
-                  nobody trusts the output.
-                </p>
-              </div>
-            </div>
-            <div class="dg ch-v">
-              <span class="dn">02</span>
-              <div>
-                <h3>No context</h3>
-                <p>
-                  The model has never seen the brand book, the past campaigns,
-                  or the account history. It is guessing, competently.
-                </p>
-              </div>
-            </div>
-            <div class="dg ch-a">
-              <span class="dn">03</span>
-              <div>
-                <h3>No verdict</h3>
-                <p>
-                  Output arrives with no way to tell good from bad, so checking
-                  costs more than doing.
-                </p>
-              </div>
-            </div>
-            <div class="dg ch-r">
-              <span class="dn">04</span>
-              <div>
-                <h3>Wrong seat</h3>
-                <p>
-                  The person holding the tool is not the person who feels the
-                  pain.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 24px)">
-            <div class="card ch-c">
-              <span class="lbl">What I do</span>
-              <h3>One task, decomposed, shipped by Friday.</h3>
-              <p style="margin-top: 8px">
-                I take the most repetitive job on that team, break it up, and
-                hand back the two most boring and most checkable pieces, inside
-                the tool they already have open. Not a training session. A
-                shipped stem.
-              </p>
-            </div>
-            <div class="card ch-a">
-              <span class="lbl">What I measure</span>
-              <h3>The baseline, taken before I build.</h3>
-              <p style="margin-top: 8px">
-                Time per unit, units per week, rework rate, agreed on that first
-                call and re-measured after. Scored against their answer to
-                question five, so the result belongs to them instead of being a
-                claim of mine.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        class="slide"
-        data-t="S2 · The question and the matrix"
-        data-p="1"
-      >
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Scenario 02</span
-            ><span>Business impact · Adoption · Strategic alignment · ROI</span>
-          </div>
-          <div class="qbox ch-v">
-            <span class="qt">The question</span>
-            <p>
-              Three requests, one sprint. Walk us through your prioritization.
-              Sales wants proposal automation. Customer Success wants an
-              onboarding assistant. Finance wants invoice categorization.
-            </p>
-          </div>
-          <div class="modes">
-            <button class="mode on" data-m="value">
-              Rank by business value
-            </button>
-            <button class="mode" data-m="eviq">Rank by time to evidence</button>
-          </div>
-          <div class="rows" id="rows"></div>
-          <div class="verdict" id="pv"></div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="S2 · Sequencing" data-p="1">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Scenario 02 · cont</span
-            ><span>What the other two get</span>
-          </div>
-          <h2 data-split>Sequencing is the skill. Ranking is not.</h2>
-          <p class="lede" style="margin-top: 16px">
-            Nobody gets a no. A silent "later" is how this role loses the room
-            in its first quarter.
-          </p>
-          <div class="cols c3">
-            <div class="card ch-a">
-              <span class="lbl">Finance · this sprint</span>
-              <h3>Invoice categorization ships.</h3>
-              <p style="margin-top: 9px">
-                Objectively checkable against a ledger. Zero adoption
-                resistance, because nobody defends their invoice-coding turf.
-                One sprint to a number that survives a finance review, and that
-                number funds everything after it.
-              </p>
-            </div>
-            <div class="card ch-c">
-              <span class="lbl">Sales · one day of this sprint</span>
-              <h3>Instrumented, not built.</h3>
-              <p style="margin-top: 9px">
-                I spend a day measuring where proposal time actually goes. The
-                highest-value request deserves the best-prepared build, and next
-                sprint it gets built against a baseline instead of a guess.
-              </p>
-            </div>
-            <div class="card ch-v">
-              <span class="lbl"
-                >Customer Success · next sprint, in writing</span
-              >
-              <h3>A date and the reason.</h3>
-              <p style="margin-top: 9px">
-                High value and high adoption risk, because the CS voice
-                <em>is</em> the product. It needs the organizational trust that
-                sprint one buys.
-              </p>
-            </div>
-          </div>
-          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 24px)">
-            <div>
-              <h3>If the VP of Sales pulls rank</h3>
-              <p style="margin-top: 9px">
-                Real dynamic, and I do not fight it. There is a zero-cost
-                version of proposal automation: the best existing proposal, the
-                brand context, and a shared prompt, out in an afternoon. It is
-                not the build. It is discovery that happens to be useful, and
-                how people use it tells me what the real build should be.
-              </p>
-            </div>
-            <div>
-              <h3>What sprint one is actually buying</h3>
-              <p style="margin-top: 9px">
-                Not ROI. <strong>Evidence.</strong> Shipping the highest-value
-                request first and producing something nobody can verify is the
-                most common way this job stalls out before it starts.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="S3 · The question" data-p="1">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Scenario 03</span
-            ><span>The adoption cliff</span>
-          </div>
-          <div class="qbox ch-a">
-            <span class="qt">The question</span>
-            <p>
-              You built an AI workflow. People tried it once and no one uses it
-              anymore. What do you do?
-            </p>
-          </div>
-          <h2 data-split style="font-size: clamp(23px, 3.2vw, 44px)">
-            They tried it once. That is good news.
-          </h2>
-          <p class="lede" style="margin-top: 14px">
-            Rejection is never trying. One try means the pitch worked and the
-            product didn't, so something specific happened on that first run.
-            There is a failure point and it has a location.
-          </p>
-          <div class="cols c4">
-            <div class="card ch-r">
-              <span class="lbl">Most likely</span>
-              <h3>It broke on a real input</h3>
-              <p style="margin-top: 8px">
-                It worked on the demo case. Theirs had a 40-page PDF or an
-                apostrophe in a client name. Nobody files a bug for an internal
-                tool. They just stop.
-              </p>
-            </div>
-            <div class="card ch-a">
-              <span class="lbl">Very likely</span>
-              <h3>It lives in the wrong place</h3>
-              <p style="margin-top: 8px">
-                I built a tool. Their work happens in Slack, the CRM, a
-                spreadsheet. Every context switch is a tax, and the tax exceeded
-                the saving.
-              </p>
-            </div>
-            <div class="card ch-v">
-              <span class="lbl">Common</span>
-              <h3>Checking cost more than doing</h3>
-              <p style="margin-top: 8px">
-                They cannot tell if the output is right without redoing it, so
-                they redo it.
-              </p>
-            </div>
-            <div class="card ch-c">
-              <span class="lbl">Quietly common</span>
-              <h3>I saved the wrong 20 minutes</h3>
-              <p style="margin-top: 8px">
-                I automated the part that was fun to build, not the part that
-                was slow and hated.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="S3 · What I do about it" data-p="1">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Scenario 03 · cont</span
-            ><span>What I do · What I measure</span>
-          </div>
-          <h2 data-split>Find the failure point, then rebuild smaller.</h2>
-          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 26px)">
-            <div>
-              <h3 style="color: var(--cyan)">How I find out</h3>
-              <ul style="margin-top: 11px">
-                <li>
-                  <strong>Not a survey.</strong> People genuinely cannot tell
-                  you why they stopped. They will say they have been busy, and
-                  they will mean it.
-                </li>
-                <li>
-                  <strong>The logs.</strong> Where did the last session end?
-                  That step is the bug, and it is usually one step.
-                </li>
-                <li>
-                  <strong>Watch three people do it the old way.</strong>
-                  Forty-five minutes total, and I will see the workaround they
-                  built instead of telling me about it.
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 style="color: var(--amber)">Then I rebuild smaller</h3>
-              <ul style="margin-top: 11px">
-                <li>
-                  One piece of the job, inside the surface they already have
-                  open, with the verification built into the output.
-                </li>
-                <li>
-                  Three people, not thirty. Adoption is earned per person before
-                  it is announced.
-                </li>
-                <li>
-                  And I say the true sentence out loud:
-                  <em>I built the wrong thing, here is the smaller thing.</em>
-                  That buys more credibility than a working v1 does.
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="verdict">
-            <b>What I measure, and the real fix:</b> this should never have been
-            an archaeological dig. Instrumented on day one, "tried once and
-            stopped" is a number on a dashboard the week it happens instead of a
-            mystery I solve two months later. That is the thread I want to pick
-            back up at the end.
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══════ PART 2 — DEEP DIVE (20 min) ═══════ -->
-
-      <section class="slide pdiv" data-t="Part 2 — Deep Dive" data-p="2">
-        <div class="photo">
-          <img
-            src="img/booth.jpg"
-            alt="A singer recording vocals in a studio booth"
-          />
-        </div>
-        <div class="inner">
-          <div class="eyebrow">
-            Part 2 of 2 · 20 minutes · Songfinch, 2022—2025
-          </div>
-          <h1 data-split style="font-size: clamp(38px, 6.6vw, 102px)">
-            Instant Song.
-          </h1>
-          <p class="lede" style="margin-top: 24px; max-width: 52ch">
-            We took a product that took a week and made it take seconds, without
-            generating a single note. Here is the whole story, including the
-            part that went wrong.
-          </p>
-        </div>
-        <div class="credit">Photo · cottonbro studio</div>
-      </section>
-
-      <section class="slide" data-t="The wall" data-p="2">
-        <div class="inner split">
-          <div>
-            <div class="kicker">
-              <i class="dot"></i><span class="num">Deep dive · 01</span
-              ><span>The problem</span>
-            </div>
-            <h2 data-split>
-              The funnel had a wall, and the obvious fix was the wrong one.
-            </h2>
-            <p style="margin-top: 18px">
-              Songfinch sold one thing: an original song written for you by a
-              real artist. Around $200, about a week to deliver. It converted
-              under two percent. Most people who wanted a song could not accept
-              the price or the wait.
-            </p>
-            <p style="margin-top: 14px">
-              The obvious answer in 2023 was to generate the songs. We did not,
-              and I would make that call the same way again.
-            </p>
-          </div>
-          <div>
-            <div class="card ch-r">
-              <span class="lbl">Why generation was a non-starter</span>
-              <ul style="margin-top: 11px">
-                <li>
-                  <strong>It kills the promise.</strong> The entire product is
-                  "a real artist wrote this for you." No version of that
-                  sentence survives.
-                </li>
-                <li>
-                  <strong>The artists walk.</strong> A supply network of
-                  hundreds of musicians was the actual asset. Announcing a
-                  generator burns it in a week.
-                </li>
-                <li>
-                  <strong>Nobody could sign off on the rights.</strong> In 2023,
-                  and honestly still.
-                </li>
-              </ul>
-            </div>
-            <div class="card ch-c" style="margin-top: 12px">
-              <span class="lbl">The reframe</span>
-              <h3>
-                The song did not need to be written on demand. It needed to be
-                assembled on demand.
-              </h3>
-              <p style="margin-top: 9px">
-                That turned an unsolvable AI problem into a solvable operations
-                problem. The reframe is most of the job.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="The mechanic, live" data-p="2">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Deep dive · 02</span
-            ><span>How it works · click any answer</span>
-          </div>
-          <h2
-            data-split
-            style="max-width: 32ch; font-size: clamp(22px, 2.9vw, 40px)"
-          >
-            Four questions. Seconds. Nothing generated.
-          </h2>
-          <div class="asm">
-            <div class="qs" id="qs"></div>
-            <div>
-              <div class="lyr">
-                <div class="hd">
-                  <span>Assembled output</span><span id="combo"></span>
-                </div>
-                <div id="out"></div>
-                <div class="legend">
-                  <span
-                    ><i style="background: var(--ink-2)"></i>Static · recorded
-                    once</span
-                  >
-                  <span
-                    ><i style="background: var(--cyan)"></i>Stem · selected at
-                    runtime</span
-                  >
-                </div>
-              </div>
-              <p style="margin-top: 14px">
-                The catalogue is finite and a person sang every piece of it.
-                Nothing is created at request time, which is exactly why it is
-                fast, cheap, on-brand, and legally clean.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="What I actually built" data-p="2">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Deep dive · 03</span
-            ><span>My part of it</span>
-          </div>
-          <h2 data-split>
-            The hard problem was never the audio. It was getting 300 musicians
-            to produce machine-readable output.
-          </h2>
-          <div class="cols c3" style="margin-top: clamp(16px, 2vw, 28px)">
-            <div class="card ch-c">
-              <span class="lbl">01 · The protocol</span>
-              <h3>A recording spec artists would actually follow</h3>
-              <p style="margin-top: 8px">
-                Step-by-step instructions, session templates for Logic Pro X and
-                Pro Tools with a track per required region, a test-track gate
-                before anyone recorded a full set, and a review loop with named
-                turnaround times. Musicians will not read a schema. They will
-                follow a session template.
-              </p>
-            </div>
-            <div class="card ch-v">
-              <span class="lbl">02 · The filename is the API</span>
-              <h3>Structure encoded where it cannot get lost</h3>
-              <p
-                class="mono"
-                style="
-                  margin-top: 8px;
-                  font-size: clamp(10px, 0.92vw, 12px);
-                  color: var(--violet);
-                "
-              >
-                10.1.1.1_V1.S1.L1_DATINGAPP
-              </p>
-              <p style="margin-top: 7px">
-                Bar.beat.division.tick, then song section, stanza and line, then
-                the answer the stem satisfies. Every file self-describes its
-                position and which customer answer it belongs to. Get this wrong
-                and the system is manual forever, at any scale.
-              </p>
-            </div>
-            <div class="card ch-a">
-              <span class="lbl">03 · The economics</span>
-              <h3>A model artists opted into</h3>
-              <p style="margin-top: 8px">
-                A guarantee on approved delivery, then a per-song royalty
-                against recoupment. It made the ask legible: this is more work
-                than a normal song, here is what it pays, here is the upside if
-                it works. Supply-side adoption is a compensation design problem,
-                not a communication problem.
-              </p>
-            </div>
-          </div>
-          <div class="verdict">
-            Under all of it, the unglamorous middle: batch processing across
-            <b>2,000+ audio assets</b> with FFmpeg pipelines for cleanup and
-            versioning, naming enforcement, QA passes and delivery prep. If the
-            batch layer is not automated, the clever layer above it never gets
-            used, because somebody is always three days behind on files.
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="Saying the name" data-p="2">
-        <div class="inner split">
-          <div>
-            <div class="kicker">
-              <i class="dot"></i><span class="num">Deep dive · 04</span
-              ><span>Where it stopped being a trick</span>
-            </div>
-            <h2 data-split>
-              Swapping a line is a trick. Saying your name is the moment.
-            </h2>
-            <p style="margin-top: 18px">
-              Customers reacted to hearing the name, not to the personalized
-              lyric. So we built a name dictionary using Synthesizer V, mapped
-              each song's blueprint down to the syllable so we knew exactly
-              which phrase was being replaced and how many syllables it had to
-              absorb, and captured vocal model templates carrying each artist's
-              vowel, consonant and performance data.
-            </p>
-            <p style="margin-top: 14px">
-              The same line, tracked roughly sixteen times, to cover the range
-              of cadence and phrasing a name has to survive.
-            </p>
-          </div>
-          <div class="card ch-v">
-            <span class="lbl">Why this is the enablement lesson</span>
-            <h3>The artists had to believe it before any of it worked.</h3>
-            <p style="margin-top: 10px">
-              We were asking musicians to hand over vocal data in the middle of
-              the loudest year of AI panic the industry has had. If that
-              conversation goes badly there is no product, no matter how good
-              the pipeline is.
-            </p>
-            <p style="margin-top: 12px">
-              What worked was being specific: exactly what we were capturing,
-              exactly what it would and would not be used for, and pay attached
-              to it.
-              <strong
-                >Adoption is a trust problem wearing a technical
-                costume.</strong
-              >
-              That is the part of this job that never shows up in the diagram.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="The number that decided it" data-p="2">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Deep dive · 05</span
-            ><span>What happened</span>
-          </div>
-          <div class="hero-num">
-            <div class="hn">7.65<small>%</small></div>
-            <div class="hn-side">
-              <p class="hn-lbl">Instant Song conversion, launch window</p>
-              <p class="hn-vs">
-                against <b>under 2%</b> on the Original Song sitting right
-                beside it. Same site, same traffic, same weeks.
-              </p>
-            </div>
-          </div>
-          <div class="verdict">
-            256 units in the first days is a small number and I want to be
-            honest that it is small.
-            <b>The ratio is what made it a green light, not the volume.</b>
-            Roughly four times the conversion of the product next to it, against
-            a baseline we had years of history on, in a comparison we designed
-            before launch so the launch produced a decision instead of a debate.
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="Then two years happened" data-p="2">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Deep dive · 06</span
-            ><span>What it became</span>
-          </div>
-          <h2 data-split>Launch week told us. Two years proved it.</h2>
-          <div class="cols c3" style="margin-top: clamp(18px, 2.4vw, 36px)">
-            <div class="stat ch-a">
-              <div class="n">150k<small>+</small></div>
-              <div class="cap">
-                Instant Songs sold<br />in the two years after
-              </div>
-            </div>
-            <div class="stat ch-c">
-              <div class="n">2,000<small>+</small></div>
-              <div class="cap">Audio assets<br />batch-processed</div>
-            </div>
-            <div class="stat ch-v">
-              <div class="n">300<small>+</small></div>
-              <div class="cap">Creators onboarded<br />into the system</div>
-            </div>
-          </div>
-          <div class="verdict">
-            A clean comparison you set up in advance is worth more than a big
-            number you have to explain afterwards.
-            <b>That is the entire argument for instrumenting first</b>, and it
-            is what I would bring here on day one.
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="What broke" data-p="2">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Deep dive · 07</span
-            ><span>The honest part</span>
-          </div>
-          <h2 data-split>
-            The assembly worked on day one. The instrumentation did not.
-          </h2>
-          <div class="cols c2" style="margin-top: clamp(14px, 1.8vw, 26px)">
-            <div>
-              <p
-                class="mono"
-                style="
-                  font-size: 10px;
-                  letter-spacing: 0.2em;
-                  text-transform: uppercase;
-                  color: var(--ink-3);
-                  margin-bottom: 12px;
-                "
-              >
-                From our own post-launch review
-              </p>
-              <ul>
-                <li>
-                  <strong>103 support tickets</strong> from customers who had
-                  already paid and then hit a problem.
-                </li>
-                <li>
-                  <strong>Previews would not load.</strong> Spinning wheels and
-                  error messages at the exact moment of highest intent.
-                </li>
-                <li>
-                  <strong
-                    >Two systems disagreed on how many songs we had
-                    sold.</strong
-                  >
-                  Analytics said one number, admin said another.
-                </li>
-                <li>
-                  <strong>Duplicate charges and stuck orders</strong> that never
-                  appeared in the system while the charge sat in the payment
-                  processor.
-                </li>
-                <li>
-                  <strong
-                    >The relationship categories did not fit real
-                    people.</strong
-                  >
-                  We shipped romantic first and everyone else bounced off the
-                  form.
-                </li>
-              </ul>
-            </div>
-            <div>
-              <div class="card ch-r">
-                <span class="lbl">The one that actually mattered</span>
-                <h3>
-                  A working product you cannot count is a product you cannot
-                  fund, prioritize, or defend.
-                </h3>
-                <p style="margin-top: 9px">
-                  The sales discrepancy was worse than any audio problem. We
-                  spent the weeks after a genuinely successful launch doing
-                  reconciliation instead of iteration, because the counting was
-                  built after the thing instead of into it.
-                </p>
-              </div>
-              <div class="card ch-c" style="margin-top: 12px">
-                <span class="lbl">What I would do differently</span>
-                <h3>Instrument on day zero.</h3>
-                <p style="margin-top: 9px">
-                  Every one of those failures was findable in a log on day one.
-                  Nobody was looking at a dashboard, because there wasn't one.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="What transfers to #paid" data-p="2">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Deep dive · 08</span
-            ><span>Why I picked this story</span>
-          </div>
-          <h2 data-split>You cannot enable what you cannot count.</h2>
-          <p class="lede" style="margin-top: 14px">
-            Scenario 3 and the thing that went wrong at Songfinch are the same
-            problem. Here is how I would make sure neither happens here.
-          </p>
-          <div class="tl">
-            <div class="ch-c">
-              <div class="d">Days 01 — 30 · Instrument</div>
-              <h3>Find out what is actually happening.</h3>
-              <p style="margin-top: 9px">
-                Usage reporting against the Claude Enterprise analytics API. Not
-                seat counts: which teams, which recurring jobs, which sessions
-                start and never finish. Then sit with three teams and take
-                baselines by hand, because the API tells me what people
-                <em>did</em> and only a person tells me what it
-                <em>cost them</em>.
-              </p>
-            </div>
-            <div class="ch-v">
-              <div class="d">Days 31 — 60 · Ship one stem</div>
-              <h3>One team, one job, one verifiable unit.</h3>
-              <p style="margin-top: 9px">
-                Pick the highest-frequency, most-checkable job in the data.
-                Decompose it. Ship it into the surface that team already lives
-                in. Three users first, then the team, with a measured before and
-                after published either way.
-              </p>
-            </div>
-            <div class="ch-a">
-              <div class="d">Days 61 — 90 · Make it visible</div>
-              <h3>Adoption becomes a number leadership sees weekly.</h3>
-              <p style="margin-top: 9px">
-                Which flows get used, cost per outcome rather than per seat,
-                where sessions get abandoned, and hours returned. Hours returned
-                is a <em>modeled</em> number and the assumption ships visible on
-                the chart, because an enablement lead who hides that gets caught
-                in the first finance review.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══════ Q&A ═══════ -->
-
-      <section class="slide" data-t="One more thing" data-p="3">
-        <div class="inner split">
-          <div>
-            <div class="kicker">
-              <i class="dot"></i><span class="num">One more thing</span
-              ><span>About this deck</span>
-            </div>
-            <h2 data-split>The brief said two hours.</h2>
-            <p class="lede" style="margin-top: 18px">
-              So the most relevant thing about this deck is how it was made, not
-              how it looks.
-            </p>
-            <p style="margin-top: 14px">
-              One HTML file. Three.js and GSAP served from the deck itself, so
-              it does not need the internet in this room. Built with Claude
-              Code, deployed to Vercel.
-            </p>
-            <p style="margin-top: 14px">
-              I am not showing you this because it is nice to look at.
-              <strong
-                >This is what a couple of hours looks like when the work is
-                decomposed properly</strong
-              >, and closing that gap for other people is the job you are hiring
-              for.
-            </p>
-          </div>
-          <div class="card ch-c">
-            <span class="lbl">The workflow, as stems</span>
-            <ol class="ch-c" style="margin-top: 11px">
-              <li>
-                <strong>Brief in, structure out.</strong> The panel brief says
-                exactly what is being scored, so it became the outline before a
-                word was written.
-              </li>
-              <li>
-                <strong>Source material parsed, not retyped.</strong> Old decks
-                and reports pulled apart programmatically.
-              </li>
-              <li>
-                <strong>Argument first, pixels second.</strong> The scenario
-                answers were drafted and attacked before any design existed.
-              </li>
-              <li><strong>Assembly.</strong> One file, one deploy.</li>
-            </ol>
-            <p style="margin-top: 12px; color: var(--ink-3)">
-              Same shape as Instant Song. Decompose, make each piece checkable
-              on its own, assemble at the end.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide" data-t="Questions for you" data-p="3">
-        <div class="inner">
-          <div class="kicker">
-            <i class="dot"></i><span class="num">Panel Q&amp;A</span
-            ><span>The brief says this is also my chance to ask</span>
-          </div>
-          <h2 data-split>Five things I want to know.</h2>
-          <div class="cols c2" style="margin-top: clamp(16px, 2vw, 30px)">
-            <div>
-              <ol class="ch-c">
-                <li>
-                  <strong
-                    >When a team says an AI tool is not working, who hears it
-                    first today, and what happens next?</strong
-                  >
-                  I want to know whether there is a path or whether it dies in a
-                  Slack thread.
-                </li>
-                <li>
-                  <strong
-                    >What is the honest answer to "how many people at #paid used
-                    Claude last week"?</strong
-                  >
-                  If it is a guess, that tells me what month one looks like.
-                </li>
-                <li>
-                  <strong
-                    >#paid publishes AI principles. Where has that actually
-                    constrained a build somebody wanted?</strong
-                  >
-                  Principles that have never cost anything are marketing. I
-                  would like to hear about the time it cost something.
-                </li>
-              </ol>
-            </div>
-            <div>
-              <ol class="ch-a" style="counter-reset: n 3">
-                <li>
-                  <strong
-                    >Is this seat measured on adoption, on hours returned, or on
-                    workflows shipped?</strong
-                  >
-                  Those are three different jobs and I would rather know which
-                  one I am doing.
-                </li>
-                <li>
-                  <strong
-                    >What is the workflow everyone here has quietly given up on
-                    automating?</strong
-                  >
-                  That is usually the most interesting problem in the building,
-                  and it is usually a decomposition problem.
-                </li>
-              </ol>
-              <div class="verdict" style="margin-top: 20px">
-                Thank you. <b>Dylan Kroll</b> · dylankroll@ymail.com ·
-                linkedin.com/in/dylanjkroll
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<section class="slide" data-t="Cover" data-p="0">
+  <div class="inner">
+    <div style="display:flex;gap:4px;margin-bottom:28px">
+      <i style="background:var(--cyan);height:3px;width:44px;display:block"></i>
+      <i style="background:var(--violet);height:3px;width:44px;display:block"></i>
+      <i style="background:var(--amber);height:3px;width:44px;display:block"></i>
+      <i style="background:var(--rose);height:3px;width:44px;display:block"></i>
     </div>
+    <p class="mono" style="font-size:clamp(10px,1vw,13px);letter-spacing:.3em;text-transform:uppercase;color:var(--ink-3);margin-bottom:22px">AI Enablement Engineer · Panel Project · Dylan Kroll</p>
+    <h1 data-split>The model isn't<br>the bottleneck.</h1>
+    <p class="lede" style="margin-top:26px">It is almost always context, verification, or adoption. Three scenarios and one build that taught me the difference.</p>
+    <div style="display:flex;gap:clamp(20px,3vw,48px);flex-wrap:wrap;margin-top:clamp(28px,3.4vw,50px);font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)">
+      <div>Prepared for<b style="display:block;color:var(--ink);font-weight:500;margin-top:7px;letter-spacing:.1em">#paid</b></div>
+      <div>Part 1<b style="display:block;color:var(--ink);font-weight:500;margin-top:7px;letter-spacing:.1em">3 Scenarios · 20 min</b></div>
+      <div>Part 2<b style="display:block;color:var(--ink);font-weight:500;margin-top:7px;letter-spacing:.1em">Deep Dive · 20 min</b></div>
+    </div>
+  </div>
+</section>
 
-    <div id="rail">
-      <span id="idx">01</span>
-      <div id="ticks"></div>
-      <span id="ttl"></span>
+<section class="slide" data-t="Who I am" data-p="0">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Introduction</span><span>90 seconds</span></div>
+    <h2 data-split>I make AI work land with people who did not ask for it.</h2>
+    <div class="beats">
+      <div class="bt ch-c"><span class="yr">2022—2025</span><div><h3>Songfinch · Innovation &amp; Artist Operations</h3><p>Artist ops and process improvement through the company's growth from $4M to $36M. Onboarding, training, documentation, QA and dashboards for 300+ creators, and batch processing across 2,000+ audio assets. A two-sided marketplace: artists on one side, customers on the other.</p></div></div>
+      <div class="bt ch-v"><span class="yr">2025—2026</span><div><h3>Creative Circle · AI Audio Workflow Engineer</h3><p>Designed an AI-assisted narration pipeline for industrial e-learning: voice output, audio cleanup, file versioning, QA review, delivery prep, and the SOPs that let a team run it without me.</p></div></div>
+      <div class="bt ch-a"><span class="yr">2026—now</span><div><h3>M. Holland / Ravago · Process Improvement</h3><p>Purchasing and logistics workflows. Document ingestion and parsing out of PDFs, unit-conversion and sanity-check tooling, and an automation map across email chains, spreadsheets and comms.</p></div></div>
+      <div class="bt ch-r"><span class="yr">2026—now</span><div><h3>Upperhand AI · Consulting</h3><p>Finding high-value automation opportunities for clients and turning ambiguous goals into practical pipelines, balancing technical feasibility, data quality and whether anyone will actually adopt it.</p></div></div>
     </div>
-    <div id="help">
-      <kbd>←</kbd><kbd>→</kbd> navigate <kbd>esc</kbd> overview
-      <kbd>?</kbd> hide
-    </div>
-    <div id="ov">
-      <div class="kicker">
-        <i class="dot"></i><span>Overview · click to jump</span>
+    <div class="verdict">Different industries, same job: <b>find the manual thing that repeats, break it into pieces a machine can do reliably, and make it survive after I leave.</b> I have spent three of the last four years inside a two-sided marketplace, which is the part of this that transfers most directly.</div>
+  </div>
+</section>
+
+<section class="slide" data-t="The thesis" data-p="0">
+  <div class="inner split">
+    <div>
+      <div class="kicker"><i class="dot"></i><span class="num">Introduction</span><span>The claim behind all four answers</span></div>
+      <h2 data-split>Nobody at #paid is blocked by the model.</h2>
+      <p class="lede" style="margin-top:20px">Every AI rollout I have seen fail, failed for one of three reasons, and none of them was capability.</p>
+      <div class="cols c1" style="margin-top:18px;gap:11px">
+        <div class="card ch-c"><span class="lbl">01 · Context</span><h3>The model has never seen your data.</h3><p style="margin-top:7px">#paid has authenticated creator audience data, 150+ creator categories, a benchmark panel of 30,000+ respondents, and a library of brand studies going back years. A general model has seen none of it, so it returns category-level marketing prose.</p></div>
+        <div class="card ch-v"><span class="lbl">02 · Verification</span><h3>They cannot tell if it came back right.</h3><p style="margin-top:7px">If checking the output costs more than doing the work, people quietly stop. Every time.</p></div>
+        <div class="card ch-a"><span class="lbl">03 · Adoption</span><h3>It lives somewhere they don't.</h3><p style="margin-top:7px">A tool outside the workflow is a tax, and the tax usually exceeds the saving.</p></div>
       </div>
-      <div id="ovg"></div>
     </div>
+    <div>
+      <div class="card ch-r"><span class="lbl">Why this matters more here than most places</span>
+        <h3>Your advantage is data that no model has seen.</h3>
+        <p style="margin-top:10px">Any competitor can buy the same model. What none of them have is which creator categories actually moved purchase intent for a QSR brand in-market, or which of your past campaigns is the right proof for the prospect on the phone right now.</p>
+        <p style="margin-top:12px">That gap is the entire job. <strong>The work is not teaching people to prompt. It is connecting the model to the things you already know.</strong></p>
+      </div>
+      <p style="margin-top:16px;color:var(--ink-3)">I will use this on all three scenarios. In Part 2 I will show you the build where I learned it, and the part of it that went wrong.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PART 1 — SCENARIOS (20 min) ═══ -->
+
+<section class="slide pdiv" data-t="Part 1 — Scenarios" data-p="1">
+  <div class="inner">
+    <div class="eyebrow">Part 1 of 2 · 20 minutes</div>
+    <h1 data-split style="font-size:clamp(38px,6.4vw,98px)">Three scenarios.</h1>
+    <div class="qlist">
+      <div class="ch-c"><div class="n">Scenario 01</div><p>A VP says: "Claude isn't helping my team." How do you respond?</p></div>
+      <div class="ch-v"><div class="n">Scenario 02</div><p>Three requests, one sprint. Walk us through your prioritization.</p></div>
+      <div class="ch-a"><div class="n">Scenario 03</div><p>You built an AI workflow. People tried it once and no one uses it anymore. What do you do?</p></div>
+    </div>
+    <p class="lede" style="margin-top:clamp(20px,2.6vw,36px)">In order. Each one gets the same three beats: <strong>what I ask</strong>, <strong>what I do</strong>, <strong>what I measure</strong>. I have answered them for your business rather than in the abstract, so some of my assumptions will be wrong and I would rather you correct them.</p>
+  </div>
+</section>
+
+<section class="slide" data-t="S1 · The question" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 01</span><span>Beat 1 · What I ask</span></div>
+    <div class="qbox ch-c"><span class="qt">The question</span>
+      <p>A VP says: "Claude isn't helping my team." How do you respond?</p>
+      <p class="sub">Looking for: <b>discovery questions · diagnosing workflow problems · identifying measurable outcomes</b> &nbsp;·&nbsp; I am going to assume this is the VP of Sales.</p>
+    </div>
+    <div class="split">
+      <div>
+        <h2 data-split style="font-size:clamp(23px,3.1vw,42px)">I do not defend the tool and I do not offer training.</h2>
+        <p style="margin-top:16px">Both are the same mistake: treating a symptom as the problem. Training assumes the team is the broken part, and the team is almost never the broken part.</p>
+      </div>
+      <div>
+        <p class="lede">A VP saying this out loud is handing me a free diagnostic. Somebody on that team had a specific bad experience on a specific day, and the whole answer is downstream of finding out what it was.</p>
+        <p style="margin-top:14px;color:var(--ink-3)">So I stop talking about Claude and start asking about how a rep actually builds a pitch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="S1 · Five discovery questions" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 01</span><span>Beat 1 · The five questions I actually ask</span></div>
+    <h2 data-split>Five questions, in this order.</h2>
+    <div class="cols c2" style="margin-top:clamp(14px,1.8vw,26px)">
+      <ol class="ch-c">
+        <li><strong>"Walk me through the last time a rep tried and it didn't work."</strong><br>A specific incident beats a general complaint. General complaints contain no failure point.</li>
+        <li><strong>"What did they expect to get back?"</strong><br>Nine times out of ten the ask was "write the pitch," which is the whole job, not a piece of it.</li>
+        <li><strong>"What does a rep do on the days they don't use it?"</strong><br>That is the real workflow, and it is the baseline I will measure against later.</li>
+      </ol>
+      <ol class="ch-a" style="counter-reset:n 3">
+        <li><strong>"Which part of a pitch would you not let a machine touch?"</strong><br>Finds the trust boundary. At #paid I would expect that to be anything a brand could hold you to.</li>
+        <li><strong>"If this worked perfectly, what would your reps stop doing?"</strong><br>The measurable outcome, in the VP's words and the VP's numbers. Not mine.</li>
+      </ol>
+    </div>
+    <div class="verdict">Question five is the one that matters. <b>If we cannot finish that sentence together on the call, we are not ready to build anything</b>, and I would rather say so than ship something neither of us can evaluate.</div>
+  </div>
+</section>
+
+<section class="slide" data-t="S1 · What I would expect to find" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 01</span><span>Beat 2 · The diagnosis, demonstrated</span></div>
+    <h2 data-split style="font-size:clamp(22px,2.9vw,40px)">Same model. Same prompt. The only variable is context.</h2>
+    <div class="demo">
+      <div class="demo-l">
+        <p class="dm-lbl">A rep asks for</p>
+        <p class="dm-prompt">"Draft the pitch for a QSR brand that wants summer foot traffic in Canada."</p>
+        <div class="modes" style="margin-top:18px;margin-bottom:0">
+          <button class="mode on" data-d="cold">Claude, cold</button>
+          <button class="mode" data-d="wired">Wired to #paid's data</button>
+        </div>
+        <div id="dnote" class="dm-note"></div>
+      </div>
+      <div class="demo-r"><div class="dm-head"><span>Output</span><span id="dtag"></span></div><div id="dout"></div></div>
+    </div>
+    <p style="margin-top:12px;color:var(--ink-3);font-size:clamp(11px,.92vw,13px)">Case-study figures shown are from #paid's public site. The point is not the numbers. It is that they exist, they are yours, and the model cannot see them.</p>
+  </div>
+</section>
+
+<section class="slide" data-t="S1 · Diagnosis and outcome" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 01</span><span>Beats 2 and 3 · What I do · What I measure</span></div>
+    <h2 data-split>It is almost always one of four.</h2>
+    <div class="diag">
+      <div class="dg ch-c"><span class="dn">01</span><div><h3>Wrong altitude</h3><p>The ask was "write the pitch." Nobody can verify a whole pitch at a glance, so nobody trusts it.</p></div></div>
+      <div class="dg ch-v"><span class="dn">02</span><div><h3>No context</h3><p>The model has never seen your brand studies, your creator categories, or your benchmark panel. It is guessing about the one thing you are actually selling.</p></div></div>
+      <div class="dg ch-a"><span class="dn">03</span><div><h3>No verdict</h3><p>Output arrives with no way to tell good from bad, so checking costs more than doing.</p></div></div>
+      <div class="dg ch-r"><span class="dn">04</span><div><h3>Wrong seat</h3><p>The rep holding the tool is not the person who owns the bottleneck. Sometimes it is the strategist.</p></div></div>
+    </div>
+    <div class="cols c2" style="margin-top:clamp(14px,1.8vw,24px)">
+      <div class="card ch-c"><span class="lbl">What I do</span><h3>Not the pitch. The evidence for the pitch.</h3><p style="margin-top:8px">Given a prospect's category, objective and market, return the three closest past campaigns with their real outcomes, plus the creator-category cut that supports the claim. Retrieval and assembly over your own data. Repetitive, high-frequency, and a rep can verify every line in ten seconds. It ships into the tool they already draft in, not a new one.</p></div>
+      <div class="card ch-a"><span class="lbl">What I measure</span><h3>Three numbers, agreed before I build.</h3><p style="margin-top:8px">Hours from qualified prospect to pitch-ready, pitches sent per rep per week, and win rate on pitches that carried a category-matched proof point against those that did not. That last one is the only one that survives a board meeting.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="S2 · The question and the matrix" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 02</span><span>Business impact · Adoption · Strategic alignment · ROI</span></div>
+    <div class="qbox ch-v"><span class="qt">The question</span>
+      <p>Three requests, one sprint. Walk us through your prioritization. Sales wants proposal automation. Customer Success wants an onboarding assistant. Finance wants invoice categorization.</p>
+    </div>
+    <div class="modes">
+      <button class="mode on" data-m="value">Rank by business value</button>
+      <button class="mode" data-m="eviq">Rank by time to evidence</button>
+    </div>
+    <div class="rows" id="rows"></div>
+    <div class="verdict" id="pv"></div>
+  </div>
+</section>
+
+<section class="slide" data-t="S2 · The question I ask first" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 02 · cont</span><span>Before I rank anything</span></div>
+    <h2 data-split>"Onboarding" means two completely different products here.</h2>
+    <div class="cols c2" style="margin-top:clamp(14px,1.8vw,26px)">
+      <div class="card ch-v"><span class="lbl">Brand side</span><h3>Dozens of enterprise accounts, high touch.</h3><p style="margin-top:8px">A strategist is already in the room. The volume is low, the value per account is enormous, and the failure mode of a wrong answer is a damaged relationship with a household-name brand. This is the wrong place to put a v1.</p></div>
+      <div class="card ch-a"><span class="lbl">Creator side</span><h3>Thousands of creators, self-serve.</h3><p style="margin-top:8px">High volume, repetitive, and the same questions over and over. The failure mode is much cheaper and the frequency is far higher. This is a genuinely good candidate, and it is a different build with different economics.</p></div>
+    </div>
+    <div class="verdict">I would not rank three requests when one of them is two requests. <b>In a two-sided marketplace, "our customers" is always an ambiguous phrase</b>, and the version of this I have seen go wrong is a team building for the loud side while the volume sits on the quiet one. Ten minutes of clarification changes the whole sprint.</div>
+  </div>
+</section>
+
+<section class="slide" data-t="S2 · Sequencing" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 02 · cont</span><span>What the other two get</span></div>
+    <h2 data-split>Sequencing is the skill. Ranking is not.</h2>
+    <p class="lede" style="margin-top:16px">Nobody gets a no. A silent "later" is how this role loses the room in its first quarter.</p>
+    <div class="cols c3">
+      <div class="card ch-a"><span class="lbl">Finance · this sprint</span><h3>Invoice categorization ships.</h3><p style="margin-top:9px">Objectively checkable against a ledger, zero adoption resistance because nobody defends their invoice-coding turf, and one sprint to a number that survives a finance review. That number funds everything after it.</p></div>
+      <div class="card ch-c"><span class="lbl">Sales · one day of this sprint</span><h3>Instrumented, not built.</h3><p style="margin-top:9px">I spend a day measuring where pitch time actually goes, so that when Sales gets its sprint it is built against a baseline instead of a guess. The highest-value request deserves the best-prepared build.</p></div>
+      <div class="card ch-v"><span class="lbl">Customer Success · next sprint, in writing</span><h3>A date, a scope, and the reason.</h3><p style="margin-top:9px">Scoped to the creator side, where the volume is. High value and high adoption risk, and it needs the organizational trust that sprint one buys.</p></div>
+    </div>
+    <div class="cols c2" style="margin-top:clamp(14px,1.8vw,24px)">
+      <div><h3>If the VP of Sales pulls rank</h3><p style="margin-top:9px">Real dynamic, and I do not fight it. There is a zero-cost version: the best existing pitch, the relevant case studies, and a shared prompt, out in an afternoon. It is not the build. It is discovery that happens to be useful, and how reps use it tells me what the real build should be.</p></div>
+      <div><h3>What sprint one is actually buying</h3><p style="margin-top:9px">Not ROI. <strong>Evidence.</strong> Shipping the highest-value request first and producing something nobody can verify is the most common way this job stalls out before it starts.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="S3 · The question" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 03</span><span>The adoption cliff</span></div>
+    <div class="qbox ch-a"><span class="qt">The question</span>
+      <p>You built an AI workflow. People tried it once and no one uses it anymore. What do you do?</p>
+      <p class="sub">I will answer it with a concrete case: <b>a tool that ranks incoming creator pitches for a campaign manager.</b></p>
+    </div>
+    <h2 data-split style="font-size:clamp(23px,3.2vw,44px)">They tried it once. That is good news.</h2>
+    <p class="lede" style="margin-top:14px">Rejection is never trying. One try means the pitch worked and the product didn't, so something specific happened on that first run. There is a failure point and it has a location.</p>
+    <div class="cols c4">
+      <div class="card ch-v"><span class="lbl">Most likely, here</span><h3>Checking cost more than doing</h3><p style="margin-top:8px">It ranked 200 creator pitches and showed a score. The manager could not see <em>why</em> number four beat number eleven, so they read all 200 anyway. The tool added a step.</p></div>
+      <div class="card ch-r"><span class="lbl">Very likely</span><h3>It broke on a real input</h3><p style="margin-top:8px">It worked on the demo campaign. A real one had a creator pitching in French, or a brief with three objectives. Nobody files a bug for an internal tool. They just stop.</p></div>
+      <div class="card ch-a"><span class="lbl">Common</span><h3>It lives in the wrong place</h3><p style="margin-top:8px">The work happens in the campaign workspace. If the ranking is in a separate tab, every switch is a tax and the tax exceeded the saving.</p></div>
+      <div class="card ch-c"><span class="lbl">Quietly common</span><h3>I saved the wrong 20 minutes</h3><p style="margin-top:8px">Ranking was the fun part to build. The slow part may have been writing the rejection notes, or checking audience authenticity.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="S3 · What I do about it" data-p="1">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Scenario 03 · cont</span><span>What I do · What I measure</span></div>
+    <h2 data-split>Find the failure point, then rebuild smaller.</h2>
+    <div class="cols c2" style="margin-top:clamp(14px,1.8vw,26px)">
+      <div>
+        <h3 style="color:var(--cyan)">How I find out</h3>
+        <ul style="margin-top:11px">
+          <li><strong>Not a survey.</strong> People genuinely cannot tell you why they stopped. They will say they have been busy, and they will mean it.</li>
+          <li><strong>The logs.</strong> Where did the last session end? That step is the bug, and it is usually one step.</li>
+          <li><strong>Watch three campaign managers do it the old way.</strong> Forty-five minutes total, and I will see the workaround they built instead of telling me about it.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:var(--amber)">Then I rebuild smaller</h3>
+        <ul style="margin-top:11px">
+          <li>Stop ranking. Just pull the one line from each pitch that answers the brief, and show it next to the creator's authenticated audience fit. The manager still decides, in a tenth of the time, and can see exactly what they are deciding on.</li>
+          <li>Inside the campaign workspace, not beside it.</li>
+          <li>Three people, not thirty. Adoption is earned per person before it is announced.</li>
+          <li>And I say the true sentence: <em>I built the wrong thing, here is the smaller thing.</em> That buys more credibility than a working v1 does.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="verdict"><b>The real fix is upstream:</b> this should never have been an archaeological dig. Instrumented on day one, "tried once and stopped" is a number on a dashboard the week it happens instead of a mystery I solve two months later. That is the thread I want to pick back up at the end.</div>
+  </div>
+</section>
+
+<!-- ═══ PART 2 — DEEP DIVE (20 min) ═══ -->
+
+<section class="slide pdiv" data-t="Part 2 — Deep Dive" data-p="2">
+  <div class="photo"><img src="img/booth.jpg" alt="A singer recording vocals in a studio booth"></div>
+  <div class="inner">
+    <div class="eyebrow">Part 2 of 2 · 20 minutes · Songfinch, 2022—2025</div>
+    <h1 data-split style="font-size:clamp(38px,6.6vw,102px)">Instant Song.</h1>
+    <p class="lede" style="margin-top:24px;max-width:52ch">We took a product that took a week and made it take seconds, without generating a single note. I picked this story because the constraint we worked under is the one you published.</p>
+  </div>
+  <div class="credit">Photo · cottonbro studio</div>
+</section>
+
+<section class="slide" data-t="Why this story" data-p="2">
+  <div class="inner split">
+    <div>
+      <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 00</span><span>Why I chose it for this room</span></div>
+      <h2 data-split>"Help, not do" was our engineering constraint before it was your principle.</h2>
+      <p style="margin-top:18px">Your first published AI principle is that AI should amplify creators rather than replace them, and that you will not touch unlicensed voice or likeness for commercial gain.</p>
+      <p style="margin-top:14px">In 2023 I was on a team that had every commercial reason to generate songs and did not, for exactly those reasons. Everything that follows is what it costs to hold that line and still ship something that works, which I suspect is a conversation you have here regularly.</p>
+    </div>
+    <div class="card ch-r"><span class="lbl">The same problem, both companies</span>
+      <h3>A marketplace only works if the supply side trusts you.</h3>
+      <p style="margin-top:10px">Songfinch's asset was hundreds of musicians. Yours is creators. In both cases the supply side can leave, and they talk to each other.</p>
+      <p style="margin-top:12px">Every technical decision in this story was constrained by whether the artists would say yes to it. <strong>That is not a values slide, it is an engineering requirement</strong>, and it changed what we were allowed to build.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="The wall" data-p="2">
+  <div class="inner split">
+    <div>
+      <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 01</span><span>The problem</span></div>
+      <h2 data-split>The funnel had a wall, and the obvious fix was the wrong one.</h2>
+      <p style="margin-top:18px">Songfinch sold one thing: an original song written for you by a real artist. Around $200, about a week to deliver. It converted under two percent. Most people who wanted a song could not accept the price or the wait.</p>
+      <p style="margin-top:14px">The obvious answer in 2023 was to generate the songs. We did not, and I would make that call the same way again.</p>
+    </div>
+    <div>
+      <div class="card ch-r"><span class="lbl">Why generation was a non-starter</span>
+        <ul style="margin-top:11px">
+          <li><strong>It kills the promise.</strong> The entire product is "a real artist wrote this for you." No version of that sentence survives.</li>
+          <li><strong>The artists walk.</strong> A supply network of hundreds of musicians was the actual asset. Announcing a generator burns it in a week.</li>
+          <li><strong>Nobody could sign off on the rights.</strong> In 2023, and honestly still.</li>
+        </ul>
+      </div>
+      <div class="card ch-c" style="margin-top:12px"><span class="lbl">The reframe</span>
+        <h3>The song did not need to be written on demand. It needed to be assembled on demand.</h3>
+        <p style="margin-top:9px">That turned an unsolvable AI problem into a solvable operations problem. The reframe is most of the job.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="The mechanic, live" data-p="2">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 02</span><span>How it works · click any answer</span></div>
+    <h2 data-split style="max-width:32ch;font-size:clamp(22px,2.9vw,40px)">Four questions. Seconds. Nothing generated.</h2>
+    <div class="asm">
+      <div class="qs" id="qs"></div>
+      <div>
+        <div class="lyr">
+          <div class="hd"><span>Assembled output</span><span id="combo"></span></div>
+          <div id="out"></div>
+          <div class="legend">
+            <span><i style="background:var(--ink-2)"></i>Static · recorded once</span>
+            <span><i style="background:var(--cyan)"></i>Stem · selected at runtime</span>
+          </div>
+        </div>
+        <p style="margin-top:14px">The catalogue is finite and a person sang every piece of it. Nothing is created at request time, which is exactly why it is fast, cheap, on-brand, and legally clean.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="What I actually built" data-p="2">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 03</span><span>My part of it</span></div>
+    <h2 data-split>The hard problem was never the audio. It was getting 300 musicians to produce machine-readable output.</h2>
+    <div class="cols c3" style="margin-top:clamp(16px,2vw,28px)">
+      <div class="card ch-c"><span class="lbl">01 · The protocol</span><h3>A recording spec artists would actually follow</h3><p style="margin-top:8px">Step-by-step instructions, session templates for Logic Pro X and Pro Tools with a track per required region, a test-track gate before anyone recorded a full set, and a review loop with named turnaround times. Musicians will not read a schema. They will follow a session template.</p></div>
+      <div class="card ch-v"><span class="lbl">02 · The filename is the API</span><h3>Structure encoded where it cannot get lost</h3><p class="mono" style="margin-top:8px;font-size:clamp(10px,.92vw,12px);color:var(--violet)">10.1.1.1_V1.S1.L1_DATINGAPP</p><p style="margin-top:7px">Bar.beat.division.tick, then song section, stanza and line, then the answer the stem satisfies. Every file self-describes its position and which customer answer it belongs to. Get this wrong and the system is manual forever, at any scale.</p></div>
+      <div class="card ch-a"><span class="lbl">03 · The economics</span><h3>A model artists opted into</h3><p style="margin-top:8px">A guarantee on approved delivery, then a per-song royalty against recoupment. It made the ask legible: this is more work than a normal song, here is what it pays, here is the upside if it works. Supply-side adoption is a compensation design problem, not a communication problem.</p></div>
+    </div>
+    <div class="verdict">Under all of it, the unglamorous middle: batch processing across <b>2,000+ audio assets</b> with FFmpeg pipelines for cleanup and versioning, naming enforcement, QA passes and delivery prep. If the batch layer is not automated, the clever layer above it never gets used, because somebody is always three days behind on files.</div>
+  </div>
+</section>
+
+<section class="slide" data-t="Saying the name" data-p="2">
+  <div class="inner split">
+    <div>
+      <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 04</span><span>The hardest conversation</span></div>
+      <h2 data-split>Swapping a line is a trick. Saying your name is the moment.</h2>
+      <p style="margin-top:18px">Customers reacted to hearing the name, not to the personalized lyric. So we built a name dictionary using Synthesizer V, mapped each song's blueprint down to the syllable so we knew exactly which phrase was being replaced and how many syllables it had to absorb, and captured vocal model templates carrying each artist's vowel, consonant and performance data.</p>
+      <p style="margin-top:14px">The same line, tracked roughly sixteen times, to cover the range of cadence a name has to survive.</p>
+    </div>
+    <div class="card ch-v"><span class="lbl">This is the part you should ask me about</span>
+      <h3>We were asking musicians for vocal data in the worst possible year to ask.</h3>
+      <p style="margin-top:10px">If that conversation goes badly there is no product, no matter how good the pipeline is. What worked was being specific: exactly what we captured, exactly what it would and would not be used for, scoped to their own songs, with pay attached.</p>
+      <p style="margin-top:12px"><strong>Adoption is a trust problem wearing a technical costume.</strong> Your creators will be asked a version of this question, and the answer has to be concrete before anyone builds anything.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="The number that decided it" data-p="2">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 05</span><span>What happened</span></div>
+    <div class="hero-num">
+      <div class="hn">7.65<small>%</small></div>
+      <div class="hn-side">
+        <p class="hn-lbl">Instant Song conversion, launch window</p>
+        <p class="hn-vs">against <b>under 2%</b> on the Original Song sitting right beside it. Same site, same traffic, same weeks.</p>
+      </div>
+    </div>
+    <div class="verdict">256 units in the first days is a small number and I want to be honest that it is small. <b>The ratio is what made it a green light, not the volume.</b> Roughly four times the conversion of the product next to it, against a baseline we had years of history on, in a comparison we designed before launch so the launch produced a decision instead of a debate.</div>
+  </div>
+</section>
+
+<section class="slide" data-t="Then two years happened" data-p="2">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 06</span><span>What it became</span></div>
+    <h2 data-split>Launch week told us. Two years proved it.</h2>
+    <div class="cols c3" style="margin-top:clamp(18px,2.4vw,36px)">
+      <div class="stat ch-a"><div class="n">150k<small>+</small></div><div class="cap">Instant Songs sold<br>in the two years after</div></div>
+      <div class="stat ch-c"><div class="n">2,000<small>+</small></div><div class="cap">Audio assets<br>batch-processed</div></div>
+      <div class="stat ch-v"><div class="n">300<small>+</small></div><div class="cap">Creators onboarded<br>into the system</div></div>
+    </div>
+    <div class="verdict">A clean comparison you set up in advance is worth more than a big number you have to explain afterwards. <b>That is the entire argument for instrumenting first</b>, and it is what I would bring here on day one.</div>
+  </div>
+</section>
+
+<section class="slide" data-t="What broke" data-p="2">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 07</span><span>The honest part</span></div>
+    <h2 data-split>The assembly worked on day one. The instrumentation did not.</h2>
+    <div class="cols c2" style="margin-top:clamp(14px,1.8vw,26px)">
+      <div>
+        <p class="mono" style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px">From our own post-launch review</p>
+        <ul>
+          <li><strong>103 support tickets</strong> from customers who had already paid and then hit a problem.</li>
+          <li><strong>Previews would not load.</strong> Spinning wheels and error messages at the exact moment of highest intent.</li>
+          <li><strong>Two systems disagreed on how many songs we had sold.</strong> Analytics said one number, admin said another.</li>
+          <li><strong>Duplicate charges and stuck orders</strong> that never appeared in the system while the charge sat in the payment processor.</li>
+          <li><strong>The relationship categories did not fit real people.</strong> We shipped romantic first and everyone else bounced off the form.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card ch-r"><span class="lbl">The one that actually mattered</span><h3>A working product you cannot count is a product you cannot fund, prioritize, or defend.</h3><p style="margin-top:9px">The sales discrepancy was worse than any audio problem. We spent the weeks after a genuinely successful launch doing reconciliation instead of iteration, because the counting was built after the thing instead of into it.</p></div>
+        <div class="card ch-c" style="margin-top:12px"><span class="lbl">What I would do differently</span><h3>Instrument on day zero.</h3><p style="margin-top:9px">Every one of those failures was findable in a log on day one. Nobody was looking at a dashboard, because there wasn't one.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="First 90 days at #paid" data-p="2">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Deep dive · 08</span><span>What I would do here</span></div>
+    <h2 data-split>You cannot enable what you cannot count.</h2>
+    <p class="lede" style="margin-top:14px">Scenario 3 and the thing that went wrong at Songfinch are the same problem. Here is how I would make sure neither happens here.</p>
+    <div class="tl">
+      <div class="ch-c"><div class="d">Days 01 — 30 · Instrument</div><h3>Find out what is actually happening.</h3><p style="margin-top:9px">Usage reporting against the Claude Enterprise analytics API. Not seat counts: which teams, which recurring jobs, which sessions start and never finish. Then sit with sales, a strategist, and a campaign manager and take baselines by hand, because the API tells me what people <em>did</em> and only a person tells me what it <em>cost them</em>.</p></div>
+      <div class="ch-v"><div class="d">Days 31 — 60 · Wire up the context</div><h3>One job, connected to your own data.</h3><p style="margin-top:9px">On current evidence I would start with pitch evidence for sales, because it is high-frequency, instantly checkable, and it is the clearest case of the model being blind to something you already own. Three reps first, then the team, with a measured before and after published either way.</p></div>
+      <div class="ch-a"><div class="d">Days 61 — 90 · Make it visible</div><h3>Adoption becomes a number leadership sees weekly.</h3><p style="margin-top:9px">Which flows get used, cost per outcome rather than per seat, where sessions get abandoned, and hours returned. Hours returned is a <em>modeled</em> number and the assumption ships visible on the chart, because an enablement lead who hides that gets caught in the first finance review.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Q&A ═══ -->
+
+<section class="slide" data-t="One more thing" data-p="3">
+  <div class="inner split">
+    <div>
+      <div class="kicker"><i class="dot"></i><span class="num">One more thing</span><span>About this deck</span></div>
+      <h2 data-split>The brief said two hours.</h2>
+      <p class="lede" style="margin-top:18px">So the most relevant thing about this deck is how it was made, not how it looks.</p>
+      <p style="margin-top:14px">One HTML file. Three.js and GSAP served from the deck itself, so it does not need the internet in this room. Built with Claude Code, deployed to Vercel.</p>
+      <p style="margin-top:14px">I am not showing you this because it is nice to look at. <strong>This is what a couple of hours looks like when the work is decomposed properly</strong>, and closing that gap for other people is the job you are hiring for.</p>
+    </div>
+    <div class="card ch-c"><span class="lbl">The workflow</span>
+      <ol class="ch-c" style="margin-top:11px">
+        <li><strong>Brief in, structure out.</strong> Your brief says exactly what is being scored, so it became the outline before a word was written.</li>
+        <li><strong>Context first.</strong> Your site, your case studies, your AI principles, read before any answer was drafted. Same move I am proposing for your reps.</li>
+        <li><strong>Argument before pixels.</strong> The scenario answers were written and attacked before any design existed.</li>
+        <li><strong>Assembly.</strong> One file, one deploy.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="Questions for you" data-p="3">
+  <div class="inner">
+    <div class="kicker"><i class="dot"></i><span class="num">Panel Q&amp;A</span><span>The brief says this is also my chance to ask</span></div>
+    <h2 data-split>Five things I want to know.</h2>
+    <div class="cols c2" style="margin-top:clamp(16px,2vw,30px)">
+      <div>
+        <ol class="ch-c">
+          <li><strong>How much of your first-party data is actually reachable by a model today?</strong> Brand studies, creator categories, benchmark panel. If the answer is "none of it," that is my first quarter and I would like to know now.</li>
+          <li><strong>When a team says an AI tool is not working, who hears it first, and what happens next?</strong> I want to know whether there is a path or whether it dies in a Slack thread.</li>
+          <li><strong>Which side of the marketplace is under more operational strain right now?</strong> Brand or creator. The answer changes what I build first.</li>
+        </ol>
+      </div>
+      <div>
+        <ol class="ch-a" style="counter-reset:n 3">
+          <li><strong>Where have your AI principles actually cost you something?</strong> Principles that have never blocked a build are marketing. I would like to hear about the time one did.</li>
+          <li><strong>Is this seat measured on adoption, hours returned, or workflows shipped?</strong> Those are three different jobs and I would rather know which one I am doing.</li>
+        </ol>
+        <div class="verdict" style="margin-top:20px">Thank you. <b>Dylan Kroll</b> · dylankroll@ymail.com · linkedin.com/in/dylanjkroll</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    </div>
+
+    <div id="rail"><span id="idx">01</span><div id="ticks"></div><span id="ttl"></span></div>
+    <div id="help"><kbd>←</kbd><kbd>→</kbd> navigate <kbd>esc</kbd> overview <kbd>?</kbd> hide</div>
+    <div id="ov"><div class="kicker"><i class="dot"></i><span>Overview · click to jump</span></div><div id="ovg"></div></div>
 
     <script src="vendor/gsap.min.js"></script>
     <script type="importmap">
@@ -2386,28 +1649,31 @@
 
       /* per-slide field state. int: 1 = performs, .08 = texture behind argument. */
       const FIELD = [
-        { a: 0.06, s: 1.5, l: 0, f: -1, z: 30, int: 1.0 }, // 01 cover
-        { a: 0.3, s: 1.3, l: -1, f: -1, z: 40, int: 0.16 }, // 02 who I am
-        { a: 0.7, s: 1.0, l: -1, f: -1, z: 36, int: 0.5 }, // 03 how I work
-        { a: 0.88, s: 1.0, l: 0, f: -1, z: 33, int: 0.9 }, // 04 PART 1
-        { a: 0.62, s: 1.1, l: -2, f: 0, z: 44, int: 0.1 }, // 05 S1 question
-        { a: 0.66, s: 1.1, l: -2, f: 0, z: 44, int: 0.07 }, // 06 S1 five questions
-        { a: 0.7, s: 1.1, l: -2, f: 0, z: 45, int: 0.07 }, // 07 S1 diagnosis
-        { a: 0.72, s: 1.1, l: -2, f: 1, z: 45, int: 0.07 }, // 08 S2 matrix
-        { a: 0.74, s: 1.1, l: -2, f: 1, z: 45, int: 0.07 }, // 09 S2 sequencing
-        { a: 0.38, s: 1.3, l: -2, f: 2, z: 44, int: 0.09 }, // 10 S3 question
-        { a: 0.44, s: 1.2, l: -2, f: 2, z: 45, int: 0.07 }, // 11 S3 what I do
-        { a: 0.9, s: 1.0, l: 0, f: -1, z: 34, int: 0.0 }, // 12 PART 2 (photo owns it)
-        { a: 0.26, s: 1.4, l: -2, f: -1, z: 44, int: 0.14 }, // 13 the wall
-        { a: 0.96, s: 1.0, l: -1, f: 0, z: 42, int: 0.26 }, // 14 the mechanic
-        { a: 0.88, s: 1.0, l: -2, f: -1, z: 46, int: 0.09 }, // 15 what I built
-        { a: 0.93, s: 1.0, l: -2, f: 3, z: 44, int: 0.15 }, // 16 saying the name
-        { a: 1, s: 1.0, l: -1, f: 0, z: 34, int: 1.0 }, // 17 7.65% — waveform lands
-        { a: 1, s: 1.0, l: -1, f: -1, z: 38, int: 0.48 }, // 18 two years
-        { a: 0.58, s: 1.25, l: -2, f: 3, z: 44, int: 0.11 }, // 19 what broke
-        { a: 0.92, s: 1.0, l: -2, f: -1, z: 45, int: 0.09 }, // 20 what transfers
-        { a: 0.86, s: 1.0, l: -1, f: 0, z: 42, int: 0.24 }, // 21 one more thing
-        { a: 1, s: 1.0, l: 0, f: -1, z: 29, int: 0.85 }, // 22 questions
+        { a: 0.06, s: 1.5, l: 0, f: -1, z: 30, int: 1.0 },
+        { a: 0.28, s: 1.3, l: -1, f: -1, z: 40, int: 0.16 },
+        { a: 0.45, s: 1.15, l: -1, f: -1, z: 38, int: 0.28 },
+        { a: 0.85, s: 1.0, l: 0, f: -1, z: 33, int: 0.9 },
+        { a: 0.6, s: 1.1, l: -2, f: 0, z: 44, int: 0.1 },
+        { a: 0.64, s: 1.1, l: -2, f: 0, z: 44, int: 0.07 },
+        { a: 0.66, s: 1.1, l: -2, f: 0, z: 45, int: 0.06 },
+        { a: 0.7, s: 1.1, l: -2, f: 0, z: 45, int: 0.07 },
+        { a: 0.72, s: 1.1, l: -2, f: 1, z: 45, int: 0.07 },
+        { a: 0.74, s: 1.1, l: -2, f: 1, z: 45, int: 0.07 },
+        { a: 0.76, s: 1.1, l: -2, f: 1, z: 45, int: 0.07 },
+        { a: 0.4, s: 1.3, l: -2, f: 2, z: 44, int: 0.09 },
+        { a: 0.46, s: 1.2, l: -2, f: 2, z: 45, int: 0.07 },
+        { a: 0.9, s: 1.0, l: 0, f: -1, z: 34, int: 0.0 },
+        { a: 0.55, s: 1.1, l: -1, f: 3, z: 42, int: 0.15 },
+        { a: 0.26, s: 1.4, l: -2, f: -1, z: 44, int: 0.14 },
+        { a: 0.96, s: 1.0, l: -1, f: 0, z: 42, int: 0.26 },
+        { a: 0.88, s: 1.0, l: -2, f: -1, z: 46, int: 0.09 },
+        { a: 0.93, s: 1.0, l: -2, f: 3, z: 44, int: 0.15 },
+        { a: 1.0, s: 1.0, l: -1, f: 0, z: 34, int: 1.0 },
+        { a: 1.0, s: 1.0, l: -1, f: -1, z: 38, int: 0.48 },
+        { a: 0.58, s: 1.25, l: -2, f: 3, z: 44, int: 0.11 },
+        { a: 0.92, s: 1.0, l: -2, f: -1, z: 45, int: 0.09 },
+        { a: 0.86, s: 1.0, l: -1, f: 0, z: 42, int: 0.24 },
+        { a: 1.0, s: 1.0, l: 0, f: -1, z: 29, int: 0.85 },
       ];
 
       /* ═══ SLIDE ENGINE ═══ */
@@ -2781,6 +2047,52 @@
         }),
       );
       paint();
+
+
+      /* ═══ INTERACTIVE — context, demonstrated (Scenario 1) ═══
+         Same model, same prompt. The only variable is whether it can see
+         #paid's own data. This is the whole thesis in one control. */
+      const DEMO = {
+        cold: {
+          tag: "generic model",
+          ch: "var(--rose)",
+          body: `<div class="dm-body">Creator marketing is a powerful way to reach your audience
+            authentically. By partnering with creators who align with your brand values, you can
+            build trust and drive real action. Our platform makes it easy to find the right
+            creators, manage your campaign end to end, and measure what works.</div>`,
+          note: `Fluent, on-topic, and unusable. No proof, no creators, no numbers, nothing a
+            brand marketer could not have written themselves. <b>The rep deletes it, writes the
+            pitch by hand, and tells their VP that Claude isn't helping.</b> They are not wrong.`
+        },
+        wired: {
+          tag: "+ case studies · creator categories · benchmark panel",
+          ch: "var(--cyan)",
+          body: `
+            <div class="dm-row ch-c"><span class="k">Closest proof</span><span class="v">IKEA, foot-traffic objective. <b>40% decrease in cost per visit.</b></span></div>
+            <div class="dm-row ch-v"><span class="k">Second</span><span class="v">McDonald's Canada, Summer Drink Days. Snapchat creator campaign, awareness in-market.</span></div>
+            <div class="dm-row ch-a"><span class="k">Category cut</span><span class="v">Food &amp; beverage plus local lifestyle, filtered to in-market creators with authenticated audience data.</span></div>
+            <div class="dm-row ch-c"><span class="k">Benchmark</span><span class="v">Brand-study panel, 30,000+ respondents.</span></div>
+            <div class="dm-row ch-r"><span class="k">Flag</span><span class="v">This buyer's category is usually graded on foot traffic and affinity, not reach. <b>Lead with cost per visit.</b></span></div>`,
+          note: `Same model, same prompt. The only thing that changed is that it can see the
+            case-study library, the creator categories and the benchmark panel. <b>Nothing here is
+            written. It is retrieved and assembled</b>, and a rep can check every line in about ten
+            seconds. That is the difference between a tool people abandon and one they open daily.`
+        }
+      };
+      function paintDemo(k) {
+        const d = DEMO[k];
+        document.getElementById("dout").innerHTML = d.body;
+        document.getElementById("dnote").innerHTML = d.note;
+        const tag = document.getElementById("dtag");
+        tag.textContent = d.tag; tag.style.color = d.ch;
+        if (!reduced) gsap.fromTo("#dout .dm-row, #dout .dm-body",
+          { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: .38, stagger: .05, ease: "power2.out" });
+      }
+      document.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => {
+        document.querySelectorAll("[data-d]").forEach(x => x.classList.remove("on"));
+        b.classList.add("on"); paintDemo(b.dataset.d);
+      }));
+      paintDemo("cold");
 
       /* ═══ FIT + BOOT ═══ */
       // A presentation runs on a screen nobody has seen. Measure and scale rather
