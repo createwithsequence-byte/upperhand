@@ -4,14 +4,62 @@
     {
       "name": "dylan-deck",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4321", "--directory", "dylan-kroll-deck"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4321",
+        "--directory",
+        "dylan-kroll-deck"
+      ],
       "port": 4321
     },
     {
       "name": "dylan-deepdive",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4322", "--directory", "dylan-kroll-deepdive"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4322",
+        "--directory",
+        "dylan-kroll-deepdive"
+      ],
       "port": 4322
+    },
+    {
+      "name": "glyph",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/glyph",
+        "run",
+        "dev"
+      ],
+      "port": 5188
+    },
+    {
+      "name": "glyph-prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/glyph",
+        "run",
+        "preview",
+        "--",
+        "--port",
+        "5199"
+      ],
+      "port": 5199
+    },
+    {
+      "name": "proposal-engine",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/proposal-engine",
+        "run",
+        "dev"
+      ],
+      "port": 3500
     }
   ]
 }
