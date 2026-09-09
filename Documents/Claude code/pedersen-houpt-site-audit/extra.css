@@ -199,11 +199,51 @@
 
 /* short viewports: the engine's padding eats 158px of a 720 pane */
 @media (max-height: 860px) {
-  #deck .slide { padding-top: 44px !important; padding-bottom: 60px !important; }
+  #deck .slide {
+    padding-top: 44px !important;
+    padding-bottom: 60px !important;
+  }
 }
-.rows.tight .row { padding: 7px 0; }
-.rows .k span { display: block; font-family: var(--sans); font-size: 11px; letter-spacing: 0.01em; text-transform: none; opacity: 0.62; margin-top: 3px; line-height: 1.3; }
-.row p.no::before { content: "✕ "; color: var(--ember); font-family: var(--mono); font-size: 11px; }
-.row p.yes::before { content: "✓ "; color: var(--ink); font-family: var(--mono); font-size: 11px; }
-#deck .rows.tight .row { grid-template-columns: 215px 0.85fr 1.55fr; }
-#deck .rows.tight .row.head { grid-template-columns: 215px 0.85fr 1.55fr; }
+.rows.tight .row {
+  padding: 7px 0;
+}
+.rows .k span {
+  display: block;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  opacity: 0.62;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+.row p.no::before {
+  content: "✕ ";
+  color: var(--ember);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.row p.yes::before {
+  content: "✓ ";
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+#deck .rows.tight .row {
+  grid-template-columns: 215px 0.85fr 1.55fr;
+}
+#deck .rows.tight .row.head {
+  grid-template-columns: 215px 0.85fr 1.55fr;
+}
+
+/* design directions */
+.ev figcaption a, .kicker a { color: var(--ember); text-decoration: underline; text-underline-offset: 3px; }
+.ev.dir { grid-template-columns: 1.45fr 1.45fr 0.6fr; }
+.ev.dir img { max-height: 42vh; }
+.sys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.sys div { border: 1px solid var(--line-2); border-radius: 6px; padding: 10px 12px; font-size: 13px; line-height: 1.45; color: var(--ink-2); }
+.sys b { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ember); margin-bottom: 5px; font-weight: 500; }
+.sys strong { color: var(--ink); font-weight: 500; }
+.chip { display: inline-block; width: 13px; height: 13px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; border: 1px solid rgba(255,255,255,0.18); }
+#deck .rows.four .row, #deck .rows.four .row.head { grid-template-columns: 130px 1fr 1fr 1fr; }
+#deck .rows.four .row p { font-size: 13px; }

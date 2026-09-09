@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eric J. Kordish · Pedersen & Houpt · Direction B, The ledger</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Source+Serif+4:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --white: #ffffff;
+        --ink: #0b0b0b;
+        --red: #ab1e23;
+        --gray: #6b6b6b;
+        --rule: #d6d6d6;
+        --disp: "Archivo", Helvetica, Arial, sans-serif;
+        --mono: "JetBrains Mono", Menlo, monospace;
+        --wm: "Source Serif 4", Georgia, serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--disp);
+        background: var(--white);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.45;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 40px;
+      }
+      .demo-bar {
+        background: #111;
+        color: #fff;
+        font: 500 11.5px/36px var(--mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .demo-bar .wrap {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .demo-bar a {
+        opacity: 0.65;
+        margin-left: 14px;
+      }
+      .demo-bar a.on {
+        opacity: 1;
+        color: #f2c4c6;
+      }
+      body.shot .demo-bar {
+        display: none;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        border-bottom: 3px solid var(--ink);
+      }
+      .mark {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+      .mark b {
+        font: 700 28px/1 var(--wm);
+        letter-spacing: -0.01em;
+      }
+      .mark i {
+        font-style: normal;
+        font: 500 9.5px/1 var(--mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gray);
+        margin-top: 6px;
+        border-top: 2px solid var(--red);
+        padding-top: 5px;
+        width: fit-content;
+      }
+      nav {
+        display: flex;
+        gap: 24px;
+        font: 600 13px/1 var(--disp);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .tools {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        font: 600 12px/1 var(--disp);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .tools a {
+        padding: 11px 12px;
+        border: 1.5px solid var(--ink);
+      }
+      .tools a.pri {
+        background: var(--ink);
+        color: #fff;
+      }
+      .crumb {
+        font: 500 10.5px/1 var(--mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gray);
+        padding: 18px 0 0;
+      }
+      .bio {
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        gap: 48px;
+        padding: 22px 0 64px;
+        align-items: start;
+      }
+      .card {
+        background: var(--ink);
+        color: #fff;
+        padding: 26px;
+      }
+      .card .ph {
+        width: 150px;
+        aspect-ratio: 1/1;
+        overflow: hidden;
+        background: #333;
+      }
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 22%;
+        filter: grayscale(1) contrast(1.18);
+      }
+      .card h1 {
+        font: 900 46px/0.92 var(--disp);
+        letter-spacing: -0.045em;
+        text-transform: uppercase;
+        margin: 22px 0 10px;
+      }
+      .card .role {
+        font: 500 11px/1.5 var(--mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #bbb;
+      }
+      .card .rows {
+        margin-top: 22px;
+        border-top: 1px solid #444;
+      }
+      .card .rows a,
+      .card .rows div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #444;
+        font: 500 12.5px var(--mono);
+      }
+      .card .rows span:first-child {
+        color: #999;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 10.5px;
+        padding-top: 2px;
+      }
+      .card .pri {
+        display: block;
+        margin-top: 18px;
+        background: #fff;
+        color: var(--ink);
+        text-align: center;
+        padding: 15px;
+        font: 700 12px var(--disp);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .eyebrow {
+        font: 500 10.5px/1 var(--mono);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--red);
+      }
+      .help {
+        font: 800 clamp(28px, 2.6vw, 38px)/1.05 var(--disp);
+        letter-spacing: -0.035em;
+        max-width: 24ch;
+        margin: 12px 0 30px;
+      }
+      h2 {
+        font: 900 13px/1 var(--disp);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border-bottom: 3px solid var(--ink);
+        padding-bottom: 10px;
+        margin: 0 0 4px;
+      }
+      .ledger .row {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 28px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--rule);
+        align-items: baseline;
+      }
+      .ledger .a {
+        font: 700 40px/1 var(--mono);
+        letter-spacing: -0.05em;
+        font-variant-numeric: tabular-nums;
+      }
+      .ledger .a small {
+        display: block;
+        font: 500 10.5px/1.3 var(--mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--red);
+        margin-top: 6px;
+      }
+      .ledger .t {
+        font-size: 16px;
+        line-height: 1.45;
+        color: #222;
+      }
+      .rec {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+        background: var(--ink);
+        border: 2px solid var(--ink);
+        margin-top: 34px;
+      }
+      .rec div {
+        background: #fff;
+        padding: 16px;
+      }
+      .rec b {
+        display: block;
+        font: 800 16px/1.15 var(--disp);
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+      }
+      .rec span {
+        display: block;
+        font: 500 11px/1.5 var(--mono);
+        color: var(--gray);
+        margin-top: 6px;
+        letter-spacing: 0.02em;
+      }
+      footer {
+        border-top: 3px solid var(--ink);
+        padding: 22px 0 40px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font: 500 11px/1.6 var(--mono);
+        color: var(--gray);
+      }
+      @media (max-width: 820px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        header {
+          padding: 12px 0;
+        }
+        nav,
+        .tools a:not(.pri) {
+          display: none;
+        }
+        .mark b {
+          font-size: 24px;
+        }
+        .bio {
+          grid-template-columns: 1fr;
+          gap: 22px;
+          padding: 14px 0 40px;
+        }
+        .card {
+          padding: 20px;
+        }
+        .card h1 {
+          font-size: 40px;
+        }
+        .help {
+          font-size: 26px;
+        }
+        .ledger .row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .ledger .a {
+          font-size: 34px;
+        }
+        .rec {
+          grid-template-columns: 1fr;
+        }
+        footer {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-bar">
+      <div class="wrap">
+        <span>Direction B · The ledger · attorney page</span
+        ><span
+          ><a href="place-bio.html">A</a
+          ><a class="on" href="ledger-bio.html">B</a
+          ><a href="counsel-bio.html">C</a
+          ><a href="ledger-home.html">Homepage</a
+          ><a href="index.html">All directions</a></span
+        >
+      </div>
+    </div>
+    <div class="wrap">
+      <header>
+        <div class="mark"><b>Pedersen</b><i>Pedersen & Houpt · Chicago</i></div>
+        <nav>
+          <a href="#">People</a><a href="#">What we do</a><a href="#">Results</a
+          ><a href="#">Insights</a><a href="#">About</a>
+        </nav>
+        <div class="tools">
+          <a href="#">Client login</a><a href="#">Pay a bill</a
+          ><a class="pri" href="#">Book a call</a>
+        </div>
+      </header>
+      <div class="crumb">
+        People / Corporate & Business Counseling / Kordish
+      </div>
+      <section class="bio">
+        <div class="card">
+          <div class="ph">
+            <img
+              src="../img/mock/people/Eric-Kordish.jpg"
+              alt="Eric J. Kordish"
+            />
+          </div>
+          <h1>Eric J.<br />Kordish</h1>
+          <div class="role">
+            Partner · Corporate & Business Counseling · Real Estate · Leads the
+            corporate group
+          </div>
+          <div class="rows">
+            <a href="#"><span>Direct</span><span>312 261 2249</span></a>
+            <a href="#"
+              ><span>Email</span><span>ekordish@pedersenhoupt.com</span></a
+            >
+            <div><span>Admitted</span><span>Illinois</span></div>
+            <div><span>Since</span><span>2005 · Loyola Chicago J.D.</span></div>
+            <div><span>Ranked</span><span>Chambers Spotlight 2026</span></div>
+          </div>
+          <a class="pri" href="#">Book a call with Eric</a>
+        </div>
+        <div>
+          <div class="eyebrow">What he does for a client</div>
+          <p class="help">
+            If you are buying, selling, financing or refinancing a company or a
+            building in Chicago, Eric has closed it before, usually more than
+            once.
+          </p>
+          <h2>Representative matters · by figure</h2>
+          <div class="ledger">
+            <div class="row">
+              <div class="a">$218M<small>Redevelopment financing</small></div>
+              <div class="t">
+                First mortgage, $92M of new equity and a $35M mezzanine loan on
+                the redevelopment of an 80-year-old downtown office building
+                into a hotel and offices.
+              </div>
+            </div>
+            <div class="row">
+              <div class="a">$178M<small>Construction facility</small></div>
+              <div class="t">
+                Construction loan facility for a mixed-use condominium tower,
+                retail, parking and garden park.
+              </div>
+            </div>
+            <div class="row">
+              <div class="a">$120M<small>Sale</small></div>
+              <div class="t">
+                Sale of a mixed-use retail and parking development in downtown
+                Chicago for a real estate developer.
+              </div>
+            </div>
+            <div class="row">
+              <div class="a">$102M<small>Private equity fund</small></div>
+              <div class="t">
+                SBA-licensed private equity fund: management buyouts,
+                recapitalizations and add-ons across a middle-market portfolio.
+              </div>
+            </div>
+            <div class="row">
+              <div class="a">
+                $70M<small>2022 · 2025 · Thompson Center</small>
+              </div>
+              <div class="t">
+                JRTC Holdings: the purchase of the Thompson Center from the
+                State of Illinois, then the Google build-to-suit.
+              </div>
+            </div>
+          </div>
+          <div class="rec">
+            <div>
+              <b>Chambers Spotlight 2026</b><span>Real Estate · Chicago</span>
+            </div>
+            <div>
+              <b>Loyola Chicago, J.D. 2005</b
+              ><span>Certificate of Taxation</span>
+            </div>
+            <div><b>Northwestern, B.A. 1996</b><span>Illinois bar</span></div>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <span
+          >PEDERSEN & HOUPT, P.C. · 161 NORTH CLARK STREET, SUITE 2700, CHICAGO,
+          ILLINOIS 60601 · 312 641 6888</span
+        ><span
+          >Attorney photograph from pedersenhoupt.com. Matters as published on
+          the firm's site.</span
+        >
+      </footer>
+    </div>
+    <script>
+      if (location.search.indexOf("shot") > -1)
+        document.body.classList.add("shot");
+    </script>
+  </body>
+</html>
