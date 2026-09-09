@@ -1,0 +1,2225 @@
+<!--
+  deep-dive deck engine. Worked example: Solo Stove / Liz Vanzura, Sept 2026.
+  Everything above <div id="deck"> is the engine (tokens, chrome, embers, slide CSS).
+  Everything inside #deck is an EXAMPLE of each slide type with real content.
+  Re-skin via :root tokens + the background layer; rewrite the slides; keep the engine.
+  Slide attributes: data-t (rail title), data-p (part index 0-4 for tick colors),
+  data-int (0..1 background intensity: 1 on cover/dividers, ~0.1 behind argument),
+  data-photo (optional full-bleed image behind a divider), class "dense" for slides
+  with more than ~6 blocks (smaller h2, tighter cards, scrolls instead of clipping).
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pedersen & Houpt · Website audit · September 2026</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0d0e10;
+        --bg-2: #14161a;
+        --line: #262a30;
+        --line-2: #363b43;
+        --ink: #f1eee8;
+        --ink-2: #aeb0b4;
+        --ink-3: #6f747b;
+        --ember: #AB1E23;
+        --heat: #e0616a;
+        --steel: #c7c9cd;
+        --cool: #7fa8c9;
+        --pad: clamp(28px, 4.2vw, 78px);
+        --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+        --sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      body.ready {
+        opacity: 1;
+      }
+
+      #embers {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        display: block;
+      }
+      #heat {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            70% 55% at 50% 118%,
+            rgba(240, 78, 35, 0.55),
+            transparent 62%
+          ),
+          radial-gradient(
+            40% 30% at 50% 108%,
+            rgba(255, 178, 74, 0.35),
+            transparent 70%
+          );
+        opacity: 0.9;
+      }
+      #photo {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 0.9s ease;
+        filter: saturate(1.05) contrast(1.05);
+      }
+      #photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(12, 10, 8, 0.96) 0%,
+          rgba(12, 10, 8, 0.82) 42%,
+          rgba(12, 10, 8, 0.35) 100%
+        );
+      }
+      #vig {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: radial-gradient(
+          125% 92% at 50% 42%,
+          transparent 34%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.1;
+        mix-blend-mode: overlay;
+      }
+
+      #deck {
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: var(--pad);
+        padding-bottom: calc(var(--pad) + 34px);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .slide .inner {
+        margin: auto;
+      }
+      .slide.dense h2 {
+        font-size: clamp(30px, 4.2vw, 64px);
+      }
+      .slide.dense .card {
+        padding: clamp(11px, 1.15vw, 18px);
+      }
+      .slide.dense .card h3 {
+        font-size: clamp(13.5px, 1.15vw, 17px);
+      }
+      .slide.dense p,
+      .slide.dense li {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+        line-height: 1.5;
+      }
+      .slide.dense .row {
+        padding: 8px 0;
+        gap: 14px;
+        grid-template-columns: 130px 0.8fr 1.6fr;
+      }
+      .slide.dense .stat {
+        padding: clamp(12px, 1.3vw, 20px) clamp(10px, 1.2vw, 18px);
+      }
+      .slide.dense .stat .n {
+        font-size: clamp(32px, 4vw, 60px);
+      }
+      .slide.dense .kicker {
+        margin-bottom: 12px;
+      }
+      body.cover #logo-corner {
+        display: none;
+      }
+      .slide.on {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .inner {
+        width: 100%;
+        max-width: 1380px;
+        margin: 0 auto;
+      }
+
+      #rail {
+        position: fixed;
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 26px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #ticks {
+        flex: 1;
+        display: flex;
+        gap: 3px;
+        height: 2px;
+      }
+      .tick {
+        flex: 1;
+        background: var(--line-2);
+        transition:
+          background 0.45s ease,
+          transform 0.45s ease;
+        transform-origin: bottom;
+      }
+      .tick.b1 {
+        background: #3d2a20;
+      }
+      .tick.b2 {
+        background: #3f3322;
+      }
+      .tick.b3 {
+        background: #2f3238;
+      }
+      .tick.b4 {
+        background: #3b2f2a;
+      }
+      .tick.done {
+        background: var(--ink-3);
+      }
+      .tick.now {
+        background: var(--ember);
+        transform: scaleY(3);
+      }
+      #brand {
+        position: fixed;
+        top: 26px;
+        right: var(--pad);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #brand b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+      #logo-corner {
+        position: fixed;
+        top: 22px;
+        left: var(--pad);
+        z-index: 6;
+        height: 18px;
+        width: auto;
+        color: var(--ink-2);
+        opacity: 0.85;
+      }
+
+      .kicker {
+        font-family: var(--mono);
+        font-size: clamp(9px, 0.78vw, 11px);
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .kicker .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ember);
+        flex: 0 0 auto;
+      }
+      .kicker .num {
+        color: var(--ink-2);
+      }
+      h1 {
+        font-family: var(--display);
+        font-size: clamp(64px, 11vw, 190px);
+        font-weight: 900;
+        line-height: 0.84;
+        letter-spacing: 0.005em;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+      h2 {
+        font-family: var(--display);
+        font-size: clamp(40px, 5.6vw, 88px);
+        font-weight: 800;
+        line-height: 0.9;
+        letter-spacing: 0.005em;
+        text-transform: uppercase;
+        text-wrap: balance;
+        max-width: 18ch;
+      }
+      h3 {
+        font-size: clamp(15px, 1.35vw, 20px);
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.012em;
+      }
+      .lede {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.55;
+        color: var(--ink-2);
+        max-width: 62ch;
+        font-weight: 300;
+      }
+      p,
+      li {
+        font-size: clamp(12.5px, 1vw, 15px);
+        line-height: 1.6;
+        color: var(--ink-2);
+        font-weight: 300;
+      }
+      strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      em {
+        font-style: normal;
+        color: var(--heat);
+        font-weight: 500;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .w {
+        display: inline-block;
+        will-change: transform, opacity;
+      }
+      .hot {
+        color: var(--ember);
+      }
+      .warm {
+        color: var(--heat);
+      }
+      .cold {
+        color: var(--cool);
+      }
+
+      .cols {
+        display: grid;
+        gap: clamp(14px, 1.8vw, 30px);
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .c2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .c3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .c4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: clamp(26px, 3.6vw, 64px);
+        align-items: center;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: clamp(14px, 1.5vw, 24px);
+        background: rgba(20, 17, 13, 0.72);
+        backdrop-filter: blur(6px);
+      }
+      .card h3 {
+        margin-bottom: 8px;
+      }
+      .card .tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 10px;
+        display: block;
+      }
+      .card.hot {
+        border-color: rgba(240, 78, 35, 0.5);
+      }
+      .card.hot .tag {
+        color: var(--ember);
+      }
+      ul {
+        list-style: none;
+      }
+      ul li {
+        padding-left: 16px;
+        position: relative;
+        margin-bottom: 6px;
+      }
+      ul li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.72em;
+        width: 6px;
+        height: 1px;
+        background: var(--ember);
+      }
+
+      /* stat blocks */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .stat {
+        padding: clamp(14px, 1.6vw, 26px) clamp(12px, 1.4vw, 22px);
+        background: rgba(20, 17, 13, 0.7);
+        border-top: 1px solid var(--line-2);
+      }
+      .stat .n {
+        font-family: var(--display);
+        font-size: clamp(38px, 4.6vw, 72px);
+        font-weight: 900;
+        line-height: 0.9;
+        letter-spacing: 0.01em;
+        color: var(--ink);
+      }
+      .stat .n.hot {
+        color: var(--ember);
+      }
+      .stat .n.warm {
+        color: var(--heat);
+      }
+      .stat .l {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .stat .s {
+        font-size: 12.5px;
+        color: var(--ink-2);
+        margin-top: 6px;
+        font-weight: 300;
+        line-height: 1.45;
+      }
+
+      /* verdict */
+      .verdict {
+        border-left: 3px solid var(--ember);
+        padding-left: clamp(16px, 2vw, 30px);
+        margin-top: 26px;
+      }
+      .verdict p {
+        font-size: clamp(15px, 1.45vw, 22px);
+        color: var(--ink);
+        font-weight: 300;
+        line-height: 1.45;
+        max-width: 58ch;
+      }
+
+      /* timeline */
+      .tl {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 6px;
+        margin-top: clamp(22px, 3vw, 44px);
+        position: relative;
+      }
+      .tl::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 7px;
+        height: 1px;
+        background: linear-gradient(90deg, var(--ink-3), var(--ember));
+      }
+      .tl > div {
+        position: relative;
+        padding-top: 22px;
+      }
+      .tl > div::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 0;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 2px solid var(--ink-3);
+      }
+      .tl > div.hot::before {
+        border-color: var(--ember);
+        background: var(--ember);
+        box-shadow: 0 0 14px rgba(240, 78, 35, 0.6);
+      }
+      .tl .y {
+        font-family: var(--display);
+        font-size: clamp(20px, 2.2vw, 34px);
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .tl .y.hot {
+        color: var(--ember);
+      }
+      .tl p {
+        font-size: clamp(10.5px, 0.82vw, 13px);
+        line-height: 1.4;
+        margin-top: 6px;
+      }
+
+      /* bars */
+      .bars {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        align-items: end;
+        height: clamp(200px, 30vh, 320px);
+        margin-top: 20px;
+      }
+      .bar {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+      }
+      .bar .v {
+        font-family: var(--display);
+        font-size: clamp(22px, 2.4vw, 38px);
+        font-weight: 800;
+        color: var(--ink);
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .bar .v small {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+        margin-left: 4px;
+        font-weight: 400;
+      }
+      .bar .f {
+        background: linear-gradient(180deg, var(--heat), var(--ember));
+        border-radius: 3px 3px 0 0;
+        transform-origin: bottom;
+      }
+      .bar .f.dim {
+        background: linear-gradient(180deg, #5a5148, #3a332c);
+      }
+      .bar .f.ghost {
+        background: transparent;
+        border: 1px dashed var(--line-2);
+      }
+      .bar .l {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .bar .l b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* people */
+      .person {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        gap: 14px;
+        align-items: start;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .person img {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        object-fit: cover;
+        filter: grayscale(0.2);
+      }
+      .person .ph {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        background: var(--bg-2);
+        border: 1px solid var(--line-2);
+        display: grid;
+        place-items: center;
+        font-family: var(--display);
+        font-size: 26px;
+        color: var(--ink-3);
+      }
+      .person h3 {
+        font-size: clamp(14px, 1.2vw, 18px);
+      }
+      .person .r {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin: 3px 0 6px;
+      }
+      .person p {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+      }
+
+      /* quote */
+      .q {
+        border-top: 1px solid var(--line);
+        padding: 16px 0 6px;
+      }
+      .q blockquote {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.4;
+        color: var(--ink);
+        font-weight: 300;
+      }
+      .q blockquote::before {
+        content: "\201C";
+        color: var(--ember);
+        font-family: var(--display);
+        font-size: 1.6em;
+        line-height: 0;
+        vertical-align: -0.3em;
+        margin-right: 4px;
+      }
+      .q cite {
+        display: block;
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+
+      /* portrait */
+      .portrait {
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        max-width: 420px;
+        border: 1px solid var(--line-2);
+      }
+      .portrait img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .portrait .cap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px;
+        background: linear-gradient(0deg, rgba(12, 10, 8, 0.92), transparent);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+
+      /* table-ish rows */
+      .rows {
+        margin-top: 22px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 150px 1fr 1fr;
+        gap: 20px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        align-items: baseline;
+      }
+      .row.head {
+        border-top: none;
+        padding-bottom: 6px;
+      }
+      .row.head span {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .row .k {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .row p {
+        font-size: clamp(11.5px, 0.92vw, 14px);
+      }
+      .row .no {
+        color: var(--ink-3);
+      }
+      .row .yes {
+        color: var(--ink);
+      }
+
+      /* product strip */
+      .prods {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .prod {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .prod img {
+        width: 100%;
+        aspect-ratio: 5 / 3;
+        object-fit: cover;
+        display: block;
+      }
+      .prod .c {
+        padding: 10px 12px;
+        background: rgba(20, 17, 13, 0.9);
+      }
+      .prod .c b {
+        display: block;
+        font-size: 13px;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .prod .c span {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+      }
+
+      /* part divider */
+      .pdiv .part {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin-bottom: 18px;
+      }
+      .pdiv h1 {
+        font-size: clamp(72px, 13vw, 220px);
+      }
+      .pdiv .lede {
+        margin-top: 22px;
+      }
+
+      /* cover */
+      .cover-slide .inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .cover-slide .logo {
+        height: clamp(28px, 3.2vw, 46px);
+        width: auto;
+        color: var(--ink);
+        margin-bottom: clamp(28px, 4vw, 60px);
+      }
+      .cover-slide h1 {
+        max-width: 12ch;
+      }
+      .cover-slide .sub {
+        margin-top: clamp(20px, 2.6vw, 40px);
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        gap: clamp(20px, 3vw, 50px);
+        justify-content: start;
+      }
+      .cover-slide .sub div {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        line-height: 1.7;
+      }
+      .cover-slide .sub b {
+        color: var(--ink);
+        font-weight: 500;
+        display: block;
+      }
+
+      /* callout */
+      .call {
+        margin-top: 22px;
+        padding: 14px 18px;
+        border: 1px solid rgba(240, 78, 35, 0.45);
+        border-radius: 4px;
+        background: rgba(240, 78, 35, 0.07);
+      }
+      .call p {
+        color: var(--ink);
+        font-size: clamp(12.5px, 1.02vw, 15.5px);
+      }
+      .note {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        margin-top: 16px;
+        text-transform: uppercase;
+      }
+
+      /* sources */
+      .src {
+        columns: 2;
+        column-gap: 40px;
+        margin-top: 20px;
+      }
+      .src p {
+        font-size: 11px;
+        line-height: 1.5;
+        margin-bottom: 6px;
+        break-inside: avoid;
+        font-family: var(--mono);
+        color: var(--ink-3);
+      }
+      .src p b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* overview */
+      #ov {
+        position: fixed;
+        inset: 0;
+        z-index: 8;
+        background: rgba(12, 10, 8, 0.96);
+        display: none;
+        padding: 60px var(--pad);
+        overflow: auto;
+      }
+      #ov.on {
+        display: block;
+      }
+      #ovg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+      }
+      .ovc {
+        border: 1px solid var(--line);
+        padding: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .ovc:hover,
+      .ovc.now {
+        border-color: var(--ember);
+      }
+      .ovc.part {
+        background: rgba(240, 78, 35, 0.08);
+      }
+      .ovc .n {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.16em;
+      }
+      .ovc .t {
+        font-size: 13px;
+        color: var(--ink);
+        margin-top: 6px;
+      }
+      #help {
+        position: fixed;
+        right: var(--pad);
+        bottom: 52px;
+        z-index: 7;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        display: none;
+      }
+      #help.on {
+        display: block;
+      }
+
+      @media (max-width: 900px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats,
+        .prods {
+          grid-template-columns: 1fr 1fr;
+        }
+        .tl {
+          grid-template-columns: repeat(5, 1fr);
+          row-gap: 26px;
+        }
+        .row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+        .src {
+          columns: 1;
+        }
+        h2 {
+          max-width: none;
+        }
+        .slide {
+          justify-content: flex-start;
+          overflow: auto;
+          padding-top: 70px;
+        }
+      }
+      @media (max-width: 600px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats,
+        .prods,
+        .bars {
+          grid-template-columns: 1fr 1fr;
+        }
+        .cover-slide .sub {
+          grid-template-columns: 1fr;
+        }
+      }
+    /* evidence images */
+.ev {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+.ev.two {
+  grid-template-columns: 1.55fr 0.9fr;
+  align-items: start;
+}
+.ev.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+.ev.strip {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.ev figure {
+  margin: 0;
+  min-width: 0;
+}
+.ev img {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: #fff;
+}
+.ev .shot {
+  max-height: 56vh;
+  object-fit: cover;
+  object-position: top;
+}
+.ev .tall {
+  max-height: 62vh;
+  object-fit: cover;
+  object-position: top;
+}
+.ev figcaption {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.ev figcaption b {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.ann {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 8px;
+}
+.ann li {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  padding-left: 22px;
+  position: relative;
+}
+.ann li::before {
+  content: attr(data-n);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ember);
+}
+.ann li b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.serp {
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  background: #fff;
+  color: #1a1a1a;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.serp .u {
+  font-size: 12px;
+  color: #4d5156;
+}
+.serp .t {
+  font-size: 18px;
+  color: #1a0dab;
+  margin: 4px 0 6px;
+}
+.serp .d {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #4d5156;
+}
+.slide.dense .ev img {
+  max-height: 46vh;
+}
+.lh {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.gauge {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+}
+.gauge .n {
+  font-family: var(--display);
+  font-size: clamp(34px, 3.6vw, 54px);
+  line-height: 1;
+  font-variation-settings: "opsz" 144;
+}
+.gauge .n.bad {
+  color: var(--ember);
+}
+.gauge .n.mid {
+  color: var(--heat);
+}
+.gauge .n.ok {
+  color: var(--ink);
+}
+.gauge .l {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+.gauge .s {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.signoff {
+  margin-top: 26px;
+  display: flex;
+  gap: 40px;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  flex-wrap: wrap;
+}
+.signoff b {
+  color: var(--ink);
+  font-weight: 500;
+}
+    </style>
+  </head>
+  <body>
+    <canvas id="embers"></canvas>
+    <div id="photo"></div>
+    <div id="heat"></div>
+    <div id="vig"></div>
+    <svg id="grain">
+      <filter id="n">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.8"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#n)" />
+    </svg>
+    <img id="logo-corner" src="img/logo-cream.svg" alt="Pedersen & Houpt" />
+    <div id="brand"><b>Pedersen & Houpt</b> · website audit · September 2026</div>
+
+    <div id="deck">
+<!-- ═══════════ COVER ═══════════ -->
+<section
+  class="slide cover-slide"
+  data-t="Cover"
+  data-p="0"
+  data-photo="img/ev/hero.jpg"
+  data-int="0.7"
+>
+  <div class="inner">
+    <img class="logo" src="img/logo-cream.svg" alt="Pedersen & Houpt" />
+    <h1 data-split>Sixty-nine years. One website.</h1>
+    <div class="sub">
+      <div>Subject<b>pedersenhoupt.com · 170 pages</b></div>
+      <div>
+        Scope<b
+          >Every page, desktop and phone · Lighthouse · 2000 to 2026 history</b
+        >
+      </div>
+      <div>Date<b>9 September 2026 · prepared for Pedersen & Houpt</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ THE READ ═══════════ -->
+<section class="slide" data-t="The read" data-p="0" data-int="0.25">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">01</span> The read in one
+      breath
+    </div>
+    <h2 data-split>A working firm, presented by a template.</h2>
+    <div class="verdict">
+      <p>
+        Pedersen & Houpt is a sixty-nine-year-old Chicago business firm with
+        twenty-six attorneys, a Chambers listing this year and deals like the
+        Thompson Center on its record. Its website is a vendor template whose current build dates from May 2021 and whose words date from 2012,
+        with stock photographs of skydivers and hard hats, a consent wall across
+        the first screen, and an About page that still says the firm is
+        fifty-five years old. The content underneath is better than the site
+        that carries it.
+      </p>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="n hot">2012</div>
+        <div class="l">Title tag, wordmark and About copy set</div>
+        <div class="s">Firmseek built the first version in September 2012 and the current one in May 2021. The words did not change between them.</div>
+      </div>
+      <div class="stat">
+        <div class="n hot">2.8 to 7.8 s</div>
+        <div class="l">Until the homepage image appears on a phone</div>
+        <div class="s">Two Lighthouse runs an hour apart, depending on which hero slide loads. Google's threshold for good is 2.5 seconds.</div>
+      </div>
+      <div class="stat">
+        <div class="n warm">167 / 169</div>
+        <div class="l">Pages with no search description</div>
+        <div class="s">
+          Google writes its own snippet for every attorney and every service
+          page.
+        </div>
+      </div>
+      <div class="stat">
+        <div class="n">4 / 10</div>
+        <div class="l">Design score, current site</div>
+        <div class="s">
+          Template, on our scale. The bios and the wordmark are the parts worth
+          keeping. Full verdict on slide 14.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FIRST SCREEN ═══════════ -->
+<section class="slide dense" data-t="First screen" data-p="1" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">02</span> What a client sees in
+      the first five seconds
+    </div>
+    <h2 data-split>Skydivers, a category headline, and a wall.</h2>
+    <div class="ev two">
+      <figure>
+        <img
+          class="shot"
+          src="img/ev/home-desktop.jpg"
+          alt="pedersenhoupt.com homepage at 1440 wide"
+        />
+        <figcaption><b>Desktop, 1440 wide</b> · 9 Sep 2026</figcaption>
+      </figure>
+      <figure>
+        <img
+          class="tall"
+          src="img/ev/home-phone.jpg"
+          alt="pedersenhoupt.com homepage on a phone"
+        />
+        <figcaption><b>Phone, 375 wide</b> · the same visit</figcaption>
+      </figure>
+    </div>
+    <ul class="ann">
+      <li data-n="01">
+        <b>The headline is a category, not the firm.</b> "Grow Your Business"
+        could sit on a bank, a software company or a gym. Nothing on the first
+        screen says middle market, Chicago, 1957, or law.
+      </li>
+      <li data-n="02">
+        <b>The photography is a metaphor.</b> Skydivers holding hands, two men
+        in hard hats, a finger on a glowing network. Not one photograph of a
+        person who works at 161 North Clark.
+      </li>
+      <li data-n="03">
+        <b>The consent bar takes the fold.</b> 140 of 900 pixels on desktop,
+        about two fifths of a phone screen, on every page and every visit until
+        it is accepted. It covers the firm's own description of itself.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════ HISTORY ═══════════ -->
+<section class="slide dense" data-t="How long" data-p="1" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">03</span> The homepage, as the
+      Wayback Machine saw it
+    </div>
+    <h2 data-split>One vendor since 2012. This build since May 2021.</h2>
+    <div class="ev strip" style="grid-template-columns: repeat(5, 1fr)">
+      <figure>
+        <img src="img/ev/wb-2008.jpg" alt="2008 capture" />
+        <figcaption><b>2008</b> · Flash hero</figcaption>
+      </figure>
+      <figure>
+        <img src="img/ev/wb-2011.jpg" alt="2011 capture" />
+        <figcaption><b>2011</b> · same site</figcaption>
+      </figure>
+      <figure>
+        <img src="img/ev/wb-2014.jpg" alt="2014 capture" />
+        <figcaption><b>Feb 2014</b> · Firmseek v1, live Sep 2012 to Apr 2021</figcaption>
+      </figure>
+
+      <figure>
+        <img src="img/ev/wb-2020.jpg" alt="2020 capture" />
+        <figcaption><b>2020</b> · v1 with a PPP banner and a Google+ icon</figcaption>
+      </figure>
+      <figure>
+        <img src="img/ev/wb-2023.jpg" alt="2023 capture" />
+        <figcaption><b>2023</b> · Firmseek v2, live since May 2021, as today</figcaption>
+      </figure>
+    </div>
+    <div class="cols c3" style="margin-top: 16px">
+      <div class="stat">
+        <div class="n">199</div>
+        <div class="l">Distinct homepage versions since Aug 2000</div>
+        <div class="s">Three eras: a Flash site to 2012, Firmseek v1 to April 2021, Firmseek v2 since. Most versions are copy changes inside the same template.</div>
+      </div>
+      <div class="stat">
+        <div class="n warm">May 2021</div>
+        <div class="l">The current build's first capture</div>
+        <div class="s">Firmseek, the same vendor since 2012. The title tag "Elite Chicago Law Firm" has not changed since 2012; the Twitter link in the footer is a 2011-era URL.</div>
+      </div>
+      <div class="stat">
+        <div class="n">0 of 6</div>
+        <div class="l">Captures with a photograph of a person at the firm</div>
+        <div class="s">
+          None. The people in every era are stock: a Flash animation, skydivers,
+          hard hats, apples.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ PEOPLE PAGES ═══════════ -->
+<section class="slide dense" data-t="The people" data-p="1" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">04</span> Twenty-six attorneys,
+      twenty-seven bio pages · the pages a client actually reads
+    </div>
+    <h2 data-split>The best content on the site is under the wall.</h2>
+    <div class="ev two">
+      <figure>
+        <img
+          class="shot"
+          src="img/ev/professionals-index-desktop.jpg"
+          alt="Professionals index page"
+        />
+        <figcaption>
+          <b>Professionals index</b> · an alphabet filter and a list, no faces
+        </figcaption>
+      </figure>
+      <figure>
+        <img
+          class="tall"
+          src="img/ev/professionals-Eric-Kordish-html-phone.jpg"
+          alt="An attorney bio on a phone"
+        />
+        <figcaption>
+          <b>A bio on a phone</b> · photograph, then the consent wall
+        </figcaption>
+      </figure>
+    </div>
+    <ul class="ann">
+      <li data-n="01">
+        <b>The index shows no one.</b> A visitor picking a lawyer sees letters A
+        to Z, a title filter and a practice list. Twenty-six real, consistent
+        headshots exist one click deeper.
+      </li>
+      <li data-n="02">
+        <b>The bio content is strong.</b> Eric Kordish's page carries fifteen
+        representative matters with dollar figures and the Chambers Spotlight
+        2026 badge. It is the most persuasive writing on the site and it sits
+        below a gray band, a tab strip and the bar.
+      </li>
+      <li data-n="03">
+        <b>Each bio weighs about 1 MB</b> and takes 1.1 seconds to load on a
+        fast connection; on a phone the photograph arrives, then the wall.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════ THE WORDS ═══════════ -->
+<section class="slide dense" data-t="The words" data-p="1" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">05</span> Copy is design · what
+      the pages say
+    </div>
+    <h2 data-split>The About page is fourteen years old.</h2>
+    <div class="ev two">
+      <figure>
+        <img
+          class="shot"
+          src="img/ev/about-html-desktop.jpg"
+          alt="About Us page"
+        />
+        <figcaption>
+          <b>About Us</b> · one red apple, and history written in 2012
+        </figcaption>
+      </figure>
+      <div>
+        <div class="card hot">
+          <span class="tag">Read on the page</span>
+          <p>
+            "This combination serves the firm as well today as it did when it
+            was first founded more than fifty-five years ago." The firm was
+            founded in 1957. Fifty-five years ago was 2012. It has been
+            sixty-nine.
+          </p>
+        </div>
+        <div class="card">
+          <span class="tag">The press link</span>
+          <p>
+            The only press item linked from the site is Crains.pdf: Crain's
+            Chicago Business, 23 January 2013, the obituary of founder Peer
+            Pedersen. Respectful, and thirteen years old.
+          </p>
+        </div>
+        <div class="card">
+          <span class="tag">The title tag</span>
+          <p>
+            "Pedersen & Houpt: Elite Chicago Law Firm" is what Google shows as
+            the headline for the homepage. The firm does not use the word elite
+            anywhere else.
+          </p>
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top: 12px">
+      The services pages are competent and brochure-like: "superlative service
+      and responsive representation." The bios, by contrast, are specific. The
+      rebuild should sound like the bios.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ NEWSROOM ═══════════ -->
+<section class="slide" data-t="Newsroom" data-p="1" data-int="0.08">
+  <div class="inner">
+    <div class="split" style="grid-template-columns: 1fr 0.9fr">
+      <div>
+        <div class="kicker">
+          <span class="dot"></span><span class="num">06</span> News & Alerts ·
+          items per year, dated on the page
+        </div>
+        <h2 data-split>The firm posts about five times a year.</h2>
+        <div class="bars">
+          <div class="bar">
+            <div class="v">15</div>
+            <div class="f" style="height: 100%"></div>
+            <div class="l"><b>2020</b> · PPP</div>
+          </div>
+          <div class="bar">
+            <div class="v">3</div>
+            <div class="f dim" style="height: 20%"></div>
+            <div class="l"><b>2021</b></div>
+          </div>
+          <div class="bar">
+            <div class="v">2</div>
+            <div class="f dim" style="height: 13%"></div>
+            <div class="l"><b>2022</b></div>
+          </div>
+          <div class="bar">
+            <div class="v">2</div>
+            <div class="f dim" style="height: 13%"></div>
+            <div class="l"><b>2023</b></div>
+          </div>
+          <div class="bar">
+            <div class="v">5</div>
+            <div class="f dim" style="height: 33%"></div>
+            <div class="l"><b>2024</b></div>
+          </div>
+          <div class="bar">
+            <div class="v">5</div>
+            <div class="f dim" style="height: 33%"></div>
+            <div class="l"><b>2025</b></div>
+          </div>
+          <div class="bar">
+            <div class="v">4</div>
+            <div class="f ghost" style="height: 27%"></div>
+            <div class="l"><b>2026</b> · to Aug</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div
+          class="stats"
+          style="grid-template-columns: 1fr 1fr; margin-top: 0"
+        >
+          <div class="stat">
+            <div class="n">Aug 2026</div>
+            <div class="l">Most recent news</div>
+            <div class="s">
+              Chambers Spotlight USA 2026 for Real Estate. Real news, on the
+              third screen of the homepage in 15px type.
+            </div>
+          </div>
+          <div class="stat">
+            <div class="n hot">Apr 2022</div>
+            <div class="l">Most recent publication</div>
+            <div class="s">
+              "The MetaBirkin: To Be or Not to Be." The one before it is October
+              2012.
+            </div>
+          </div>
+          <div class="stat">
+            <div class="n">83</div>
+            <div class="l">Newsroom pages, 2000 to 2026</div>
+            <div class="s">
+              Fifteen of them are COVID and PPP alerts from 2020, when the firm
+              showed it can move fast.
+            </div>
+          </div>
+          <div class="stat">
+            <div class="n warm">0</div>
+            <div class="l">Video, podcast or webinar recordings</div>
+            <div class="s">
+              A partner presented an IICLE webcast in January 2026. The site
+              links to nothing.
+            </div>
+          </div>
+        </div>
+        <p class="note">Off the site: LinkedIn 502 followers and two posts in nine months; X 214 followers, silent since January 2026. The newsletter sign-up requires a "Comments or Questions" field before it will accept an email address.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ON A PHONE ═══════════ -->
+<section class="slide dense" data-t="On a phone" data-p="1" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">07</span> Phone pass · 375
+      wide, the same pages
+    </div>
+    <h2 data-split>It fits a phone. It was not made for one.</h2>
+    <div class="ev three">
+      <figure>
+        <img
+          class="tall"
+          src="img/ev/home-phone.jpg"
+          alt="Homepage on a phone"
+        />
+        <figcaption><b>Home</b> · 23 links smaller than a fingertip</figcaption>
+      </figure>
+      <figure>
+        <img
+          class="tall"
+          src="img/ev/professionals-index-phone-full.jpg"
+          alt="Professionals index on a phone"
+        />
+        <figcaption><b>Professionals</b> · the menu, then a list</figcaption>
+      </figure>
+      <figure>
+        <img
+          class="tall"
+          src="img/ev/focus-results-html-phone.jpg"
+          alt="Results page on a phone"
+        />
+        <figcaption><b>Results</b> · 9,168 pixels tall, one column</figcaption>
+      </figure>
+    </div>
+    <ul class="ann">
+      <li data-n="01">
+        <b>Nothing overflows,</b> which is the good news: the template collapses
+        to one column on all fifteen pages we measured.
+      </li>
+      <li data-n="02">
+        <b>Tap targets fail Google's size check</b> on the homepage (eight
+        flagged) and every page has between 14 and 38 links under 40 pixels.
+      </li>
+      <li data-n="03">
+        <b>The phone menu is iOS 6.</b> Two gray beveled buttons, a magnifier
+        and the word MENU. The bar under it says whatever page you are on, in
+        the same gray.
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════ UNDER THE HOOD ═══════════ -->
+<section class="slide dense" data-t="Under the hood" data-p="2" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">08</span> Stack and weight ·
+      every page measured
+    </div>
+    <h2 data-split>2.4 MB of homepage, most of it three PNG photographs.</h2>
+    <div class="rows">
+      <div class="row head">
+        <span>Measured</span><span>Value</span><span>What it means</span>
+      </div>
+      <div class="row">
+        <div class="k">Built by</div>
+        <p><strong>FirmSeek template</strong></p>
+        <p>
+          A law-firm website vendor. The credit is in the footer of all 169
+          pages. The firm edits through the vendor's system.
+        </p>
+      </div>
+      <div class="row">
+        <div class="k">Homepage weight</div>
+        <p><strong>2.4 MB, 15 requests</strong></p>
+        <p>
+          Three tile images are PNG files of 850 KB to 1.27 MB each; the hero is
+          a 2,150-pixel JPEG. Lighthouse counts 1.9 MB of savings from sizing
+          and 1.5 MB from modern formats.
+        </p>
+      </div>
+      <div class="row">
+        <div class="k">Attorney pages</div>
+        <p><strong>About 1 MB each</strong></p>
+        <p>
+          Twenty-seven of them. The headshots are served at full size regardless
+          of screen.
+        </p>
+      </div>
+      <div class="row">
+        <div class="k">Code</div>
+        <p>
+          <strong
+            >jQuery 3.7.1 · Proxima Nova via Typekit · GA4 and Tag
+            Manager</strong
+          >
+        </p>
+        <p>
+          Current libraries, one font family. The site is not insecure or
+          broken. It is a 2021 build of a 2012 layout, with 2024 plumbing.
+        </p>
+      </div>
+      <div class="row">
+        <div class="k">Blocking</div>
+        <p><strong>1.6 s of render-blocking resources on a phone</strong></p>
+        <p>
+          Stylesheets and fonts load before anything paints. Fixable in a
+          rebuild by default.
+        </p>
+      </div>
+      <div class="row">
+        <div class="k">Contact page</div>
+        <p><strong>Map renders blank</strong></p>
+        <p>
+          The Google Maps embed on Connect With Us draws an empty white box next
+          to driving directions written for the Kennedy and the Dan Ryan.
+        </p>
+      </div>
+      <div class="row">
+        <div class="k">Sitemap</div>
+        <p><strong>One 404 in the firm's own sitemap</strong></p>
+        <p>
+          connect-Chicago.html is listed for search engines and does not exist. Every URL is marked "changefreq weekly"; the service pages were last modified in March 2021. HTTPS is on everywhere.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ GOOGLE'S VIEW ═══════════ -->
+<section class="slide" data-t="Lighthouse" data-p="2" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">09</span> Lighthouse 12 ·
+      Google's own audit tool, run 9 Sep 2026
+    </div>
+    <h2 data-split>Never under Google's line, on any run.</h2>
+    <div class="lh">
+      <div class="gauge"><div class="n mid">63 · 82</div><div class="l">Performance · phone, two runs</div><div class="s">65 and 69 on desktop. The spread comes from a rotating hero. Firms rebuilt this year land above 85 every run.</div></div>
+      <div class="gauge">
+        <div class="n ok">96</div>
+        <div class="l">Accessibility</div>
+        <div class="s">
+          Good, with two failures worth fixing: tap targets and two contrast
+          pairs on desktop.
+        </div>
+      </div>
+      <div class="gauge">
+        <div class="n ok">93</div>
+        <div class="l">Best practices</div>
+        <div class="s">
+          Console errors on load and an image drawn at the wrong aspect ratio
+          cost the points.
+        </div>
+      </div>
+      <div class="gauge">
+        <div class="n ok">92</div>
+        <div class="l">Search basics</div>
+        <div class="s">
+          Titles and a viewport exist. The missing descriptions are counted on
+          the next slide.
+        </div>
+      </div>
+    </div>
+    <div class="cols c3" style="margin-top: 16px">
+      <div class="stat"><div class="n hot">2.8 · 7.8 s</div><div class="l">Largest Contentful Paint · phone, two runs</div><div class="s">The moment the main image is on screen. Google's line for good is 2.5 s. Neither run made it.</div></div>
+      <div class="stat">
+        <div class="n hot">0.40</div>
+        <div class="l">Layout shift · desktop</div>
+        <div class="s">
+          The page jumps as it loads. Google's line for good is 0.10.
+        </div>
+      </div>
+      <div class="stat">
+        <div class="n warm">8</div>
+        <div class="l">Tap targets flagged too small</div>
+        <div class="s">
+          On the homepage alone. Links in the header and footer are the usual
+          culprits.
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top: 12px">
+      Scores are out of 100. Lighthouse is the tool inside Chrome; the figures
+      above are the lab run, not field data, because Google's field sample for
+      this site is too small to report.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ SEARCH ═══════════ -->
+<section class="slide dense" data-t="Search" data-p="2" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">10</span> What Google has to
+      work with
+    </div>
+    <h2 data-split>167 of 169 pages leave the description to Google.</h2>
+    <div class="split" style="grid-template-columns: 1fr 1fr">
+      <div>
+        <div class="serp">
+          <div class="u">
+            pedersenhoupt.com › professionals-Anthony-Pesce.html
+          </div>
+          <div class="t">Anthony Pesce: Pedersen & Houpt</div>
+          <div class="d">
+            Cookie Settings Client Focus Services Professionals News & Alerts
+            About Us Careers Connect With Us Professionals Anthony DeMarco Pesce
+            PartnerChicago T 312 261 2191 ...
+          </div>
+        </div>
+        <p class="note" style="margin-top: 10px">
+          A reconstruction of the snippet Google builds when a page has no
+          description: it scrapes the navigation. Every attorney and every
+          practice page is in this position.
+        </p>
+      </div>
+      <div class="stats" style="grid-template-columns: 1fr 1fr; margin-top: 0">
+        <div class="stat">
+          <div class="n hot">167</div>
+          <div class="l">Pages with no meta description</div>
+          <div class="s">
+            Out of 169 that load. The homepage and one other have one.
+          </div>
+        </div>
+        <div class="stat">
+          <div class="n warm">11</div>
+          <div class="l">Duplicate page titles</div>
+          <div class="s">
+            Service pages exist twice under two URLs with the same title,
+            splitting whatever ranking they earn.
+          </div>
+        </div>
+        <div class="stat">
+          <div class="n">3</div>
+          <div class="l">H1 headings on the homepage</div>
+          <div class="s">
+            All three say GROW YOUR BUSINESS. One per page is the convention
+            search engines expect.
+          </div>
+        </div>
+        <div class="stat"><div class="n hot">2.8 ★</div><div class="l">Google Business Profile, 4 reviews</div><div class="s">Listed as "Pedersen & Houpt Law Offices" with the "Own this business?" prompt showing, so it appears unclaimed. FindLaw still carries Suite 3100 from a 2014 update.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ PEERS ═══════════ -->
+<section class="slide dense" data-t="The peers" data-p="2" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">11</span> Chicago middle-market
+      firms a client compares you with
+    </div>
+    <h2 data-split>Six of seven peers rebuilt since 2023. Four show their own people.</h2>
+    <div class="rows" id="peers"></div>
+    <p class="note" style="margin-top: 12px">
+      Redesign years come from the Wayback Machine's first capture of each
+      firm's current design; presentation notes from reading each site on 9
+      September 2026.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ WHAT WORKS ═══════════ -->
+<section class="slide" data-t="What works" data-p="3" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">12</span> The keep list · what
+      a rebuild carries forward
+    </div>
+    <h2 data-split>Four things on this site are already right.</h2>
+    <div class="cols c2" style="margin-top: 18px">
+      <div class="card">
+        <span class="tag">The wordmark</span>
+        <h3>"Pedersen" with the red rule</h3>
+        <p>
+          A real mark: a serif name, a single red line, the full name beneath.
+          It has held since 2012 and it should anchor the rebuild. The red,
+          #AB1E23, is the accent this deck wears.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">The bios</span>
+        <h3>Representative experience</h3>
+        <p>
+          Dollar figures, deal shapes, industries. Fifteen matters on one
+          partner's page. This is the proof clients look for and it becomes the
+          front of the new site, not the bottom of a tab.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">The headshots</span>
+        <h3>One standard, twenty-six times</h3>
+        <p>
+          Same backdrop, same crop, same light. A rare discipline on a firm
+          site. They belong on the index, at size, with names and practices.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">The positioning, hidden in the nav</span>
+        <h3>We Listen · It's About Results · Alternative Fee Arrangements</h3>
+        <p>
+          Three pages under "Client Focus" say exactly what a middle-market
+          owner wants to hear. Today they are a sidebar. They are the homepage.
+        </p>
+      </div>
+    </div>
+    <p class="note" style="margin-top: 14px">
+      Also kept: the Chambers Spotlight 2026 badge, the client Payment and
+      EACCESS links in the footer (moved up front), and the 2020 alert cadence
+      as proof the firm can publish fast when it matters.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ THE VERDICT ═══════════ -->
+<section class="slide dense" data-t="The verdict" data-p="3" data-int="0.12">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">13</span> Design verdict · our
+      house standard, the same scale we hold our own work to
+    </div>
+    <h2 data-split>A four, with a seven inside it.</h2>
+    <div class="cols c3">
+      <div class="card">
+        <span class="tag">Cold read, three seconds</span>
+        <p>
+          Corporate template, 2012 vintage, rebuilt in 2021. Skydivers over a law firm. The one word the
+          site evokes is <strong>brochure</strong>. A client cannot say from the
+          first screen who the firm is for or why it is different.
+        </p>
+      </div>
+      <div class="card hot">
+        <span class="tag">The score · 4 of 10</span>
+        <p>
+          <strong>Template.</strong> Nothing is wrong by rule and nothing was
+          chosen: the vendor's layout, stock metaphors, a category headline,
+          default type. Above broken because it works, is consistent and is
+          honest. Below professional because the copy is 2012, the map is blank
+          and the first interaction is a consent wall.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">What raises it</span>
+        <p>
+          The seven trapped inside is the bio content and the wordmark. Put the
+          people first, write the homepage in the voice of the bios, and replace
+          metaphor photography with the firm itself, and this site reaches
+          signature territory without changing what the firm says about itself.
+        </p>
+      </div>
+    </div>
+    <div class="verdict" style="margin-top: 16px">
+      <p>
+        <strong>The ten-out-of-ten version of this exact site:</strong> a
+        Chicago firm that looks like the room it works in. The homepage says in
+        one sentence who it serves and shows the people who do the work, at 161
+        North Clark, in their own light. The bios read on a phone in the
+        elevator on the way up to the meeting. The news reads as counsel, with a
+        face beside it.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ WHAT A REBUILD DOES ═══════════ -->
+<section class="slide dense" data-t="A rebuild" data-p="3" data-int="0.12">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">14</span> What changes for a
+      client · each tied to a finding
+    </div>
+    <h2 data-split>Six things a client would notice.</h2>
+    <div class="cols c3">
+      <div class="card">
+        <span class="tag">Slide 02</span>
+        <h3>The first screen says who you are for</h3>
+        <p>
+          One sentence about middle-market owners and their companies, the
+          firm's own people in the photograph, proof beside it: Chambers, 1957,
+          the Thompson Center.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">Slide 04</span>
+        <h3>Faces on the index, matters up front</h3>
+        <p>
+          Twenty-six attorneys by face, practice and one line. The bio opens
+          with representative experience, not a tab strip.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">Slide 09</span>
+        <h3>Loads in under two seconds on a phone</h3>
+        <p>
+          Right-sized images in modern formats, nothing blocking the first
+          paint. From 2.8 to 7.8 seconds today to under 2.5 is a build default, not an add-on.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">Slide 02 · 07</span>
+        <h3>No wall, real buttons</h3>
+        <p>
+          Consent handled in a slim bar or not at all, given what the site
+          actually tracks. Every link big enough to tap.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">Slide 10</span>
+        <h3>Google shows the firm's own words</h3>
+        <p>
+          A description on every page, one title per page, one H1, a sitemap
+          with no dead ends. Search results that read like the firm wrote them.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">Slide 06</span>
+        <h3>News with a face and a follow</h3>
+        <p>
+          Each item carries its author's photograph and a practice tag. A
+          visitor can follow one practice. The 2020 speed becomes the normal
+          pace.
+        </p>
+      </div>
+    </div>
+    <p class="note" style="margin-top: 14px">
+      What this deck does not do: propose a scope, a timeline or a price. Those
+      come after the firm decides what it wants the site to be. This is the case
+      that it should be something.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ SOURCES ═══════════ -->
+<section class="slide dense" data-t="Sources" data-p="4" data-int="0.08">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">15</span> Every number in this
+      deck, with its date
+    </div>
+    <h2 data-split>Sources.</h2>
+    <div id="src" class="src"></div>
+  </div>
+</section>
+
+<!-- ═══════════ SIGN-OFF ═══════════ -->
+<section class="slide" data-t="Sign-off" data-p="4" data-int="0.5">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">16</span> Prepared by
+    </div>
+    <h2 data-split>Upperhand.</h2>
+    <p class="lede">
+      A Chicago studio that builds sites, brands and the systems behind them for
+      companies that have a real story and a website that does not tell it. This
+      audit was run on 9 September 2026; every page was measured, every
+      screenshot was taken by us, and every claim has a source on the previous
+      slide.
+    </p>
+    <div class="signoff">
+      <span><b>hello@getupperhand.io</b></span
+      ><span><b>getupperhand.io</b></span
+      ><span>Chicago</span>
+    </div>
+  </div>
+</section>
+
+    </div>
+
+    <div id="rail">
+      <span id="idx">01</span>
+      <div id="ticks"></div>
+      <span id="ttl"></span>
+    </div>
+    <div id="help">← → navigate · esc overview · ? help</div>
+    <div id="ov"><div id="ovg"></div></div>
+
+    <script src="vendor/gsap.min.js"></script>
+    <script>
+      /* ═══ EMBERS — 2D canvas, rising sparks. Performs on cover and part
+         dividers, near-silent behind argument slides. ponytail: no WebGL,
+         the fire is the brand, particles are enough. */
+      const canvas = document.getElementById("embers");
+      const ctx = canvas.getContext("2d");
+      const state = { int: 1 };
+      let W,
+        H,
+        P = [];
+      const COUNT = innerWidth < 760 ? 90 : 220;
+      function resize() {
+        W = canvas.width = innerWidth * Math.min(devicePixelRatio, 2);
+        H = canvas.height = innerHeight * Math.min(devicePixelRatio, 2);
+      }
+      resize();
+      addEventListener("resize", resize);
+      function spawn(p, fresh) {
+        p.x = Math.random() * W;
+        p.y = fresh ? Math.random() * H : H + Math.random() * 40;
+        p.r = (0.6 + Math.random() * 2.2) * Math.min(devicePixelRatio, 2);
+        p.vy = (0.25 + Math.random() * 0.9) * Math.min(devicePixelRatio, 2);
+        p.vx = (Math.random() - 0.5) * 0.35;
+        p.life = 0.4 + Math.random() * 0.6;
+        p.ph = Math.random() * Math.PI * 2;
+        p.hot = Math.random() < 0.3;
+        return p;
+      }
+      for (let i = 0; i < COUNT; i++) P.push(spawn({}, true));
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function frame(t) {
+        ctx.clearRect(0, 0, W, H);
+        const I = state.int;
+        for (const p of P) {
+          p.y -= p.vy * (0.35 + I);
+          p.x += p.vx + Math.sin(t * 0.0012 + p.ph) * 0.3;
+          p.life -= 0.0009;
+          if (p.y < -10 || p.life <= 0) spawn(p, false);
+          const a =
+            Math.min(1, p.life * 1.6) *
+            (0.25 + I * 0.75) *
+            (0.6 + 0.4 * Math.sin(t * 0.004 + p.ph));
+          ctx.beginPath();
+          ctx.fillStyle = p.hot
+            ? `rgba(255,178,74,${a})`
+            : `rgba(240,78,35,${a * 0.85})`;
+          ctx.arc(p.x, p.y, p.r * (0.7 + I * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (!reduced) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      /* ═══ SLIDE ENGINE ═══ */
+      const slides = [...document.querySelectorAll(".slide")];
+      const N = slides.length;
+      let cur = 0;
+      const photo = document.getElementById("photo");
+      const heat = document.getElementById("heat");
+
+      document.querySelectorAll("[data-split]").forEach((el) => {
+        el.innerHTML = el.innerHTML
+          .split(/(<br\s*\/?>)/i)
+          .map((part) =>
+            /^<br/i.test(part)
+              ? part
+              : part
+                  .split(/(\s+)/)
+                  .map((w) => (w.trim() ? `<span class="w">${w}</span>` : w))
+                  .join(""),
+          )
+          .join("");
+      });
+
+      const ticks = document.getElementById("ticks");
+      slides.forEach((s) =>
+        ticks.insertAdjacentHTML(
+          "beforeend",
+          `<i class="tick b${s.dataset.p}"></i>`,
+        ),
+      );
+      const tickEls = [...ticks.children];
+      const ovg = document.getElementById("ovg");
+      slides.forEach((s, i) =>
+        ovg.insertAdjacentHTML(
+          "beforeend",
+          `<div class="ovc${s.classList.contains("pdiv") ? " part" : ""}" data-i="${i}"><div class="n">${String(i + 1).padStart(2, "0")}</div><div class="t">${s.dataset.t}</div></div>`,
+        ),
+      );
+      ovg.addEventListener("click", (e) => {
+        const c = e.target.closest(".ovc");
+        if (!c) return;
+        go(+c.dataset.i);
+        toggleOv(false);
+      });
+
+      let entrance = null;
+      gsap.ticker.lagSmoothing(0);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && entrance) entrance.progress(1);
+      });
+
+      function go(n) {
+        n = Math.max(0, Math.min(N - 1, n));
+        if (n === cur && slides[n].classList.contains("on")) return;
+        const prev = slides[cur],
+          next = slides[n];
+        cur = n;
+        if (prev !== next)
+          gsap.to(prev, {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => prev.classList.remove("on"),
+          });
+        next.classList.add("on");
+        if (entrance) entrance.progress(1);
+        const tl = (entrance = gsap.timeline());
+        tl.fromTo(
+          next,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.42, ease: "power2.out" },
+          0,
+        );
+        if (!reduced) {
+          const words = next.querySelectorAll(".w");
+          if (words.length)
+            tl.fromTo(
+              words,
+              { yPercent: 108, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: 0.022,
+                ease: "expo.out",
+              },
+              0.06,
+            );
+          const blocks = next.querySelectorAll(
+            ".card, .stat, .row, .tl > div, .q, .person, .prod, .verdict, .call, .lede, .sub > div",
+          );
+          if (blocks.length)
+            tl.fromTo(
+              blocks,
+              { y: 18, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.018,
+                ease: "power3.out",
+              },
+              0.16,
+            );
+          const bars = next.querySelectorAll(".bar .f");
+          if (bars.length)
+            tl.fromTo(
+              bars,
+              { scaleY: 0 },
+              { scaleY: 1, duration: 0.9, stagger: 0.08, ease: "expo.out" },
+              0.2,
+            );
+        }
+        const int = parseFloat(next.dataset.int ?? 0.1);
+        gsap.to(state, { int, duration: 1.2, ease: "power2.inOut" });
+        gsap.to(heat, { opacity: 0.25 + int * 0.75, duration: 1.1 });
+        const ph = next.dataset.photo;
+        if (ph) {
+          photo.style.backgroundImage = `url(${ph})`;
+          photo.style.opacity = 1;
+        } else photo.style.opacity = 0;
+
+        tickEls.forEach((t, i) => {
+          t.className =
+            "tick b" +
+            slides[i].dataset.p +
+            (i < n ? " done" : i === n ? " now" : "");
+        });
+        document.getElementById("idx").textContent =
+          String(n + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+        document.getElementById("ttl").textContent = next.dataset.t;
+        document.body.classList.toggle("cover", n === 0);
+        [...ovg.children].forEach((c, i) => c.classList.toggle("now", i === n));
+        history.replaceState(null, "", n ? "#" + (n + 1) : "./");
+      }
+      const ov = document.getElementById("ov");
+      const toggleOv = (on) =>
+        ov.classList.toggle("on", on ?? !ov.classList.contains("on"));
+      addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur - 1);
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          toggleOv();
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(N - 1);
+        else if (e.key === "?")
+          document.getElementById("help").classList.toggle("on");
+      });
+      let tx = 0;
+      addEventListener(
+        "touchstart",
+        (e) => (tx = e.changedTouches[0].clientX),
+        { passive: true },
+      );
+      addEventListener(
+        "touchend",
+        (e) => {
+          const d = e.changedTouches[0].clientX - tx;
+          if (Math.abs(d) > 55) go(cur + (d < 0 ? 1 : -1));
+        },
+        { passive: true },
+      );
+      addEventListener("click", (e) => {
+        if (ov.classList.contains("on") || e.target.closest("a,button")) return;
+        if (e.clientX > innerWidth * 0.8) go(cur + 1);
+        else if (e.clientX < innerWidth * 0.2) go(cur - 1);
+      });
+
+      /* ═══ SOURCES ═══ */
+      const SRC = [["Crawl of pedersenhoupt.com, 170 URLs (157 in sitemap.xml plus discovered links), desktop 1440 and phone 375, 9 Sep 2026", "site-audit crawler, Playwright"], ["Lighthouse 12, homepage, mobile and desktop presets, run locally 9 Sep 2026", "Google Lighthouse"], ["Wayback Machine CDX index for pedersenhoupt.com, 199 distinct homepage captures Aug 2000 to Jan 2026; frames 2008, 2011, 2014, 2017, 2020, 2023", "web.archive.org"], ["pedersenhoupt.com homepage, About, Connect With Us, Professionals, Services, News & Alerts pages, read 9 Sep 2026", "pedersenhoupt.com"], ["Crain's Chicago Business, For the Record: Peer Pedersen has died, 23 Jan 2013 (the Crains.pdf linked from the firm site)", "chicagobusiness.com · pedersenhoupt.com"], ["Pedersen & Houpt Recognized in Chambers Spotlight USA 2026 for Real Estate, firm newsroom, Aug 2026", "pedersenhoupt.com"], ["Pedersen Represents JRTC Holdings in Thompson Center Agreement, firm newsroom, Nov 2025", "pedersenhoupt.com"], ["Site credit: SITE BY FIRMSEEK in the footer of every page; use.typekit.net (Proxima Nova); jQuery 3.7.1; GA4 G-NP8X2E101W; Google Maps embed", "pedersenhoupt.com"], ["Google Search Central: Largest Contentful Paint is good under 2.5 s; Cumulative Layout Shift is good under 0.1", "developers.google.com"], ["Peer firm websites and their Wayback capture dates, read 9 Sep 2026", "web.archive.org · the firms' sites"]];
+      const PEERS = [["Levenfeld Pearlstein", "lplegal.com", "2023", "Photography of its own people. Three insights in two weeks. Online payment."], ["Much Shelist", "muchlaw.com", "2023", "Chicago and people photography. Weekly insights, subscribe, LawPay, a client portal."], ["Burke Warren MacKay & Serritella", "burkelaw.com", "2023", "Same vendor as Pedersen; on the identical Firmseek pattern in Jan 2022, rebuilt by Jan 2023. Team photography, payments."], ["Neal Gerber Eisenberg", "nge.com", "2024", "Office photography; the hero is its Chambers USA 2026 news. Three insights in a month."], ["Golan Christie Taglia", "gct.law", "2025", "27 lawyers, the closest twin. Bio-card grid with faces, three posts in a month, payments."], ["Chuhak & Tecson", "chuhak.com", "2025", "People photography, 'Right there with you.' Blog undated."], ["Lavelle Law", "lavellelaw.com", "2019", "Stock imagery, but a podcast and video section, a newsletter, payments."], ["Pedersen & Houpt", "pedersenhoupt.com", "2021", "Firmseek build on 2012 words. Stock metaphors. Five items in fourteen months. Google profile unclaimed."]];
+      const _pe = document.getElementById('peers'); if (_pe) _pe.innerHTML = '<div class="row head"><span>Firm</span><span>Current design since</span><span>What a client sees</span></div>' + PEERS.map(p => `<div class="row"><div class="k">${p[0]}<br><span style="opacity:.6">${p[1]}</span></div><p class="${/^20(2[2-6])/.test(p[2]) ? 'yes' : 'no'}"><strong>${p[2]}</strong></p><p>${p[3]}</p></div>`).join('');
+      document.getElementById("src").innerHTML = SRC.map(
+        (s) => `<p><b>${s[0]}</b> · ${s[1]}</p>`,
+      ).join("");
+
+      /* ═══ BOOT ═══ */
+      const h = parseInt(location.hash.slice(1)) || 1;
+      go(h - 1);
+      document.fonts.ready.then(() => document.body.classList.add("ready"));
+      setTimeout(() => document.body.classList.add("ready"), 1200);
+    </script>
+  </body>
+</html>

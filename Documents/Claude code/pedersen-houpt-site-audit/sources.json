@@ -1,0 +1,42 @@
+[
+  [
+    "Crawl of pedersenhoupt.com, 170 URLs (157 in sitemap.xml plus discovered links), desktop 1440 and phone 375, 9 Sep 2026",
+    "site-audit crawler, Playwright"
+  ],
+  [
+    "Lighthouse 12, homepage, mobile and desktop presets, run locally 9 Sep 2026",
+    "Google Lighthouse"
+  ],
+  [
+    "Wayback Machine CDX index for pedersenhoupt.com, 199 distinct homepage captures Aug 2000 to Jan 2026; frames 2008, 2011, 2014, 2017, 2020, 2023",
+    "web.archive.org"
+  ],
+  [
+    "pedersenhoupt.com homepage, About, Connect With Us, Professionals, Services, News & Alerts pages, read 9 Sep 2026",
+    "pedersenhoupt.com"
+  ],
+  [
+    "Crain's Chicago Business, For the Record: Peer Pedersen has died, 23 Jan 2013 (the Crains.pdf linked from the firm site)",
+    "chicagobusiness.com · pedersenhoupt.com"
+  ],
+  [
+    "Pedersen & Houpt Recognized in Chambers Spotlight USA 2026 for Real Estate, firm newsroom, Aug 2026",
+    "pedersenhoupt.com"
+  ],
+  [
+    "Pedersen Represents JRTC Holdings in Thompson Center Agreement, firm newsroom, Nov 2025",
+    "pedersenhoupt.com"
+  ],
+  [
+    "Site credit: SITE BY FIRMSEEK in the footer of every page; use.typekit.net (Proxima Nova); jQuery 3.7.1; GA4 G-NP8X2E101W; Google Maps embed",
+    "pedersenhoupt.com"
+  ],
+  [
+    "Google Search Central: Largest Contentful Paint is good under 2.5 s; Cumulative Layout Shift is good under 0.1",
+    "developers.google.com"
+  ],
+  [
+    "Peer firm websites and their Wayback capture dates, read 9 Sep 2026",
+    "web.archive.org · the firms' sites"
+  ]
+]

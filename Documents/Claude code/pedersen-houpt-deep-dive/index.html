@@ -1,0 +1,1778 @@
+<!--
+  deep-dive deck engine. Worked example: Solo Stove / Liz Vanzura, Sept 2026.
+  Everything above <div id="deck"> is the engine (tokens, chrome, embers, slide CSS).
+  Everything inside #deck is an EXAMPLE of each slide type with real content.
+  Re-skin via :root tokens + the background layer; rewrite the slides; keep the engine.
+  Slide attributes: data-t (rail title), data-p (part index 0-4 for tick colors),
+  data-int (0..1 background intensity: 1 on cover/dividers, ~0.1 behind argument),
+  data-photo (optional full-bleed image behind a divider), class "dense" for slides
+  with more than ~6 blocks (smaller h2, tighter cards, scrolls instead of clipping).
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pedersen & Houpt · Deep dive · September 2026</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0d0e10;
+        --bg-2: #14161a;
+        --line: #262a30;
+        --line-2: #363b43;
+        --ink: #f1eee8;
+        --ink-2: #aeb0b4;
+        --ink-3: #6f747b;
+        --ember: #AB1E23;
+        --heat: #e0616a;
+        --steel: #c7c9cd;
+        --cool: #7fa8c9;
+        --pad: clamp(28px, 4.2vw, 78px);
+        --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+        --sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      body.ready {
+        opacity: 1;
+      }
+
+      #embers {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        display: block;
+      }
+      #heat {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            70% 55% at 50% 118%,
+            rgba(240, 78, 35, 0.55),
+            transparent 62%
+          ),
+          radial-gradient(
+            40% 30% at 50% 108%,
+            rgba(255, 178, 74, 0.35),
+            transparent 70%
+          );
+        opacity: 0.9;
+      }
+      #photo {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 0.9s ease;
+        filter: saturate(1.05) contrast(1.05);
+      }
+      #photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(12, 10, 8, 0.96) 0%,
+          rgba(12, 10, 8, 0.82) 42%,
+          rgba(12, 10, 8, 0.35) 100%
+        );
+      }
+      #vig {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: radial-gradient(
+          125% 92% at 50% 42%,
+          transparent 34%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.1;
+        mix-blend-mode: overlay;
+      }
+
+      #deck {
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: var(--pad);
+        padding-bottom: calc(var(--pad) + 34px);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .slide .inner {
+        margin: auto;
+      }
+      .slide.dense h2 {
+        font-size: clamp(30px, 4.2vw, 64px);
+      }
+      .slide.dense .card {
+        padding: clamp(11px, 1.15vw, 18px);
+      }
+      .slide.dense .card h3 {
+        font-size: clamp(13.5px, 1.15vw, 17px);
+      }
+      .slide.dense p,
+      .slide.dense li {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+        line-height: 1.5;
+      }
+      .slide.dense .row {
+        padding: 8px 0;
+        gap: 14px;
+        grid-template-columns: 130px 0.8fr 1.6fr;
+      }
+      .slide.dense .stat {
+        padding: clamp(12px, 1.3vw, 20px) clamp(10px, 1.2vw, 18px);
+      }
+      .slide.dense .stat .n {
+        font-size: clamp(32px, 4vw, 60px);
+      }
+      .slide.dense .kicker {
+        margin-bottom: 12px;
+      }
+      body.cover #logo-corner {
+        display: none;
+      }
+      .slide.on {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .inner {
+        width: 100%;
+        max-width: 1380px;
+        margin: 0 auto;
+      }
+
+      #rail {
+        position: fixed;
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 26px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #ticks {
+        flex: 1;
+        display: flex;
+        gap: 3px;
+        height: 2px;
+      }
+      .tick {
+        flex: 1;
+        background: var(--line-2);
+        transition:
+          background 0.45s ease,
+          transform 0.45s ease;
+        transform-origin: bottom;
+      }
+      .tick.b1 {
+        background: #3d2a20;
+      }
+      .tick.b2 {
+        background: #3f3322;
+      }
+      .tick.b3 {
+        background: #2f3238;
+      }
+      .tick.b4 {
+        background: #3b2f2a;
+      }
+      .tick.done {
+        background: var(--ink-3);
+      }
+      .tick.now {
+        background: var(--ember);
+        transform: scaleY(3);
+      }
+      #brand {
+        position: fixed;
+        top: 26px;
+        right: var(--pad);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #brand b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+      #logo-corner {
+        position: fixed;
+        top: 22px;
+        left: var(--pad);
+        z-index: 6;
+        height: 18px;
+        width: auto;
+        color: var(--ink-2);
+        opacity: 0.85;
+      }
+
+      .kicker {
+        font-family: var(--mono);
+        font-size: clamp(9px, 0.78vw, 11px);
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .kicker .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ember);
+        flex: 0 0 auto;
+      }
+      .kicker .num {
+        color: var(--ink-2);
+      }
+      h1 {
+        font-family: var(--display);
+        font-size: clamp(64px, 11vw, 190px);
+        font-weight: 900;
+        line-height: 0.84;
+        letter-spacing: 0.005em;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+      h2 {
+        font-family: var(--display);
+        font-size: clamp(40px, 5.6vw, 88px);
+        font-weight: 800;
+        line-height: 0.9;
+        letter-spacing: 0.005em;
+        text-transform: uppercase;
+        text-wrap: balance;
+        max-width: 18ch;
+      }
+      h3 {
+        font-size: clamp(15px, 1.35vw, 20px);
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.012em;
+      }
+      .lede {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.55;
+        color: var(--ink-2);
+        max-width: 62ch;
+        font-weight: 300;
+      }
+      p,
+      li {
+        font-size: clamp(12.5px, 1vw, 15px);
+        line-height: 1.6;
+        color: var(--ink-2);
+        font-weight: 300;
+      }
+      strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      em {
+        font-style: normal;
+        color: var(--heat);
+        font-weight: 500;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .w {
+        display: inline-block;
+        will-change: transform, opacity;
+      }
+      .hot {
+        color: var(--ember);
+      }
+      .warm {
+        color: var(--heat);
+      }
+      .cold {
+        color: var(--cool);
+      }
+
+      .cols {
+        display: grid;
+        gap: clamp(14px, 1.8vw, 30px);
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .c2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .c3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .c4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: clamp(26px, 3.6vw, 64px);
+        align-items: center;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: clamp(14px, 1.5vw, 24px);
+        background: rgba(20, 17, 13, 0.72);
+        backdrop-filter: blur(6px);
+      }
+      .card h3 {
+        margin-bottom: 8px;
+      }
+      .card .tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 10px;
+        display: block;
+      }
+      .card.hot {
+        border-color: rgba(240, 78, 35, 0.5);
+      }
+      .card.hot .tag {
+        color: var(--ember);
+      }
+      ul {
+        list-style: none;
+      }
+      ul li {
+        padding-left: 16px;
+        position: relative;
+        margin-bottom: 6px;
+      }
+      ul li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.72em;
+        width: 6px;
+        height: 1px;
+        background: var(--ember);
+      }
+
+      /* stat blocks */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .stat {
+        padding: clamp(14px, 1.6vw, 26px) clamp(12px, 1.4vw, 22px);
+        background: rgba(20, 17, 13, 0.7);
+        border-top: 1px solid var(--line-2);
+      }
+      .stat .n {
+        font-family: var(--display);
+        font-size: clamp(38px, 4.6vw, 72px);
+        font-weight: 900;
+        line-height: 0.9;
+        letter-spacing: 0.01em;
+        color: var(--ink);
+      }
+      .stat .n.hot {
+        color: var(--ember);
+      }
+      .stat .n.warm {
+        color: var(--heat);
+      }
+      .stat .l {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .stat .s {
+        font-size: 12.5px;
+        color: var(--ink-2);
+        margin-top: 6px;
+        font-weight: 300;
+        line-height: 1.45;
+      }
+
+      /* verdict */
+      .verdict {
+        border-left: 3px solid var(--ember);
+        padding-left: clamp(16px, 2vw, 30px);
+        margin-top: 26px;
+      }
+      .verdict p {
+        font-size: clamp(15px, 1.45vw, 22px);
+        color: var(--ink);
+        font-weight: 300;
+        line-height: 1.45;
+        max-width: 58ch;
+      }
+
+      /* timeline */
+      .tl {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 6px;
+        margin-top: clamp(22px, 3vw, 44px);
+        position: relative;
+      }
+      .tl::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 7px;
+        height: 1px;
+        background: linear-gradient(90deg, var(--ink-3), var(--ember));
+      }
+      .tl > div {
+        position: relative;
+        padding-top: 22px;
+      }
+      .tl > div::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 0;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 2px solid var(--ink-3);
+      }
+      .tl > div.hot::before {
+        border-color: var(--ember);
+        background: var(--ember);
+        box-shadow: 0 0 14px rgba(240, 78, 35, 0.6);
+      }
+      .tl .y {
+        font-family: var(--display);
+        font-size: clamp(20px, 2.2vw, 34px);
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .tl .y.hot {
+        color: var(--ember);
+      }
+      .tl p {
+        font-size: clamp(10.5px, 0.82vw, 13px);
+        line-height: 1.4;
+        margin-top: 6px;
+      }
+
+      /* bars */
+      .bars {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        align-items: end;
+        height: clamp(200px, 30vh, 320px);
+        margin-top: 20px;
+      }
+      .bar {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+      }
+      .bar .v {
+        font-family: var(--display);
+        font-size: clamp(22px, 2.4vw, 38px);
+        font-weight: 800;
+        color: var(--ink);
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .bar .v small {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+        margin-left: 4px;
+        font-weight: 400;
+      }
+      .bar .f {
+        background: linear-gradient(180deg, var(--heat), var(--ember));
+        border-radius: 3px 3px 0 0;
+        transform-origin: bottom;
+      }
+      .bar .f.dim {
+        background: linear-gradient(180deg, #5a5148, #3a332c);
+      }
+      .bar .f.ghost {
+        background: transparent;
+        border: 1px dashed var(--line-2);
+      }
+      .bar .l {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .bar .l b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* people */
+      .person {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        gap: 14px;
+        align-items: start;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .person img {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        object-fit: cover;
+        filter: grayscale(0.2);
+      }
+      .person .ph {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        background: var(--bg-2);
+        border: 1px solid var(--line-2);
+        display: grid;
+        place-items: center;
+        font-family: var(--display);
+        font-size: 26px;
+        color: var(--ink-3);
+      }
+      .person h3 {
+        font-size: clamp(14px, 1.2vw, 18px);
+      }
+      .person .r {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin: 3px 0 6px;
+      }
+      .person p {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+      }
+
+      /* quote */
+      .q {
+        border-top: 1px solid var(--line);
+        padding: 16px 0 6px;
+      }
+      .q blockquote {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.4;
+        color: var(--ink);
+        font-weight: 300;
+      }
+      .q blockquote::before {
+        content: "\201C";
+        color: var(--ember);
+        font-family: var(--display);
+        font-size: 1.6em;
+        line-height: 0;
+        vertical-align: -0.3em;
+        margin-right: 4px;
+      }
+      .q cite {
+        display: block;
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+
+      /* portrait */
+      .portrait {
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        max-width: 420px;
+        border: 1px solid var(--line-2);
+      }
+      .portrait img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .portrait .cap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px;
+        background: linear-gradient(0deg, rgba(12, 10, 8, 0.92), transparent);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+
+      /* table-ish rows */
+      .rows {
+        margin-top: 22px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 150px 1fr 1fr;
+        gap: 20px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        align-items: baseline;
+      }
+      .row.head {
+        border-top: none;
+        padding-bottom: 6px;
+      }
+      .row.head span {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .row .k {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .row p {
+        font-size: clamp(11.5px, 0.92vw, 14px);
+      }
+      .row .no {
+        color: var(--ink-3);
+      }
+      .row .yes {
+        color: var(--ink);
+      }
+
+      /* product strip */
+      .prods {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .prod {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .prod img {
+        width: 100%;
+        aspect-ratio: 5 / 3;
+        object-fit: cover;
+        display: block;
+      }
+      .prod .c {
+        padding: 10px 12px;
+        background: rgba(20, 17, 13, 0.9);
+      }
+      .prod .c b {
+        display: block;
+        font-size: 13px;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .prod .c span {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+      }
+
+      /* part divider */
+      .pdiv .part {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin-bottom: 18px;
+      }
+      .pdiv h1 {
+        font-size: clamp(72px, 13vw, 220px);
+      }
+      .pdiv .lede {
+        margin-top: 22px;
+      }
+
+      /* cover */
+      .cover-slide .inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .cover-slide .logo {
+        height: clamp(28px, 3.2vw, 46px);
+        width: auto;
+        color: var(--ink);
+        margin-bottom: clamp(28px, 4vw, 60px);
+      }
+      .cover-slide h1 {
+        max-width: 12ch;
+      }
+      .cover-slide .sub {
+        margin-top: clamp(20px, 2.6vw, 40px);
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        gap: clamp(20px, 3vw, 50px);
+        justify-content: start;
+      }
+      .cover-slide .sub div {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        line-height: 1.7;
+      }
+      .cover-slide .sub b {
+        color: var(--ink);
+        font-weight: 500;
+        display: block;
+      }
+
+      /* callout */
+      .call {
+        margin-top: 22px;
+        padding: 14px 18px;
+        border: 1px solid rgba(240, 78, 35, 0.45);
+        border-radius: 4px;
+        background: rgba(240, 78, 35, 0.07);
+      }
+      .call p {
+        color: var(--ink);
+        font-size: clamp(12.5px, 1.02vw, 15.5px);
+      }
+      .note {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        margin-top: 16px;
+        text-transform: uppercase;
+      }
+
+      /* sources */
+      .src {
+        columns: 2;
+        column-gap: 40px;
+        margin-top: 20px;
+      }
+      .src p {
+        font-size: 11px;
+        line-height: 1.5;
+        margin-bottom: 6px;
+        break-inside: avoid;
+        font-family: var(--mono);
+        color: var(--ink-3);
+      }
+      .src p b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* overview */
+      #ov {
+        position: fixed;
+        inset: 0;
+        z-index: 8;
+        background: rgba(12, 10, 8, 0.96);
+        display: none;
+        padding: 60px var(--pad);
+        overflow: auto;
+      }
+      #ov.on {
+        display: block;
+      }
+      #ovg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+      }
+      .ovc {
+        border: 1px solid var(--line);
+        padding: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .ovc:hover,
+      .ovc.now {
+        border-color: var(--ember);
+      }
+      .ovc.part {
+        background: rgba(240, 78, 35, 0.08);
+      }
+      .ovc .n {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.16em;
+      }
+      .ovc .t {
+        font-size: 13px;
+        color: var(--ink);
+        margin-top: 6px;
+      }
+      #help {
+        position: fixed;
+        right: var(--pad);
+        bottom: 52px;
+        z-index: 7;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        display: none;
+      }
+      #help.on {
+        display: block;
+      }
+
+      @media (max-width: 900px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats,
+        .prods {
+          grid-template-columns: 1fr 1fr;
+        }
+        .tl {
+          grid-template-columns: repeat(5, 1fr);
+          row-gap: 26px;
+        }
+        .row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+        .src {
+          columns: 1;
+        }
+        h2 {
+          max-width: none;
+        }
+        .slide {
+          justify-content: flex-start;
+          overflow: auto;
+          padding-top: 70px;
+        }
+      }
+      @media (max-width: 600px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats,
+        .prods,
+        .bars {
+          grid-template-columns: 1fr 1fr;
+        }
+        .cover-slide .sub {
+          grid-template-columns: 1fr;
+        }
+      }
+    /* evidence images */
+.ev {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+.ev.two {
+  grid-template-columns: 1.55fr 0.9fr;
+  align-items: start;
+}
+.ev.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+.ev.strip {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.ev figure {
+  margin: 0;
+  min-width: 0;
+}
+.ev img {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: #fff;
+}
+.ev .shot {
+  max-height: 56vh;
+  object-fit: cover;
+  object-position: top;
+}
+.ev .tall {
+  max-height: 62vh;
+  object-fit: cover;
+  object-position: top;
+}
+.ev figcaption {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.ev figcaption b {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.ann {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 8px;
+}
+.ann li {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  padding-left: 22px;
+  position: relative;
+}
+.ann li::before {
+  content: attr(data-n);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ember);
+}
+.ann li b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.serp {
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  background: #fff;
+  color: #1a1a1a;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.serp .u {
+  font-size: 12px;
+  color: #4d5156;
+}
+.serp .t {
+  font-size: 18px;
+  color: #1a0dab;
+  margin: 4px 0 6px;
+}
+.serp .d {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #4d5156;
+}
+.slide.dense .ev img {
+  max-height: 46vh;
+}
+.lh {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.gauge {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+}
+.gauge .n {
+  font-family: var(--display);
+  font-size: clamp(34px, 3.6vw, 54px);
+  line-height: 1;
+  font-variation-settings: "opsz" 144;
+}
+.gauge .n.bad {
+  color: var(--ember);
+}
+.gauge .n.mid {
+  color: var(--heat);
+}
+.gauge .n.ok {
+  color: var(--ink);
+}
+.gauge .l {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+.gauge .s {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.signoff {
+  margin-top: 26px;
+  display: flex;
+  gap: 40px;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  flex-wrap: wrap;
+}
+.signoff b {
+  color: var(--ink);
+  font-weight: 500;
+}
+    </style>
+  </head>
+  <body>
+    <canvas id="embers"></canvas>
+    <div id="photo"></div>
+    <div id="heat"></div>
+    <div id="vig"></div>
+    <svg id="grain">
+      <filter id="n">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.8"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#n)" />
+    </svg>
+    <img id="logo-corner" src="img/logo-cream.svg" alt="Pedersen & Houpt" />
+    <div id="brand"><b>Pedersen & Houpt</b> · deep dive · September 2026</div>
+
+    <div id="deck">
+      <!-- ═══════════ COVER ═══════════ -->
+      <section class="slide cover-slide" data-t="Cover" data-p="0" data-photo="img/ev/hero.jpg" data-int="0.7">
+        <div class="inner">
+          <img class="logo" src="img/logo-cream.svg" alt="Pedersen & Houpt" />
+          <h1 data-split>Sixty-nine years on Clark Street.</h1>
+          <div class="sub">
+            <div>Deep dive<b>Pedersen & Houpt, P.C. · Chicago</b></div>
+            <div>Scope<b>The firm · How it shows up · Brian Collins, Anthony Pesce · How we approach</b></div>
+            <div>Date<b>9 September 2026 · internal, Upperhand</b></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ THE READ ═══════════ -->
+      <section class="slide dense" data-t="The read" data-p="0" data-int="0.25">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">01</span> The read in one breath</div>
+          <h2 data-split>A real firm with a 2012 front door, and a friend inside it.</h2>
+          <div class="verdict">
+            <p>
+              Sixty-nine years, one office, twenty-six lawyers, nineteen of them partners. A chairman who is the founder's nephew and measures things in rent. A managing partner elected in 2015 to grow the firm who has never given a public quote. A first Chambers listing this August, on the third screen of a Firmseek template rebuilt in 2021 on words from 2012. A litigation partner, Anthony Pesce, calls the site lame; he is right, another agency has priced a rebuild, and Brian Collins signs.
+            </p>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="n">26</div>
+              <div class="l">Lawyers on the roster today</div>
+              <div class="s">19 partners including the managing partner, 2 of counsel, 5 associates. One office, 161 North Clark, Suite 2700.</div>
+            </div>
+            <div class="stat">
+              <div class="n">1957</div>
+              <div class="l">Founded by Peer Pedersen</div>
+              <div class="s">Richard V. Houpt joined within six years. Peer retired in 2010 after a stroke and died in January 2013, aged 87.</div>
+            </div>
+            <div class="stat">
+              <div class="n warm">Aug 2026</div>
+              <div class="l">Chambers Spotlight, Real Estate</div>
+              <div class="s">First year ranked. Eleven lawyers listed, Michael Sullivan the contact. The firm's newest public proof, on the third screen of its homepage.</div>
+            </div>
+            <div class="stat">
+              <div class="n hot">2012</div>
+              <div class="l">The website's words were set · the build is May 2021</div>
+              <div class="s">Firmseek v1 in September 2012, v2 in May 2021; the title tag and About copy never changed. The full audit is a separate deck: pedersen-houpt-site-audit.vercel.app.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ PART 1 ═══════════ -->
+      <section class="slide pdiv" data-t="Part 1 · The firm" data-p="1" data-int="0.9">
+        <div class="inner">
+          <div class="part">Part one</div>
+          <h1 data-split>The firm</h1>
+          <p class="lede">Pedersen & Houpt, A Professional Corporation. One office, seven practice groups, a founder who was better known for Waste Management and Blockbuster than for law, and a roster that has quietly turned over since 2023.</p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="What it is" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">02</span> Overview · sources dated 9 Sep 2026 unless noted</div>
+          <h2 data-split>A middle-market firm that says so only in directories.</h2>
+          <div class="cols c3">
+            <div class="card"><span class="tag">Entity and office</span><h3>Pedersen & Houpt, P.C.</h3><p>"A Professional Corporation" in the footer and in the 2013 ISBA notice; "P.C." in case captions. One office at 161 N. Clark, Suite 2700 (an older FindLaw listing says Suite 3000, so a floor move, unverified). Illinois Secretary of State filing could not be pulled: the state's site blocks scripted requests.</p></div>
+            <div class="card"><span class="tag">Size · the sources disagree</span><h3>26 lawyers on the roster</h3><p>Firm roster 26 (19 partners incl. MP, 2 of counsel, 5 associates). Chambers 2026: 19 partners, 42 total. LeadIQ: about 56 employees, revenue $10 to 25M, unverified. RocketReach: $22.3M for 2025, unverified. U.S. News snippet: 28 lawyers. Lawyers.com: 21. Use 26 lawyers and "about 40 to 55 people."</p></div>
+            <div class="card"><span class="tag">Who it serves</span><h3>Middle market, owners, developers</h3><p>The live site says "large publicly-held entities and middle-market companies to small businesses, start-up companies, and individuals." The sharper line, "middle market, early stage and start-up companies and their owners… real estate and multi-unit retail developers on a national basis," exists only in the FindLaw and Lawyers.com copy.</p></div>
+          </div>
+          <div class="cols c2" style="margin-top: 14px">
+            <div class="card"><span class="tag">Practice groups, per services.html</span><p>Corporate and Business Counseling · Creditors' Rights, Restructuring and Bankruptcy · Employment · Litigation and Dispute Resolution · Real Estate (Chambers: Real Estate and Financing) · Wealth Preservation · Trust and Estates Controversy. An alternative-fee page sits under Client Focus.</p></div>
+            <div class="card hot"><span class="tag">The founder's shadow</span><p>Peer Pedersen (1925 to 2013) was "known more for his deal-making than his law practice": part of the 1990s group behind Waste Management, Boston Chicken and Blockbuster; Lyric Opera board; a $1M gift in memory of his wife Sarah in 2008. That is the only press item the site links, as Crains.pdf.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Timeline" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">03</span> Sixty-nine years, three name eras, one redesign</div>
+          <h2 data-split>Founded on deals. Run by the nephew, then the M&A partner, since 2001.</h2>
+          <div class="tl">
+            <div><div class="y">1957</div><p>Peer Pedersen, WWII veteran and ex-associate of Senator W. Russell Arrington, opens his own firm.</p></div>
+            <div><div class="y">by 1963</div><p>Richard V. Houpt, his Illinois law classmate, joins: municipal, zoning, land use. The name is set.</p></div>
+            <div><div class="y">1990s</div><p>Peer's investor group stands up Waste Management, Boston Chicken, Blockbuster. The firm's reputation rides on its founder's deals.</p></div>
+            <div class="hot"><div class="y hot">Mar 2010</div><p>Peer ends a 65-year career after a stroke. Nephew John Muehlstein is chairman.</p></div>
+            <div><div class="y">Jan 2013</div><p>Peer dies at 87. Crain's, 23 Jan. The March 2013 press release lists Muehlstein as chairman and Marc Janser as managing partner.</p></div>
+            <div class="hot"><div class="y hot">2012 to 14</div><p>September 2012: Firmseek replaces the Flash site with the wordmark and title tag still in use. 2014: office rebuilt with ICG for a "modern, open, collaborative" floor (date unverified).</p></div>
+            <div><div class="y">2020</div><p>Fifteen COVID and PPP alerts in one year. The site's busiest stretch ever, and proof the firm can publish fast.</p></div>
+            <div><div class="y">2024 to 25</div><p>Hires: O'Donnell (Jun 24), Czajkowski (Nov 24), Ledesma (Jan 25), Garfinkle (Jul 25). Skolnik Industries sale closes with the firm as counsel, Jan 2025.</p></div>
+            <div><div class="y">Nov 2025</div><p>Site item: JRTC Holdings, the Thompson Center and the Google build-to-suit. The state's $70M sale agreement was March 2022; the firm's own LinkedIn post is August 2022. The deck keeps both dates.</p></div>
+            <div class="hot"><div class="y hot">2026</div><p>March: partner John J. Hayes, Wealth Preservation leader, dies. August: Chambers Spotlight USA, Real Estate, first year ranked. Brian Collins has been managing partner since the partners elected him in July 2015; Marc Janser, his predecessor, is still a partner.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="The size" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="split" style="grid-template-columns: 1.15fr 0.85fr">
+            <div>
+              <div class="kicker"><span class="dot"></span><span class="num">04</span> Lawyers per firm · Chicago middle-market set · counts from each firm's own site or Chambers 2026</div>
+              <h2 data-split>Small end of the peer set, and the same building as Saul Ewing.</h2>
+              <div class="bars">
+                <div class="bar"><div class="v">137</div><div class="f dim" style="height: 100%"></div><div class="l"><b>Neal Gerber</b></div></div>
+                <div class="bar"><div class="v">~110</div><div class="f dim" style="height: 80%"></div><div class="l"><b>Levenfeld P.</b></div></div>
+                <div class="bar"><div class="v">100+</div><div class="f dim" style="height: 73%"></div><div class="l"><b>Much Shelist</b></div></div>
+                <div class="bar"><div class="v">76</div><div class="f dim" style="height: 55%"></div><div class="l"><b>Burke Warren</b></div></div>
+                <div class="bar"><div class="v">68</div><div class="f dim" style="height: 50%"></div><div class="l"><b>Aronberg G.</b></div></div>
+                <div class="bar"><div class="v">60–70</div><div class="f dim" style="height: 47%"></div><div class="l"><b>Chuhak</b></div></div>
+                <div class="bar"><div class="v">47</div><div class="f dim" style="height: 34%"></div><div class="l"><b>Lavelle</b></div></div>
+                <div class="bar"><div class="v">27</div><div class="f dim" style="height: 20%"></div><div class="l"><b>GCT</b></div></div>
+                <div class="bar"><div class="v">26</div><div class="f" style="height: 19%"></div><div class="l"><b>Pedersen</b></div></div>
+                <div class="bar"><div class="v">24</div><div class="f dim" style="height: 18%"></div><div class="l"><b>Robbins D.</b></div></div>
+              </div>
+            </div>
+            <div>
+              <div class="stats" style="grid-template-columns: 1fr 1fr; margin-top: 0">
+                <div class="stat"><div class="n">19</div><div class="l">Partners</div><div class="s">Of 26 lawyers. A partner-heavy shape: the firm sells senior time, not leverage.</div></div>
+                <div class="stat"><div class="n hot">36 to 26</div><div class="l">Lawyers, Aug 2014 to today</div><div class="s">Muehlstein told Crain's the firm moved 36 attorneys in 2014. Ten fewer now; four juniors hired since 2024 are rebuilding the bench.</div></div>
+                <div class="stat"><div class="n warm">$10–25M</div><div class="l">Revenue, estimated</div><div class="s">LeadIQ range; RocketReach says $22.3M for 2025. Both unverified; no filing exists for a P.C.</div></div>
+                <div class="stat"><div class="n">2</div><div class="l">Peers that no longer exist</div><div class="s">Freeborn & Peters into Smith Gambrell (Apr 2023); Horwood Marcus & Berk into Kilpatrick (Mar 2024). Consolidation is the weather.</div></div>
+              </div>
+              <p class="note">Counts: nge.com, Law.com and LP's 2026 ESOP PDF, Chambers 2026, agdglaw.com, chuhak.com vs Chambers, lavellelaw.com, gct.law, the firm roster, robbinsdimonte.com. All read 9 Sep 2026.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Leadership" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">05</span> Who runs it · from the firm's bios and the 2013 release</div>
+          <h2 data-split>The chairman is family. The managing partner is the deal guy.</h2>
+          <div class="cols c2" style="margin-top: 14px">
+            <div>
+              <div class="person"><div class="ph">BC</div><div><h3>Brian P. Collins</h3><div class="r">Managing Partner · Corporate and Business Counseling</div><p>M&A, private equity, banking and finance for closely held and middle-market companies. Illinois JD 2002 cum laude, Marquette BS 1999, Evans Scholar. Elected by the partners in July 2015; joined 2004, partner by 2012. Full profile in Part 3.</p></div></div>
+              <div class="person"><div class="ph">JM</div><div><h3>John H. Muehlstein</h3><div class="r">Chairman · Partner · Corporate, Creditors' Rights</div><p>Peer Pedersen's nephew, about 71. Managing partner 2001 to 2007, chairman by 2012. Dayton JD 1980. Blue Rhino and SpinCycle boards. Corporate finance, M&A, restructurings. Leading Lawyers 2016 to 17. The institutional memory and, on a website decision, the veto.</p></div></div>
+              <div class="person"><div class="ph">SS</div><div><h3>Stephanie Storkel</h3><div class="r">Chief Operating Officer (SurePoint, Aug 2020) · now "Executive Advisor" per listings, unverified</div><p>Quoted by ICG on the office build-out: an "aggressive timeline" and a "strict budget." If the website is bought the way the office was, she is in the room.</p></div></div>
+            </div>
+            <div>
+              <div class="person"><div class="ph">EK</div><div><h3>Eric J. Kordish</h3><div class="r">Leader, Corporate and Business Counseling · Real Estate</div><p>Thompson Center counsel with Sullivan; ran the 2020 PPP webinar. Fifteen representative matters on his bio, the richest page on the site.</p></div></div>
+              <div class="person"><div class="ph">MS</div><div><h3>Michael P. Sullivan</h3><div class="r">Leader, Real Estate and Financing · Chambers contact</div><p>The name on the firm's first Chambers ranking. Over the Rainbow Association advisory board since 2011.</p></div></div>
+              <div class="person"><div class="ph">+</div><div><h3>Practice leaders</h3><div class="r">Gering (Litigation) · Delnero (Creditors' Rights) · Durkin (Trust and Estates Controversy) · Sneeringer (Technology and IP) · Barbosa (Diversity Committee)</div><p>Wealth Preservation had John J. Hayes until March 2026; no successor is named on the group page. Employment names no leader. TheOrg lists a Stephen Brown as a group leader; he is not on the roster.</p></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="What it sells" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">06</span> The work · matters the firm itself names</div>
+          <h2 data-split>Deals with Chicago addresses, and a trade-secret verdict.</h2>
+          <div class="cols c3">
+            <div class="card hot"><span class="tag">Nov 2025 · Real estate</span><h3>Thompson Center</h3><p>JRTC Holdings (Michael Reschke): the state's $70M sale, then the Google build-to-suit. Kordish and Sullivan. The state's agreement dates to March 2022; the firm's own posts to August 2022 and November 2025.</p></div>
+            <div class="card"><span class="tag">Jan 2025 · M&A</span><h3>Skolnik Industries</h3><p>Steel-drum maker sold to Pelican Energy Partners; "Pedersen & Houpt served as legal counsel to Skolnik." PR Newswire, 13 Jan 2025. Livingstone lists a 31 Dec 2024 close.</p></div>
+            <div class="card"><span class="tag">Mar 2013 · Litigation</span><h3>iCONN Systems v. Conxall</h3><p>Trade-secret defense verdict after a five-week jury trial, lead counsel Stan Sneeringer. The firm's own release, 28 Mar 2013.</p></div>
+            <div class="card"><span class="tag">Undated · Results page</span><h3>Kalodimos v. Morton Grove</h3><p>The village's handgun ordinance, taken to the U.S. Supreme Court. Listed on focus-results.html without a year.</p></div>
+            <div class="card"><span class="tag">Undated · Restructuring</span><h3>Dana retirees, ~$93M</h3><p>Retirees committee in the Dana bankruptcy; also Vineyard National Bancorp trustee work and a $2.5M FINRA verdict the Wall Street Journal covered.</p></div>
+            <div class="card"><span class="tag">Undated · Real estate finance</span><h3>IDS Tower · Deerfield</h3><p>$225M on the IDS Tower in Minneapolis and a $168M Deerfield office park. Big numbers, no dates, on a page most visitors never reach.</p></div>
+          </div>
+          <p class="note" style="margin-top: 12px">The pattern: the proof exists and is undated. A rebuild's first content job is putting years on this page.</p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Roster moves" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">07</span> Rankings, arrivals, departures · 2023 to 2026</div>
+          <h2 data-split>One new ranking, four new hires, at least seven names gone.</h2>
+          <div class="cols c3">
+            <div class="card"><span class="tag">Rankings</span><p><strong>Chambers Spotlight USA 2026</strong>, Real Estate, first year ranked. <strong>Super Lawyers</strong>: Byrne, Collins, Delnero, Holtzman, Ledesma. <strong>Leading Lawyers</strong>: Delnero (2017 on), Moran, both Muehlsteins, Durkin, Janser, Hayes. <strong>Best Lawyers / U.S. News</strong>: no evidence found, and the site makes no claim.</p></div>
+            <div class="card"><span class="tag">Arrived</span><p>Sean O'Donnell, associate, Litigation, Jun 2024 · Ashley Czajkowski, partner, Wealth Preservation, Nov 2024 · J. Diego Ledesma, associate, Real Estate, Jan 2025 · Justin Garfinkle, associate, Corporate and IP privacy, Jul 2025. No promotions announced in the newsroom since 2023.</p></div>
+            <div class="card hot"><span class="tag">Gone from the roster, no notice</span><p>Andrea Briski (partner, Real Estate; Avvo now shows Winston & Strawn, unverified), Caroline McAuliffe, George Renfrew, Dean Oldham, Paul Altman (ERISA), Stephen Brown, Arthur Holtzman. John J. Hayes died in March 2026. Dates: no evidence. The site has no way to say goodbye except silence.</p></div>
+          </div>
+          <div class="verdict" style="margin-top: 14px"><p>Read together: a firm that has hired four juniors in a year, lost senior names without a word, and won its first Chambers listing. It is rebuilding, and its website tells none of it.</p></div>
+        </div>
+      </section>
+
+      <!-- SITE COLD READ · pulled from the audit deck -->
+      <section class="slide dense" data-t="Site cold read" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">08</span> The storefront · the audit in one slide</div>
+          <h2 data-split>Skydivers, a category headline, a wall, and 2012 copy.</h2>
+          <div class="ev two">
+            <figure><img class="shot" src="img/ev/home-desktop.jpg" alt="pedersenhoupt.com homepage" /><figcaption><b>pedersenhoupt.com</b> · 9 Sep 2026 · Firmseek since 2012, this build since May 2021</figcaption></figure>
+            <div class="stats" style="grid-template-columns: 1fr 1fr; margin-top: 0">
+              <div class="stat"><div class="n hot">2.8 to 7.8 s</div><div class="l">Homepage image on a phone, two runs</div><div class="s">Lighthouse mobile 63 and 82; Google's line is 2.5 s.</div></div>
+              <div class="stat"><div class="n hot">167/169</div><div class="l">Pages without a description</div><div class="s">Google writes the snippets.</div></div>
+              <div class="stat"><div class="n warm">55 yrs</div><div class="l">The About page's age of the firm</div><div class="s">Written in 2012. It is 69.</div></div>
+              <div class="stat"><div class="n">4/10</div><div class="l">Design score</div><div class="s">Template, with the bios as the seven inside it.</div></div>
+            </div>
+          </div>
+          <p class="note" style="margin-top: 10px">Full audit, seventeen slides with the evidence: pedersen-houpt-site-audit.vercel.app. Built to be forwarded inside the firm; no price in it.</p>
+        </div>
+      </section>
+
+            <!-- ═══════════ PART 2 ═══════════ -->
+      <section class="slide pdiv" data-t="Part 2 · How it shows up" data-p="2" data-int="0.9">
+        <div class="inner">
+          <div class="part">Part two</div>
+          <h1 data-split>How it shows up</h1>
+          <p class="lede">Three websites in twenty-six years, one unclaimed Google profile, two social accounts that post a handful of times a year, and no public sentence from leadership since 2024. The firm's record is better than its signal.</p>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Web history" data-p="2" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">09</span> The website, 2000 to 2026 · Wayback CDX, 199 distinct homepage versions</div>
+          <h2 data-split>Three eras, one vendor since 2012, and words that never moved.</h2>
+          <div class="tl">
+            <div><div class="y">2000</div><p>A 550-byte placeholder page. Captured August 2000.</p></div>
+            <div><div class="y">2006</div><p>The Flash site: "PEDERSEN&HOUPT", four .swf movies, fourteen HTML tables. Live to at least April 2012.</p></div>
+            <div class="hot"><div class="y hot">Sep 2012</div><p>Firmseek v1. Title tag "Pedersen & Houpt: Elite Chicago Law Firm", the "Pedersen" wordmark, the current navigation, "Download Our Firm Brochure." Piwik analytics. No viewport tag until 2016.</p></div>
+            <div><div class="y">2016 to 21</div><p>A Google+ icon appears by 2016 and stays until April 2021, two years after Google+ closed. The 2020 PPP banner is the last v1 change.</p></div>
+            <div class="hot"><div class="y hot">May 2021</div><p>Firmseek v2, the current build: seven rotating hero slides under one H1, "Grow Your Business." Typekit Proxima Nova by 2024. Five years and four months old.</p></div>
+            <div><div class="y">2025 to 26</div><p>Homepage digest changed 15 times in 2025 and 6 in 2026, mostly the rotating hero. Five newsroom items in fourteen months. About page still says "more than fifty-five years."</p></div>
+          </div>
+          <p class="note" style="margin-top: 12px">Tells: a PHPSESSID cookie and cache-control no-store on every hit; robots.txt hiding CMS paths named /gazebo17 and /trellis19; a footer Twitter link on the 2011 twitter.com/#!/ pattern; a LawPay link. Firmseek's own portfolio page does not list the firm.</p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Search and listings" data-p="2" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">10</span> Where a client finds the firm before the site · checked 9 Sep 2026</div>
+          <h2 data-split>The Google profile is unclaimed and the directories say Suite 3100.</h2>
+          <div class="cols c3">
+            <div class="card hot"><span class="tag">Google Business Profile</span><h3>2.8 stars, 4 reviews</h3><p>Listed as "Pedersen & Houpt Law Offices," located in "Grant Thornton," with the "Own this business?" prompt Google shows on unclaimed listings. Inference, but the prompt is the tell. The first thing a referral sees after typing the name.</p></div>
+            <div class="card"><span class="tag">Directories</span><h3>Stale on the address, thin on claims</h3><p>FindLaw, "Updated 12/15/2014," 29 attorneys, Suite 3100. Lexology also says 3100; the site says 2700. Super Lawyers lists five. Martindale "Distinguished" shows 2025 on one page and 2021 on another. No Best Law Firms listing. Avvo profiles flagged not active.</p></div>
+            <div class="card"><span class="tag">Search</span><h3>Fifth of ten, on its own terms</h3><p>"Business law firm Chicago middle market" and "Chicago commercial real estate law firm developers financing" both surface the firm around fifth. Brand search returns the site, Yelp (5.0, one review), LinkedIn, U.S. News, MapQuest. No rank tool was run; positions are single-day reads.</p></div>
+          </div>
+          <div class="cols c3" style="margin-top: 14px">
+            <div class="stat"><div class="n">502</div><div class="l">LinkedIn followers · 56 employees listed</div><div class="s">Two visible posts in nine months: the Chambers news and the IICLE webcast.</div></div>
+            <div class="stat"><div class="n">214</div><div class="l">X followers · 61 posts since April 2012</div><div class="s">Four posts in twelve months; nothing since 8 January 2026. Facebook behind a login wall; no Instagram or YouTube.</div></div>
+            <div class="stat"><div class="n warm">0</div><div class="l">Public quotes from leadership, 2024 to 2026</div><div class="s">None found in Law360, Crain's, the Daily Law Bulletin or the firm's own announcements. The firm has a record and no voice.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Peers online" data-p="2" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">11</span> Seven Chicago peers · site read and Wayback, 9 Sep 2026</div>
+          <h2 data-split>Six of seven rebuilt since 2023. The vendor rebuilt Burke Warren; not this one.</h2>
+          <div class="rows">
+            <div class="row head"><span>Firm</span><span>Current design since</span><span>What a client sees</span></div>
+            <div class="row"><div class="k">Levenfeld Pearlstein<br><span style="opacity:.6">lplegal.com</span></div><p class="yes"><strong>2023</strong></p><p>Custom photography of its own people. Three insights in the last two weeks. Online payment.</p></div>
+            <div class="row"><div class="k">Much Shelist<br><span style="opacity:.6">muchlaw.com</span></div><p class="yes"><strong>2023</strong></p><p>Custom Chicago and people photography, "We're Much." Weekly insights, subscribe, LawPay, a client portal.</p></div>
+            <div class="row"><div class="k">Burke Warren<br><span style="opacity:.6">burkelaw.com</span></div><p class="yes"><strong>2023</strong></p><p>Same vendor as Pedersen. Was on the identical Firmseek asset pattern in January 2022; a new Firmseek build by January 2023. Team photography, profile cards, payments.</p></div>
+            <div class="row"><div class="k">Neal Gerber Eisenberg<br><span style="opacity:.6">nge.com</span></div><p class="yes"><strong>2024</strong></p><p>Office photography; the hero is its Chambers USA 2026 news. Three insights in the last month.</p></div>
+            <div class="row"><div class="k">Golan Christie Taglia<br><span style="opacity:.6">gct.law</span></div><p class="yes"><strong>2025</strong></p><p>27 lawyers, the closest twin. Skyline photography, a bio-card grid with faces, three blog posts in the last month, payments.</p></div>
+            <div class="row"><div class="k">Chuhak & Tecson<br><span style="opacity:.6">chuhak.com</span></div><p class="yes"><strong>2025</strong></p><p>People photography, "Right there with you." Blog undated.</p></div>
+            <div class="row"><div class="k">Lavelle Law<br><span style="opacity:.6">lavellelaw.com</span></div><p class="no"><strong>2019</strong></p><p>Stock imagery, but a podcast and video section, a newsletter, online payments.</p></div>
+            <div class="row"><div class="k">Pedersen & Houpt<br><span style="opacity:.6">pedersenhoupt.com</span></div><p class="no"><strong>May 2021</strong></p><p>Firmseek v2 carrying 2012 words. Stock metaphor photography. Five newsroom items in fourteen months. The only site in the set with no dated insight in the last thirty days and an apparently unclaimed Google profile.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Says versus does" data-p="2" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">12</span> What the site says · what the record shows</div>
+          <h2 data-split>The copy promises immersion. The record shows a firm that stopped narrating.</h2>
+          <div class="split" style="grid-template-columns: 1fr 1fr">
+            <div>
+              <div class="card"><span class="tag">focus-results.html</span><p>"All members of our firm share a single goal: to achieve client objectives while exceeding their expectations."</p></div>
+              <div class="card" style="margin-top: 10px"><span class="tag">about.html</span><p>"Pedersen & Houpt lawyers become immersed in their clients' businesses. We get to know the people, culture, business, and industry in which our clients work and operate."</p></div>
+              <div class="card" style="margin-top: 10px"><span class="tag">homepage hero</span><p>"Provide Enhanced Solutions." "Pull Together to Gain Momentum." "The Right Connections to Build Solutions." "Grow Your Business."</p></div>
+            </div>
+            <div>
+              <ul class="ann" style="margin-top: 4px">
+                <li data-n="01"><b>Immersion is real and undated.</b> Fifteen matters on one bio, the Thompson Center, Skolnik, a five-week trade-secret trial. None with a year on the results page.</li>
+                <li data-n="02"><b>Nobody speaks.</b> Zero attributed quotes in the firm's own announcements or the trade press since 2024. The site's voice is the vendor's.</li>
+                <li data-n="03"><b>Momentum is invisible.</b> Four hires and a first Chambers ranking in two years, seven names gone without a word, one memorial. The homepage shows skydivers.</li>
+                <li data-n="04"><b>The client tools exist.</b> LawPay and EACCESS links live in the footer. A client has to know to look.</li>
+              </ul>
+              <div class="verdict" style="margin-top: 14px"><p>The gap is not ambition. It is narration. The firm has a story since 2013 and has not told it anywhere a client looks.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+            <!-- ═══════════ PART 3 ═══════════ -->
+      <section class="slide pdiv" data-t="Part 3 · The people" data-p="3" data-int="0.9">
+        <div class="inner">
+          <div class="part">Part three</div>
+          <h1 data-split>The people</h1>
+          <p class="lede">Who decides, who champions, who can veto. Brian Collins signs, John Muehlstein can stop it, Stephanie Storkel has bought a build-out before, and Anthony Pesce is the partner who said out loud what the site is.</p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Brian Collins" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">13</span> The decision-maker · from the firm bio and the record</div>
+          <h2 data-split>Elected in 2015 to grow the firm. Has never said a public word.</h2>
+          <div class="cols c2" style="margin-top: 12px">
+            <div>
+              <div class="person"><div class="ph">BC</div><div><h3>Brian P. Collins</h3><div class="r">Managing Partner · Corporate and Business Counseling · Chicago · 312 261 2247</div><p>M&A, private equity, banking and finance for closely held and middle-market companies: leveraged deals, tax-free reorganizations, public and private mergers, divestitures. "Works closely with his clients to negotiate terms and structure and finalize each transaction." Illinois JD 2002, cum laude; Marquette BS 1999; Chick Evans Scholar (a caddie scholarship). Super Lawyers 2024 to 2027 per Avvo. Illinois bar since November 2002, ARDC authorized.</p></div></div>
+              <div class="card" style="margin-top: 12px"><span class="tag">Role at the firm</span><p>Elected Managing Partner by the partners in July 2015 (firm newsroom item 71, recovered from the Wayback Machine; the live site 404s it). Joined the firm in 2004 from Shefsky & Froelich, associate in 2006, partner and leader of the corporate group by 2012. Predecessor Marc Janser, "Immediate Past Managing Partner," is still a partner. Sits in the corporate group under Kordish's leadership. Publications listed on his bio include "Protecting the Little Guy" with Susan Burke. Director of the Western Golf Association (volunteer class), Evans Scholars Foundation, Cristo Rey Jesuit High School advisory council.</p></div>
+            </div>
+            <div>
+              <div class="card hot"><span class="tag">What the record says about how he decides</span><p>A transactional lawyer who prices, structures and closes. Every public trace is a deal. No quote in his own voice exists anywhere reachable: Crain's, Law360, the Law Bulletin, Chicago Lawyer, alumni media, or fourteen years of the firm's own newsroom. The only words about him are Janser's, July 2015: "a clear vision, energy and commitment," a desire "to provide exceptional value and client service as well as attract top talent," and that he "has excelled in growing the Firm, its client base, and markets." Those are the pitch's vocabulary. He will read a website proposal as a term sheet: scope, price, who does the work, what happens when it slips.</p></div>
+              <div class="card" style="margin-top: 12px"><span class="tag">Outside the job</span><p>Marquette finance, a semester at Loyola Rome. Publications in 2008 on indemnification and on "Protecting the Little Guy." Hometown: no evidence. The dossier searched IL bar records, Super Lawyers, Leading Lawyers, the firm newsroom, Law360, Crain's, the Daily Law Bulletin.</p></div>
+              <div class="card" style="margin-top: 12px"><span class="tag">Unverified</span><p>Any committee role on marketing or technology. Whether he has ever bought a website. Treat as unknown in the room; ask him.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="The room" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">14</span> Who else is in the decision · champion, veto, buyer</div>
+          <h2 data-split>Anthony raised it. John can stop it. Janser bought the last big thing.</h2>
+          <div class="cols c3">
+            <div class="card hot"><span class="tag">The inside contact · Anthony DeMarco Pesce</span><h3>Partner, Litigation and Dispute Resolution · Technology, IP and Advertising</h3><p>Notre Dame JD 2009 magna cum laude; admitted in Illinois, N.D. Ill. and E.D. Texas, the patent venue. Trial lawyer for corporate clients in search, gaming, advertising, health, telecom, pharma and consumer tech. Joined as a lateral partner in August 2021 from Winston & Strawn, where he defended patent cases for Dell and Wi-LAN. No publications, no speaking, no committee footprint on the record: an ally who raised it, not a sponsor who can carry it. John's friend. He texted the current site and the other firm's quote unprompted.</p></div>
+            <div class="card"><span class="tag">The veto · John H. Muehlstein</span><h3>Chairman · about 71 · partner since 1986, managing partner 2001 to 2007</h3><p>Peer Pedersen's nephew; Blue Rhino and SpinCycle director, a "founding investor" in SpinCycle. His one substantive press quote, Crain's May 2015, is about the 2014 move: 36 attorneys from 32,000 to 20,000 square feet, rent down "more than 30 percent," and "I got lonely sitting there back in the corner." Cost is his test. A rebuild that erases the history loses him; one that tells it well, at a number he can defend, wins him.</p></div>
+            <div class="card"><span class="tag">The buyer · Stephanie Storkel</span><h3>COO in 2020 and 2021 · "Executive Advisor" on her own headline now, unverified</h3><p>Quoted by ICG on the office build-out: an "aggressive timeline" and a "strict budget." The 2014 office was bought by an "Emerging Leaders" group of "tech savvy" younger attorneys who wrote the brief, per Marc Janser's ICG interview (Aug 2014, snippets only). The title change reads as a step back; confirm before routing through her. Eric Knight, Director of Finance and Administration, runs the paperwork per aggregator listings. No marketing or IT director could be named from any source.</p></div>
+          </div>
+          <div class="verdict" style="margin-top: 14px"><p>The pattern from 2014: this firm bought its last big change through a group of younger partners with a brief, an operations lead with a budget, and a chairman who measured it in rent. Sell to that shape, and add Janser: Immediate Past Managing Partner, still a partner, the one person on the record talking about technology and a modern firm.</p></div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Their situation" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">15</span> Constraints · what the decision sits inside</div>
+          <h2 data-split>Small firm, partner-heavy, a quote already on the table.</h2>
+          <div class="cols c2">
+            <div class="card"><span class="tag">Budget</span><p>A 26-lawyer P.C. with an estimated $10 to 25M in revenue and nineteen partners who each see the bill. Another firm has quoted a five-year package. Anthony's own words: it "seems NUTS." The number is the objection; the case for doing anything at all is not.</p></div>
+            <div class="card"><span class="tag">Scope</span><p>One office, seven groups, 26 bios, 34 service pages, 83 newsroom pages, a brochure PDF, LawPay, EACCESS, a newsletter with a broken sign-up form. Everything that exists is small. The content problem is dates and voice, not volume.</p></div>
+            <div class="card"><span class="tag">Skin in the game</span><p>Chambers ranked the real estate group for the first time in August 2026 and the site shows it in 15px on the third screen. Four juniors hired since 2024 are recruiting on a site that shows skydivers. The partners who lost seven colleagues without a public word have a narration problem, not a design taste problem.</p></div>
+            <div class="card"><span class="tag">Calendar</span><p>Year-end is planning season for a P.C.; the 2014 build-out ran on a hard date. Chambers submissions and Super Lawyers cycles run in Q1. A site that can carry the next ranking is worth more before it than after.</p></div>
+          </div>
+          <div class="cols c2" style="margin-top: 14px">
+            <div class="card"><span class="tag">What they have shipped</span><p>2012: a real redesign after the Flash era. 2014: a new office on an aggressive timeline. 2020: fifteen alerts in a year. 2021: a template refresh. 2024 to 25: four hires. 2026: a first Chambers ranking, one memorial page done with care.</p></div>
+            <div class="card hot"><span class="tag">What they have not</span><p>Photographed themselves. Put a year on their proof. Claimed their Google profile. Written a sentence that says who the firm is for. Spoken in public since 2024. Each is a gap nobody has filled, not a preference. The website is the one place all six can be fixed at once.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="How to reach them" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">16</span> Do · Don't · Openers that fit the record</div>
+          <h2 data-split>Lead with the audit, not the agency.</h2>
+          <div class="cols c3">
+            <div class="card"><span class="tag">Do</span><ul class="ann"><li data-n="01"><b>Send the audit deck through Anthony</b> so it arrives as a partner's find, not a vendor's pitch.</li><li data-n="02"><b>Pitch Collins in the words the partners used to elect him:</b> growing "the Firm, its client base, and markets," "exceptional value and client service," "attract top talent." Then a term sheet: what, who, how long, what happens if it slips.</li><li data-n="03"><b>Use their own vocabulary:</b> "We Listen," "It's About Results," "Alternative Fee Arrangements." Those pages are the homepage they have not built.</li><li data-n="04"><b>Give Muehlstein the history.</b> A timeline from 1957 with Peer's deals in it, done properly, is the veto turned into the sponsor.</li><li data-n="05"><b>Bring a photographer, not a mood board.</b> The one asset they cannot download.</li></ul></div>
+            <div class="card hot"><span class="tag">Don't</span><ul class="ann"><li data-n="01"><b>Don't quote against the other firm's number</b> in the first meeting. Win on the case, then price.</li><li data-n="02"><b>Don't say template, lame or dated</b> to anyone but Anthony. Partners approved this site twice.</li><li data-n="03"><b>Don't propose a five-year retainer.</b> That is the exact shape that made Anthony write "NUTS."</li><li data-n="04"><b>Don't lead with technology.</b> Nobody there has said a public word about it. Lead with the client in the elevator.</li><li data-n="05"><b>Don't touch the wordmark.</b> It is the one designed thing they own.</li></ul></div>
+            <div class="card"><span class="tag">Openers that fit the record</span><ul class="ann"><li data-n="01"><b>"Your About page says fifty-five years. You are sixty-nine."</b> Cites about.html; every partner will check it on the spot.</li><li data-n="02"><b>"Chambers ranked you for the first time in August. It is on your third screen in 15-pixel type."</b> Cites the Aug 2026 news item and the homepage.</li><li data-n="03"><b>"Burke Warren was on your exact template in January 2022 and got a new one by January 2023, from your own vendor."</b> Cites the Wayback captures. For Muehlstein: "You cut the rent thirty percent in 2014. This costs less than a year of the difference." Cites Crain's, May 2015.</li><li data-n="04"><b>"Eric Kordish's page has fifteen deals with dollar figures on it. That is the best writing on your site and it is under a cookie wall."</b> Cites the bio.</li></ul></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ PART 4 ═══════════ -->
+      <section class="slide pdiv" data-t="Part 4 · So what" data-p="4" data-int="0.9">
+        <div class="inner">
+          <div class="part">Part four</div>
+          <h1 data-split>So what</h1>
+          <p class="lede">The author's read. Where Upperhand fits, in four openings, and the first move.</p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Openings" data-p="4" data-int="0.12">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">17</span> Four openings · labeled as the author's read</div>
+          <h2 data-split>Sell the site as the firm's first public voice in a decade.</h2>
+          <div class="cols c2">
+            <div class="card hot"><span class="tag">01 · The rebuild, bought the 2014 way</span><h3>A fixed-scope site, a hard date, a small partner group and the COO</h3><p>What: the site the audit describes, people first, dated proof, no wall, under two seconds on a phone. Why it fits: the firm's one documented purchase of this size (the office) was bought exactly this way (slide 14), and Anthony's objection is the other firm's shape, not the idea (slide 15). Frame it as a pilot with a kill criterion: the homepage and ten bios live by a date, or no second phase.</p></div>
+            <div class="card"><span class="tag">02 · The photo day</span><h3>One day at 161 North Clark, twenty-six people, the room</h3><p>What: a shoot that produces the index faces, the homepage, and a year of news imagery. Why it fits: no photograph of a person at the firm exists anywhere on the site in any era (audit slide 03), and it is the one thing the incumbent vendor cannot template. Sellable alone, and it makes the rebuild inevitable.</p></div>
+            <div class="card"><span class="tag">03 · Claim the record</span><h3>Google profile, directories, the results page with years on it</h3><p>What: claim and fix the Google Business Profile (2.8 stars, "Own this business?"), correct Suite 3100 in FindLaw and Lexology, date every matter on focus-results. Why it fits: cheap, fast, measurable, and it is where a referral looks before the site (slide 10). A first invoice that proves the firm can trust the second.</p></div>
+            <div class="card"><span class="tag">04 · Narration as a retainer, monthly not five-year</span><h3>One item a month with a face on it, the newsletter form fixed</h3><p>What: a monthly cadence that turns hires, rankings, deals and memorials into dated, authored items. Why it fits: the firm publishes five times a year and has no public voice (slide 12); the 2020 pace proves it can (slide 07). Month to month, cancelable, the opposite of the quote on the table.</p></div>
+          </div>
+          <p class="note" style="margin-top: 12px">Counterparty read: a 69-year-old P.C. with nineteen partners and no distress signals found. Normal terms. The risk is a committee that cannot decide, not a client that cannot pay. The first move is the audit deck, forwarded by Anthony, with one sentence from John.</p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Sources" data-p="4" data-int="0.08">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">18</span> Every claim, with its date</div>
+          <h2 data-split>Sources.</h2>
+          <div id="src" class="src"></div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Sign-off" data-p="4" data-int="0.5">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">19</span> Internal · Upperhand</div>
+          <h2 data-split>Not verified, and worth knowing.</h2>
+          <ul class="ann" style="max-width: 70ch">
+            <li data-n="01"><b>Pesce's 2019 to 2021.</b> Winston & Strawn to September 2019 per LinkedIn snippets, Pedersen from August 2021; the two years between have no public employer. Do not raise; note it.</li>
+            <li data-n="02"><b>Storkel's current title.</b> COO in 2020, "Executive Advisor" in listings. Whoever holds the budget today is a question for Anthony.</li>
+            <li data-n="03"><b>Headcount.</b> 26 lawyers on the roster; 42 or 56 total people depending on the source. Use "about fifty."</li>
+            <li data-n="04"><b>The Thompson Center date.</b> The site says November 2025; the state's sale closed March 2022 and the firm's own LinkedIn post is August 2022. The site date is likely an edit date.</li>
+            <li data-n="05"><b>Departures.</b> Seven names gone from the roster since earlier listings, one to Winston & Strawn per Avvo. No notices. Do not raise unprompted.</li>
+            <li data-n="06"><b>The other firm's quote.</b> Known only from Anthony's text. Shape, not number, is what matters.</li>
+          </ul>
+          <div class="signoff"><span><b>Upperhand</b></span><span>Greg McDonald · John</span><span>9 September 2026</span></div>
+        </div>
+      </section>
+
+      
+
+    </div>
+
+    <div id="rail">
+      <span id="idx">01</span>
+      <div id="ticks"></div>
+      <span id="ttl"></span>
+    </div>
+    <div id="help">← → navigate · esc overview · ? help</div>
+    <div id="ov"><div id="ovg"></div></div>
+
+    <script src="vendor/gsap.min.js"></script>
+    <script>
+      /* ═══ EMBERS — 2D canvas, rising sparks. Performs on cover and part
+         dividers, near-silent behind argument slides. ponytail: no WebGL,
+         the fire is the brand, particles are enough. */
+      const canvas = document.getElementById("embers");
+      const ctx = canvas.getContext("2d");
+      const state = { int: 1 };
+      let W,
+        H,
+        P = [];
+      const COUNT = innerWidth < 760 ? 90 : 220;
+      function resize() {
+        W = canvas.width = innerWidth * Math.min(devicePixelRatio, 2);
+        H = canvas.height = innerHeight * Math.min(devicePixelRatio, 2);
+      }
+      resize();
+      addEventListener("resize", resize);
+      function spawn(p, fresh) {
+        p.x = Math.random() * W;
+        p.y = fresh ? Math.random() * H : H + Math.random() * 40;
+        p.r = (0.6 + Math.random() * 2.2) * Math.min(devicePixelRatio, 2);
+        p.vy = (0.25 + Math.random() * 0.9) * Math.min(devicePixelRatio, 2);
+        p.vx = (Math.random() - 0.5) * 0.35;
+        p.life = 0.4 + Math.random() * 0.6;
+        p.ph = Math.random() * Math.PI * 2;
+        p.hot = Math.random() < 0.3;
+        return p;
+      }
+      for (let i = 0; i < COUNT; i++) P.push(spawn({}, true));
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function frame(t) {
+        ctx.clearRect(0, 0, W, H);
+        const I = state.int;
+        for (const p of P) {
+          p.y -= p.vy * (0.35 + I);
+          p.x += p.vx + Math.sin(t * 0.0012 + p.ph) * 0.3;
+          p.life -= 0.0009;
+          if (p.y < -10 || p.life <= 0) spawn(p, false);
+          const a =
+            Math.min(1, p.life * 1.6) *
+            (0.25 + I * 0.75) *
+            (0.6 + 0.4 * Math.sin(t * 0.004 + p.ph));
+          ctx.beginPath();
+          ctx.fillStyle = p.hot
+            ? `rgba(255,178,74,${a})`
+            : `rgba(240,78,35,${a * 0.85})`;
+          ctx.arc(p.x, p.y, p.r * (0.7 + I * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (!reduced) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      /* ═══ SLIDE ENGINE ═══ */
+      const slides = [...document.querySelectorAll(".slide")];
+      const N = slides.length;
+      let cur = 0;
+      const photo = document.getElementById("photo");
+      const heat = document.getElementById("heat");
+
+      document.querySelectorAll("[data-split]").forEach((el) => {
+        el.innerHTML = el.innerHTML
+          .split(/(<br\s*\/?>)/i)
+          .map((part) =>
+            /^<br/i.test(part)
+              ? part
+              : part
+                  .split(/(\s+)/)
+                  .map((w) => (w.trim() ? `<span class="w">${w}</span>` : w))
+                  .join(""),
+          )
+          .join("");
+      });
+
+      const ticks = document.getElementById("ticks");
+      slides.forEach((s) =>
+        ticks.insertAdjacentHTML(
+          "beforeend",
+          `<i class="tick b${s.dataset.p}"></i>`,
+        ),
+      );
+      const tickEls = [...ticks.children];
+      const ovg = document.getElementById("ovg");
+      slides.forEach((s, i) =>
+        ovg.insertAdjacentHTML(
+          "beforeend",
+          `<div class="ovc${s.classList.contains("pdiv") ? " part" : ""}" data-i="${i}"><div class="n">${String(i + 1).padStart(2, "0")}</div><div class="t">${s.dataset.t}</div></div>`,
+        ),
+      );
+      ovg.addEventListener("click", (e) => {
+        const c = e.target.closest(".ovc");
+        if (!c) return;
+        go(+c.dataset.i);
+        toggleOv(false);
+      });
+
+      let entrance = null;
+      gsap.ticker.lagSmoothing(0);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && entrance) entrance.progress(1);
+      });
+
+      function go(n) {
+        n = Math.max(0, Math.min(N - 1, n));
+        if (n === cur && slides[n].classList.contains("on")) return;
+        const prev = slides[cur],
+          next = slides[n];
+        cur = n;
+        if (prev !== next)
+          gsap.to(prev, {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => prev.classList.remove("on"),
+          });
+        next.classList.add("on");
+        if (entrance) entrance.progress(1);
+        const tl = (entrance = gsap.timeline());
+        tl.fromTo(
+          next,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.42, ease: "power2.out" },
+          0,
+        );
+        if (!reduced) {
+          const words = next.querySelectorAll(".w");
+          if (words.length)
+            tl.fromTo(
+              words,
+              { yPercent: 108, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: 0.022,
+                ease: "expo.out",
+              },
+              0.06,
+            );
+          const blocks = next.querySelectorAll(
+            ".card, .stat, .row, .tl > div, .q, .person, .prod, .verdict, .call, .lede, .sub > div",
+          );
+          if (blocks.length)
+            tl.fromTo(
+              blocks,
+              { y: 18, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.018,
+                ease: "power3.out",
+              },
+              0.16,
+            );
+          const bars = next.querySelectorAll(".bar .f");
+          if (bars.length)
+            tl.fromTo(
+              bars,
+              { scaleY: 0 },
+              { scaleY: 1, duration: 0.9, stagger: 0.08, ease: "expo.out" },
+              0.2,
+            );
+        }
+        const int = parseFloat(next.dataset.int ?? 0.1);
+        gsap.to(state, { int, duration: 1.2, ease: "power2.inOut" });
+        gsap.to(heat, { opacity: 0.25 + int * 0.75, duration: 1.1 });
+        const ph = next.dataset.photo;
+        if (ph) {
+          photo.style.backgroundImage = `url(${ph})`;
+          photo.style.opacity = 1;
+        } else photo.style.opacity = 0;
+
+        tickEls.forEach((t, i) => {
+          t.className =
+            "tick b" +
+            slides[i].dataset.p +
+            (i < n ? " done" : i === n ? " now" : "");
+        });
+        document.getElementById("idx").textContent =
+          String(n + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+        document.getElementById("ttl").textContent = next.dataset.t;
+        document.body.classList.toggle("cover", n === 0);
+        [...ovg.children].forEach((c, i) => c.classList.toggle("now", i === n));
+        history.replaceState(null, "", n ? "#" + (n + 1) : "./");
+      }
+      const ov = document.getElementById("ov");
+      const toggleOv = (on) =>
+        ov.classList.toggle("on", on ?? !ov.classList.contains("on"));
+      addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur - 1);
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          toggleOv();
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(N - 1);
+        else if (e.key === "?")
+          document.getElementById("help").classList.toggle("on");
+      });
+      let tx = 0;
+      addEventListener(
+        "touchstart",
+        (e) => (tx = e.changedTouches[0].clientX),
+        { passive: true },
+      );
+      addEventListener(
+        "touchend",
+        (e) => {
+          const d = e.changedTouches[0].clientX - tx;
+          if (Math.abs(d) > 55) go(cur + (d < 0 ? 1 : -1));
+        },
+        { passive: true },
+      );
+      addEventListener("click", (e) => {
+        if (ov.classList.contains("on") || e.target.closest("a,button")) return;
+        if (e.clientX > innerWidth * 0.8) go(cur + 1);
+        else if (e.clientX < innerWidth * 0.2) go(cur - 1);
+      });
+
+      /* ═══ SOURCES ═══ */
+      const SRC = [["pedersenhoupt.com: about, professionals, services, focus-results, newsroom pages and Crains.pdf, read 9 Sep 2026", "pedersenhoupt.com"], ["Crain's Chicago Business, For the Record: Peer Pedersen has died, 23 Jan 2013", "chicagobusiness.com"], ["ISBA notice, Peer Pedersen 1925 to 2013, 12 Feb 2013", "isba.org"], ["Firm press release, iCONN Systems v. Conxall verdict, 28 Mar 2013 (lists Muehlstein as chairman, Janser as managing partner)", "pedersenhoupt.com/media/news/19_Press Release.pdf"], ["Chambers USA Spotlight 2026, Pedersen & Houpt, Real Estate, Chicago", "chambers.com"], ["Firm newsroom: Chambers Spotlight, Aug 2026; In memoriam John J. Hayes, Mar 2026; Byrne IICLE webcast, Jan 2026; JRTC Holdings, Nov 2025; Garfinkle, Jul 2025; Ledesma, Jan 2025; Czajkowski, Nov 2024; O'Donnell, Jun 2024", "pedersenhoupt.com"], ["PR Newswire, Pelican Energy Partners acquires Skolnik Industries, 13 Jan 2025", "prnewswire.com"], ["CBS Chicago, Thompson Center sale finalized to JRTC Holdings, 31 Mar 2022", "cbsnews.com"], ["SurePoint, Embracing the changes and the challenges in a pandemic (Stephanie Storkel, COO), Aug 2020", "surepoint.com"], ["ICG Construction, Pedersen & Houpt portfolio page and Reinventing Part 2 interview (page blocked to scripts; search snippets only)", "icgconstruction.com"], ["Super Lawyers firm profile; Leading Lawyers years from firm bios; Martindale ratings from firm bios", "superlawyers.com · pedersenhoupt.com"], ["LeadIQ and RocketReach company profiles (headcount and revenue estimates, unverified), Jul 2026", "leadiq.com · rocketreach.co"], ["Peer counts: nge.com, law.com and Levenfeld Pearlstein 2026 ESOP PDF, Chambers 2026 (Much Shelist, Burke Warren, Chuhak), agdglaw.com, lavellelaw.com, gct.law, robbinsdimonte.com, read 9 Sep 2026", "the firms' sites · chambers.com"], ["Smith Gambrell Russell and Freeborn combination, 1 Apr 2023; Kilpatrick and HMB merger, 1 Mar 2024", "sgrlaw.com · ktslaw.com"], ["Site audit deck, Upperhand, 9 Sep 2026 (crawl of 170 pages, Lighthouse 12, Wayback 2000 to 2026)", "pedersen-houpt-site-audit.vercel.app"], ["Firm newsroom item 71, Brian Collins elected Managing Partner, Jul 2015 (Wayback capture; live URL 404s)", "web.archive.org · pedersenhoupt.com"], ["ARDC Lawyer Search: Collins admitted 7 Nov 2002, Pesce 5 Nov 2009, Muehlstein 29 Oct 1980, all authorized, run 9 Sep 2026", "iardc.org"], ["Crain's Chicago Business, Chicago law firms move to smaller offices, 16 May 2015 (Muehlstein on the 2014 move, 36 attorneys, rent down more than 30 percent)", "chicagobusiness.com"], ["Crain's People on the Move, Anthony DeMarco Pesce joins as partner, 11 Oct 2021; firm item Aug 2021; Winston & Strawn bio, 2018 capture", "chicagobusiness.com · web.archive.org"], ["SEC EDGAR: Blue Rhino DEF 14A 12 Nov 2003; SpinCycle 10-K 2 Apr 2001 (Muehlstein directorships, founding investor)", "sec.gov"], ["Firm bios: Collins, Pesce, Muehlstein, live 9 Sep 2026; 2004, 2006, 2012 and 2015 captures", "pedersenhoupt.com · web.archive.org"], ["Storkel and Knight titles: Wiza (2021), Crunchbase, RocketReach, TheOrg, LinkedIn headlines (snippets only, unverified)", "aggregators"], ["Anthony Pesce's text to John, 9 Sep 2026 (the current site, the other firm's quote); the quote's number is deliberately not in either deck", "internal"]];
+      const PEERS = [];
+      const _pe = document.getElementById('peers'); if (_pe) _pe.innerHTML = '<div class="row head"><span>Firm</span><span>Current design since</span><span>What a client sees</span></div>' + PEERS.map(p => `<div class="row"><div class="k">${p[0]}<br><span style="opacity:.6">${p[1]}</span></div><p class="${/^20(2[2-6])/.test(p[2]) ? 'yes' : 'no'}"><strong>${p[2]}</strong></p><p>${p[3]}</p></div>`).join('');
+      document.getElementById("src").innerHTML = SRC.map(
+        (s) => `<p><b>${s[0]}</b> · ${s[1]}</p>`,
+      ).join("");
+
+      /* ═══ BOOT ═══ */
+      const h = parseInt(location.hash.slice(1)) || 1;
+      go(h - 1);
+      document.fonts.ready.then(() => document.body.classList.add("ready"));
+      setTimeout(() => document.body.classList.add("ready"), 1200);
+    </script>
+  </body>
+</html>
