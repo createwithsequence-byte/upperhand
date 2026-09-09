@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -35,7 +35,7 @@
         --steel: #c7c9cd;
         --cool: #7fa8c9;
         --pad: clamp(28px, 4.2vw, 78px);
-        --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+        --display: "Big Shoulders Display", "Space Grotesk", Impact, sans-serif;
         --sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
         --mono:
           "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -1110,6 +1110,57 @@
   color: var(--ink);
   font-weight: 500;
 }
+
+/* legibility: prose never under 14px at 1280, dense never under 13px */
+#deck .card p,
+#deck .verdict p,
+#deck .lede,
+#deck .rows .row p,
+#deck .tl p,
+#deck .ann li,
+#deck .note,
+#deck .stat .s,
+#deck .person p {
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+#deck .slide.dense .card p,
+#deck .slide.dense .rows .row p,
+#deck .slide.dense .ann li,
+#deck .slide.dense .stat .s,
+#deck .slide.dense .person p,
+#deck .slide.dense .tl p {
+  font-size: 13.5px;
+}
+#deck .verdict p {
+  font-size: 17px;
+}
+#deck .kicker {
+  font-size: 11.5px;
+}
+#deck h2 {
+  font-weight: 900;
+  letter-spacing: -0.005em;
+}
+#deck .gauge .n,
+#deck .stat .n {
+  font-variation-settings: normal;
+  font-weight: 900;
+}
+#deck .card h3 {
+  font-size: 20px;
+}
+
+/* short viewports: the engine's padding eats 158px of a 720 pane */
+@media (max-height: 860px) {
+  #deck .slide { padding-top: 44px !important; padding-bottom: 60px !important; }
+}
+.rows.tight .row { padding: 7px 0; }
+.rows .k span { display: block; font-family: var(--sans); font-size: 11px; letter-spacing: 0.01em; text-transform: none; opacity: 0.62; margin-top: 3px; line-height: 1.3; }
+.row p.no::before { content: "✕ "; color: var(--ember); font-family: var(--mono); font-size: 11px; }
+.row p.yes::before { content: "✓ "; color: var(--ink); font-family: var(--mono); font-size: 11px; }
+#deck .rows.tight .row { grid-template-columns: 215px 0.85fr 1.55fr; }
+#deck .rows.tight .row.head { grid-template-columns: 215px 0.85fr 1.55fr; }
     </style>
   </head>
   <body>
@@ -1147,7 +1198,8 @@
       <div>Subject<b>pedersenhoupt.com · 170 pages</b></div>
       <div>
         Scope<b
-          >Every page, desktop and phone · Lighthouse · 2000 to 2026 history</b
+          >Every page, desktop and phone · Lighthouse · 2000 to 2026 · seven
+          peers · what we would change</b
         >
       </div>
       <div>Date<b>9 September 2026 · prepared for Pedersen & Houpt</b></div>
@@ -1156,7 +1208,7 @@
 </section>
 
 <!-- ═══════════ THE READ ═══════════ -->
-<section class="slide" data-t="The read" data-p="0" data-int="0.25">
+<section class="slide dense" data-t="The read" data-p="0" data-int="0.25">
   <div class="inner">
     <div class="kicker">
       <span class="dot"></span><span class="num">01</span> The read in one
@@ -1166,24 +1218,31 @@
     <div class="verdict">
       <p>
         Pedersen & Houpt is a sixty-nine-year-old Chicago business firm with
-        twenty-six attorneys, a Chambers listing this year and deals like the
-        Thompson Center on its record. Its website is a vendor template whose current build dates from May 2021 and whose words date from 2012,
-        with stock photographs of skydivers and hard hats, a consent wall across
-        the first screen, and an About page that still says the firm is
-        fifty-five years old. The content underneath is better than the site
-        that carries it.
+        twenty-six lawyers, a Chambers listing this year and the Thompson Center
+        on its record. Its website is a vendor template whose words were written
+        in 2012 and whose current build dates from May 2021: stock photographs
+        of skydivers and hard hats, a consent wall across the first screen, an
+        About page that still says the firm is fifty-five years old. The content
+        underneath is better than the site that carries it. This deck shows what
+        is there, who it is for, what is bad, and what we would change.
       </p>
     </div>
     <div class="stats">
       <div class="stat">
         <div class="n hot">2012</div>
         <div class="l">Title tag, wordmark and About copy set</div>
-        <div class="s">Firmseek built the first version in September 2012 and the current one in May 2021. The words did not change between them.</div>
+        <div class="s">
+          Firmseek built the first version in September 2012 and the current one
+          in May 2021. The words did not change between them.
+        </div>
       </div>
       <div class="stat">
         <div class="n hot">2.8 to 7.8 s</div>
         <div class="l">Until the homepage image appears on a phone</div>
-        <div class="s">Two Lighthouse runs an hour apart, depending on which hero slide loads. Google's threshold for good is 2.5 seconds.</div>
+        <div class="s">
+          Two Lighthouse runs an hour apart. Google's threshold for good is 2.5
+          seconds.
+        </div>
       </div>
       <div class="stat">
         <div class="n warm">167 / 169</div>
@@ -1197,15 +1256,32 @@
         <div class="n">4 / 10</div>
         <div class="l">Design score, current site</div>
         <div class="s">
-          Template, on our scale. The bios and the wordmark are the parts worth
-          keeping. Full verdict on slide 14.
+          Template, on our scale. The bios and the wordmark are the seven
+          trapped inside it. Verdict on slide 18.
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ FIRST SCREEN ═══════════ -->
+<!-- ═══════════ PART 1 ═══════════ -->
+<section
+  class="slide pdiv"
+  data-t="Part 1 · What is there"
+  data-p="1"
+  data-int="0.9"
+>
+  <div class="inner">
+    <div class="part">Part one</div>
+    <h1 data-split>What is there</h1>
+    <p class="lede">
+      Every page crawled, every key page screenshotted at 1440 and 375, Google's
+      own audit tool run twice, and the homepage as the Wayback Machine saw it
+      since 2000.
+    </p>
+  </div>
+</section>
+
 <section class="slide dense" data-t="First screen" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
@@ -1251,7 +1327,6 @@
   </div>
 </section>
 
-<!-- ═══════════ HISTORY ═══════════ -->
 <section class="slide dense" data-t="How long" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
@@ -1270,42 +1345,52 @@
       </figure>
       <figure>
         <img src="img/ev/wb-2014.jpg" alt="2014 capture" />
-        <figcaption><b>Feb 2014</b> · Firmseek v1, live Sep 2012 to Apr 2021</figcaption>
+        <figcaption>
+          <b>Feb 2014</b> · Firmseek v1, live Sep 2012 to Apr 2021
+        </figcaption>
       </figure>
-
       <figure>
         <img src="img/ev/wb-2020.jpg" alt="2020 capture" />
-        <figcaption><b>2020</b> · v1 with a PPP banner and a Google+ icon</figcaption>
+        <figcaption>
+          <b>2020</b> · v1 with a PPP banner and a Google+ icon
+        </figcaption>
       </figure>
       <figure>
         <img src="img/ev/wb-2023.jpg" alt="2023 capture" />
-        <figcaption><b>2023</b> · Firmseek v2, live since May 2021, as today</figcaption>
+        <figcaption>
+          <b>2023</b> · Firmseek v2, live since May 2021, as today
+        </figcaption>
       </figure>
     </div>
     <div class="cols c3" style="margin-top: 16px">
       <div class="stat">
         <div class="n">199</div>
         <div class="l">Distinct homepage versions since Aug 2000</div>
-        <div class="s">Three eras: a Flash site to 2012, Firmseek v1 to April 2021, Firmseek v2 since. Most versions are copy changes inside the same template.</div>
+        <div class="s">
+          Three eras: a Flash site to 2012, Firmseek v1 to April 2021, Firmseek
+          v2 since. Most versions are copy changes inside the same template.
+        </div>
       </div>
       <div class="stat">
         <div class="n warm">May 2021</div>
         <div class="l">The current build's first capture</div>
-        <div class="s">Firmseek, the same vendor since 2012. The title tag "Elite Chicago Law Firm" has not changed since 2012; the Twitter link in the footer is a 2011-era URL.</div>
+        <div class="s">
+          Same vendor since 2012. The title tag "Elite Chicago Law Firm" has not
+          changed since 2012; the Twitter link in the footer is a 2011-era URL.
+        </div>
       </div>
       <div class="stat">
         <div class="n">0 of 6</div>
         <div class="l">Captures with a photograph of a person at the firm</div>
         <div class="s">
-          None. The people in every era are stock: a Flash animation, skydivers,
-          hard hats, apples.
+          The people in every era are stock: a Flash animation, skydivers, hard
+          hats, apples.
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ PEOPLE PAGES ═══════════ -->
 <section class="slide dense" data-t="The people" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
@@ -1355,7 +1440,6 @@
   </div>
 </section>
 
-<!-- ═══════════ THE WORDS ═══════════ -->
 <section class="slide dense" data-t="The words" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
@@ -1393,11 +1477,12 @@
           </p>
         </div>
         <div class="card">
-          <span class="tag">The title tag</span>
+          <span class="tag">The proof, undated</span>
           <p>
-            "Pedersen & Houpt: Elite Chicago Law Firm" is what Google shows as
-            the headline for the homepage. The firm does not use the word elite
-            anywhere else.
+            The results page lists a $225M financing, a $168M office park, a
+            Supreme Court case and a $93M bankruptcy settlement. None carries a
+            year. The Chambers Spotlight 2026 news sits on the third screen of
+            the homepage in 15px type.
           </p>
         </div>
       </div>
@@ -1410,7 +1495,6 @@
   </div>
 </section>
 
-<!-- ═══════════ NEWSROOM ═══════════ -->
 <section class="slide" data-t="Newsroom" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="split" style="grid-template-columns: 1fr 0.9fr">
@@ -1468,7 +1552,7 @@
             <div class="l">Most recent news</div>
             <div class="s">
               Chambers Spotlight USA 2026 for Real Estate. Real news, on the
-              third screen of the homepage in 15px type.
+              third screen of the homepage.
             </div>
           </div>
           <div class="stat">
@@ -1483,8 +1567,8 @@
             <div class="n">83</div>
             <div class="l">Newsroom pages, 2000 to 2026</div>
             <div class="s">
-              Fifteen of them are COVID and PPP alerts from 2020, when the firm
-              showed it can move fast.
+              Fifteen are COVID and PPP alerts from 2020, when the firm showed
+              it can move fast.
             </div>
           </div>
           <div class="stat">
@@ -1496,13 +1580,17 @@
             </div>
           </div>
         </div>
-        <p class="note">Off the site: LinkedIn 502 followers and two posts in nine months; X 214 followers, silent since January 2026. The newsletter sign-up requires a "Comments or Questions" field before it will accept an email address.</p>
+        <p class="note">
+          Off the site: LinkedIn 502 followers and two posts in nine months; X
+          214 followers, silent since January 2026. The newsletter sign-up
+          requires a "Comments or Questions" field before it accepts an email
+          address.
+        </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ ON A PHONE ═══════════ -->
 <section class="slide dense" data-t="On a phone" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
@@ -1554,8 +1642,7 @@
   </div>
 </section>
 
-<!-- ═══════════ UNDER THE HOOD ═══════════ -->
-<section class="slide dense" data-t="Under the hood" data-p="2" data-int="0.08">
+<section class="slide dense" data-t="Under the hood" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
       <span class="dot"></span><span class="num">08</span> Stack and weight ·
@@ -1568,7 +1655,7 @@
       </div>
       <div class="row">
         <div class="k">Built by</div>
-        <p><strong>FirmSeek template</strong></p>
+        <p><strong>Firmseek template</strong></p>
         <p>
           A law-firm website vendor. The credit is in the footer of all 169
           pages. The firm edits through the vendor's system.
@@ -1624,23 +1711,31 @@
         <div class="k">Sitemap</div>
         <p><strong>One 404 in the firm's own sitemap</strong></p>
         <p>
-          connect-Chicago.html is listed for search engines and does not exist. Every URL is marked "changefreq weekly"; the service pages were last modified in March 2021. HTTPS is on everywhere.
+          connect-Chicago.html is listed for search engines and does not exist.
+          Every URL is marked "changefreq weekly"; the service pages were last
+          modified in March 2021. HTTPS is on everywhere.
         </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ GOOGLE'S VIEW ═══════════ -->
-<section class="slide" data-t="Lighthouse" data-p="2" data-int="0.08">
+<section class="slide" data-t="Lighthouse" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
       <span class="dot"></span><span class="num">09</span> Lighthouse 12 ·
-      Google's own audit tool, run 9 Sep 2026
+      Google's own audit tool, run twice on 9 Sep 2026
     </div>
     <h2 data-split>Never under Google's line, on any run.</h2>
     <div class="lh">
-      <div class="gauge"><div class="n mid">63 · 82</div><div class="l">Performance · phone, two runs</div><div class="s">65 and 69 on desktop. The spread comes from a rotating hero. Firms rebuilt this year land above 85 every run.</div></div>
+      <div class="gauge">
+        <div class="n mid">63 · 82</div>
+        <div class="l">Performance · phone, two runs</div>
+        <div class="s">
+          65 and 69 on desktop. The spread comes from a rotating hero. Firms
+          rebuilt this year land above 85 every run.
+        </div>
+      </div>
       <div class="gauge">
         <div class="n ok">96</div>
         <div class="l">Accessibility</div>
@@ -1667,7 +1762,14 @@
       </div>
     </div>
     <div class="cols c3" style="margin-top: 16px">
-      <div class="stat"><div class="n hot">2.8 · 7.8 s</div><div class="l">Largest Contentful Paint · phone, two runs</div><div class="s">The moment the main image is on screen. Google's line for good is 2.5 s. Neither run made it.</div></div>
+      <div class="stat">
+        <div class="n hot">2.8 · 7.8 s</div>
+        <div class="l">Largest Contentful Paint · phone, two runs</div>
+        <div class="s">
+          The moment the main image is on screen. Google's line for good is 2.5
+          s. Neither run made it.
+        </div>
+      </div>
       <div class="stat">
         <div class="n hot">0.40</div>
         <div class="l">Layout shift · desktop</div>
@@ -1685,19 +1787,17 @@
       </div>
     </div>
     <p class="note" style="margin-top: 12px">
-      Scores are out of 100. Lighthouse is the tool inside Chrome; the figures
-      above are the lab run, not field data, because Google's field sample for
+      Scores are out of 100. Lab runs, not field data: Google's field sample for
       this site is too small to report.
     </p>
   </div>
 </section>
 
-<!-- ═══════════ SEARCH ═══════════ -->
-<section class="slide dense" data-t="Search" data-p="2" data-int="0.08">
+<section class="slide dense" data-t="Search" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
       <span class="dot"></span><span class="num">10</span> What Google has to
-      work with
+      work with, and what it says about the firm
     </div>
     <h2 data-split>167 of 169 pages leave the description to Google.</h2>
     <div class="split" style="grid-template-columns: 1fr 1fr">
@@ -1736,93 +1836,201 @@
           </div>
         </div>
         <div class="stat">
+          <div class="n hot">2.8 ★</div>
+          <div class="l">Google Business Profile, 4 reviews</div>
+          <div class="s">
+            Listed as "Pedersen & Houpt Law Offices" with the "Own this
+            business?" prompt showing, so it appears unclaimed. FindLaw still
+            carries Suite 3100 from a 2014 update.
+          </div>
+        </div>
+        <div class="stat">
           <div class="n">3</div>
           <div class="l">H1 headings on the homepage</div>
           <div class="s">
-            All three say GROW YOUR BUSINESS. One per page is the convention
-            search engines expect.
+            All three say GROW YOUR BUSINESS. One per page is what search
+            engines expect. Plus one broken link in the sitemap and five images
+            without alt text.
           </div>
         </div>
-        <div class="stat"><div class="n hot">2.8 ★</div><div class="l">Google Business Profile, 4 reviews</div><div class="s">Listed as "Pedersen & Houpt Law Offices" with the "Own this business?" prompt showing, so it appears unclaimed. FindLaw still carries Suite 3100 from a 2014 update.</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ PEERS ═══════════ -->
-<section class="slide dense" data-t="The peers" data-p="2" data-int="0.08">
+<section class="slide dense" data-t="The peers" data-p="1" data-int="0.08">
   <div class="inner">
     <div class="kicker">
       <span class="dot"></span><span class="num">11</span> Chicago middle-market
-      firms a client compares you with
+      firms a client compares you with · read live, dated via Wayback
     </div>
-    <h2 data-split>Six of seven peers rebuilt since 2023. Four show their own people.</h2>
-    <div class="rows" id="peers"></div>
+    <h2 data-split>
+      Six of seven peers have rebuilt since 2023.
+    </h2>
+    <div class="rows tight" id="peers"></div>
     <p class="note" style="margin-top: 12px">
-      Redesign years come from the Wayback Machine's first capture of each
-      firm's current design; presentation notes from reading each site on 9
-      September 2026.
+      Four of the seven show their own people. Redesign years are the first Wayback capture of each firm's current design; notes from reading each site on 9 September 2026.
     </p>
   </div>
 </section>
 
-<!-- ═══════════ WHAT WORKS ═══════════ -->
-<section class="slide" data-t="What works" data-p="3" data-int="0.08">
+<!-- ═══════════ PART 2 ═══════════ -->
+<section
+  class="slide pdiv"
+  data-t="Part 2 · Who it is for"
+  data-p="2"
+  data-int="0.9"
+>
+  <div class="inner">
+    <div class="part">Part two</div>
+    <h1 data-split>Who it is for</h1>
+    <p class="lede">
+      We do not have the firm's analytics, so this is a model, stated as one:
+      the six kinds of people who open pedersenhoupt.com, what each needs in ten
+      seconds, and what the site gives them today.
+    </p>
+  </div>
+</section>
+
+<section class="slide dense" data-t="Visitors" data-p="2" data-int="0.08">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">12</span> The visitor model · six people, one site</div>
+          <h2 data-split>Six kinds of visitor. The site serves one of them.</h2>
+          <div class="rows tight">
+            <div class="row head"><span>Who, and why now</span><span>Needs in ten seconds</span><span>Gets today</span></div>
+            <div class="row"><div class="k">The referred prospect<span>owner or CFO, a banker's referral, on a phone at night</span></div><p>Is this a real firm, do they do my kind of work, who would I talk to, is there proof.</p><p class="no">Skydivers, "Grow Your Business," a wall over the firm's own sentence. No proof above the fold.</p></div>
+            <div class="row"><div class="k">In-house counsel<span>desktop, comparing three firms</span></div><p>Has this firm done my matter before, with dates, and who is the lawyer to call.</p><p class="no">Adjective paragraphs. Matters undated, on a page under Client Focus.</p></div>
+            <div class="row"><div class="k">The existing client<span>a bill, a portal, a forwarded alert</span></div><p>Pay and log in within one tap of the header.</p><p class="no">"Payment" and "EACCESS" are footer links at the bottom of every page.</p></div>
+            <div class="row"><div class="k">The lateral or the student<span>four hired since 2024</span></div><p>Who would I work with, is the firm growing, what is the culture.</p><p class="no">An alphabet index, a 197-word careers page, the hires buried in the archive.</p></div>
+            <div class="row"><div class="k">Another lawyer<span>referral source or opposing counsel</span></div><p>Bio, admissions, representative matters, publications.</p><p class="yes">The one visitor served: the bios are complete and specific, once past the wall.</p></div>
+            <div class="row"><div class="k">Rankers and reporters<span>Chambers researchers, trade press</span></div><p>Dated matters, a quote, a face beside the news.</p><p class="no">Undated results, no attributed quote since 2024, news without images.</p></div>
+          </div>
+        </div>
+      </section>
+
+<section class="slide dense" data-t="The bar" data-p="2" data-int="0.08">
   <div class="inner">
     <div class="kicker">
-      <span class="dot"></span><span class="num">12</span> The keep list · what
-      a rebuild carries forward
+      <span class="dot"></span><span class="num">13</span> The industry bar · nine things mid-size firms' sites do in 2026 · this site has the material for four
     </div>
-    <h2 data-split>Four things on this site are already right.</h2>
-    <div class="cols c2" style="margin-top: 18px">
+    <h2 data-split>
+      Nine things the best firms do. This site does none.
+    </h2>
+    <div class="cols c3">
       <div class="card">
-        <span class="tag">The wordmark</span>
-        <h3>"Pedersen" with the red rule</h3>
+        <span class="tag">01 · A sentence that names the client</span>
         <p>
-          A real mark: a serif name, a single red line, the full name beneath.
-          It has held since 2012 and it should anchor the rebuild. The red,
-          #AB1E23, is the accent this deck wears.
+          "Counsel to owner-led companies in the Midwest," not "Grow your
+          business." <strong>Missing.</strong> The material exists in the
+          FindLaw copy: middle market, owners, developers.
         </p>
       </div>
       <div class="card">
-        <span class="tag">The bios</span>
-        <h3>Representative experience</h3>
+        <span class="tag">02 · People first</span>
         <p>
-          Dollar figures, deal shapes, industries. Fifteen matters on one
-          partner's page. This is the proof clients look for and it becomes the
-          front of the new site, not the bottom of a tab.
+          Faces on the index, bios that open with what the lawyer does for you
+          and dated matters, a direct line, often a short video.
+          <strong>Missing.</strong> Twenty-six consistent headshots and
+          fifteen-matter bios already exist.
         </p>
       </div>
       <div class="card">
-        <span class="tag">The headshots</span>
-        <h3>One standard, twenty-six times</h3>
+        <span class="tag">03 · Practice pages as answers</span>
         <p>
-          Same backdrop, same crop, same light. A rare discipline on a firm
-          site. They belong on the index, at size, with names and practices.
+          What we do for you, three dated matters, the lawyer to call, related
+          insights. <strong>Missing.</strong> Thirty-four pages of adjectives
+          instead of seven groups of answers.
         </p>
       </div>
       <div class="card">
-        <span class="tag">The positioning, hidden in the nav</span>
-        <h3>We Listen · It's About Results · Alternative Fee Arrangements</h3>
+        <span class="tag">04 · Proof with dates</span>
         <p>
-          Three pages under "Client Focus" say exactly what a middle-market
-          owner wants to hear. Today they are a sidebar. They are the homepage.
+          Rankings beside the ask; matters with years; news with authors.
+          <strong>Missing.</strong> The proof exists and is undated; Chambers
+          2026 is real and buried.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">05 · Client tools in the header</span>
+        <p>
+          Pay a bill, client login, book a call. Every peer that rebuilt since
+          2023 moved these out of the footer. <strong>Missing.</strong> LawPay
+          and EACCESS exist, in the footer.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">06 · Photography of the actual firm</span>
+        <p>
+          Its people, its office, its city. Stock metaphors are the strongest
+          template tell there is. <strong>Missing,</strong> in every era since
+          2000.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">07 · Fast and made for a phone</span>
+        <p>
+          Under 2.5 s to the main image, no layout shift, tap targets over 44
+          px, no wall. Illinois requires no cookie banner for an analytics-only
+          site. <strong>Missing.</strong>
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">08 · Readable by search and AI</span>
+        <p>
+          A description on every page, one title, schema, a clean sitemap, so
+          search results and answer engines use the firm's own words.
+          <strong>Missing:</strong> 167 pages without a description.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">09 · A cadence with faces</span>
+        <p>
+          One authored item a month, tagged by practice, a sign-up that asks for
+          an email only. <strong>Missing.</strong> Five items a year, no faces;
+          the form demands a comment.
         </p>
       </div>
     </div>
-    <p class="note" style="margin-top: 14px">
-      Also kept: the Chambers Spotlight 2026 badge, the client Payment and
-      EACCESS links in the footer (moved up front), and the 2020 alert cadence
-      as proof the firm can publish fast when it matters.
+  </div>
+</section>
+
+<!-- ═══════════ PART 3 ═══════════ -->
+<section
+  class="slide pdiv"
+  data-t="Part 3 · What is bad"
+  data-p="3"
+  data-int="0.9"
+>
+  <div class="inner">
+    <div class="part">Part three</div>
+    <h1 data-split>What is bad</h1>
+    <p class="lede">
+      Six findings, ranked by how much fixing each one improves the whole. Each
+      states the defect, who it fails, and the fix. Then the verdict, and what
+      the rebuild must not break.
     </p>
   </div>
 </section>
 
-<!-- ═══════════ THE VERDICT ═══════════ -->
+<section class="slide dense" data-t="Six defects" data-p="3" data-int="0.08">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">14</span> The six things that are bad · defect, who it fails, the fix</div>
+          <h2 data-split>Six things that are bad. Six fixes.</h2>
+          <div class="cols c3">
+            <div class="card hot"><span class="tag">1 · The consent wall</span><h3>Covers the fold on every page, every visit</h3><p><strong>Fails:</strong> the referred prospect, who meets a black bar before the firm's own sentence. 140 of 900 px on desktop, two fifths of a phone. <strong>Fix:</strong> no banner. Analytics-only sites in Illinois need none; if counsel insists, a 56 px bar, once.</p></div>
+            <div class="card hot"><span class="tag">2 · A homepage for no one</span><h3>189 words, three H1s, zero proof</h3><p><strong>Fails:</strong> every visitor except another lawyer. <strong>Fix:</strong> one sentence that names the client, a proof strip (1957, Chambers 2026, the Thompson Center, 26 lawyers, fixed fees), six faces, three dated matters.</p></div>
+            <div class="card hot"><span class="tag">3 · The people are hidden</span><h3>An alphabet where the faces should be</h3><p><strong>Fails:</strong> the prospect and the lateral; bios open on a gray band, a tab strip and the wall, matters at the bottom. <strong>Fix:</strong> faces on the index; bios that open with "how I can help" and dated matters; a photo day at Clark Street.</p></div>
+            <div class="card"><span class="tag">4 · Slow and heavy in a hand</span><h3>2.4 MB, three ~1 MB PNGs, 1.6 s blocked</h3><p><strong>Fails:</strong> anyone on a phone: 2.8 to 7.8 s to the main image, layout shift 0.40, eight tap targets too small. <strong>Fix:</strong> images at display size in WebP or AVIF, lazy below the fold, fonts preloaded. Under 600 KB and 2.5 s.</p></div>
+            <div class="card"><span class="tag">5 · Old words, undated proof</span><h3>"Fifty-five years," a 2013 obituary, results with no years</h3><p><strong>Fails:</strong> in-house counsel and rankers, who need dates. <strong>Fix:</strong> About rewritten in 400 words with the 2013 to 2026 story; a year on every matter; Chambers beside the ask; the Crain's PDF retired into a history page.</p></div>
+            <div class="card"><span class="tag">6 · Invisible to search, stale in listings</span><h3>167 pages without a description, a 2.8-star unclaimed profile</h3><p><strong>Fails:</strong> the prospect before they reach the site. <strong>Fix:</strong> templated descriptions, one title and one H1 per page, a clean sitemap, the Google profile claimed and answered, directories corrected to Suite 2700, a static map.</p></div>
+          </div>
+        </div>
+      </section>
+
 <section class="slide dense" data-t="The verdict" data-p="3" data-int="0.12">
   <div class="inner">
     <div class="kicker">
-      <span class="dot"></span><span class="num">13</span> Design verdict · our
+      <span class="dot"></span><span class="num">15</span> Design verdict · our
       house standard, the same scale we hold our own work to
     </div>
     <h2 data-split>A four, with a seven inside it.</h2>
@@ -1830,9 +2038,10 @@
       <div class="card">
         <span class="tag">Cold read, three seconds</span>
         <p>
-          Corporate template, 2012 vintage, rebuilt in 2021. Skydivers over a law firm. The one word the
-          site evokes is <strong>brochure</strong>. A client cannot say from the
-          first screen who the firm is for or why it is different.
+          Corporate template, 2012 vintage, rebuilt in 2021. Skydivers over a
+          law firm. The one word the site evokes is <strong>brochure</strong>. A
+          client cannot say from the first screen who the firm is for or why it
+          is different.
         </p>
       </div>
       <div class="card hot">
@@ -1868,17 +2077,215 @@
   </div>
 </section>
 
-<!-- ═══════════ WHAT A REBUILD DOES ═══════════ -->
-<section class="slide dense" data-t="A rebuild" data-p="3" data-int="0.12">
+<section class="slide" data-t="What works" data-p="3" data-int="0.08">
   <div class="inner">
     <div class="kicker">
-      <span class="dot"></span><span class="num">14</span> What changes for a
+      <span class="dot"></span><span class="num">16</span> The keep list · what
+      a rebuild carries forward
+    </div>
+    <h2 data-split>Four things on this site are already right.</h2>
+    <div class="cols c2" style="margin-top: 18px">
+      <div class="card">
+        <span class="tag">The wordmark</span>
+        <h3>"Pedersen" with the red rule</h3>
+        <p>
+          A real mark: a serif name, a single red line, the full name beneath.
+          It has held since 2012 and it should anchor the rebuild. The red,
+          #AB1E23, is the accent this deck wears.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">The bios</span>
+        <h3>Representative experience</h3>
+        <p>
+          Dollar figures, deal shapes, industries. Fifteen matters on one
+          partner's page. This is the proof clients look for and it becomes the
+          front of the new site, not the bottom of a tab.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">The headshots</span>
+        <h3>One standard, twenty-six times</h3>
+        <p>
+          Same backdrop, same crop, same light. A rare discipline on a firm
+          site. They belong on the index, at size, with names and practices,
+          until the photo day replaces them.
+        </p>
+      </div>
+      <div class="card">
+        <span class="tag">The positioning, hidden in the nav</span>
+        <h3>We Listen · It's About Results · Alternative Fee Arrangements</h3>
+        <p>
+          Three pages under "Client Focus" say exactly what a middle-market
+          owner wants to hear. Today they are a sidebar. They are the homepage.
+        </p>
+      </div>
+    </div>
+    <p class="note" style="margin-top: 14px">
+      Also kept: the Chambers Spotlight 2026 badge, the LawPay and EACCESS
+      client tools (moved up front), and the 2020 alert cadence as proof the
+      firm can publish fast when it matters.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ PART 4 ═══════════ -->
+<section
+  class="slide pdiv"
+  data-t="Part 4 · What we would change"
+  data-p="4"
+  data-int="0.9"
+>
+  <div class="inner">
+    <div class="part">Part four</div>
+    <h1 data-split>What we would change</h1>
+    <p class="lede">
+      Our read, labeled as ours. Eight sweeping changes, three directions and
+      the one we would take, and two first sketches. No scope list, no timeline,
+      no price.
+    </p>
+  </div>
+</section>
+
+<section class="slide dense" data-t="Sweeping changes" data-p="4" data-int="0.08">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">17</span> The sweeping changes · not fixes, moves · each answers a slide in Part 1</div>
+          <h2 data-split>Eight moves, each named for a visitor.</h2>
+          <div class="cols c4">
+            <div class="card hot"><span class="tag">01 · For the referred prospect</span><h3>Reposition in one sentence</h3><p>"Counsel to Chicago's middle market, since 1957," and a homepage built as that argument: who we serve, the proof, the people. Slide 02.</p></div>
+            <div class="card hot"><span class="tag">02 · For the prospect, the lateral, other lawyers</span><h3>People first</h3><p>Twenty-six faces on the index. The bio becomes the product page. One photo day at 161 North Clark makes the year's imagery. Slides 03, 04.</p></div>
+            <div class="card"><span class="tag">03 · For in-house counsel</span><h3>Practice pages become answers</h3><p>Thirty-four pages become seven groups, each opening with what it does for a client, three dated matters, the lawyer to call. Slide 05.</p></div>
+            <div class="card"><span class="tag">04 · For rankers, prospects, the chairman</span><h3>Proof with dates</h3><p>A results timeline from 1957 with Peer Pedersen's deals in it. Rankings beside the ask. News with a face. The history told, not linked. Slides 05, 06.</p></div>
+            <div class="card"><span class="tag">05 · For existing clients</span><h3>Client tools up front</h3><p>Pay a bill, client login and book a call move from the footer to the header on every page. Slide 02.</p></div>
+            <div class="card"><span class="tag">06 · For clients and referrers</span><h3>A voice and a cadence</h3><p>One authored item a month with a face, tagged by practice. A sign-up that asks for an email only. The 2020 pace, made normal. Slide 06.</p></div>
+            <div class="card"><span class="tag">07 · For everyone, including Google</span><h3>A platform the firm owns</h3><p>Fast by default, editable by the firm, a description and schema on every page, no wall, the Google profile claimed. Slides 07 to 10.</p></div>
+            <div class="card"><span class="tag">08 · For the firm's own sense of itself</span><h3>The brand, kept and sharpened</h3><p>Keep the wordmark and the red. Retire the stock. A bold serif, a clean grotesk, photography of real people in real rooms. Slide 16.</p></div>
+          </div>
+          <p class="note" style="margin-top: 10px"><b>What we would not do:</b> a five-year package or an invented tagline. The firm has the words: We Listen, It's About Results, Alternative Fee Arrangements. Put them where a client looks.</p>
+        </div>
+      </section>
+
+<section class="slide dense" data-t="Directions" data-p="4" data-int="0.08">
+        <div class="inner">
+          <div class="kicker"><span class="dot"></span><span class="num">18</span> Three directions · the idea, the type, the pictures, what it says</div>
+          <h2 data-split>Three ways to look like this firm. We would take the first.</h2>
+          <div class="cols c3">
+            <div class="card hot"><span class="tag">Our pick · The place</span><h3>The firm as an address and a room</h3><p><strong>Idea:</strong> 161 North Clark is the brand: the people, the rooms, the city out the window. <strong>Type:</strong> a bold editorial serif for headlines, a clean grotesk for reading. <strong>Color:</strong> warm paper, ink, the firm's red as the only accent. <strong>Pictures:</strong> documentary photography of the partners and the office, window light. <strong>Says:</strong> we are real, we are here, since 1957.</p></div>
+            <div class="card"><span class="tag">The ledger</span><h3>Evidence as the visual system</h3><p><strong>Idea:</strong> matters, dates and numbers are the design. <strong>Type:</strong> a tabular grotesk, numerals at display size. <strong>Color:</strong> monochrome with the red. <strong>Pictures:</strong> few; documents, tombstones, the city as texture. <strong>Says:</strong> results. <strong>Risk:</strong> reads as a bank and loses the warmth "We Listen" promises.</p></div>
+            <div class="card"><span class="tag">Counsel</span><h3>Classical and quiet</h3><p><strong>Idea:</strong> judgment and discretion. <strong>Type:</strong> serif-led, generous white space. <strong>Color:</strong> ivory, charcoal, the red used sparingly. <strong>Pictures:</strong> formal portraits, archival material for the history. <strong>Says:</strong> heritage. <strong>Risk:</strong> the smallest step from where the site is; a client may not notice it changed.</p></div>
+          </div>
+          <div class="verdict" style="margin-top: 12px"><p><strong>Why the first:</strong> the firm's real asset is people at an address, and no peer in the set is showing Chicago itself. It moves the site furthest from the template while staying unmistakably a law firm, and it makes the photo day the center of the project.</p></div>
+        </div>
+      </section>
+
+<section
+  class="slide dense"
+  data-t="First sketch · home"
+  data-p="4"
+  data-int="0.08"
+>
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">19</span> First sketch, not a
+      design · the homepage in "The place"
+    </div>
+    <h2 data-split>What the first screen would say, and show.</h2>
+    <div class="ev two" style="grid-template-columns: 1.7fr 0.8fr">
+      <figure>
+        <img class="tall" src="img/ev/mock-home.jpg" alt="Homepage sketch" />
+        <figcaption>
+          <b>Homepage sketch</b> · real copy from the firm's record, real names;
+          photographs marked as placeholders until the photo day
+        </figcaption>
+      </figure>
+      <ul class="ann" style="margin-top: 0">
+        <li data-n="01">
+          <b>The sentence.</b> "Counsel to Chicago's middle market." The address
+          as the eyebrow. The firm's own tools in the header: phone, client
+          login, pay a bill, book a call.
+        </li>
+        <li data-n="02">
+          <b>The proof strip.</b> 1957, Chambers 2026, the Thompson Center, 26
+          lawyers, fixed fees. Five facts a prospect can check, above the fold,
+          in place of three stock tiles.
+        </li>
+        <li data-n="03">
+          <b>The people, then the matters.</b> Six faces with practices, then
+          three dated matters. Everything on this screen already exists on the
+          current site; it has never been put here.
+        </li>
+        <li data-n="04"><b>Not shown:</b> the wall. There is none.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section
+  class="slide dense"
+  data-t="First sketch · bio"
+  data-p="4"
+  data-int="0.08"
+>
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">20</span> First sketch, not a
+      design · a bio, desktop and phone
+    </div>
+    <h2 data-split>The bio becomes the product page.</h2>
+    <div class="ev" style="grid-template-columns: 1.55fr 0.5fr 0.9fr">
+      <figure>
+        <img
+          class="tall"
+          src="img/ev/mock-bio.jpg"
+          alt="Bio page sketch, desktop"
+        />
+        <figcaption>
+          <b>Eric J. Kordish, desktop</b> · his real matters, with the years and
+          figures he already publishes
+        </figcaption>
+      </figure>
+      <figure>
+        <img
+          class="tall"
+          src="img/ev/mock-bio-phone.jpg"
+          alt="Bio page sketch, phone"
+        />
+        <figcaption><b>The same page, phone</b> · the elevator read</figcaption>
+      </figure>
+      <ul class="ann" style="margin-top: 0">
+        <li data-n="01">
+          <b>Opens with what he does for you,</b> in one sentence, then the
+          direct line and email above the fold. Today those sit under a gray
+          band and a tab strip.
+        </li>
+        <li data-n="02">
+          <b>Matters lead, with dates and figures.</b> The Thompson Center, a
+          $218M refinancing, a $178M construction facility. The best content on
+          the current site, moved to the top.
+        </li>
+        <li data-n="03">
+          <b>Recognition and background as one row,</b> not a sidebar. Chambers,
+          Loyola, Northwestern, the bar.
+        </li>
+        <li data-n="04">
+          <b>On a phone it is one column and one thumb:</b> portrait, sentence,
+          number, matters. No wall, nothing under 44 px.
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide dense" data-t="What changes" data-p="4" data-int="0.12">
+  <div class="inner">
+    <div class="kicker">
+      <span class="dot"></span><span class="num">21</span> What changes for a
       client · each tied to a finding
     </div>
     <h2 data-split>Six things a client would notice.</h2>
     <div class="cols c3">
       <div class="card">
-        <span class="tag">Slide 02</span>
+        <span class="tag">Slide 02 · 19</span>
         <h3>The first screen says who you are for</h3>
         <p>
           One sentence about middle-market owners and their companies, the
@@ -1887,11 +2294,11 @@
         </p>
       </div>
       <div class="card">
-        <span class="tag">Slide 04</span>
+        <span class="tag">Slide 04 · 20</span>
         <h3>Faces on the index, matters up front</h3>
         <p>
           Twenty-six attorneys by face, practice and one line. The bio opens
-          with representative experience, not a tab strip.
+          with what the lawyer does for you and the matters that prove it.
         </p>
       </div>
       <div class="card">
@@ -1899,7 +2306,8 @@
         <h3>Loads in under two seconds on a phone</h3>
         <p>
           Right-sized images in modern formats, nothing blocking the first
-          paint. From 2.8 to 7.8 seconds today to under 2.5 is a build default, not an add-on.
+          paint. From 2.8 to 7.8 seconds today to under 2.5 is a build default,
+          not an add-on.
         </p>
       </div>
       <div class="card">
@@ -1914,8 +2322,9 @@
         <span class="tag">Slide 10</span>
         <h3>Google shows the firm's own words</h3>
         <p>
-          A description on every page, one title per page, one H1, a sitemap
-          with no dead ends. Search results that read like the firm wrote them.
+          A description on every page, one title, one H1, a clean sitemap, a
+          claimed and answered Google profile. Search results that read like the
+          firm wrote them.
         </p>
       </div>
       <div class="card">
@@ -1931,16 +2340,15 @@
     <p class="note" style="margin-top: 14px">
       What this deck does not do: propose a scope, a timeline or a price. Those
       come after the firm decides what it wants the site to be. This is the case
-      that it should be something.
+      that it should be something, and a first look at what.
     </p>
   </div>
 </section>
 
-<!-- ═══════════ SOURCES ═══════════ -->
 <section class="slide dense" data-t="Sources" data-p="4" data-int="0.08">
   <div class="inner">
     <div class="kicker">
-      <span class="dot"></span><span class="num">15</span> Every number in this
+      <span class="dot"></span><span class="num">22</span> Every number in this
       deck, with its date
     </div>
     <h2 data-split>Sources.</h2>
@@ -1948,19 +2356,18 @@
   </div>
 </section>
 
-<!-- ═══════════ SIGN-OFF ═══════════ -->
 <section class="slide" data-t="Sign-off" data-p="4" data-int="0.5">
   <div class="inner">
     <div class="kicker">
-      <span class="dot"></span><span class="num">16</span> Prepared by
+      <span class="dot"></span><span class="num">23</span> Prepared by
     </div>
     <h2 data-split>Upperhand.</h2>
     <p class="lede">
       A Chicago studio that builds sites, brands and the systems behind them for
       companies that have a real story and a website that does not tell it. This
       audit was run on 9 September 2026; every page was measured, every
-      screenshot was taken by us, and every claim has a source on the previous
-      slide.
+      screenshot was taken by us, the two sketches are ours, and every claim has
+      a source on the previous slide.
     </p>
     <div class="signoff">
       <span><b>hello@getupperhand.io</b></span
@@ -2210,7 +2617,7 @@
       /* ═══ SOURCES ═══ */
       const SRC = [["Crawl of pedersenhoupt.com, 170 URLs (157 in sitemap.xml plus discovered links), desktop 1440 and phone 375, 9 Sep 2026", "site-audit crawler, Playwright"], ["Lighthouse 12, homepage, mobile and desktop presets, run locally 9 Sep 2026", "Google Lighthouse"], ["Wayback Machine CDX index for pedersenhoupt.com, 199 distinct homepage captures Aug 2000 to Jan 2026; frames 2008, 2011, 2014, 2017, 2020, 2023", "web.archive.org"], ["pedersenhoupt.com homepage, About, Connect With Us, Professionals, Services, News & Alerts pages, read 9 Sep 2026", "pedersenhoupt.com"], ["Crain's Chicago Business, For the Record: Peer Pedersen has died, 23 Jan 2013 (the Crains.pdf linked from the firm site)", "chicagobusiness.com · pedersenhoupt.com"], ["Pedersen & Houpt Recognized in Chambers Spotlight USA 2026 for Real Estate, firm newsroom, Aug 2026", "pedersenhoupt.com"], ["Pedersen Represents JRTC Holdings in Thompson Center Agreement, firm newsroom, Nov 2025", "pedersenhoupt.com"], ["Site credit: SITE BY FIRMSEEK in the footer of every page; use.typekit.net (Proxima Nova); jQuery 3.7.1; GA4 G-NP8X2E101W; Google Maps embed", "pedersenhoupt.com"], ["Google Search Central: Largest Contentful Paint is good under 2.5 s; Cumulative Layout Shift is good under 0.1", "developers.google.com"], ["Peer firm websites and their Wayback capture dates, read 9 Sep 2026", "web.archive.org · the firms' sites"]];
       const PEERS = [["Levenfeld Pearlstein", "lplegal.com", "2023", "Photography of its own people. Three insights in two weeks. Online payment."], ["Much Shelist", "muchlaw.com", "2023", "Chicago and people photography. Weekly insights, subscribe, LawPay, a client portal."], ["Burke Warren MacKay & Serritella", "burkelaw.com", "2023", "Same vendor as Pedersen; on the identical Firmseek pattern in Jan 2022, rebuilt by Jan 2023. Team photography, payments."], ["Neal Gerber Eisenberg", "nge.com", "2024", "Office photography; the hero is its Chambers USA 2026 news. Three insights in a month."], ["Golan Christie Taglia", "gct.law", "2025", "27 lawyers, the closest twin. Bio-card grid with faces, three posts in a month, payments."], ["Chuhak & Tecson", "chuhak.com", "2025", "People photography, 'Right there with you.' Blog undated."], ["Lavelle Law", "lavellelaw.com", "2019", "Stock imagery, but a podcast and video section, a newsletter, payments."], ["Pedersen & Houpt", "pedersenhoupt.com", "2021", "Firmseek build on 2012 words. Stock metaphors. Five items in fourteen months. Google profile unclaimed."]];
-      const _pe = document.getElementById('peers'); if (_pe) _pe.innerHTML = '<div class="row head"><span>Firm</span><span>Current design since</span><span>What a client sees</span></div>' + PEERS.map(p => `<div class="row"><div class="k">${p[0]}<br><span style="opacity:.6">${p[1]}</span></div><p class="${/^20(2[2-6])/.test(p[2]) ? 'yes' : 'no'}"><strong>${p[2]}</strong></p><p>${p[3]}</p></div>`).join('');
+      const _pe = document.getElementById('peers'); if (_pe) _pe.innerHTML = '<div class="row head"><span>Firm</span><span>Current design since</span><span>What a client sees</span></div>' + PEERS.map(p => `<div class="row"><div class="k">${p[0]}</div><p class="${/^20(2[2-6])/.test(p[2]) ? 'yes' : 'no'}"><strong>${p[2]}</strong></p><p>${p[3]}</p></div>`).join('');
       document.getElementById("src").innerHTML = SRC.map(
         (s) => `<p><b>${s[0]}</b> · ${s[1]}</p>`,
       ).join("");

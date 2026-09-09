@@ -9,8 +9,7 @@ def tok(name, val):
     head, n = re.subn(r"(--%s:\s*)[^;]+;" % re.escape(name), r"\g<1>%s;" % val, head, count=1)
     assert n == 1, name
 head = head.replace("{{TARGET}} · Deep Dive · {{MONTH YEAR}}", "Pedersen & Houpt · Deep dive · September 2026")
-head = head.replace("family=Big+Shoulders+Display:wght@700;800;900", "family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700")
-for k, v in [("bg", "#0d0e10"), ("bg-2", "#14161a"), ("line", "#262a30"), ("line-2", "#363b43"), ("ink", "#f1eee8"), ("ink-2", "#aeb0b4"), ("ink-3", "#6f747b"), ("ember", "#AB1E23"), ("heat", "#e0616a"), ("display", '"Fraunces", "Iowan Old Style", Georgia, serif')]:
+for k, v in [("bg", "#0d0e10"), ("bg-2", "#14161a"), ("line", "#262a30"), ("line-2", "#363b43"), ("ink", "#f1eee8"), ("ink-2", "#aeb0b4"), ("ink-3", "#6f747b"), ("ember", "#AB1E23"), ("heat", "#e0616a"), ("display", '"Big Shoulders Display", "Space Grotesk", Impact, sans-serif')]:
     tok(k, v)
 head = re.sub(r'<img id="logo-corner"[^>]*>', '<img id="logo-corner" src="img/logo-cream.svg" alt="Pedersen & Houpt" />', head)
 head = re.sub(r'<div id="brand">.*?</div>', '<div id="brand"><b>Pedersen & Houpt</b> · deep dive · September 2026</div>', head)

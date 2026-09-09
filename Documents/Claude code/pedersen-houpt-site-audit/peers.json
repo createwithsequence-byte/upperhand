@@ -1,10 +1,50 @@
 [
- ["Levenfeld Pearlstein", "lplegal.com", "2023", "Photography of its own people. Three insights in two weeks. Online payment."],
- ["Much Shelist", "muchlaw.com", "2023", "Chicago and people photography. Weekly insights, subscribe, LawPay, a client portal."],
- ["Burke Warren MacKay & Serritella", "burkelaw.com", "2023", "Same vendor as Pedersen; on the identical Firmseek pattern in Jan 2022, rebuilt by Jan 2023. Team photography, payments."],
- ["Neal Gerber Eisenberg", "nge.com", "2024", "Office photography; the hero is its Chambers USA 2026 news. Three insights in a month."],
- ["Golan Christie Taglia", "gct.law", "2025", "27 lawyers, the closest twin. Bio-card grid with faces, three posts in a month, payments."],
- ["Chuhak & Tecson", "chuhak.com", "2025", "People photography, 'Right there with you.' Blog undated."],
- ["Lavelle Law", "lavellelaw.com", "2019", "Stock imagery, but a podcast and video section, a newsletter, payments."],
- ["Pedersen & Houpt", "pedersenhoupt.com", "2021", "Firmseek build on 2012 words. Stock metaphors. Five items in fourteen months. Google profile unclaimed."]
+  [
+    "Levenfeld Pearlstein",
+    "lplegal.com",
+    "2023",
+    "Photography of its own people. Three insights in two weeks. Online payment."
+  ],
+  [
+    "Much Shelist",
+    "muchlaw.com",
+    "2023",
+    "Chicago and people photography. Weekly insights, subscribe, LawPay, a client portal."
+  ],
+  [
+    "Burke Warren MacKay & Serritella",
+    "burkelaw.com",
+    "2023",
+    "Same vendor as Pedersen; on the identical Firmseek pattern in Jan 2022, rebuilt by Jan 2023. Team photography, payments."
+  ],
+  [
+    "Neal Gerber Eisenberg",
+    "nge.com",
+    "2024",
+    "Office photography; the hero is its Chambers USA 2026 news. Three insights in a month."
+  ],
+  [
+    "Golan Christie Taglia",
+    "gct.law",
+    "2025",
+    "27 lawyers, the closest twin. Bio-card grid with faces, three posts in a month, payments."
+  ],
+  [
+    "Chuhak & Tecson",
+    "chuhak.com",
+    "2025",
+    "People photography, 'Right there with you.' Blog undated."
+  ],
+  [
+    "Lavelle Law",
+    "lavellelaw.com",
+    "2019",
+    "Stock imagery, but a podcast and video section, a newsletter, payments."
+  ],
+  [
+    "Pedersen & Houpt",
+    "pedersenhoupt.com",
+    "2021",
+    "Firmseek build on 2012 words. Stock metaphors. Five items in fourteen months. Google profile unclaimed."
+  ]
 ]

@@ -156,3 +156,54 @@
   color: var(--ink);
   font-weight: 500;
 }
+
+/* legibility: prose never under 14px at 1280, dense never under 13px */
+#deck .card p,
+#deck .verdict p,
+#deck .lede,
+#deck .rows .row p,
+#deck .tl p,
+#deck .ann li,
+#deck .note,
+#deck .stat .s,
+#deck .person p {
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+#deck .slide.dense .card p,
+#deck .slide.dense .rows .row p,
+#deck .slide.dense .ann li,
+#deck .slide.dense .stat .s,
+#deck .slide.dense .person p,
+#deck .slide.dense .tl p {
+  font-size: 13.5px;
+}
+#deck .verdict p {
+  font-size: 17px;
+}
+#deck .kicker {
+  font-size: 11.5px;
+}
+#deck h2 {
+  font-weight: 900;
+  letter-spacing: -0.005em;
+}
+#deck .gauge .n,
+#deck .stat .n {
+  font-variation-settings: normal;
+  font-weight: 900;
+}
+#deck .card h3 {
+  font-size: 20px;
+}
+
+/* short viewports: the engine's padding eats 158px of a 720 pane */
+@media (max-height: 860px) {
+  #deck .slide { padding-top: 44px !important; padding-bottom: 60px !important; }
+}
+.rows.tight .row { padding: 7px 0; }
+.rows .k span { display: block; font-family: var(--sans); font-size: 11px; letter-spacing: 0.01em; text-transform: none; opacity: 0.62; margin-top: 3px; line-height: 1.3; }
+.row p.no::before { content: "✕ "; color: var(--ember); font-family: var(--mono); font-size: 11px; }
+.row p.yes::before { content: "✓ "; color: var(--ink); font-family: var(--mono); font-size: 11px; }
+#deck .rows.tight .row { grid-template-columns: 215px 0.85fr 1.55fr; }
+#deck .rows.tight .row.head { grid-template-columns: 215px 0.85fr 1.55fr; }

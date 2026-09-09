@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>First sketch · bio page · Eric J. Kordish</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --red: #ab1e23;
+        --ink: #1c1b19;
+        --paper: #f6f3ee;
+        --muted: #6b6761;
+        --line: rgba(28, 27, 25, 0.14);
+        --serif: "Playfair Display", Georgia, serif;
+        --sans: "Hanken Grotesk", Helvetica, Arial, sans-serif;
+        --mono: "IBM Plex Mono", monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: var(--sans);
+        background: var(--paper);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 48px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .mark b {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 30px;
+      }
+      nav {
+        display: flex;
+        gap: 24px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .tools {
+        display: flex;
+        gap: 10px;
+        font-size: 13px;
+      }
+      .tools a {
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .tools a.pri {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--red);
+      }
+      .bio {
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        gap: 56px;
+        padding: 44px 0 56px;
+      }
+      .portrait {
+        aspect-ratio: 4/5;
+        background: linear-gradient(170deg, #d9d2c6, #a89f90);
+        border-radius: 4px;
+        display: grid;
+        place-items: end start;
+        padding: 14px;
+      }
+      .portrait span {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(28, 27, 25, 0.6);
+      }
+      .contact {
+        margin-top: 18px;
+        display: grid;
+        gap: 8px;
+        font-size: 15px;
+      }
+      .contact a {
+        color: var(--ink);
+        text-decoration: none;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        padding: 8px 0;
+      }
+      .contact a b {
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--red);
+      }
+      h1 {
+        font-family: var(--serif);
+        font-weight: 800;
+        font-size: 64px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        margin: 10px 0 8px;
+      }
+      .role {
+        font-size: 18px;
+        color: #3a3833;
+      }
+      .tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 16px 0 26px;
+      }
+      .tags span {
+        font-size: 12.5px;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+      }
+      .help {
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 26px;
+        line-height: 1.3;
+        max-width: 30ch;
+        letter-spacing: -0.01em;
+      }
+      h2 {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 34px 0 12px;
+      }
+      .matters div {
+        display: grid;
+        grid-template-columns: 90px 1fr;
+        gap: 16px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        font-size: 15px;
+        line-height: 1.45;
+      }
+      .matters b {
+        font-family: var(--mono);
+        font-weight: 500;
+        font-size: 12.5px;
+        letter-spacing: 0.06em;
+        color: var(--red);
+        padding-top: 3px;
+      }
+      .rec {
+        display: flex;
+        gap: 18px;
+        font-size: 14px;
+      }
+      .rec div {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 12px 14px;
+      }
+      .rec b {
+        display: block;
+        font-family: var(--serif);
+        font-size: 18px;
+        font-weight: 800;
+      }
+      .note {
+        position: fixed;
+        right: 16px;
+        bottom: 14px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--red);
+        padding: 8px 12px;
+        border-radius: 3px;
+      }
+      @media (max-width: 700px) {
+        .wrap {
+          padding: 0 20px;
+        }
+        header {
+          padding: 14px 0;
+        }
+        nav {
+          display: none;
+        }
+        .tools a:not(.pri) {
+          display: none;
+        }
+        .bio {
+          grid-template-columns: 1fr;
+          gap: 20px;
+          padding: 22px 0 40px;
+        }
+        .portrait {
+          aspect-ratio: 4/4.6;
+        }
+        h1 {
+          font-size: 44px;
+        }
+        .help {
+          font-size: 21px;
+        }
+        .matters div {
+          grid-template-columns: 70px 1fr;
+          font-size: 14.5px;
+        }
+        .rec {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="mark"><b>Pedersen</b></div>
+        <nav>
+          <a>People</a><a>What we do</a><a>Results</a><a>Insights</a
+          ><a>About</a>
+        </nav>
+        <div class="tools">
+          <a>Client login</a><a>Pay a bill</a><a class="pri">Book a call</a>
+        </div>
+      </header>
+      <section class="bio">
+        <div>
+          <div class="portrait">
+            <span>Portrait · window light · Clark Street</span>
+          </div>
+          <div class="contact">
+            <a href="#"><span>Direct</span><b>312 261 2249</b></a>
+            <a href="#"><span>Email</span><b>ekordish@pedersenhoupt.com</b></a>
+            <a href="#"><span>vCard · LinkedIn</span><b>↓</b></a>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow">
+            Partner · Corporate &amp; Business Counseling · Real Estate
+          </div>
+          <h1>Eric J. Kordish</h1>
+          <p class="role">
+            Leads the corporate group. Counsel on the Thompson Center.
+          </p>
+          <div class="tags">
+            <span>M&amp;A</span><span>Real estate finance</span
+            ><span>Private equity</span><span>Lender &amp; borrower</span
+            ><span>Chambers Spotlight 2026</span>
+          </div>
+          <p class="help">
+            If you are buying, selling, financing or refinancing a company or a
+            building in Chicago, Eric has closed it before, usually more than
+            once.
+          </p>
+          <h2>Representative matters</h2>
+          <div class="matters">
+            <div>
+              <b>2022 · 2025</b
+              ><span
+                >JRTC Holdings: the $70M purchase of the Thompson Center from
+                the State of Illinois, then the Google build-to-suit.</span
+              >
+            </div>
+            <div>
+              <b>$218M</b
+              ><span
+                >First mortgage, $92M of new equity and a $35M mezzanine loan on
+                the redevelopment of an 80-year-old downtown office building
+                into a hotel and offices.</span
+              >
+            </div>
+            <div>
+              <b>$178M</b
+              ><span
+                >Construction loan facility for a mixed-use condominium tower,
+                retail, parking and garden park.</span
+              >
+            </div>
+            <div>
+              <b>$120M</b
+              ><span
+                >Sale of a mixed-use retail and parking development in downtown
+                Chicago for a real estate developer.</span
+              >
+            </div>
+            <div>
+              <b>$102M</b
+              ><span
+                >SBA-licensed private equity fund: management buyouts,
+                recapitalizations and add-ons across a middle-market
+                portfolio.</span
+              >
+            </div>
+          </div>
+          <h2>Recognition and background</h2>
+          <div class="rec">
+            <div><b>Chambers Spotlight 2026</b>Real Estate, Chicago</div>
+            <div><b>Loyola Chicago, J.D. 2005</b>Certificate of Taxation</div>
+            <div><b>Northwestern, B.A. 1996</b>Illinois bar</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

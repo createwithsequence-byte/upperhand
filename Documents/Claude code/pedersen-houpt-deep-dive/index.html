@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -35,7 +35,7 @@
         --steel: #c7c9cd;
         --cool: #7fa8c9;
         --pad: clamp(28px, 4.2vw, 78px);
-        --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+        --display: "Big Shoulders Display", "Space Grotesk", Impact, sans-serif;
         --sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
         --mono:
           "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -1110,6 +1110,26 @@
   color: var(--ink);
   font-weight: 500;
 }
+
+      /* legibility: prose never under 14px at 1280, dense never under 13px */
+      #deck .card p, #deck .verdict p, #deck .lede, #deck .rows .row p, #deck .tl p, #deck .ann li, #deck .note, #deck .stat .s, #deck .person p { font-size: 14.5px; line-height: 1.5; }
+      #deck .slide.dense .card p, #deck .slide.dense .rows .row p, #deck .slide.dense .ann li, #deck .slide.dense .stat .s, #deck .slide.dense .person p, #deck .slide.dense .tl p { font-size: 13.5px; }
+      #deck .verdict p { font-size: 17px; }
+      #deck .kicker { font-size: 11.5px; }
+      #deck h2 { font-weight: 900; letter-spacing: -0.005em; }
+      #deck .gauge .n, #deck .stat .n { font-variation-settings: normal; font-weight: 900; }
+      #deck .card h3 { font-size: 20px; }
+
+/* short viewports: the engine's padding eats 158px of a 720 pane */
+@media (max-height: 860px) {
+  #deck .slide { padding-top: 44px !important; padding-bottom: 60px !important; }
+}
+.rows.tight .row { padding: 7px 0; }
+.rows .k span { display: block; font-family: var(--sans); font-size: 11px; letter-spacing: 0.01em; text-transform: none; opacity: 0.62; margin-top: 3px; line-height: 1.3; }
+.row p.no::before { content: "✕ "; color: var(--ember); font-family: var(--mono); font-size: 11px; }
+.row p.yes::before { content: "✓ "; color: var(--ink); font-family: var(--mono); font-size: 11px; }
+#deck .rows.tight .row { grid-template-columns: 215px 0.85fr 1.55fr; }
+#deck .rows.tight .row.head { grid-template-columns: 215px 0.85fr 1.55fr; }
     </style>
   </head>
   <body>
@@ -1205,21 +1225,19 @@
         </div>
       </section>
 
-      <section class="slide" data-t="Timeline" data-p="1" data-int="0.1">
+      <section class="slide dense" data-t="Timeline" data-p="1" data-int="0.1">
         <div class="inner">
           <div class="kicker"><span class="dot"></span><span class="num">03</span> Sixty-nine years, three name eras, one redesign</div>
-          <h2 data-split>Founded on deals. Run by the nephew, then the M&A partner, since 2001.</h2>
+          <h2 data-split>Founded on deals. Run by the nephew, then the M&A partner.</h2>
           <div class="tl">
-            <div><div class="y">1957</div><p>Peer Pedersen, WWII veteran and ex-associate of Senator W. Russell Arrington, opens his own firm.</p></div>
-            <div><div class="y">by 1963</div><p>Richard V. Houpt, his Illinois law classmate, joins: municipal, zoning, land use. The name is set.</p></div>
-            <div><div class="y">1990s</div><p>Peer's investor group stands up Waste Management, Boston Chicken, Blockbuster. The firm's reputation rides on its founder's deals.</p></div>
+            <div><div class="y">1957</div><p>Peer Pedersen, WWII veteran and ex-associate of Senator W. Russell Arrington, opens the firm.</p></div>
+            <div><div class="y">by 1963</div><p>Richard V. Houpt, his law school classmate, joins: municipal, zoning, land use. The name is set.</p></div>
+            <div><div class="y">1990s</div><p>Peer's investor group stands up Waste Management, Boston Chicken, Blockbuster. The reputation rides on his deals.</p></div>
             <div class="hot"><div class="y hot">Mar 2010</div><p>Peer ends a 65-year career after a stroke. Nephew John Muehlstein is chairman.</p></div>
-            <div><div class="y">Jan 2013</div><p>Peer dies at 87. Crain's, 23 Jan. The March 2013 press release lists Muehlstein as chairman and Marc Janser as managing partner.</p></div>
-            <div class="hot"><div class="y hot">2012 to 14</div><p>September 2012: Firmseek replaces the Flash site with the wordmark and title tag still in use. 2014: office rebuilt with ICG for a "modern, open, collaborative" floor (date unverified).</p></div>
-            <div><div class="y">2020</div><p>Fifteen COVID and PPP alerts in one year. The site's busiest stretch ever, and proof the firm can publish fast.</p></div>
-            <div><div class="y">2024 to 25</div><p>Hires: O'Donnell (Jun 24), Czajkowski (Nov 24), Ledesma (Jan 25), Garfinkle (Jul 25). Skolnik Industries sale closes with the firm as counsel, Jan 2025.</p></div>
-            <div><div class="y">Nov 2025</div><p>Site item: JRTC Holdings, the Thompson Center and the Google build-to-suit. The state's $70M sale agreement was March 2022; the firm's own LinkedIn post is August 2022. The deck keeps both dates.</p></div>
-            <div class="hot"><div class="y hot">2026</div><p>March: partner John J. Hayes, Wealth Preservation leader, dies. August: Chambers Spotlight USA, Real Estate, first year ranked. Brian Collins has been managing partner since the partners elected him in July 2015; Marc Janser, his predecessor, is still a partner.</p></div>
+            <div><div class="y">Jan 2013</div><p>Peer dies at 87; Crain's runs the obituary the site still links. Marc Janser is managing partner.</p></div>
+            <div class="hot"><div class="y hot">2012 to 14</div><p>Sep 2012: Firmseek replaces the Flash site; wordmark and title tag still in use. 2014: 36 lawyers move to a rebuilt floor, rent down 30%.</p></div>
+            <div><div class="y">2022 to 25</div><p>Thompson Center: counsel to JRTC Holdings on the $70M purchase (state agreement March 2022), then the Google build-to-suit. Four hires 2024 to 25. Skolnik sale, Jan 2025.</p></div>
+            <div class="hot"><div class="y hot">2026</div><p>March: partner John J. Hayes dies. August: Chambers Spotlight USA, Real Estate, first year ranked. Collins managing partner since July 2015.</p></div>
           </div>
         </div>
       </section>
@@ -1331,19 +1349,19 @@
         </div>
       </section>
 
-      <section class="slide" data-t="Web history" data-p="2" data-int="0.1">
+      <section class="slide dense" data-t="Web history" data-p="2" data-int="0.1">
         <div class="inner">
           <div class="kicker"><span class="dot"></span><span class="num">09</span> The website, 2000 to 2026 · Wayback CDX, 199 distinct homepage versions</div>
           <h2 data-split>Three eras, one vendor since 2012, and words that never moved.</h2>
           <div class="tl">
-            <div><div class="y">2000</div><p>A 550-byte placeholder page. Captured August 2000.</p></div>
-            <div><div class="y">2006</div><p>The Flash site: "PEDERSEN&HOUPT", four .swf movies, fourteen HTML tables. Live to at least April 2012.</p></div>
-            <div class="hot"><div class="y hot">Sep 2012</div><p>Firmseek v1. Title tag "Pedersen & Houpt: Elite Chicago Law Firm", the "Pedersen" wordmark, the current navigation, "Download Our Firm Brochure." Piwik analytics. No viewport tag until 2016.</p></div>
-            <div><div class="y">2016 to 21</div><p>A Google+ icon appears by 2016 and stays until April 2021, two years after Google+ closed. The 2020 PPP banner is the last v1 change.</p></div>
-            <div class="hot"><div class="y hot">May 2021</div><p>Firmseek v2, the current build: seven rotating hero slides under one H1, "Grow Your Business." Typekit Proxima Nova by 2024. Five years and four months old.</p></div>
-            <div><div class="y">2025 to 26</div><p>Homepage digest changed 15 times in 2025 and 6 in 2026, mostly the rotating hero. Five newsroom items in fourteen months. About page still says "more than fifty-five years."</p></div>
+            <div><div class="y">2000</div><p>A 550-byte placeholder page, captured August 2000.</p></div>
+            <div><div class="y">2006</div><p>The Flash site: four .swf movies, fourteen HTML tables. Live to at least April 2012.</p></div>
+            <div class="hot"><div class="y hot">Sep 2012</div><p>Firmseek v1: the "Elite Chicago Law Firm" title tag, the wordmark and the navigation still in use. No viewport tag until 2016.</p></div>
+            <div><div class="y">2016 to 21</div><p>A Google+ icon appears by 2016 and stays until April 2021, two years after Google+ closed. The 2020 PPP banner is v1's last change.</p></div>
+            <div class="hot"><div class="y hot">May 2021</div><p>Firmseek v2, the current build: seven rotating hero slides under one H1, "Grow Your Business." Five years and four months old.</p></div>
+            <div><div class="y">2025 to 26</div><p>Homepage digest changed 15 times in 2025 and 6 in 2026, mostly the rotating hero. About still says "fifty-five years."</p></div>
           </div>
-          <p class="note" style="margin-top: 12px">Tells: a PHPSESSID cookie and cache-control no-store on every hit; robots.txt hiding CMS paths named /gazebo17 and /trellis19; a footer Twitter link on the 2011 twitter.com/#!/ pattern; a LawPay link. Firmseek's own portfolio page does not list the firm.</p>
+          <p class="note" style="margin-top: 12px">Tells: a PHPSESSID cookie and no-store on every hit; robots.txt hiding CMS paths /gazebo17 and /trellis19; a 2011-pattern Twitter link; Firmseek's own portfolio page does not list the firm.</p>
         </div>
       </section>
 
@@ -1367,17 +1385,18 @@
       <section class="slide dense" data-t="Peers online" data-p="2" data-int="0.1">
         <div class="inner">
           <div class="kicker"><span class="dot"></span><span class="num">11</span> Seven Chicago peers · site read and Wayback, 9 Sep 2026</div>
-          <h2 data-split>Six of seven rebuilt since 2023. The vendor rebuilt Burke Warren; not this one.</h2>
-          <div class="rows">
+          <h2 data-split>Six of seven have rebuilt since 2023.</h2>
+          <div class="rows tight">
             <div class="row head"><span>Firm</span><span>Current design since</span><span>What a client sees</span></div>
-            <div class="row"><div class="k">Levenfeld Pearlstein<br><span style="opacity:.6">lplegal.com</span></div><p class="yes"><strong>2023</strong></p><p>Custom photography of its own people. Three insights in the last two weeks. Online payment.</p></div>
-            <div class="row"><div class="k">Much Shelist<br><span style="opacity:.6">muchlaw.com</span></div><p class="yes"><strong>2023</strong></p><p>Custom Chicago and people photography, "We're Much." Weekly insights, subscribe, LawPay, a client portal.</p></div>
-            <div class="row"><div class="k">Burke Warren<br><span style="opacity:.6">burkelaw.com</span></div><p class="yes"><strong>2023</strong></p><p>Same vendor as Pedersen. Was on the identical Firmseek asset pattern in January 2022; a new Firmseek build by January 2023. Team photography, profile cards, payments.</p></div>
-            <div class="row"><div class="k">Neal Gerber Eisenberg<br><span style="opacity:.6">nge.com</span></div><p class="yes"><strong>2024</strong></p><p>Office photography; the hero is its Chambers USA 2026 news. Three insights in the last month.</p></div>
-            <div class="row"><div class="k">Golan Christie Taglia<br><span style="opacity:.6">gct.law</span></div><p class="yes"><strong>2025</strong></p><p>27 lawyers, the closest twin. Skyline photography, a bio-card grid with faces, three blog posts in the last month, payments.</p></div>
-            <div class="row"><div class="k">Chuhak & Tecson<br><span style="opacity:.6">chuhak.com</span></div><p class="yes"><strong>2025</strong></p><p>People photography, "Right there with you." Blog undated.</p></div>
-            <div class="row"><div class="k">Lavelle Law<br><span style="opacity:.6">lavellelaw.com</span></div><p class="no"><strong>2019</strong></p><p>Stock imagery, but a podcast and video section, a newsletter, online payments.</p></div>
-            <div class="row"><div class="k">Pedersen & Houpt<br><span style="opacity:.6">pedersenhoupt.com</span></div><p class="no"><strong>May 2021</strong></p><p>Firmseek v2 carrying 2012 words. Stock metaphor photography. Five newsroom items in fourteen months. The only site in the set with no dated insight in the last thirty days and an apparently unclaimed Google profile.</p></div>
+            <div class="row"><div class="k">Levenfeld Pearlstein<span>lplegal.com</span></div><p class="yes"><strong>2023</strong></p><p>Photography of its own people. Three insights in two weeks. Online payment.</p></div>
+            <div class="row"><div class="k">Much Shelist<span>muchlaw.com</span></div><p class="yes"><strong>2023</strong></p><p>Chicago and people photography, "We're Much." Weekly insights, LawPay, a client portal.</p></div>
+            <div class="row"><div class="k">Burke Warren<span>burkelaw.com</span></div><p class="yes"><strong>2023</strong></p><p>Same vendor. Identical Firmseek pattern in Jan 2022; rebuilt by Jan 2023. Team photography, payments.</p></div>
+            <div class="row"><div class="k">Neal Gerber Eisenberg<span>nge.com</span></div><p class="yes"><strong>2024</strong></p><p>Office photography; the hero is its Chambers USA 2026 news. Three insights in a month.</p></div>
+            <div class="row"><div class="k">Golan Christie Taglia<span>gct.law</span></div><p class="yes"><strong>2025</strong></p><p>27 lawyers, the closest twin. Skyline photography, a face grid, three posts a month, payments.</p></div>
+            <div class="row"><div class="k">Chuhak & Tecson<span>chuhak.com</span></div><p class="yes"><strong>2025</strong></p><p>People photography, "Right there with you." Blog undated.</p></div>
+            <div class="row"><div class="k">Lavelle Law<span>lavellelaw.com</span></div><p class="no"><strong>2019</strong></p><p>Stock imagery, but a podcast and video section, a newsletter, online payments.</p></div>
+            <div class="row"><div class="k">Pedersen & Houpt<span>pedersenhoupt.com</span></div><p class="no"><strong>May 2021</strong></p><p>Firmseek v2 on 2012 words. Stock metaphors. Five items in fourteen months. No dated insight in thirty days; an unclaimed Google profile.</p></div>
+          <p class="note" style="margin-top: 10px">Same vendor: Firmseek rebuilt Burke Warren by January 2023, from what had been the identical asset pattern. Not this one.</p>
           </div>
         </div>
       </section>
@@ -1420,13 +1439,12 @@
           <h2 data-split>Elected in 2015 to grow the firm. Has never said a public word.</h2>
           <div class="cols c2" style="margin-top: 12px">
             <div>
-              <div class="person"><div class="ph">BC</div><div><h3>Brian P. Collins</h3><div class="r">Managing Partner · Corporate and Business Counseling · Chicago · 312 261 2247</div><p>M&A, private equity, banking and finance for closely held and middle-market companies: leveraged deals, tax-free reorganizations, public and private mergers, divestitures. "Works closely with his clients to negotiate terms and structure and finalize each transaction." Illinois JD 2002, cum laude; Marquette BS 1999; Chick Evans Scholar (a caddie scholarship). Super Lawyers 2024 to 2027 per Avvo. Illinois bar since November 2002, ARDC authorized.</p></div></div>
-              <div class="card" style="margin-top: 12px"><span class="tag">Role at the firm</span><p>Elected Managing Partner by the partners in July 2015 (firm newsroom item 71, recovered from the Wayback Machine; the live site 404s it). Joined the firm in 2004 from Shefsky & Froelich, associate in 2006, partner and leader of the corporate group by 2012. Predecessor Marc Janser, "Immediate Past Managing Partner," is still a partner. Sits in the corporate group under Kordish's leadership. Publications listed on his bio include "Protecting the Little Guy" with Susan Burke. Director of the Western Golf Association (volunteer class), Evans Scholars Foundation, Cristo Rey Jesuit High School advisory council.</p></div>
+              <div class="person"><div class="ph">BC</div><div><h3>Brian P. Collins</h3><div class="r">Managing Partner · Corporate and Business Counseling · Chicago · 312 261 2247</div><p>M&A, private equity, banking and finance for closely held and middle-market companies: leveraged deals, reorganizations, mergers, divestitures. Illinois JD 2002, cum laude; Marquette BS 1999; Evans Scholar. Super Lawyers 2024 to 2027 per Avvo. Illinois bar since 2002.</p></div></div>
+              <div class="card" style="margin-top: 12px"><span class="tag">Role at the firm</span><p>Elected Managing Partner by the partners in July 2015 (newsroom item 71, recovered from the Wayback Machine; the live site 404s it). Joined in 2004 from Shefsky & Froelich, partner and corporate group leader by 2012. Predecessor Marc Janser, "Immediate Past Managing Partner," is still a partner. Director, Western Golf Association and Evans Scholars Foundation; Cristo Rey advisory council.</p></div>
             </div>
             <div>
-              <div class="card hot"><span class="tag">What the record says about how he decides</span><p>A transactional lawyer who prices, structures and closes. Every public trace is a deal. No quote in his own voice exists anywhere reachable: Crain's, Law360, the Law Bulletin, Chicago Lawyer, alumni media, or fourteen years of the firm's own newsroom. The only words about him are Janser's, July 2015: "a clear vision, energy and commitment," a desire "to provide exceptional value and client service as well as attract top talent," and that he "has excelled in growing the Firm, its client base, and markets." Those are the pitch's vocabulary. He will read a website proposal as a term sheet: scope, price, who does the work, what happens when it slips.</p></div>
-              <div class="card" style="margin-top: 12px"><span class="tag">Outside the job</span><p>Marquette finance, a semester at Loyola Rome. Publications in 2008 on indemnification and on "Protecting the Little Guy." Hometown: no evidence. The dossier searched IL bar records, Super Lawyers, Leading Lawyers, the firm newsroom, Law360, Crain's, the Daily Law Bulletin.</p></div>
-              <div class="card" style="margin-top: 12px"><span class="tag">Unverified</span><p>Any committee role on marketing or technology. Whether he has ever bought a website. Treat as unknown in the room; ask him.</p></div>
+              <div class="card hot"><span class="tag">What the record says about how he decides</span><p>A transactional lawyer who prices, structures and closes. Every public trace is a deal. No quote in his own voice exists anywhere reachable: Crain's, Law360, the Law Bulletin, alumni media, fourteen years of the firm's newsroom. The only words about him are Janser's, July 2015: "a clear vision, energy and commitment," a desire "to provide exceptional value and client service as well as attract top talent." Those are the pitch's vocabulary. He will read a website proposal as a term sheet: scope, price, who does the work, what happens when it slips.</p></div>
+              <div class="card" style="margin-top: 12px"><span class="tag">Outside the job · unverified</span><p>Marquette finance, a semester at Loyola Rome; 2008 publications on indemnification and "Protecting the Little Guy." Hometown: no evidence. Unverified: any committee role on marketing or technology, and whether he has ever bought a website. Ask him.</p></div>
             </div>
           </div>
         </div>
@@ -1437,11 +1455,11 @@
           <div class="kicker"><span class="dot"></span><span class="num">14</span> Who else is in the decision · champion, veto, buyer</div>
           <h2 data-split>Anthony raised it. John can stop it. Janser bought the last big thing.</h2>
           <div class="cols c3">
-            <div class="card hot"><span class="tag">The inside contact · Anthony DeMarco Pesce</span><h3>Partner, Litigation and Dispute Resolution · Technology, IP and Advertising</h3><p>Notre Dame JD 2009 magna cum laude; admitted in Illinois, N.D. Ill. and E.D. Texas, the patent venue. Trial lawyer for corporate clients in search, gaming, advertising, health, telecom, pharma and consumer tech. Joined as a lateral partner in August 2021 from Winston & Strawn, where he defended patent cases for Dell and Wi-LAN. No publications, no speaking, no committee footprint on the record: an ally who raised it, not a sponsor who can carry it. John's friend. He texted the current site and the other firm's quote unprompted.</p></div>
-            <div class="card"><span class="tag">The veto · John H. Muehlstein</span><h3>Chairman · about 71 · partner since 1986, managing partner 2001 to 2007</h3><p>Peer Pedersen's nephew; Blue Rhino and SpinCycle director, a "founding investor" in SpinCycle. His one substantive press quote, Crain's May 2015, is about the 2014 move: 36 attorneys from 32,000 to 20,000 square feet, rent down "more than 30 percent," and "I got lonely sitting there back in the corner." Cost is his test. A rebuild that erases the history loses him; one that tells it well, at a number he can defend, wins him.</p></div>
-            <div class="card"><span class="tag">The buyer · Stephanie Storkel</span><h3>COO in 2020 and 2021 · "Executive Advisor" on her own headline now, unverified</h3><p>Quoted by ICG on the office build-out: an "aggressive timeline" and a "strict budget." The 2014 office was bought by an "Emerging Leaders" group of "tech savvy" younger attorneys who wrote the brief, per Marc Janser's ICG interview (Aug 2014, snippets only). The title change reads as a step back; confirm before routing through her. Eric Knight, Director of Finance and Administration, runs the paperwork per aggregator listings. No marketing or IT director could be named from any source.</p></div>
+            <div class="card hot"><span class="tag">The inside contact · Anthony DeMarco Pesce</span><h3>Partner, Litigation · Technology, IP and Advertising</h3><p>Notre Dame JD 2009, magna cum laude; admitted in Illinois, N.D. Ill. and E.D. Texas, the patent venue. Trial lawyer for clients in search, gaming, advertising, health and consumer tech. Lateral partner from Winston & Strawn, August 2021. No publications, speaking or committee footprint on the record: an ally who raised it, not a sponsor who can carry it. John's friend; he sent the site and the other quote unprompted.</p></div>
+            <div class="card"><span class="tag">The veto · John H. Muehlstein</span><h3>Chairman · about 71 · managing partner 2001 to 2007</h3><p>Peer Pedersen's nephew; Blue Rhino and SpinCycle director. His one substantive press quote, Crain's May 2015, is about the 2014 move: 36 attorneys from 32,000 to 20,000 square feet, rent down "more than 30 percent." Cost is his test. A rebuild that erases the history loses him; one that tells it well, at a number he can defend, wins him.</p></div>
+            <div class="card"><span class="tag">The buyer · Stephanie Storkel</span><h3>COO in 2020 and 2021 · "Executive Advisor" now, unverified</h3><p>Quoted by ICG on the office build-out: an "aggressive timeline" and a "strict budget." The 2014 office was bought by an "Emerging Leaders" group of younger attorneys who wrote the brief, per Marc Janser (ICG, Aug 2014, snippets only). The title change reads as a step back; confirm before routing through her. Eric Knight, Director of Finance and Administration, runs the paperwork. No marketing or IT director could be named.</p></div>
           </div>
-          <div class="verdict" style="margin-top: 14px"><p>The pattern from 2014: this firm bought its last big change through a group of younger partners with a brief, an operations lead with a budget, and a chairman who measured it in rent. Sell to that shape, and add Janser: Immediate Past Managing Partner, still a partner, the one person on the record talking about technology and a modern firm.</p></div>
+          <div class="verdict" style="margin-top: 12px"><p>The 2014 pattern: the firm bought its last big change through younger partners with a brief, an operations lead with a budget and a chairman who measured it in rent. Sell to that shape, and add Janser: still a partner, the one person on the record talking about a modern firm.</p></div>
         </div>
       </section>
 
@@ -1450,14 +1468,14 @@
           <div class="kicker"><span class="dot"></span><span class="num">15</span> Constraints · what the decision sits inside</div>
           <h2 data-split>Small firm, partner-heavy, a quote already on the table.</h2>
           <div class="cols c2">
-            <div class="card"><span class="tag">Budget</span><p>A 26-lawyer P.C. with an estimated $10 to 25M in revenue and nineteen partners who each see the bill. Another firm has quoted a five-year package. Anthony's own words: it "seems NUTS." The number is the objection; the case for doing anything at all is not.</p></div>
-            <div class="card"><span class="tag">Scope</span><p>One office, seven groups, 26 bios, 34 service pages, 83 newsroom pages, a brochure PDF, LawPay, EACCESS, a newsletter with a broken sign-up form. Everything that exists is small. The content problem is dates and voice, not volume.</p></div>
-            <div class="card"><span class="tag">Skin in the game</span><p>Chambers ranked the real estate group for the first time in August 2026 and the site shows it in 15px on the third screen. Four juniors hired since 2024 are recruiting on a site that shows skydivers. The partners who lost seven colleagues without a public word have a narration problem, not a design taste problem.</p></div>
+            <div class="card"><span class="tag">Budget</span><p>A 26-lawyer P.C. with an estimated $10 to 25M in revenue and nineteen partners who each see the bill. Another firm has quoted a five-year package; Anthony's word for it: "NUTS." The number is the objection, not the idea.</p></div>
+            <div class="card"><span class="tag">Scope</span><p>One office, seven groups, 26 bios, 34 service pages, 83 newsroom pages, a brochure PDF, LawPay, EACCESS, a newsletter with a broken sign-up. Everything is small. The content problem is dates and voice, not volume.</p></div>
+            <div class="card"><span class="tag">Skin in the game</span><p>Chambers ranked the real estate group for the first time in August 2026 and the site shows it in 15px on the third screen. Four juniors hired since 2024 are recruiting on a site that shows skydivers.</p></div>
             <div class="card"><span class="tag">Calendar</span><p>Year-end is planning season for a P.C.; the 2014 build-out ran on a hard date. Chambers submissions and Super Lawyers cycles run in Q1. A site that can carry the next ranking is worth more before it than after.</p></div>
           </div>
           <div class="cols c2" style="margin-top: 14px">
-            <div class="card"><span class="tag">What they have shipped</span><p>2012: a real redesign after the Flash era. 2014: a new office on an aggressive timeline. 2020: fifteen alerts in a year. 2021: a template refresh. 2024 to 25: four hires. 2026: a first Chambers ranking, one memorial page done with care.</p></div>
-            <div class="card hot"><span class="tag">What they have not</span><p>Photographed themselves. Put a year on their proof. Claimed their Google profile. Written a sentence that says who the firm is for. Spoken in public since 2024. Each is a gap nobody has filled, not a preference. The website is the one place all six can be fixed at once.</p></div>
+            <div class="card"><span class="tag">What they have shipped</span><p>2012: a real redesign after Flash. 2014: a new office on an aggressive timeline. 2020: fifteen alerts in a year. 2021: a template refresh. 2024 to 25: four hires. 2026: a first Chambers ranking, one memorial page done with care.</p></div>
+            <div class="card hot"><span class="tag">What they have not</span><p>Photographed themselves. Put a year on their proof. Claimed their Google profile. Written a sentence that says who the firm is for. Spoken in public since 2024. Gaps, not preferences; the website is the one place all five can be fixed at once.</p></div>
           </div>
         </div>
       </section>
@@ -1488,12 +1506,12 @@
           <div class="kicker"><span class="dot"></span><span class="num">17</span> Four openings · labeled as the author's read</div>
           <h2 data-split>Sell the site as the firm's first public voice in a decade.</h2>
           <div class="cols c2">
-            <div class="card hot"><span class="tag">01 · The rebuild, bought the 2014 way</span><h3>A fixed-scope site, a hard date, a small partner group and the COO</h3><p>What: the site the audit describes, people first, dated proof, no wall, under two seconds on a phone. Why it fits: the firm's one documented purchase of this size (the office) was bought exactly this way (slide 14), and Anthony's objection is the other firm's shape, not the idea (slide 15). Frame it as a pilot with a kill criterion: the homepage and ten bios live by a date, or no second phase.</p></div>
-            <div class="card"><span class="tag">02 · The photo day</span><h3>One day at 161 North Clark, twenty-six people, the room</h3><p>What: a shoot that produces the index faces, the homepage, and a year of news imagery. Why it fits: no photograph of a person at the firm exists anywhere on the site in any era (audit slide 03), and it is the one thing the incumbent vendor cannot template. Sellable alone, and it makes the rebuild inevitable.</p></div>
-            <div class="card"><span class="tag">03 · Claim the record</span><h3>Google profile, directories, the results page with years on it</h3><p>What: claim and fix the Google Business Profile (2.8 stars, "Own this business?"), correct Suite 3100 in FindLaw and Lexology, date every matter on focus-results. Why it fits: cheap, fast, measurable, and it is where a referral looks before the site (slide 10). A first invoice that proves the firm can trust the second.</p></div>
-            <div class="card"><span class="tag">04 · Narration as a retainer, monthly not five-year</span><h3>One item a month with a face on it, the newsletter form fixed</h3><p>What: a monthly cadence that turns hires, rankings, deals and memorials into dated, authored items. Why it fits: the firm publishes five times a year and has no public voice (slide 12); the 2020 pace proves it can (slide 07). Month to month, cancelable, the opposite of the quote on the table.</p></div>
+            <div class="card hot"><span class="tag">01 · The rebuild, bought the 2014 way</span><h3>Fixed scope, a hard date, a small group, the COO</h3><p>What: the site the audit describes: people first, dated proof, no wall, fast on a phone. Why: the office, the firm's one purchase of this size, was bought this way (slide 14); Anthony's objection is the other firm's shape, not the idea. Frame it as a pilot: homepage and ten bios live by a date, or no second phase.</p></div>
+            <div class="card"><span class="tag">02 · The photo day</span><h3>One day at 161 North Clark, twenty-six people</h3><p>What: a shoot that produces the index faces, the homepage and a year of news imagery. Why: no photograph of a person at the firm exists on the site in any era, and it is the one thing the incumbent vendor cannot template. Sellable alone; it makes the rebuild inevitable.</p></div>
+            <div class="card"><span class="tag">03 · Claim the record</span><h3>Google profile, directories, dated results</h3><p>What: claim and fix the Google Business Profile (2.8 stars, "Own this business?"), correct Suite 3100 in FindLaw and Lexology, date every matter. Why: cheap, fast, measurable, and where a referral looks before the site (slide 10). A first invoice that earns the second.</p></div>
+            <div class="card"><span class="tag">04 · Narration as a retainer, monthly not five-year</span><h3>One item a month with a face on it</h3><p>What: a monthly cadence that turns hires, rankings, deals and memorials into dated, authored items; the newsletter form fixed. Why: the firm publishes five times a year and has no public voice (slide 12); the 2020 pace proves it can. Month to month, cancelable, the opposite of the quote on the table.</p></div>
           </div>
-          <p class="note" style="margin-top: 12px">Counterparty read: a 69-year-old P.C. with nineteen partners and no distress signals found. Normal terms. The risk is a committee that cannot decide, not a client that cannot pay. The first move is the audit deck, forwarded by Anthony, with one sentence from John.</p>
+          <p class="note" style="margin-top: 12px">Counterparty read: a 69-year-old P.C. with nineteen partners and no distress signals found. Normal terms. The risk is a committee that cannot decide, not a client that cannot pay. First move: the audit deck, forwarded by Anthony, with one sentence from John.</p>
         </div>
       </section>
 
