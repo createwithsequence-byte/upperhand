@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pedersen & Houpt · 161 North Clark · Direction A</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rokkitt:wght@500;700;800&family=Libre+Franklin:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --blue: #b9ddf0;
+        --blue-2: #dceef8;
+        --ink: #121417;
+        --board: #17191c;
+        --red: #ab1e23;
+        --gray: #6b7075;
+        --line: rgba(18, 20, 23, 0.16);
+        --slab: "Rokkitt", Georgia, serif;
+        --sans: "Libre Franklin", Helvetica, Arial, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font: 16px/1.5 var(--sans);
+        background: #fff;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 0 40px;
+      }
+      .demo-bar {
+        background: #111;
+        color: #fff;
+        font: 600 11px/36px var(--sans);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .demo-bar .wrap {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .demo-bar a {
+        opacity: 0.6;
+        margin-left: 14px;
+      }
+      .demo-bar a.on {
+        opacity: 1;
+        color: #b9ddf0;
+      }
+      body.shot .demo-bar {
+        display: none;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 2px solid var(--ink);
+      }
+      .mark {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+      .mark b {
+        font: 800 30px/1 var(--slab);
+        letter-spacing: -0.01em;
+      }
+      .mark i {
+        font-style: normal;
+        font: 700 9.5px/1 var(--sans);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gray);
+        margin-top: 6px;
+        border-top: 2px solid var(--red);
+        padding-top: 5px;
+        width: fit-content;
+      }
+      nav {
+        display: flex;
+        gap: 26px;
+        font: 600 14px/1 var(--sans);
+      }
+      .tools {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font: 600 12.5px/1 var(--sans);
+      }
+      .tools a {
+        padding: 11px 13px;
+        border: 1.5px solid var(--ink);
+      }
+      .tools a.pri {
+        background: var(--ink);
+        color: #fff;
+      }
+      .tools .tel {
+        border: 0;
+        font-weight: 500;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 440px 1fr;
+        gap: 56px;
+        padding: 44px 0 40px;
+        align-items: stretch;
+      }
+      .board {
+        background: var(--board);
+        color: #fff;
+        padding: 22px 22px 18px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+      }
+      .board .top {
+        display: flex;
+        justify-content: space-between;
+        font: 700 10.5px/1 var(--sans);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #b9ddf0;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .board .big {
+        font: 800 72px/0.9 var(--slab);
+        letter-spacing: -0.02em;
+        padding: 18px 0 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      .board .big small {
+        display: block;
+        font: 600 11px/1.4 var(--sans);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #b9ddf0;
+        margin-top: 10px;
+      }
+      .board .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 9px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        font: 600 12.5px/1.3 var(--sans);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition:
+          background 0.2s,
+          padding 0.2s;
+      }
+      .board .row span:last-child {
+        color: #b9ddf0;
+        font-variant-numeric: tabular-nums;
+      }
+      .board .row small {
+        display: block;
+        font: 400 11px/1.3 var(--sans);
+        letter-spacing: 0.04em;
+        text-transform: none;
+        color: #9aa0a6;
+        margin-top: 2px;
+      }
+      .board .row:hover {
+        background: rgba(185, 221, 240, 0.12);
+        padding-left: 8px;
+      }
+      .board .foot {
+        margin-top: auto;
+        padding-top: 14px;
+        font: 500 11px/1.5 var(--sans);
+        color: #9aa0a6;
+      }
+      .hero .txt {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      h1 {
+        font: 800 clamp(48px, 6.6vw, 98px)/0.95 var(--slab);
+        letter-spacing: -0.02em;
+        max-width: 11ch;
+      }
+      .lede {
+        font-size: 19px;
+        line-height: 1.5;
+        max-width: 46ch;
+        margin-top: 22px;
+        color: #2a2d31;
+      }
+      .cta {
+        display: flex;
+        gap: 10px;
+        margin-top: 26px;
+      }
+      .cta a {
+        padding: 15px 22px;
+        font: 700 13px/1 var(--sans);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        border: 1.5px solid var(--ink);
+      }
+      .cta .a {
+        background: var(--ink);
+        color: #fff;
+      }
+      .photo {
+        position: relative;
+        height: 520px;
+        overflow: hidden;
+      }
+      .photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 40%;
+      }
+      .photo figcaption {
+        position: absolute;
+        left: 20px;
+        bottom: 16px;
+        background: #fff;
+        padding: 8px 12px;
+        font: 600 11px/1.4 var(--sans);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .civic {
+        background: var(--blue);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+      }
+      .civic div {
+        padding: 26px 22px 24px;
+        border-right: 1px solid rgba(18, 20, 23, 0.18);
+      }
+      .civic div:last-child {
+        border-right: 0;
+      }
+      .civic b {
+        display: block;
+        font: 800 40px/1 var(--slab);
+        letter-spacing: -0.01em;
+      }
+      .civic small {
+        display: block;
+        font: 500 13px/1.4 var(--sans);
+        margin-top: 8px;
+        color: #26333d;
+      }
+      .people {
+        padding: 64px 0 20px;
+      }
+      .sechead {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        border-bottom: 2px solid var(--ink);
+        padding-bottom: 12px;
+      }
+      h2 {
+        font: 800 clamp(30px, 3.6vw, 48px)/1 var(--slab);
+        letter-spacing: -0.015em;
+      }
+      .sechead a {
+        font: 700 12.5px var(--sans);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--red);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 16px;
+      }
+      .card .ph {
+        aspect-ratio: 4/5;
+        overflow: hidden;
+        background: var(--blue-2);
+      }
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+      .card:hover img {
+        transform: scale(1.04);
+      }
+      .card h3 {
+        font: 700 15px/1.2 var(--sans);
+        margin-top: 10px;
+      }
+      .card p {
+        font: 400 12.5px/1.4 var(--sans);
+        color: var(--gray);
+        margin-top: 3px;
+      }
+      .matters {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        border-top: 2px solid var(--ink);
+        margin: 40px 0 64px;
+      }
+      .m {
+        padding: 22px 22px 26px 0;
+        border-right: 1px solid var(--line);
+      }
+      .m:last-child {
+        border-right: 0;
+      }
+      .m + .m {
+        padding-left: 22px;
+      }
+      .m .y {
+        font: 800 40px/1 var(--slab);
+        color: var(--red);
+      }
+      .m .y small {
+        font: 600 11px var(--sans);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--gray);
+        margin-left: 8px;
+      }
+      .m h4 {
+        font: 800 24px/1.1 var(--slab);
+        margin: 12px 0 8px;
+        letter-spacing: -0.01em;
+      }
+      .m p {
+        font-size: 15px;
+        line-height: 1.5;
+        color: #2a2d31;
+      }
+      footer {
+        border-top: 2px solid var(--ink);
+        padding: 20px 0 40px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font: 500 12px/1.6 var(--sans);
+        color: var(--gray);
+      }
+      @media (max-width: 860px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        header {
+          padding: 12px 0;
+        }
+        nav,
+        .tools a:not(.pri) {
+          display: none;
+        }
+        .mark b {
+          font-size: 26px;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+          gap: 22px;
+          padding: 22px 0 24px;
+        }
+        .board {
+          order: 2;
+        }
+        .board .big {
+          font-size: 56px;
+        }
+        h1 {
+          font-size: 48px;
+        }
+        .lede {
+          font-size: 16px;
+        }
+        .photo {
+          height: 300px;
+        }
+        .civic {
+          grid-template-columns: 1fr 1fr;
+        }
+        .civic div {
+          border-bottom: 1px solid rgba(18, 20, 23, 0.18);
+          padding: 18px 14px;
+        }
+        .civic div:nth-child(even) {
+          border-right: 0;
+        }
+        .civic b {
+          font-size: 30px;
+        }
+        .people {
+          padding: 40px 0 10px;
+        }
+        .grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .matters {
+          grid-template-columns: 1fr;
+          margin: 24px 0 40px;
+        }
+        .m {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: 18px 0;
+        }
+        .m + .m {
+          padding-left: 0;
+        }
+        footer {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .card img {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-bar">
+      <div class="wrap">
+        <span>Direction A · 161 · homepage</span
+        ><span
+          ><a class="on" href="161-home.html">A</a
+          ><a href="record-home.html">B</a><a href="1957-home.html">C</a
+          ><a href="termsheet-home.html">D</a><a href="loop-home.html">E</a
+          ><a href="161-bio.html">Attorney page</a
+          ><a href="index.html">All directions</a></span
+        >
+      </div>
+    </div>
+    <div class="wrap">
+      <header>
+        <div class="mark"><b>Pedersen</b><i>Pedersen & Houpt · Chicago</i></div>
+        <nav>
+          <a href="#">People</a><a href="#">What we do</a><a href="#">Results</a
+          ><a href="#">Insights</a><a href="#">About</a>
+        </nav>
+        <div class="tools">
+          <a class="tel" href="#">312 641 6888</a><a href="#">Client login</a
+          ><a href="#">Pay a bill</a><a class="pri" href="#">Book a call</a>
+        </div>
+      </header>
+      <section class="hero">
+        <aside class="board" data-reveal>
+          <div class="top">
+            <span>161 North Clark Street</span><span>Directory</span>
+          </div>
+          <div class="big">
+            27<small
+              >Twenty-seventh floor · Pedersen & Houpt, P.C. · since 1957</small
+            >
+          </div>
+          <a class="row" href="#"
+            ><span
+              >Collins, Brian P.<small
+                >Managing Partner · M&A, private equity</small
+              ></span
+            ><span>2247</span></a
+          >
+          <a class="row" href="#"
+            ><span
+              >Muehlstein, John H.<small
+                >Chairman · Corporate finance, restructuring</small
+              ></span
+            ><span>2239</span></a
+          >
+          <a class="row" href="161-bio.html"
+            ><span
+              >Kordish, Eric J.<small
+                >Corporate group · Real estate finance</small
+              ></span
+            ><span>2249</span></a
+          >
+          <a class="row" href="#"
+            ><span
+              >Sullivan, Michael P.<small
+                >Real estate & financing · Chambers 2026</small
+              ></span
+            ><span>2233</span></a
+          >
+          <a class="row" href="#"
+            ><span
+              >Pesce, Anthony D.<small
+                >Litigation · Technology & IP</small
+              ></span
+            ><span>2191</span></a
+          >
+          <a class="row" href="#"
+            ><span
+              >Czajkowski, Ashley N.<small
+                >Wealth preservation · Estates</small
+              ></span
+            ><span>2262</span></a
+          >
+          <div class="foot">
+            Twenty-six lawyers, nineteen partners, one floor. Reception: 312 641
+            6888.
+          </div>
+        </aside>
+        <div class="txt">
+          <h1 data-reveal>Counsel to Chicago's middle market.</h1>
+          <p class="lede" data-reveal>
+            Twenty-six lawyers for the companies, owners and developers who
+            build this city. Deals, disputes, real estate, employment and the
+            wealth that comes out of it. Since 1957, on Clark Street.
+          </p>
+          <div class="cta" data-reveal>
+            <a class="a" href="#">Talk to a partner</a
+            ><a href="#">See our results</a>
+          </div>
+        </div>
+      </section>
+    </div>
+    <figure class="photo">
+      <img
+        src="../img/mock/clark-adams.jpg"
+        alt="Clark Street at Adams, in the Loop"
+      />
+      <figcaption>
+        Clark Street at Adams · placeholder until the firm's own photographs
+      </figcaption>
+    </figure>
+    <section class="civic">
+      <div>
+        <b>1957</b
+        ><small>Founded by Peer Pedersen. Sixty-nine years in the Loop.</small>
+      </div>
+      <div>
+        <b>26</b
+        ><small
+          >Lawyers. Nineteen partners. One office, one phone number.</small
+        >
+      </div>
+      <div>
+        <b>$70M</b
+        ><small
+          >The Thompson Center: counsel to JRTC Holdings, then the Google
+          build-to-suit.</small
+        >
+      </div>
+      <div>
+        <b>Chambers</b
+        ><small>Spotlight USA 2026, Real Estate. First year ranked.</small>
+      </div>
+      <div>
+        <b>Fixed</b><small>Fee arrangements on most matters. Ask.</small>
+      </div>
+    </section>
+    <div class="wrap">
+      <section class="people">
+        <div class="sechead">
+          <h2>The people you would work with.</h2>
+          <a href="#">All 26 lawyers →</a>
+        </div>
+        <div class="grid">
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Brian-Collins-cut.png"
+                alt="Brian P. Collins"
+              />
+            </div>
+            <h3>Brian P. Collins</h3>
+            <p>Managing Partner · M&A, private equity, finance</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/John-Muehlstein-cut.png"
+                alt="John H. Muehlstein"
+              />
+            </div>
+            <h3>John H. Muehlstein</h3>
+            <p>Chairman · Corporate finance, restructuring</p></a
+          >
+          <a class="card" href="161-bio.html"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Eric-Kordish-cut.png"
+                alt="Eric J. Kordish"
+              />
+            </div>
+            <h3>Eric J. Kordish</h3>
+            <p>Corporate & Business Counseling · Real estate finance</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Michael-Sullivan-cut.png"
+                alt="Michael P. Sullivan"
+              />
+            </div>
+            <h3>Michael P. Sullivan</h3>
+            <p>Real Estate & Financing · Chambers ranked</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Anthony-Pesce-cut.png"
+                alt="Anthony D. Pesce"
+              />
+            </div>
+            <h3>Anthony D. Pesce</h3>
+            <p>Litigation · Technology & IP</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Ashley-Czajkowski-cut.png"
+                alt="Ashley N. Czajkowski"
+              />
+            </div>
+            <h3>Ashley N. Czajkowski</h3>
+            <p>Wealth Preservation · Estates</p></a
+          >
+        </div>
+      </section>
+      <section class="matters">
+        <div class="m">
+          <div class="y">2025<small>M&A</small></div>
+          <h4>Skolnik Industries sold to Pelican Energy Partners</h4>
+          <p>
+            Counsel to the seller, a Chicago steel-drum maker, through close.
+          </p>
+        </div>
+        <div class="m">
+          <div class="y">2022<small>Real estate</small></div>
+          <h4>The Thompson Center</h4>
+          <p>
+            JRTC Holdings' $70M purchase from the State of Illinois and the
+            Google build-to-suit that followed.
+          </p>
+        </div>
+        <div class="m">
+          <div class="y">2013<small>Litigation</small></div>
+          <h4>iCONN Systems v. Conxall</h4>
+          <p>Defense verdict after a five-week trade-secret jury trial.</p>
+        </div>
+      </section>
+      <footer>
+        <span
+          >Pedersen & Houpt, P.C. · 161 North Clark Street, Suite 2700, Chicago,
+          Illinois 60601 · 312 641 6888</span
+        ><span
+          >Demo photograph: Ken Lund, CC BY-SA 2.0, Wikimedia Commons. Attorney
+          photographs from pedersenhoupt.com.</span
+        >
+      </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+      var shot = location.search.indexOf("shot") > -1;
+      if (shot) document.body.classList.add("shot");
+      if (
+        !shot &&
+        window.gsap &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        gsap.from(".board .row", {
+          opacity: 0,
+          x: -10,
+          duration: 0.5,
+          stagger: 0.06,
+          ease: "power2.out",
+          delay: 0.15,
+        });
+        gsap.from("[data-reveal]:not(.board)", {
+          opacity: 0,
+          y: 14,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "power3.out",
+          delay: 0.1,
+        });
+      }
+    </script>
+  </body>
+</html>

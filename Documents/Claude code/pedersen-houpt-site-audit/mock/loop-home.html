@@ -3,24 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      Pedersen & Houpt · Counsel to Chicago's middle market · Direction A, The
-      place
-    </title>
+    <title>Pedersen & Houpt · The Loop · Direction E</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --paper: #f7f4ee;
-        --ink: #171613;
+        --salmon: #e9a797;
+        --salmon-2: #f4cfc6;
+        --blue: #9db6c9;
+        --blue-2: #d9e4ec;
+        --ink: #141516;
         --red: #ab1e23;
-        --stone: #8a8377;
-        --line: rgba(23, 22, 19, 0.14);
-        --serif: "Young Serif", Georgia, serif;
-        --sans: "Hanken Grotesk", Helvetica, Arial, sans-serif;
-        --mono: "IBM Plex Mono", monospace;
+        --gray: #5f6469;
+        --sans: "Bricolage Grotesque", Helvetica, Arial, sans-serif;
       }
       * {
         box-sizing: border-box;
@@ -28,25 +25,24 @@
         padding: 0;
       }
       body {
-        font-family: var(--sans);
-        background: var(--paper);
+        font: 16px/1.5 var(--sans);
+        background: #fff;
         color: var(--ink);
         -webkit-font-smoothing: antialiased;
-        line-height: 1.5;
       }
       a {
         color: inherit;
         text-decoration: none;
       }
       .wrap {
-        max-width: 1360px;
+        max-width: 1380px;
         margin: 0 auto;
         padding: 0 40px;
       }
       .demo-bar {
         background: #111;
         color: #fff;
-        font: 500 11.5px/36px var(--mono);
+        font: 700 11px/36px var(--sans);
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
@@ -57,12 +53,12 @@
         flex-wrap: wrap;
       }
       .demo-bar a {
-        opacity: 0.65;
+        opacity: 0.6;
         margin-left: 14px;
       }
       .demo-bar a.on {
         opacity: 1;
-        color: #f2c4c6;
+        color: #e9a797;
       }
       body.shot .demo-bar {
         display: none;
@@ -71,88 +67,59 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 22px 0;
-        border-bottom: 1px solid var(--line);
+        padding: 18px 0;
       }
       .mark {
         display: flex;
-        align-items: center;
-        gap: 16px;
-      }
-      .mark .name {
-        display: flex;
         flex-direction: column;
         line-height: 1;
       }
-      .mark .name b {
-        font: 400 30px/1 var(--serif);
-        letter-spacing: -0.01em;
+      .mark b {
+        font: 800 30px/1 var(--sans);
+        letter-spacing: -0.03em;
       }
-      .mark .name i {
+      .mark i {
         font-style: normal;
-        font-size: 10.5px;
-        letter-spacing: 0.06em;
-        color: var(--stone);
-        margin-top: 5px;
-        border-top: 2px solid var(--red);
-        padding-top: 4px;
-        width: fit-content;
-      }
-      .plate {
-        display: inline-flex;
-        flex-direction: column;
-        background: var(--ink);
-        color: var(--paper);
-        padding: 7px 10px 6px;
-        line-height: 1;
-      }
-      .plate b {
-        font: 400 15px/1 var(--serif);
-      }
-      .plate span {
-        font: 500 9px/1.2 var(--mono);
+        font: 700 10px/1 var(--sans);
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        opacity: 0.8;
-        margin-top: 4px;
+        color: var(--gray);
+        margin-top: 6px;
+        border-top: 2px solid var(--red);
+        padding-top: 5px;
+        width: fit-content;
       }
       nav {
         display: flex;
         gap: 26px;
-        font-weight: 500;
-        font-size: 15px;
+        font: 700 14.5px/1 var(--sans);
       }
       .tools {
         display: flex;
         gap: 8px;
         align-items: center;
-        font-size: 13px;
+        font: 700 13px/1 var(--sans);
       }
       .tools a {
-        padding: 9px 12px;
-        border: 1px solid var(--line);
-        border-radius: 3px;
+        padding: 11px 14px;
+        border-radius: 999px;
+        border: 1.5px solid var(--ink);
       }
       .tools a.pri {
-        background: var(--red);
+        background: var(--ink);
         color: #fff;
-        border-color: var(--red);
       }
       .tools .tel {
         border: 0;
-        font-family: var(--mono);
-        letter-spacing: 0.04em;
+        font-weight: 600;
       }
       .hero {
         position: relative;
-        margin-top: 24px;
-        border-radius: 6px;
+        height: 640px;
         overflow: hidden;
-        min-height: 640px;
-        display: flex;
-        align-items: flex-end;
-        color: var(--paper);
+        border-radius: 0 0 0 72px;
         isolation: isolate;
+        color: #fff;
       }
       .hero img {
         position: absolute;
@@ -160,9 +127,9 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center 62%;
-        z-index: -2;
-        filter: saturate(0.8) contrast(1.06);
+        object-position: center 45%;
+        z-index: -1;
+        transform-origin: center;
       }
       .hero::after {
         content: "";
@@ -170,264 +137,310 @@
         inset: 0;
         background: linear-gradient(
           180deg,
-          rgba(23, 22, 19, 0.1) 0%,
-          rgba(23, 22, 19, 0.3) 40%,
-          rgba(23, 22, 19, 0.88) 100%
+          rgba(20, 21, 22, 0) 30%,
+          rgba(20, 21, 22, 0.72) 100%
         );
         z-index: -1;
       }
       .hero .in {
-        padding: 48px 48px 44px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0 48px 44px;
         display: grid;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap: 40px;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 32px;
         align-items: end;
-        width: 100%;
       }
-      .hero h1 {
-        font: 400 clamp(44px, 6.4vw, 94px)/0.98 var(--serif);
-        letter-spacing: -0.015em;
-        max-width: 11ch;
-      }
-      .hero h1 span {
-        color: #f2c4c6;
+      h1 {
+        font: 800 clamp(52px, 8vw, 124px)/0.9 var(--sans);
+        letter-spacing: -0.045em;
+        max-width: 9ch;
+        font-variation-settings: "opsz" 96;
       }
       .hero p {
-        font-size: 19px;
+        font-size: 18px;
         line-height: 1.5;
-        max-width: 44ch;
-        opacity: 0.94;
+        max-width: 40ch;
       }
       .cta {
         display: flex;
-        gap: 12px;
-        margin-top: 24px;
+        gap: 10px;
+        margin-top: 18px;
       }
       .cta a {
         padding: 14px 20px;
-        border-radius: 3px;
-        font-weight: 600;
-        font-size: 15px;
+        border-radius: 999px;
+        font: 700 14px/1 var(--sans);
       }
       .cta .a {
-        background: var(--paper);
+        background: var(--salmon);
         color: var(--ink);
       }
       .cta .b {
-        border: 1px solid rgba(247, 244, 238, 0.6);
+        border: 1.5px solid rgba(255, 255, 255, 0.7);
       }
-      .hero .cap {
+      .hero figcaption {
         position: absolute;
-        top: 22px;
-        right: 24px;
-        font: 500 10.5px/1.5 var(--mono);
-        letter-spacing: 0.12em;
+        top: 18px;
+        right: 20px;
+        font: 600 11px/1.4 var(--sans);
+        letter-spacing: 0.06em;
         text-transform: uppercase;
-        opacity: 0.7;
+        color: rgba(255, 255, 255, 0.85);
         text-align: right;
       }
-      .proof {
+      .band {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        border-bottom: 1px solid var(--line);
-        margin-top: 10px;
+        background: var(--blue-2);
+        margin-top: 14px;
+        border-radius: 0 0 0 40px;
+        overflow: hidden;
       }
-      .proof div {
-        padding: 28px 18px 24px;
-        border-right: 1px solid var(--line);
+      .band div {
+        padding: 26px 22px 24px;
+        border-right: 1px solid rgba(20, 21, 22, 0.12);
       }
-      .proof div:last-child {
+      .band div:last-child {
         border-right: 0;
       }
-      .proof b {
+      .band b {
         display: block;
-        font: 400 34px/1 var(--serif);
-        letter-spacing: -0.01em;
+        font: 800 40px/1 var(--sans);
+        letter-spacing: -0.03em;
       }
-      .proof small {
+      .band small {
         display: block;
-        font-size: 13.5px;
-        color: var(--stone);
-        margin-top: 8px;
+        font-size: 13px;
         line-height: 1.4;
+        color: #3a4148;
+        margin-top: 8px;
       }
       .people {
-        padding: 64px 0 24px;
+        padding: 64px 0 20px;
       }
       .sechead {
         display: flex;
         align-items: baseline;
         justify-content: space-between;
-        margin-bottom: 26px;
+        margin-bottom: 24px;
       }
       h2 {
-        font: 400 clamp(30px, 3.4vw, 46px)/1.05 var(--serif);
-        letter-spacing: -0.01em;
+        font: 800 clamp(32px, 4vw, 54px)/0.95 var(--sans);
+        letter-spacing: -0.04em;
       }
       .sechead a {
-        font-size: 14px;
-        font-weight: 600;
+        font: 700 14px var(--sans);
         color: var(--red);
       }
       .grid {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
-        gap: 18px;
+        gap: 16px;
       }
       .card .ph {
         aspect-ratio: 4/5;
         overflow: hidden;
-        border-radius: 4px;
-        background: #d8d2c7;
+        background: var(--salmon-2);
+        border-radius: 0 0 0 28px;
+        transition: background 0.3s;
+      }
+      .card:nth-child(even) .ph {
+        background: var(--blue-2);
       }
       .card img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center 22%;
-        filter: grayscale(1) sepia(0.3) contrast(1.06);
-        transition: filter 0.4s;
+        object-position: center top;
+        transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+      .card:hover .ph {
+        background: var(--salmon);
+      }
+      .card:nth-child(even):hover .ph {
+        background: var(--blue);
       }
       .card:hover img {
-        filter: none;
+        transform: translateY(-4px) scale(1.03);
       }
       .card h3 {
-        font: 400 17px/1.2 var(--serif);
-        margin-top: 12px;
+        font: 700 15.5px/1.2 var(--sans);
+        margin-top: 10px;
+        letter-spacing: -0.01em;
       }
       .card p {
-        font-size: 13px;
-        color: var(--stone);
-        margin-top: 4px;
-        line-height: 1.35;
+        font-size: 12.5px;
+        line-height: 1.4;
+        color: var(--gray);
+        margin-top: 3px;
+      }
+      .photo2 {
+        position: relative;
+        height: 420px;
+        overflow: hidden;
+        border-radius: 0 0 0 72px;
+        margin-top: 48px;
+      }
+      .photo2 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 60%;
+      }
+      .photo2 div {
+        position: absolute;
+        left: 32px;
+        bottom: 28px;
+        color: #fff;
+        font: 800 clamp(28px, 3.4vw, 44px)/1 var(--sans);
+        letter-spacing: -0.035em;
+        max-width: 16ch;
+        text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+      }
+      .photo2 small {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        font: 600 11px var(--sans);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
       }
       .matters {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 22px;
-        padding: 36px 0 64px;
+        gap: 16px;
+        margin: 40px 0 64px;
       }
       .m {
-        border-top: 2px solid var(--ink);
-        padding-top: 16px;
+        background: var(--salmon-2);
+        padding: 26px 24px 28px;
+        border-radius: 0 0 0 28px;
+      }
+      .m:nth-child(2) {
+        background: var(--blue-2);
+      }
+      .m:nth-child(3) {
+        background: #efefef;
       }
       .m .y {
-        font: 500 12px/1 var(--mono);
-        letter-spacing: 0.16em;
-        color: var(--red);
+        font: 700 13px/1 var(--sans);
+        letter-spacing: 0.04em;
         text-transform: uppercase;
       }
       .m h4 {
-        font: 400 24px/1.15 var(--serif);
-        margin: 10px 0 8px;
+        font: 800 26px/1.05 var(--sans);
+        letter-spacing: -0.03em;
+        margin: 14px 0 8px;
       }
       .m p {
         font-size: 15px;
         line-height: 1.5;
-        color: #3d3a34;
+        color: #2a2d31;
       }
       footer {
-        border-top: 1px solid var(--line);
-        padding: 26px 0 40px;
+        border-top: 1.5px solid var(--ink);
+        padding: 20px 0 40px;
         display: flex;
         justify-content: space-between;
         gap: 20px;
-        font-size: 12.5px;
-        color: var(--stone);
+        font: 500 12.5px/1.6 var(--sans);
+        color: var(--gray);
       }
-      @media (max-width: 820px) {
+      @media (max-width: 860px) {
         .wrap {
-          padding: 0 18px;
+          padding: 0 16px;
         }
         header {
-          padding: 14px 0;
+          padding: 12px 0;
         }
         nav,
         .tools a:not(.pri) {
           display: none;
         }
-        .mark .name b {
+        .mark b {
           font-size: 26px;
         }
         .hero {
-          min-height: 540px;
-          margin-top: 14px;
+          height: 560px;
+          border-radius: 0 0 0 40px;
         }
         .hero .in {
           grid-template-columns: 1fr;
-          gap: 16px;
-          padding: 28px 20px 24px;
+          padding: 0 20px 24px;
+          gap: 14px;
         }
-        .hero h1 {
-          font-size: 46px;
+        h1 {
+          font-size: 56px;
         }
         .hero p {
           font-size: 16px;
         }
-        .hero .cap {
+        .hero figcaption {
           display: none;
         }
-        .proof {
+        .band {
           grid-template-columns: 1fr 1fr;
+          border-radius: 0 0 0 24px;
         }
-        .proof div {
+        .band div {
+          border-bottom: 1px solid rgba(20, 21, 22, 0.12);
+          padding: 16px 14px;
+        }
+        .band div:nth-child(even) {
           border-right: 0;
-          border-bottom: 1px solid var(--line);
-          padding: 18px 6px;
         }
-        .proof div:nth-child(odd) {
-          border-right: 1px solid var(--line);
-          padding-right: 12px;
-        }
-        .proof div:nth-child(even) {
-          padding-left: 12px;
-        }
-        .proof b {
-          font-size: 28px;
+        .band b {
+          font-size: 30px;
         }
         .people {
           padding: 40px 0 10px;
         }
         .grid {
           grid-template-columns: 1fr 1fr;
-          gap: 14px;
+          gap: 12px;
+        }
+        .photo2 {
+          height: 280px;
+          border-radius: 0 0 0 40px;
+          margin-top: 28px;
         }
         .matters {
           grid-template-columns: 1fr;
-          gap: 18px;
-          padding: 24px 0 40px;
+          margin: 20px 0 40px;
         }
         footer {
           flex-direction: column;
           gap: 8px;
         }
       }
-    /* post-review fixes */
-.cta a,.tools a.pri{white-space:nowrap}@media(max-width:820px){.cta a{padding:12px 14px;font-size:14px}.tools a.pri{padding:8px 10px;font-size:12px}}
-/* cutout portraits */
-.card .ph{background:#E7E1D5}.card img{object-fit:cover;object-position:center top;filter:grayscale(1) sepia(.32) contrast(1.05)}
-</style>
+      @media (prefers-reduced-motion: reduce) {
+        .card img,
+        .card .ph {
+          transition: none;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="demo-bar">
       <div class="wrap">
-        <span>Direction A · The place · homepage</span
+        <span>Direction E · The Loop · homepage</span
         ><span
-          ><a class="on" href="place-home.html">A</a
-          ><a href="ledger-home.html">B</a><a href="counsel-home.html">C</a
-          ><a href="place-bio.html">Bio page</a
+          ><a href="161-home.html">A</a><a href="record-home.html">B</a
+          ><a href="1957-home.html">C</a><a href="termsheet-home.html">D</a
+          ><a class="on" href="loop-home.html">E</a
+          ><a href="loop-bio.html">Attorney page</a
           ><a href="index.html">All directions</a></span
         >
       </div>
     </div>
     <div class="wrap">
       <header>
-        <div class="mark">
-          <div class="name"><b>Pedersen</b><i>Pedersen & Houpt</i></div>
-          <span class="plate"
-            ><b>161 N. Clark</b><span>Suite 2700 · Chicago</span></span
-          >
-        </div>
+        <div class="mark"><b>Pedersen</b><i>Pedersen & Houpt · Chicago</i></div>
         <nav>
           <a href="#">People</a><a href="#">What we do</a><a href="#">Results</a
           ><a href="#">Insights</a><a href="#">About</a>
@@ -439,44 +452,34 @@
       </header>
       <section class="hero">
         <img
-          src="../img/mock/river-night.jpg"
-          alt="The Chicago River and the Loop at night"
+          id="heroimg"
+          src="../img/mock/thompson-atrium-tall.jpg"
+          alt="The atrium of the James R. Thompson Center"
         />
-        <div class="cap">
-          Placeholder photograph · the photo day<br />replaces it with the
-          partners and the office
-        </div>
+        <figcaption>
+          The Thompson Center atrium · the firm's matter, 2022 · placeholder
+          photograph
+        </figcaption>
         <div class="in">
-          <div>
-            <h1>Counsel to Chicago's <span>middle market.</span></h1>
+          <h1 data-reveal>Counsel to Chicago's middle market.</h1>
+          <div data-reveal>
+            <p>
+              Twenty-six lawyers for the companies, owners and developers who
+              build this city. Deals, disputes, real estate, employment and the
+              wealth that comes out of it. Since 1957, on Clark Street.
+            </p>
             <div class="cta">
               <a class="a" href="#">Talk to a partner</a
               ><a class="b" href="#">See our results</a>
             </div>
           </div>
-          <p>
-            Twenty-six lawyers for the companies, owners and developers who
-            build this city. Deals, disputes, real estate, employment and the
-            wealth that comes out of it. Since 1957, on Clark Street.
-          </p>
         </div>
       </section>
-      <section class="proof">
+      <section class="band">
         <div>
           <b>1957</b
           ><small
             >Founded by Peer Pedersen. Sixty-nine years in the Loop.</small
-          >
-        </div>
-        <div>
-          <b>Chambers</b
-          ><small>Spotlight USA 2026, Real Estate. First year ranked.</small>
-        </div>
-        <div>
-          <b>$70M</b
-          ><small
-            >The Thompson Center: counsel to JRTC Holdings, then the Google
-            build-to-suit.</small
           >
         </div>
         <div>
@@ -486,8 +489,18 @@
           >
         </div>
         <div>
-          <b>Fixed fees</b
-          ><small>Alternative fee arrangements on most matters. Ask.</small>
+          <b>$70M</b
+          ><small
+            >The Thompson Center: counsel to JRTC Holdings, then the Google
+            build-to-suit.</small
+          >
+        </div>
+        <div>
+          <b>Chambers</b
+          ><small>Spotlight USA 2026, Real Estate. First year ranked.</small>
+        </div>
+        <div>
+          <b>Fixed</b><small>Fee arrangements on most matters. Ask.</small>
         </div>
       </section>
       <section class="people">
@@ -516,7 +529,7 @@
             <h3>John H. Muehlstein</h3>
             <p>Chairman · Corporate finance, restructuring</p></a
           >
-          <a class="card" href="place-bio.html"
+          <a class="card" href="loop-bio.html"
             ><div class="ph">
               <img
                 src="../img/mock/people/Eric-Kordish-cut.png"
@@ -558,6 +571,13 @@
           >
         </div>
       </section>
+      <section class="photo2">
+        <img
+          src="../img/mock/under-the-l.jpg"
+          alt="Under the L on Wabash Avenue"
+        /><small>Wabash Avenue, under the L · placeholder photograph</small>
+        <div>Sixty-nine years in the Loop. Deals, disputes, buildings.</div>
+      </section>
       <section class="matters">
         <div class="m">
           <div class="y">2025 · M&A</div>
@@ -585,14 +605,34 @@
           >Pedersen & Houpt, P.C. · 161 North Clark Street, Suite 2700, Chicago,
           Illinois 60601 · 312 641 6888</span
         ><span
-          >Demo photograph: Matt Kieffer, CC BY-SA 2.0, Wikimedia Commons.
+          >Demo photographs: Chris Rycroft, CC BY 2.0, Wikimedia Commons.
           Attorney photographs from pedersenhoupt.com.</span
         >
       </footer>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
-      if (location.search.indexOf("shot") > -1)
-        document.body.classList.add("shot");
+      var shot = location.search.indexOf("shot") > -1;
+      if (shot) document.body.classList.add("shot");
+      if (
+        !shot &&
+        window.gsap &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        gsap.from("[data-reveal]", {
+          opacity: 0,
+          y: 16,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power3.out",
+          delay: 0.1,
+        });
+        gsap.fromTo(
+          "#heroimg",
+          { scale: 1 },
+          { scale: 1.08, duration: 26, ease: "none", repeat: -1, yoyo: true },
+        );
+      }
     </script>
   </body>
 </html>

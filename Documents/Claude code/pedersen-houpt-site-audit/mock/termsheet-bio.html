@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schedule 1 · Eric J. Kordish · Pedersen & Houpt · Direction D</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#141414;--red:#AB1E23;--hl:#FFF176;--gray:#6A6A6A;--line:rgba(20,20,20,.22);--serif:"Source Serif 4",Georgia,serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:17px/1.6 var(--serif);background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1380px;margin:0 auto;padding:0 40px}
+.demo-bar{background:#111;color:#fff;font:600 11px/36px var(--serif);letter-spacing:.08em;text-transform:uppercase}
+.demo-bar .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.demo-bar a{opacity:.6;margin-left:14px}.demo-bar a.on{opacity:1;color:#FFF176}
+body.shot .demo-bar{display:none}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--ink)}
+.mark{display:flex;flex-direction:column;line-height:1}
+.mark b{font:700 28px/1 var(--serif)}
+.mark i{font-style:normal;font:600 10px/1 var(--serif);letter-spacing:.16em;text-transform:uppercase;color:var(--gray);margin-top:6px;border-top:2px solid var(--red);padding-top:5px;width:fit-content}
+nav{display:flex;gap:24px;font:400 16px/1 var(--serif)}
+.tools{display:flex;gap:16px;align-items:center;font:400 15px/1 var(--serif)}
+.tools a{border-bottom:1px solid var(--ink)}
+.tools a.pri{border:1px solid var(--ink);padding:9px 14px}
+.doc{display:grid;grid-template-columns:1fr 300px;gap:56px;padding:44px 0 60px}
+.page{max-width:860px}
+.head{display:grid;grid-template-columns:1fr 1fr;gap:20px;border-bottom:1px solid var(--ink);padding-bottom:16px;font-size:14px;color:var(--gray)}
+.head b{display:block;font:700 12px/1 var(--serif);letter-spacing:.22em;text-transform:uppercase;color:var(--ink);margin-bottom:6px}
+.head .r{text-align:right}
+.title{display:grid;grid-template-columns:1fr 200px;gap:32px;align-items:start;padding:26px 0 0}
+.title h1{font:700 clamp(36px,4.2vw,60px)/1.05 var(--serif);letter-spacing:-.015em}
+.title p{font-size:17px;color:#333;margin-top:10px}
+.passport{border:1px solid var(--ink);padding:5px;background:#fff}
+.passport .ph{aspect-ratio:4/5;overflow:hidden}
+.passport img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.passport small{display:block;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);padding:6px 0 2px}
+.clause{display:grid;grid-template-columns:64px 1fr;gap:16px;padding:24px 0;border-bottom:1px solid var(--line)}
+.clause .n{font:700 18px/1.55 var(--serif)}
+.clause h3{font:700 18px/1.55 var(--serif);display:inline}
+.clause p{display:inline}
+.clause .big{display:block;font:700 clamp(26px,2.8vw,38px)/1.15 var(--serif);letter-spacing:-.01em;margin:4px 0 8px;max-width:30ch}
+mark{background:linear-gradient(transparent 12%, var(--hl) 12%, var(--hl) 94%, transparent 94%) left/100% 100% no-repeat;color:inherit;font-weight:600;padding:0 .12em;white-space:nowrap}
+.sub{margin-top:12px;display:grid;gap:8px}
+.sub div{display:grid;grid-template-columns:44px 1fr;gap:12px}
+.sub .k{font-weight:700}
+.sign{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;position:relative}
+.sign .line{border-bottom:1px solid var(--ink);padding-bottom:6px;font-size:14px;color:var(--gray);height:60px;display:flex;align-items:flex-end}
+.sign .cta{display:flex;gap:14px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.sign .cta a{border:1px solid var(--ink);padding:12px 18px;font-weight:600;font-size:15px}
+.sign .cta a.u{border:0;border-bottom:1px solid var(--ink);padding:0 0 2px}
+.stamp{position:absolute;right:0;top:-28px;border:2.5px solid var(--red);color:var(--red);font:700 15px/1 var(--serif);letter-spacing:.24em;text-transform:uppercase;padding:9px 12px 8px;transform:rotate(-6deg);border-radius:3px}
+.stamp small{display:block;font:400 10px/1.3 var(--serif);letter-spacing:.1em;margin-top:4px;text-transform:none}
+.margin{font:italic 400 14.5px/1.5 var(--serif);color:var(--gray);padding-top:44px}
+.margin div{border-left:2px solid var(--hl);padding-left:12px;margin-bottom:22px}
+.margin b{display:block;font-style:normal;font-weight:700;color:var(--ink);margin-bottom:2px}
+footer{border-top:1px solid var(--ink);padding:20px 0 40px;display:flex;justify-content:space-between;gap:20px;font-size:13px;line-height:1.6;color:var(--gray)}
+@media(max-width:860px){
+  .wrap{padding:0 16px}header{padding:12px 0}nav,.tools a:not(.pri){display:none}.mark b{font-size:24px}
+  .doc{grid-template-columns:1fr;gap:20px;padding:22px 0 40px}.margin{display:none}.head{grid-template-columns:1fr;gap:10px}.head .r{text-align:left}
+  .title{grid-template-columns:1fr 120px;gap:16px}.title h1{font-size:34px}.clause{grid-template-columns:40px 1fr;padding:18px 0}.clause .big{font-size:24px}.sign{grid-template-columns:1fr;gap:18px}.stamp{position:static;display:inline-block;margin-bottom:10px}footer{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+<div class="demo-bar"><div class="wrap"><span>Direction D · Term sheet · attorney page</span><span><a href="161-bio.html">A</a><a href="record-bio.html">B</a><a href="1957-bio.html">C</a><a class="on" href="termsheet-bio.html">D</a><a href="loop-bio.html">E</a><a href="termsheet-home.html">Homepage</a><a href="index.html">All directions</a></span></div></div>
+<div class="wrap">
+<header>
+  <div class="mark"><b>Pedersen</b><i>Pedersen & Houpt · Chicago</i></div>
+  <nav><a href="#">People</a><a href="#">What we do</a><a href="#">Results</a><a href="#">Insights</a><a href="#">About</a></nav>
+  <div class="tools"><a href="#">312 641 6888</a><a href="#">Client login</a><a href="#">Pay a bill</a><a class="pri" href="#">Book a call</a></div>
+</header>
+<div class="doc">
+<article class="page">
+  <div class="head"><div><b>Schedule 1</b>to the term sheet of Pedersen & Houpt, P.C.</div><div class="r"><b>Concerning</b>Eric J. Kordish, Partner</div></div>
+  <div class="title" data-reveal>
+    <div><h1>Eric J. Kordish</h1><p>Partner, Corporate & Business Counseling and Real Estate. Leads the corporate group. Counsel on the Thompson Center.</p></div>
+    <div class="passport"><div class="ph"><img src="../img/mock/people/Eric-Kordish-cut.png" alt="Eric J. Kordish"></div><small>Exhibit A</small></div>
+  </div>
+  <section class="clause" data-reveal><div class="n">1.</div><div><h3>Capacity.</h3> <span class="big">If you are buying, selling, financing or refinancing a company or a building in Chicago, Eric has closed it before, usually more than once.</span><p>Admitted in Illinois, <mark>2005</mark>. Loyola University Chicago, J.D. 2005, with a Certificate of Taxation. Northwestern University, B.A. 1996.</p></div></section>
+  <section class="clause" data-reveal><div class="n">2.</div><div><h3>Contact.</h3> <p>Direct line <mark>312 261 2249</mark>. Email ekordish@pedersenhoupt.com. Suite 2700, 161 North Clark Street. Calls returned the same day (the <mark>Standard</mark>).</p></div></section>
+  <section class="clause" data-reveal><div class="n">3.</div><div><h3>Matters.</h3> <p>As published, with the figure.</p>
+    <div class="sub">
+      <div><span class="k">3.1</span><span><mark>$70M</mark> JRTC Holdings: the purchase of the Thompson Center from the State of Illinois, <mark>2022</mark>, then the Google build-to-suit, 2025.</span></div>
+      <div><span class="k">3.2</span><span><mark>$218M</mark> First mortgage, $92M of new equity and a $35M mezzanine loan on the redevelopment of an 80-year-old downtown office building into a hotel and offices.</span></div>
+      <div><span class="k">3.3</span><span><mark>$178M</mark> Construction loan facility for a mixed-use condominium tower, retail, parking and garden park.</span></div>
+      <div><span class="k">3.4</span><span><mark>$120M</mark> Sale of a mixed-use retail and parking development in downtown Chicago for a real estate developer.</span></div>
+      <div><span class="k">3.5</span><span><mark>$102M</mark> SBA-licensed private equity fund: management buyouts, recapitalizations and add-ons across a middle-market portfolio.</span></div>
+    </div></div></section>
+  <section class="clause" data-reveal><div class="n">4.</div><div><h3>Recognition.</h3> <p>Chambers Spotlight USA <mark>2026</mark>, Real Estate, Chicago.</p></div></section>
+  <div class="sign" data-reveal>
+    <div><div class="line">For Eric J. Kordish</div><div class="cta"><a href="#">Book a call with Eric</a><a class="u" href="#">Download vCard</a></div></div>
+    <div><div class="line">For the Client</div><div class="cta"><a class="u" href="#">20 minutes, no charge</a></div></div>
+    <div class="stamp" id="stamp">Executed<small>Chicago · 2005 to date</small></div>
+  </div>
+</article>
+<aside class="margin">
+  <div><b>Schedule 1</b>Every partner gets a schedule. Same clauses, same order, so a client can compare two lawyers the way they compare two drafts.</div>
+  <div><b>Clause 1</b>What he does for a client comes before where he went to school.</div>
+  <div><b>Clause 3</b>Figures first, then the story. The current site has the figures and hides them under a tab.</div>
+</aside>
+</div>
+<footer><span>Pedersen & Houpt, P.C. · 161 North Clark Street, Suite 2700, Chicago, Illinois 60601 · 312 641 6888</span><span>Attorney photograph from pedersenhoupt.com. Matters as published on the firm's site.</span></footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+var shot=location.search.indexOf("shot")>-1; if(shot)document.body.classList.add("shot");
+if(!shot&&window.gsap&&!matchMedia("(prefers-reduced-motion: reduce)").matches){
+  gsap.from("[data-reveal]",{opacity:0,y:8,duration:.5,stagger:.07,ease:"power2.out"});
+  document.querySelectorAll("mark").forEach(function(m,i){m.style.backgroundSize="0% 100%";m.animate([{backgroundSize:"0% 100%"},{backgroundSize:"100% 100%"}],{duration:420,delay:500+i*90,easing:"cubic-bezier(.2,.7,.2,1)",fill:"forwards"});});
+  var st=document.getElementById("stamp");st.animate([{transform:"rotate(-12deg) scale(1.5)",opacity:0},{transform:"rotate(-6deg) scale(1)",opacity:1}],{duration:380,delay:1500,easing:"cubic-bezier(.3,1.4,.5,1)",fill:"forwards"});
+}
+</script>
+</body>
+</html>

@@ -1,286 +1,56 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pedersen & Houpt · Three design directions · Upperhand</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --bg: #0f0e0d;
-        --ink: #f2ede4;
-        --dim: #9b958a;
-        --red: #ab1e23;
-        --line: rgba(242, 237, 228, 0.14);
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        background: var(--bg);
-        color: var(--ink);
-        font:
-          15px/1.5 "Hanken Grotesk",
-          Helvetica,
-          Arial,
-          sans-serif;
-        -webkit-font-smoothing: antialiased;
-      }
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-      .wrap {
-        max-width: 1380px;
-        margin: 0 auto;
-        padding: 40px;
-      }
-      .kick {
-        font:
-          500 11px/1 "IBM Plex Mono",
-          monospace;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--red);
-      }
-      h1 {
-        font:
-          900 clamp(44px, 6vw, 84px)/0.95 "Big Shoulders Display",
-          Impact,
-          sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 0.005em;
-        margin: 14px 0 18px;
-      }
-      .lede {
-        max-width: 70ch;
-        color: var(--dim);
-        font-size: 17px;
-      }
-      .brief {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        margin: 30px 0 10px;
-        border-top: 1px solid var(--line);
-        padding-top: 22px;
-      }
-      .brief div {
-        font-size: 14px;
-        color: var(--dim);
-      }
-      .brief b {
-        display: block;
-        color: var(--ink);
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-        margin-top: 30px;
-      }
-      .dir {
-        border: 1px solid var(--line);
-        background: #161514;
-        display: flex;
-        flex-direction: column;
-      }
-      .dir .shot {
-        aspect-ratio: 4/3;
-        overflow: hidden;
-        background: #222;
-      }
-      .dir img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top;
-      }
-      .dir .b {
-        padding: 18px 18px 20px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .dir .l {
-        font:
-          500 11px/1 "IBM Plex Mono",
-          monospace;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--red);
-      }
-      .dir h2 {
-        font:
-          900 30px/1 "Big Shoulders Display",
-          Impact,
-          sans-serif;
-        text-transform: uppercase;
-      }
-      .dir p {
-        color: var(--dim);
-        font-size: 14px;
-      }
-      .dir .links {
-        display: flex;
-        gap: 8px;
-        margin-top: auto;
-        padding-top: 10px;
-      }
-      .dir .links a {
-        border: 1px solid var(--line);
-        padding: 9px 12px;
-        font-weight: 600;
-        font-size: 13px;
-      }
-      .dir .links a.pri {
-        background: var(--ink);
-        color: var(--bg);
-        border-color: var(--ink);
-      }
-      .dir.pick {
-        border-color: var(--red);
-      }
-      .dir.pick .l::after {
-        content: " · our pick";
-        color: var(--ink);
-      }
-      footer {
-        margin-top: 40px;
-        border-top: 1px solid var(--line);
-        padding-top: 18px;
-        font-size: 12.5px;
-        color: var(--dim);
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        flex-wrap: wrap;
-      }
-      @media (max-width: 860px) {
-        .wrap {
-          padding: 22px 18px;
-        }
-        .brief,
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <div class="kick">
-        Pedersen & Houpt · website audit · first sketches, not designs
-      </div>
-      <h1>Three directions,<br />one brief.</h1>
-      <p class="lede">
-        The same two pages, built three ways. Same words, same six people, same
-        three matters, same attorney page for Eric J. Kordish, so the only thing
-        that changes between them is the design. Attorney photographs are the
-        firm's current headshots; the Chicago photographs are placeholders until
-        the firm's own photo day.
-      </p>
-      <div class="brief">
-        <div>
-          <b>What every direction must do</b>Say who the firm is for in one
-          sentence, show the people first, put dated proof above the fold, keep
-          the wordmark and the red, put the client tools in the header, read on
-          a phone in one thumb.
-        </div>
-        <div>
-          <b>What changes between them</b>The idea, the typefaces, the color,
-          the pictures, the layout rhythm, and what a first-time visitor feels
-          in three seconds.
-        </div>
-        <div>
-          <b>How to read them</b>Open each homepage, then its attorney page, on
-          a laptop and on a phone. Ask which one a referred client would trust,
-          which one a lateral would join, and which one the firm could live in
-          for ten years.
-        </div>
-      </div>
-      <div class="grid">
-        <div class="dir pick">
-          <div class="shot">
-            <img
-              src="../img/ev/mock-place-home-desktop.jpg"
-              alt="Direction A, The place"
-            />
-          </div>
-          <div class="b">
-            <div class="l">Direction A</div>
-            <h2>The place</h2>
-            <p>
-              The firm as an address and a room. Photography of the city and,
-              after the photo day, the people. A warm serif, a plain grotesk,
-              the firm's red as the only accent.
-            </p>
-            <div class="links">
-              <a class="pri" href="place-home.html">Homepage</a
-              ><a href="place-bio.html">Attorney page</a>
-            </div>
-          </div>
-        </div>
-        <div class="dir">
-          <div class="shot">
-            <img
-              src="../img/ev/mock-ledger-home-desktop.jpg"
-              alt="Direction B, The ledger"
-            />
-          </div>
-          <div class="b">
-            <div class="l">Direction B</div>
-            <h2>The ledger</h2>
-            <p>
-              Evidence as the visual system. Matters, dates and figures set at
-              display size in a heavy grotesk and a mono, black on white, the
-              red as a rule. The city in black and white.
-            </p>
-            <div class="links">
-              <a class="pri" href="ledger-home.html">Homepage</a
-              ><a href="ledger-bio.html">Attorney page</a>
-            </div>
-          </div>
-        </div>
-        <div class="dir">
-          <div class="shot">
-            <img
-              src="../img/ev/mock-counsel-home-desktop.jpg"
-              alt="Direction C, Counsel"
-            />
-          </div>
-          <div class="b">
-            <div class="l">Direction C</div>
-            <h2>Counsel</h2>
-            <p>
-              Classical and quiet. Centered, ivory and charcoal, Garamond and
-              small capitals, arched portraits, a hairline frame, the history
-              told with archival photography.
-            </p>
-            <div class="links">
-              <a class="pri" href="counsel-home.html">Homepage</a
-              ><a href="counsel-bio.html">Attorney page</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <footer>
-        <span
-          >Upperhand · Chicago · September 2026 ·
-          pedersen-houpt-site-audit.vercel.app</span
-        ><span
-          >Chicago photographs via Wikimedia Commons: Matt Kieffer (CC BY-SA
-          2.0), Reading Tom (CC BY 2.0), NEA (public domain).</span
-        >
-      </footer>
-    </div>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedersen & Houpt · Five design directions · Upperhand</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0e0d;--ink:#f2ede4;--dim:#9b958a;--red:#AB1E23;--line:rgba(242,237,228,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "Hanken Grotesk",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1420px;margin:0 auto;padding:40px}
+.kick{font:600 11px/1 "Hanken Grotesk",sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+h1{font:900 clamp(44px,6vw,84px)/.95 "Big Shoulders Display",Impact,sans-serif;text-transform:uppercase;margin:14px 0 18px}
+.lede{max-width:74ch;color:var(--dim);font-size:17px}
+.brief{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0 10px;border-top:1px solid var(--line);padding-top:22px}
+.brief div{font-size:14px;color:var(--dim)}.brief b{display:block;color:var(--ink);font-weight:600;margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:30px}
+.dir{border:1px solid var(--line);background:#161514;display:flex;flex-direction:column}
+.dir .shot{aspect-ratio:4/3;overflow:hidden;background:#222}
+.dir img{width:100%;height:100%;object-fit:cover;object-position:top}
+.dir .b{padding:16px 16px 18px;flex:1;display:flex;flex-direction:column;gap:8px}
+.dir .l{font:600 11px/1 "Hanken Grotesk",sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+.dir h2{font:900 28px/1 "Big Shoulders Display",Impact,sans-serif;text-transform:uppercase}
+.dir p{color:var(--dim);font-size:13.5px}
+.dir .links{display:flex;gap:6px;margin-top:auto;padding-top:10px;flex-wrap:wrap}
+.dir .links a{border:1px solid var(--line);padding:8px 10px;font-weight:600;font-size:12.5px}
+.dir .links a.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dir.pick{border-color:var(--red)}.dir.pick .l::after{content:" · our pick";color:var(--ink)}
+footer{margin-top:40px;border-top:1px solid var(--line);padding-top:18px;font-size:12.5px;color:var(--dim);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){.wrap{padding:22px 18px}.brief,.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kick">Pedersen & Houpt · website audit · design directions, built as pages</div>
+  <h1>Five directions,<br>one brief.</h1>
+  <p class="lede">The same two pages, built five ways. Same sentence, same six people, same matters, same attorney page for Eric J. Kordish, so the only thing that changes is the design. Each direction starts from an object in the firm's own world: a lobby directory, a deal announcement, the year 1957, a term sheet, the Loop. Attorney photographs are the firm's current headshots with the backdrops removed; the Chicago photographs are placeholders until the firm's own photo day.</p>
+  <div class="brief">
+    <div><b>What every direction must do</b>Say who the firm is for in one sentence, show the people first, put dated proof above the fold, keep the wordmark and the red, put the client tools in the header, read on a phone in one thumb.</div>
+    <div><b>What changes between them</b>The idea, the typefaces, the color, the pictures, the layout rhythm, the motion, and what a first-time visitor feels in three seconds.</div>
+    <div><b>How to read them</b>Open each homepage, then its attorney page, on a laptop and on a phone. Ask which one a referred client would trust, which one a lateral would join, and which one the firm could live in for ten years.</div>
+  </div>
+  <div class="grid">
+    <div class="dir pick"><div class="shot"><img src="../img/ev/mock-161-home-desktop.jpg" alt="Direction A, 161"></div><div class="b"><div class="l">Direction A</div><h2>161</h2><p>The lobby directory. A slab serif, Chicago-flag blue, the partners listed by name and extension, the Loop in color.</p><div class="links"><a class="pri" href="161-home.html">Homepage</a><a href="161-bio.html">Attorney page</a></div></div></div>
+    <div class="dir"><div class="shot"><img src="../img/ev/mock-record-home-desktop.jpg" alt="Direction B, As a matter of record"></div><div class="b"><div class="l">Direction B</div><h2>Matter of record</h2><p>The deal tombstone. Double-ruled announcements with years and figures, a newspaper grotesk, a rotating seal.</p><div class="links"><a class="pri" href="record-home.html">Homepage</a><a href="record-bio.html">Attorney page</a></div></div></div>
+    <div class="dir"><div class="shot"><img src="../img/ev/mock-1957-home-desktop.jpg" alt="Direction C, 1957"></div><div class="b"><div class="l">Direction C</div><h2>1957</h2><p>The founding year as mid-century modern. A drawn grid, light Plex, steel gray, the Inland Steel Building.</p><div class="links"><a class="pri" href="1957-home.html">Homepage</a><a href="1957-bio.html">Attorney page</a></div></div></div>
+    <div class="dir"><div class="shot"><img src="../img/ev/mock-termsheet-home-desktop.jpg" alt="Direction D, Term sheet"></div><div class="b"><div class="l">Direction D</div><h2>Term sheet</h2><p>The site as the first document the firm writes for a client. Numbered clauses, defined terms in highlighter, an executed stamp.</p><div class="links"><a class="pri" href="termsheet-home.html">Homepage</a><a href="termsheet-bio.html">Attorney page</a></div></div></div>
+    <div class="dir"><div class="shot"><img src="../img/ev/mock-loop-home-desktop.jpg" alt="Direction E, The Loop"></div><div class="b"><div class="l">Direction E</div><h2>The Loop</h2><p>The Thompson Center's salmon and blue, a wide grotesk, the L overhead, one curved corner. The energetic one.</p><div class="links"><a class="pri" href="loop-home.html">Homepage</a><a href="loop-bio.html">Attorney page</a></div></div></div>
+  </div>
+  <footer><span>Upperhand · Chicago · September 2026 · pedersen-houpt-site-audit.vercel.app</span><span>Chicago photographs via Wikimedia Commons, credited on each page.</span></footer>
+</div>
+</body>
 </html>

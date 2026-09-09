@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pedersen & Houpt · As a matter of record · Direction B</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #111111;
+        --red: #ab1e23;
+        --gray: #6f6f6f;
+        --line: #111111;
+        --soft: rgba(17, 17, 17, 0.14);
+        --grot: "Schibsted Grotesk", Helvetica, Arial, sans-serif;
+        --serif: "Newsreader", Georgia, serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font: 17px/1.5 var(--serif);
+        background: #fff;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 0 40px;
+      }
+      .demo-bar {
+        background: #111;
+        color: #fff;
+        font: 700 11px/36px var(--grot);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .demo-bar .wrap {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .demo-bar a {
+        opacity: 0.6;
+        margin-left: 14px;
+      }
+      .demo-bar a.on {
+        opacity: 1;
+        color: #f2c4c6;
+      }
+      body.shot .demo-bar {
+        display: none;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .mark {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+      .mark b {
+        font: 600 30px/1 var(--serif);
+      }
+      .mark i {
+        font-style: normal;
+        font: 700 9.5px/1 var(--grot);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gray);
+        margin-top: 6px;
+        border-top: 2px solid var(--red);
+        padding-top: 5px;
+        width: fit-content;
+      }
+      nav {
+        display: flex;
+        gap: 24px;
+        font: 700 13px/1 var(--grot);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .tools {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font: 700 12px/1 var(--grot);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .tools a {
+        padding: 11px 13px;
+        border: 1.5px solid var(--ink);
+      }
+      .tools a.pri {
+        background: var(--ink);
+        color: #fff;
+      }
+      .tools .tel {
+        border: 0;
+        text-transform: none;
+        font-weight: 500;
+      }
+      .hero {
+        padding: 48px 0 36px;
+        position: relative;
+      }
+      .hero h1 {
+        font: 800 clamp(52px, 7.8vw, 118px)/0.9 var(--grot);
+        letter-spacing: -0.035em;
+        max-width: 12ch;
+      }
+      .hero .sub {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 40px;
+        margin-top: 26px;
+        align-items: end;
+      }
+      .hero .sub h2 {
+        font: 500 clamp(24px, 2.4vw, 34px)/1.2 var(--serif);
+        letter-spacing: -0.01em;
+      }
+      .hero .sub p {
+        font-size: 18px;
+        line-height: 1.5;
+        color: #333;
+        margin-top: 12px;
+        max-width: 52ch;
+      }
+      .cta {
+        display: flex;
+        gap: 10px;
+        margin-top: 22px;
+      }
+      .cta a {
+        padding: 14px 20px;
+        font: 700 12.5px/1 var(--grot);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        border: 1.5px solid var(--ink);
+      }
+      .cta .a {
+        background: var(--ink);
+        color: #fff;
+      }
+      .seal {
+        position: absolute;
+        right: 0;
+        top: 44px;
+        width: 150px;
+        height: 150px;
+        animation: spin 48s linear infinite;
+      }
+      .seal svg {
+        width: 100%;
+        height: 100%;
+      }
+      .seal text {
+        font: 700 12.5px var(--grot);
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        fill: var(--red);
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .wall {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        margin-top: 34px;
+      }
+      .stone {
+        border: 1.5px solid var(--ink);
+        padding: 7px;
+        background: #fff;
+      }
+      .stone .in {
+        border: 1px solid var(--ink);
+        padding: 26px 22px 22px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        min-height: 330px;
+      }
+      .stone .rec {
+        font: 500 10px/1.4 var(--grot);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--gray);
+      }
+      .stone .date {
+        font: 400 14px/1.4 var(--serif);
+        color: var(--gray);
+        margin-top: 6px;
+        font-style: italic;
+      }
+      .stone .amt {
+        font: 600 clamp(44px, 4.4vw, 64px)/1 var(--serif);
+        letter-spacing: -0.02em;
+        margin: 18px 0 10px;
+        font-variant-numeric: tabular-nums;
+      }
+      .stone .amt.word {
+        font-size: clamp(34px, 3.2vw, 46px);
+      }
+      .stone .what {
+        font: 500 19px/1.3 var(--serif);
+        max-width: 26ch;
+        margin: 0 auto;
+      }
+      .stone .role {
+        font: italic 400 15px/1.4 var(--serif);
+        color: #444;
+        margin-top: 10px;
+      }
+      .stone .firm {
+        margin-top: auto;
+        padding-top: 18px;
+        border-top: 1px solid var(--soft);
+        font: 700 11px/1.4 var(--grot);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .stone .firm small {
+        display: block;
+        font: 400 12px/1.4 var(--serif);
+        letter-spacing: 0;
+        text-transform: none;
+        color: var(--gray);
+        margin-top: 3px;
+      }
+      .stone.hot {
+        background: var(--ink);
+        color: #fff;
+      }
+      .stone.hot .in {
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      .stone.hot .rec,
+      .stone.hot .date,
+      .stone.hot .role,
+      .stone.hot .firm small {
+        color: #c9c9c9;
+      }
+      .stone.hot .firm {
+        border-top-color: rgba(255, 255, 255, 0.3);
+      }
+      .people {
+        padding: 60px 0 20px;
+      }
+      .sechead {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 12px;
+      }
+      h2.t {
+        font: 800 clamp(28px, 3.4vw, 44px)/1 var(--grot);
+        letter-spacing: -0.03em;
+      }
+      .sechead a {
+        font: 700 12px var(--grot);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--red);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 18px;
+      }
+      .card .ph {
+        aspect-ratio: 1/1;
+        overflow: hidden;
+        background: #ededed;
+      }
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        filter: grayscale(1) contrast(1.12);
+      }
+      .card h3 {
+        font: 700 14px/1.2 var(--grot);
+        margin-top: 10px;
+        letter-spacing: -0.01em;
+      }
+      .card p {
+        font: 400 14px/1.35 var(--serif);
+        color: var(--gray);
+        margin-top: 3px;
+      }
+      .note {
+        margin: 40px 0 64px;
+        padding: 26px 0 0;
+        border-top: 1px solid var(--ink);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+      .note h3 {
+        font: 600 clamp(26px, 2.6vw, 36px)/1.2 var(--serif);
+        letter-spacing: -0.01em;
+      }
+      .note p {
+        font-size: 17px;
+        line-height: 1.55;
+        color: #333;
+      }
+      footer {
+        border-top: 1px solid var(--ink);
+        padding: 20px 0 40px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font: 400 13px/1.6 var(--serif);
+        color: var(--gray);
+      }
+      @media (max-width: 860px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        header {
+          padding: 12px 0;
+        }
+        nav,
+        .tools a:not(.pri) {
+          display: none;
+        }
+        .mark b {
+          font-size: 26px;
+        }
+        .hero {
+          padding: 26px 0 20px;
+        }
+        .hero h1 {
+          font-size: 54px;
+        }
+        .hero .sub {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        .seal {
+          display: none;
+        }
+        .wall {
+          grid-template-columns: 1fr;
+          gap: 14px;
+          margin-top: 24px;
+        }
+        .stone .in {
+          min-height: 0;
+          padding: 22px 16px 18px;
+        }
+        .people {
+          padding: 40px 0 10px;
+        }
+        .grid {
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 10px;
+        }
+        .note {
+          grid-template-columns: 1fr;
+          gap: 12px;
+          margin: 28px 0 40px;
+        }
+        footer {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .seal {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-bar">
+      <div class="wrap">
+        <span>Direction B · As a matter of record · homepage</span
+        ><span
+          ><a href="161-home.html">A</a
+          ><a class="on" href="record-home.html">B</a
+          ><a href="1957-home.html">C</a><a href="termsheet-home.html">D</a
+          ><a href="loop-home.html">E</a
+          ><a href="record-bio.html">Attorney page</a
+          ><a href="index.html">All directions</a></span
+        >
+      </div>
+    </div>
+    <div class="wrap">
+      <header>
+        <div class="mark"><b>Pedersen</b><i>Pedersen & Houpt · Chicago</i></div>
+        <nav>
+          <a href="#">People</a><a href="#">What we do</a><a href="#">Results</a
+          ><a href="#">Insights</a><a href="#">About</a>
+        </nav>
+        <div class="tools">
+          <a class="tel" href="#">312 641 6888</a><a href="#">Client login</a
+          ><a href="#">Pay a bill</a><a class="pri" href="#">Book a call</a>
+        </div>
+      </header>
+      <section class="hero">
+        <div class="seal" aria-hidden="true">
+          <svg viewBox="0 0 150 150">
+            <defs>
+              <path
+                id="c"
+                d="M75,75 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0"
+              />
+            </defs>
+            <text>
+              <textPath href="#c">
+                Pedersen & Houpt · Chicago · since 1957 ·
+              </textPath>
+            </text>
+          </svg>
+        </div>
+        <h1 data-reveal>As a matter of record.</h1>
+        <div class="sub">
+          <div data-reveal>
+            <h2>Counsel to Chicago's middle market.</h2>
+            <p>
+              Twenty-six lawyers for the companies, owners and developers who
+              build this city. Deals, disputes, real estate, employment and the
+              wealth that comes out of it. Since 1957, on Clark Street.
+            </p>
+          </div>
+          <div class="cta" data-reveal>
+            <a class="a" href="#">Talk to a partner</a
+            ><a href="#">All matters of record</a>
+          </div>
+        </div>
+        <div class="wall">
+          <div class="stone hot">
+            <div class="in">
+              <div class="rec">
+                This announcement appears as a matter of record only
+              </div>
+              <div class="date">January 2025</div>
+              <div class="amt word">Sale</div>
+              <div class="what">
+                Skolnik Industries acquired by Pelican Energy Partners
+              </div>
+              <div class="role">
+                Counsel to the seller, a Chicago steel-drum maker, through close
+              </div>
+              <div class="firm">
+                Pedersen & Houpt<small>Corporate and Business Counseling</small>
+              </div>
+            </div>
+          </div>
+          <div class="stone">
+            <div class="in">
+              <div class="rec">
+                This announcement appears as a matter of record only
+              </div>
+              <div class="date">2022, and the build-to-suit in 2025</div>
+              <div class="amt">$70M</div>
+              <div class="what">
+                The James R. Thompson Center, acquired from the State of
+                Illinois
+              </div>
+              <div class="role">
+                Counsel to JRTC Holdings, then on the Google build-to-suit
+              </div>
+              <div class="firm">
+                Pedersen & Houpt<small>Real Estate and Financing</small>
+              </div>
+            </div>
+          </div>
+          <div class="stone">
+            <div class="in">
+              <div class="rec">
+                This announcement appears as a matter of record only
+              </div>
+              <div class="date">Downtown Chicago</div>
+              <div class="amt">$218M</div>
+              <div class="what">
+                First mortgage, $92M of new equity and a $35M mezzanine loan on
+                the redevelopment of an 80-year-old office building into a hotel
+                and offices
+              </div>
+              <div class="role">Counsel on the financing</div>
+              <div class="firm">
+                Pedersen & Houpt<small>Real Estate and Financing</small>
+              </div>
+            </div>
+          </div>
+          <div class="stone">
+            <div class="in">
+              <div class="rec">
+                This announcement appears as a matter of record only
+              </div>
+              <div class="date">Mixed-use tower</div>
+              <div class="amt">$178M</div>
+              <div class="what">
+                Construction loan facility for a condominium tower with retail,
+                parking and a garden park
+              </div>
+              <div class="role">Counsel on the facility</div>
+              <div class="firm">
+                Pedersen & Houpt<small>Real Estate and Financing</small>
+              </div>
+            </div>
+          </div>
+          <div class="stone">
+            <div class="in">
+              <div class="rec">
+                This announcement appears as a matter of record only
+              </div>
+              <div class="date">Middle-market portfolio</div>
+              <div class="amt">$102M</div>
+              <div class="what">
+                SBA-licensed private equity fund: management buyouts,
+                recapitalizations and add-ons
+              </div>
+              <div class="role">Counsel to the fund</div>
+              <div class="firm">
+                Pedersen & Houpt<small>Corporate and Business Counseling</small>
+              </div>
+            </div>
+          </div>
+          <div class="stone">
+            <div class="in">
+              <div class="rec">
+                This announcement appears as a matter of record only
+              </div>
+              <div class="date">March 2013</div>
+              <div class="amt word">Verdict</div>
+              <div class="what">
+                iCONN Systems v. Conxall, a five-week trade-secret jury trial
+              </div>
+              <div class="role">Counsel to the defense</div>
+              <div class="firm">
+                Pedersen & Houpt<small>Litigation and Dispute Resolution</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="people">
+        <div class="sechead">
+          <h2 class="t">Counsel of record</h2>
+          <a href="#">All 26 lawyers →</a>
+        </div>
+        <div class="grid">
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Brian-Collins-cut.png"
+                alt="Brian P. Collins"
+              />
+            </div>
+            <h3>Brian P. Collins</h3>
+            <p>Managing Partner</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/John-Muehlstein-cut.png"
+                alt="John H. Muehlstein"
+              />
+            </div>
+            <h3>John H. Muehlstein</h3>
+            <p>Chairman</p></a
+          >
+          <a class="card" href="record-bio.html"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Eric-Kordish-cut.png"
+                alt="Eric J. Kordish"
+              />
+            </div>
+            <h3>Eric J. Kordish</h3>
+            <p>Corporate · Real estate finance</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Michael-Sullivan-cut.png"
+                alt="Michael P. Sullivan"
+              />
+            </div>
+            <h3>Michael P. Sullivan</h3>
+            <p>Real Estate & Financing</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Anthony-Pesce-cut.png"
+                alt="Anthony D. Pesce"
+              />
+            </div>
+            <h3>Anthony D. Pesce</h3>
+            <p>Litigation · Technology & IP</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Ashley-Czajkowski-cut.png"
+                alt="Ashley N. Czajkowski"
+              />
+            </div>
+            <h3>Ashley N. Czajkowski</h3>
+            <p>Wealth Preservation</p></a
+          >
+        </div>
+      </section>
+      <section class="note">
+        <h3>
+          Sixty-nine years of announcements like these. Founded by Peer
+          Pedersen, whose investor group stood up Waste Management, Boston
+          Chicken and Blockbuster.
+        </h3>
+        <p>
+          Every matter on this page appears with its year and its figure, the
+          way the firm's own record has always been kept. Chambers ranked the
+          real estate group in 2026, the first year it was submitted. Fixed fee
+          arrangements are available on most matters; ask before the first call.
+        </p>
+      </section>
+      <footer>
+        <span
+          >Pedersen & Houpt, P.C. · 161 North Clark Street, Suite 2700, Chicago,
+          Illinois 60601 · 312 641 6888</span
+        ><span
+          >Attorney photographs from pedersenhoupt.com. Matters as published on
+          the firm's site.</span
+        >
+      </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+      var shot = location.search.indexOf("shot") > -1;
+      if (shot) document.body.classList.add("shot");
+      if (
+        !shot &&
+        window.gsap &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        gsap.from("[data-reveal]", {
+          opacity: 0,
+          y: 12,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: "power3.out",
+        });
+        gsap.from(".stone", {
+          opacity: 0,
+          scale: 1.06,
+          duration: 0.55,
+          stagger: 0.07,
+          ease: "power3.out",
+          delay: 0.25,
+        });
+      }
+    </script>
+  </body>
+</html>

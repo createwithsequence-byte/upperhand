@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pedersen & Houpt · 1957 · Direction C</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ground: #f5f6f7;
+        --steel: #e4e7e9;
+        --steel-2: #c9cdd1;
+        --ink: #1b1d1f;
+        --red: #ab1e23;
+        --gray: #6e7378;
+        --line: rgba(27, 29, 31, 0.2);
+        --sans: "IBM Plex Sans", Helvetica, Arial, sans-serif;
+        --cond: "IBM Plex Sans Condensed", var(--sans);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font: 16px/1.5 var(--sans);
+        background: var(--ground);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 0 40px;
+        position: relative;
+      }
+      .demo-bar {
+        background: #111;
+        color: #fff;
+        font: 500 11px/36px var(--cond);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .demo-bar .wrap {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .demo-bar a {
+        opacity: 0.6;
+        margin-left: 14px;
+      }
+      .demo-bar a.on {
+        opacity: 1;
+        color: #c9cdd1;
+      }
+      body.shot .demo-bar {
+        display: none;
+      }
+      .gridlines {
+        position: absolute;
+        inset: 0 40px;
+        pointer-events: none;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 0;
+      }
+      .gridlines i {
+        border-left: 1px solid var(--line);
+        transform-origin: top;
+      }
+      .gridlines i:last-child {
+        border-right: 1px solid var(--line);
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--ink);
+        position: relative;
+      }
+      .mark {
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+      }
+      .mark b {
+        font: 600 28px/1 var(--sans);
+        letter-spacing: -0.02em;
+      }
+      .mark i {
+        font-style: normal;
+        font: 500 10px/1 var(--cond);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--gray);
+        margin-top: 6px;
+        border-top: 2px solid var(--red);
+        padding-top: 5px;
+        width: fit-content;
+      }
+      nav {
+        display: flex;
+        gap: 26px;
+        font: 500 14px/1 var(--sans);
+      }
+      .tools {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font: 500 12.5px/1 var(--cond);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .tools a {
+        padding: 11px 13px;
+        border: 1px solid var(--ink);
+      }
+      .tools a.pri {
+        background: var(--ink);
+        color: #fff;
+      }
+      .tools .tel {
+        border: 0;
+      }
+      .hero {
+        position: relative;
+        padding: 56px 0 48px;
+        display: grid;
+        grid-template-columns: 5fr 7fr;
+        gap: 40px;
+        align-items: end;
+      }
+      .year {
+        font: 600 clamp(150px, 20vw, 300px)/0.82 var(--sans);
+        letter-spacing: -0.06em;
+        color: var(--ink);
+      }
+      .year small {
+        display: block;
+        font: 500 12px/1.5 var(--cond);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--gray);
+        margin-top: 14px;
+      }
+      h1 {
+        font: 300 clamp(34px, 3.6vw, 52px)/1.15 var(--sans);
+        letter-spacing: -0.02em;
+        max-width: 22ch;
+      }
+      h1 b {
+        font-weight: 600;
+      }
+      .lede {
+        font-size: 18px;
+        line-height: 1.55;
+        color: #3a3d40;
+        max-width: 50ch;
+        margin-top: 18px;
+      }
+      .cta {
+        display: flex;
+        gap: 10px;
+        margin-top: 24px;
+      }
+      .cta a {
+        padding: 14px 20px;
+        font: 500 12.5px/1 var(--cond);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        border: 1px solid var(--ink);
+      }
+      .cta .a {
+        background: var(--ink);
+        color: #fff;
+      }
+      .photo {
+        position: relative;
+        height: 560px;
+        overflow: hidden;
+        border-top: 1px solid var(--ink);
+      }
+      .photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 30%;
+        filter: saturate(0.55) contrast(1.04);
+      }
+      .photo figcaption {
+        position: absolute;
+        left: 40px;
+        bottom: 0;
+        background: var(--ground);
+        padding: 10px 14px 10px 0;
+        font: 500 11px/1.4 var(--cond);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .table {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        margin-top: 0;
+      }
+      .table div {
+        padding: 24px 18px 22px;
+        border-right: 1px solid var(--line);
+      }
+      .table div:last-child {
+        border-right: 0;
+      }
+      .table b {
+        display: block;
+        font: 300 44px/1 var(--sans);
+        letter-spacing: -0.03em;
+      }
+      .table small {
+        display: block;
+        font: 500 11px/1.5 var(--cond);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--gray);
+        margin-top: 10px;
+      }
+      .people {
+        padding: 64px 0 20px;
+        position: relative;
+      }
+      .sechead {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 12px;
+      }
+      h2 {
+        font: 300 clamp(30px, 3.6vw, 46px)/1.05 var(--sans);
+        letter-spacing: -0.025em;
+      }
+      .sechead a {
+        font: 500 12px var(--cond);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--red);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 1px;
+        background: var(--line);
+      }
+      .card {
+        background: var(--ground);
+        padding: 0 0 14px;
+      }
+      .card .ph {
+        aspect-ratio: 4/5;
+        overflow: hidden;
+        background: var(--steel);
+      }
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        filter: saturate(0.7);
+      }
+      .card h3 {
+        font: 500 15px/1.2 var(--sans);
+        margin: 10px 12px 0;
+      }
+      .card p {
+        font: 400 12.5px/1.4 var(--sans);
+        color: var(--gray);
+        margin: 3px 12px 0;
+      }
+      .matters {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--ink);
+        margin: 44px 0 64px;
+      }
+      .m {
+        padding: 22px 22px 24px 0;
+        border-right: 1px solid var(--line);
+      }
+      .m:last-child {
+        border-right: 0;
+      }
+      .m + .m {
+        padding-left: 22px;
+      }
+      .m .y {
+        font: 600 13px/1 var(--cond);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--red);
+      }
+      .m h4 {
+        font: 300 26px/1.15 var(--sans);
+        letter-spacing: -0.02em;
+        margin: 12px 0 8px;
+      }
+      .m p {
+        font-size: 15px;
+        line-height: 1.5;
+        color: #3a3d40;
+      }
+      footer {
+        border-top: 1px solid var(--ink);
+        padding: 20px 0 40px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        font: 400 12.5px/1.6 var(--sans);
+        color: var(--gray);
+      }
+      @media (max-width: 860px) {
+        .wrap {
+          padding: 0 16px;
+        }
+        .gridlines {
+          inset: 0 16px;
+          grid-template-columns: repeat(4, 1fr);
+        }
+        header {
+          padding: 12px 0;
+        }
+        nav,
+        .tools a:not(.pri) {
+          display: none;
+        }
+        .mark b {
+          font-size: 24px;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+          gap: 18px;
+          padding: 26px 0 24px;
+        }
+        .year {
+          font-size: 128px;
+        }
+        h1 {
+          font-size: 30px;
+        }
+        .lede {
+          font-size: 16px;
+        }
+        .photo {
+          height: 300px;
+        }
+        .photo figcaption {
+          left: 16px;
+        }
+        .table {
+          grid-template-columns: 1fr 1fr;
+        }
+        .table div {
+          border-bottom: 1px solid var(--line);
+          padding: 16px 12px;
+        }
+        .table div:nth-child(even) {
+          border-right: 0;
+        }
+        .table b {
+          font-size: 34px;
+        }
+        .people {
+          padding: 40px 0 10px;
+        }
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .matters {
+          grid-template-columns: 1fr;
+          margin: 24px 0 40px;
+        }
+        .m {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: 18px 0;
+        }
+        .m + .m {
+          padding-left: 0;
+        }
+        footer {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-bar">
+      <div class="wrap">
+        <span>Direction C · 1957 · homepage</span
+        ><span
+          ><a href="161-home.html">A</a><a href="record-home.html">B</a
+          ><a class="on" href="1957-home.html">C</a
+          ><a href="termsheet-home.html">D</a><a href="loop-home.html">E</a
+          ><a href="1957-bio.html">Attorney page</a
+          ><a href="index.html">All directions</a></span
+        >
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="gridlines" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+        ><i></i><i></i>
+      </div>
+      <header>
+        <div class="mark"><b>Pedersen</b><i>Pedersen & Houpt · Chicago</i></div>
+        <nav>
+          <a href="#">People</a><a href="#">What we do</a><a href="#">Results</a
+          ><a href="#">Insights</a><a href="#">About</a>
+        </nav>
+        <div class="tools">
+          <a class="tel" href="#">312 641 6888</a><a href="#">Client login</a
+          ><a href="#">Pay a bill</a><a class="pri" href="#">Book a call</a>
+        </div>
+      </header>
+      <section class="hero">
+        <div class="year" data-reveal>
+          1957<small>The year the firm opened on Clark Street</small>
+        </div>
+        <div>
+          <h1 data-reveal>
+            <b>Counsel to Chicago's middle market.</b> Founded the year
+            Helvetica was cut and the Inland Steel Building rose a few blocks
+            south.
+          </h1>
+          <p class="lede" data-reveal>
+            Twenty-six lawyers for the companies, owners and developers who
+            build this city. Deals, disputes, real estate, employment and the
+            wealth that comes out of it. Since 1957, on Clark Street.
+          </p>
+          <div class="cta" data-reveal>
+            <a class="a" href="#">Talk to a partner</a
+            ><a href="#">See our results</a>
+          </div>
+        </div>
+      </section>
+    </div>
+    <figure class="photo">
+      <img
+        src="../img/mock/inland-steel-tall.jpg"
+        alt="The Inland Steel Building, Chicago, 1957"
+      />
+      <figcaption>
+        The Inland Steel Building, 30 West Monroe, 1957 · placeholder until the
+        firm's own photographs
+      </figcaption>
+    </figure>
+    <div class="wrap">
+      <section class="table">
+        <div><b>1957</b><small>Founded by Peer Pedersen</small></div>
+        <div><b>26</b><small>Lawyers · nineteen partners</small></div>
+        <div><b>$70M</b><small>The Thompson Center · 2022</small></div>
+        <div><b>2026</b><small>Chambers Spotlight · Real Estate</small></div>
+        <div><b>Fixed</b><small>Fee arrangements on most matters</small></div>
+      </section>
+      <section class="people">
+        <div class="sechead">
+          <h2>The people you would work with.</h2>
+          <a href="#">All 26 lawyers →</a>
+        </div>
+        <div class="grid">
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Brian-Collins-cut.png"
+                alt="Brian P. Collins"
+              />
+            </div>
+            <h3>Brian P. Collins</h3>
+            <p>Managing Partner · M&A, private equity, finance</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/John-Muehlstein-cut.png"
+                alt="John H. Muehlstein"
+              />
+            </div>
+            <h3>John H. Muehlstein</h3>
+            <p>Chairman · Corporate finance, restructuring</p></a
+          >
+          <a class="card" href="1957-bio.html"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Eric-Kordish-cut.png"
+                alt="Eric J. Kordish"
+              />
+            </div>
+            <h3>Eric J. Kordish</h3>
+            <p>Corporate & Business Counseling · Real estate finance</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Michael-Sullivan-cut.png"
+                alt="Michael P. Sullivan"
+              />
+            </div>
+            <h3>Michael P. Sullivan</h3>
+            <p>Real Estate & Financing · Chambers ranked</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Anthony-Pesce-cut.png"
+                alt="Anthony D. Pesce"
+              />
+            </div>
+            <h3>Anthony D. Pesce</h3>
+            <p>Litigation · Technology & IP</p></a
+          >
+          <a class="card" href="#"
+            ><div class="ph">
+              <img
+                src="../img/mock/people/Ashley-Czajkowski-cut.png"
+                alt="Ashley N. Czajkowski"
+              />
+            </div>
+            <h3>Ashley N. Czajkowski</h3>
+            <p>Wealth Preservation · Estates</p></a
+          >
+        </div>
+      </section>
+      <section class="matters">
+        <div class="m">
+          <div class="y">2025 · M&A</div>
+          <h4>Skolnik Industries sold to Pelican Energy Partners</h4>
+          <p>
+            Counsel to the seller, a Chicago steel-drum maker, through close.
+          </p>
+        </div>
+        <div class="m">
+          <div class="y">2022 · Real estate</div>
+          <h4>The Thompson Center</h4>
+          <p>
+            JRTC Holdings' $70M purchase from the State of Illinois and the
+            Google build-to-suit that followed.
+          </p>
+        </div>
+        <div class="m">
+          <div class="y">2013 · Litigation</div>
+          <h4>iCONN Systems v. Conxall</h4>
+          <p>Defense verdict after a five-week trade-secret jury trial.</p>
+        </div>
+      </section>
+      <footer>
+        <span
+          >Pedersen & Houpt, P.C. · 161 North Clark Street, Suite 2700, Chicago,
+          Illinois 60601 · 312 641 6888</span
+        ><span
+          >Demo photograph: Teemu008, CC BY-SA 2.0, Wikimedia Commons. Attorney
+          photographs from pedersenhoupt.com.</span
+        >
+      </footer>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+      var shot = location.search.indexOf("shot") > -1;
+      if (shot) document.body.classList.add("shot");
+      if (
+        !shot &&
+        window.gsap &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        gsap.from(".gridlines i", {
+          scaleY: 0,
+          duration: 0.9,
+          stagger: 0.05,
+          ease: "power2.inOut",
+        });
+        gsap.from("[data-reveal]", {
+          opacity: 0,
+          y: 10,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "power3.out",
+          delay: 0.5,
+        });
+      }
+    </script>
+  </body>
+</html>
