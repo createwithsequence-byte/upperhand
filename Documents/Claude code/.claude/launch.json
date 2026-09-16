@@ -2,6 +2,19 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "getupperhand-io",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "-y",
+        "serve",
+        "/Users/gugumax/code/getupperhand-io/dist",
+        "-l",
+        "4485",
+        "--no-clipboard"
+      ],
+      "port": 4485
+    },
+    {
       "name": "dylan-deck",
       "runtimeExecutable": "python3",
       "runtimeArgs": [
@@ -60,6 +73,280 @@
         "dev"
       ],
       "port": 3500
+    },
+    {
+      "name": "evrglo",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4400",
+        "--directory",
+        "/Users/gugumax/code/evrglo-demo"
+      ],
+      "port": 4400
+    },
+    {
+      "name": "dave-demo",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4311"
+      ],
+      "cwd": "/Users/gugumax/code/engraverdave-demo",
+      "port": 4311
+    },
+    {
+      "name": "retro-arcade",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4330",
+        "--directory",
+        "/Users/gugumax/code/upperhand-skills/retro/references"
+      ],
+      "port": 4330
+    },
+    {
+      "name": "sheehan-demo",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4312"
+      ],
+      "cwd": "/Users/gugumax/code/dsengraver-demo",
+      "port": 4312
+    },
+    {
+      "name": "farrierswife",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4408",
+        "--directory",
+        "/Users/gugumax/code/farrierswife-demo"
+      ],
+      "port": 4408
+    },
+    {
+      "name": "maritime",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4412",
+        "--directory",
+        "/Users/gugumax/code/maritimeclassics-demo"
+      ],
+      "port": 4412
+    },
+    {
+      "name": "iota",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4415",
+        "--directory",
+        "/Users/gugumax/code/maritime-demo"
+      ],
+      "port": 4415
+    },
+    {
+      "name": "bpt",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4420",
+        "--directory",
+        "/Users/gugumax/code/baypianotuner-demo"
+      ],
+      "port": 4420
+    },
+    {
+      "name": "abm-recipe-lab",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd /Users/gugumax/code/abm-recipe-lab && exec npm run dev -- -p 3070"
+      ],
+      "port": 3070
+    },
+    {
+      "name": "hri-pitch",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4412",
+        "--directory",
+        "/Users/gugumax/code/hri-pitch/public"
+      ],
+      "port": 4412
+    },
+    {
+      "name": "tf-proposal",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4470",
+        "--directory",
+        "/Users/gugumax/code/tangible-formats/proposal"
+      ],
+      "port": 4470
+    },
+    {
+      "name": "getupperhand-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/getupperhand-site",
+        "run",
+        "dev",
+        "--",
+        "-p",
+        "3800"
+      ],
+      "port": 3800
+    },
+    {
+      "name": "uh-blocks",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/uh-blocks",
+        "run",
+        "dev"
+      ],
+      "port": 3600
+    },
+    {
+      "name": "solo-stove-audit",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4180",
+        "--directory",
+        "solo-stove-audit"
+      ],
+      "port": 4180
+    },
+    {
+      "name": "echelon",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4433",
+        "--directory",
+        "/Users/gugumax/code/echelon-deep-dive"
+      ],
+      "port": 4433
+    },
+    {
+      "name": "echintake",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4440",
+        "--directory",
+        "/Users/gugumax/code/echelon-intake"
+      ],
+      "port": 4440
+    },
+    {
+      "name": "echphase1",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/echelon-phase-one",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4450"
+      ],
+      "port": 4450
+    },
+    {
+      "name": "echelon-ledger",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/echelon-ledger",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4460"
+      ],
+      "port": 4460
+    },
+    {
+      "name": "jelsert-deck",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4470",
+        "--directory",
+        "/Users/gugumax/code/jel-sert-deep-dive"
+      ],
+      "port": 4470
+    },
+    {
+      "name": "tyger-deck",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4480",
+        "--directory",
+        "/Users/gugumax/code/tyger-deep-dive"
+      ],
+      "port": 4480
+    },
+    {
+      "name": "uh-agendas",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4490",
+        "--directory",
+        "/Users/gugumax/code/uh-agendas"
+      ],
+      "port": 4490
+    },
+    {
+      "name": "sib",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "3311"
+      ],
+      "port": 3311,
+      "cwd": "/Users/gugumax/code/say-it-back"
+    },
+    {
+      "name": "assembly",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/gugumax/code/assembly && npm run dev -- -p 3050"
+      ],
+      "port": 3050
     }
   ]
 }
