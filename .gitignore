@@ -14,3 +14,5 @@
 # ─── Within the workspace, still ignore build output + local secrets ───
 .vercel
 .env*.local
+node_modules/
+.next/
