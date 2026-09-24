@@ -59,7 +59,7 @@ export const QUOTE = {
 export const PHASES = [
   { id: 'discovery', n: '01', name: 'Discovery & planning', short: 'Discovery', start: 0, end: 2, milestone: 'sign' },
   { id: 'design', n: '02', name: 'Design', short: 'Design', start: 2, end: 5, milestone: 'm1' },
-  { id: 'content', n: '03', name: 'Content', short: 'Content', start: 4, end: 6 },
+  { id: 'content', n: '03', name: 'Content & photography', short: 'Content + photo', start: 4, end: 6 },
   { id: 'build', n: '04', name: 'Development', short: 'Build', start: 5, end: 9 },
   { id: 'launch', n: '05', name: 'Optimize, test & launch', short: 'Launch', start: 9, end: 10, milestone: 'm2' },
   { id: 'beyond', n: '06', name: 'Beyond launch', short: 'Beyond', start: 10, end: 12, optional: true },

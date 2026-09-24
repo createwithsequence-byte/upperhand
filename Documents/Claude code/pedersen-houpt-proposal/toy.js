@@ -133,11 +133,13 @@ export async function mountToy(host, { reduce = false } = {}) {
   const clock = new THREE.Clock();
   const frame = () => {
     raf = 0;
-    const t = clock.getElapsedTime();
-    if (!dragging) { spin += vel; vel *= 0.94; spin *= 0.985; }
+    // easing measured in 60 Hz frames, so a 120 Hz display turns the block at the same speed
+    const dt = Math.min(clock.getDelta(), 0.1) * 60, t = clock.elapsedTime;
+    const ease = 1 - Math.pow(1 - 0.06, dt);
+    if (!dragging) { spin += vel * dt; vel *= Math.pow(0.94, dt); spin *= Math.pow(0.985, dt); }
     const sy = Math.min(scrollY / innerHeight, 1.2);
-    rx += (tx + Math.sin(t * 0.5) * 0.04 - sy * 0.12 - rx) * 0.06;
-    ry += (ty + Math.sin(t * 0.35) * 0.22 - 0.28 + spin + sy * 0.9 - ry) * 0.06;
+    rx += (tx + Math.sin(t * 0.5) * 0.04 - sy * 0.12 - rx) * ease;
+    ry += (ty + Math.sin(t * 0.35) * 0.22 - 0.28 + spin + sy * 0.9 - ry) * ease;
     toy.rotation.set(rx, ry, Math.sin(t * 0.4) * 0.015);
     toy.position.y = Math.sin(t * 0.8) * 0.04 + sy * 0.35;
     back.position.x = -ty * 0.25;
