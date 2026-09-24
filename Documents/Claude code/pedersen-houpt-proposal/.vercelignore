@@ -2,3 +2,8 @@ docs
 *.mjs
 package.json
 .vercel
+img/credits.json
+img/today-news.webp
+img/today-people.webp
+img/record-*.webp
+img/hero-duo*.webp

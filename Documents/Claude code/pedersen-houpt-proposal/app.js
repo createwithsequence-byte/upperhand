@@ -56,16 +56,11 @@ function renderQuote() {
     </div>`).join('') +
     `<div class="q-total"><span>Total, fixed fee</span><b>${money(QUOTE.total)}</b></div>`;
   $('#pays').innerHTML = QUOTE.payments.map((p, i) => `
-    <div class="pay"><span class="pay-pct">${p.pct}%</span><p class="pay-when">Payment ${i + 1} · ${p.when}</p><p class="pay-amt">${money(p.amount)}</p><p class="pay-lab">${p.label}</p></div>`).join('');
-  $('#opts').innerHTML = QUOTE.optional.map(o => {
-    const quoted = o.unit === 'quote';
-    const price = quoted ? 'Quoted<small>fixed fee</small>' : `${money(o.price)}<small>per ${o.unit === 'mo' ? 'month' : o.unit}</small>`;
-    return `<label class="opt-row${quoted ? ' quoted' : ''}">
-      ${quoted ? '<span class="sw" aria-hidden="true"></span>' : `<input type="checkbox" data-opt="${o.id}"><span class="sw" aria-hidden="true"></span>`}
+    <div class="pay"><span class="pay-pct">${p.pct}%</span><p class="pay-when">Payment ${i + 1} · ${p.week === 0 ? 'Day 1' : 'Week ' + p.week}</p><p class="pay-amt">${money(p.amount)}</p><p class="pay-lab">${p.label}</p></div>`).join('');
+  const unit = { mo: 'a month, at cost', block: 'per 10-hour block', article: 'per article', session: 'per session' };
+  $('#opts').innerHTML = QUOTE.optional.map(o => `<div class="opt-row">
       <span><span class="opt-name">${o.name}</span><span class="opt-det">${o.detail}</span></span>
-      <span class="opt-price">${price}</span></label>`;
-  }).join('');
-  $('#onetime').textContent = money(QUOTE.total);
+      <span class="opt-price">${o.unit === 'quote' ? 'Quoted' : money(o.price)}<small>${o.unit === 'quote' ? 'one at a time' : unit[o.unit]}</small></span></div>`).join('');
 }
 
 function renderCal() {
@@ -87,19 +82,19 @@ function wireQuote() {
       b.setAttribute('aria-expanded', open);
     });
   }
-  const monthly = $('#monthly');
-  const sum = () => {
-    let m = 0;
-    for (const i of $$('input[data-opt]')) {
-      const o = QUOTE.optional.find(x => x.id === i.dataset.opt);
-      i.closest('.opt-row').classList.toggle('on', i.checked);
-      if (i.checked && o.unit === 'mo') m += o.price;
-    }
-    const sess = $$('input[data-opt]').filter(i => i.checked && QUOTE.optional.find(x => x.id === i.dataset.opt).unit === 'session');
-    monthly.textContent = money(m) + (sess.length ? ' + sessions' : '');
+  // the first-year estimate: hosting is fixed, hours and articles are the reader's to set
+  const price = id => QUOTE.optional.find(o => o.id === id).price;
+  const ia = $('#in-a'), ih = $('#in-h');
+  if (!ia) return;
+  const est = () => {
+    const host = price('hosting') * 12, hrs = +ih.value * price('hours'), art = +ia.value * 12 * price('articles');
+    $('#out-a').textContent = ia.value; $('#out-h').textContent = ih.value;
+    $('#est-t').textContent = money(host + hrs + art);
+    $('#est-n').textContent = `Hosting ${money(host)} · hours ${money(hrs)} · articles ${money(art)}`;
+    for (const r of [ia, ih]) r.style.setProperty('--fill', (r.value / r.max) * 100 + '%');
   };
-  for (const i of $$('input[data-opt]')) i.addEventListener('change', sum);
-  sum();
+  ia.addEventListener('input', est); ih.addEventListener('input', est);
+  est();
 }
 
 function wireBA() {
@@ -153,7 +148,7 @@ function wireWall() {
 
 /* ─── motion ─── */
 function reveals() {
-  const els = $$('.rv, .hl, .measures tr, .svc-row, .quote, .phase');
+  const els = $$('.rv, .hl, .measures tr, .quote, .phase');
   if (reduce || !('IntersectionObserver' in window)) { for (const e of els) e.classList.add('in', 'drawn'); return; }
   const io = new IntersectionObserver(ents => {
     for (const en of ents) if (en.isIntersecting) {
@@ -163,9 +158,6 @@ function reveals() {
     }
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
   for (const e of els) io.observe(e);
-  // the four verbs light as each one reaches the middle of the screen
-  const lit = new IntersectionObserver(ents => { for (const en of ents) en.target.classList.toggle('lit', en.isIntersecting); }, { rootMargin: '-35% 0px -45% 0px' });
-  for (const r of $$('.svc-row')) lit.observe(r);
 }
 
 function count(scope) {
@@ -222,7 +214,7 @@ function scrollWork() {
       }
       gantt.style.setProperty('--t', Math.min(1, t / SPAN));
       if (play) play.style.setProperty('--t', Math.min(1, t / SPAN));
-      if (playLab) playLab.textContent = label(t);
+      if (playLab) { playLab.textContent = label(t); playLab.classList.toggle('end', t / SPAN > 0.72); }
       for (const p of PHASES) {
         bars[p.id]?.classList.toggle('on', p.id === active);
         bars[p.id]?.classList.toggle('done', t >= p.end && p.id !== active);
@@ -262,6 +254,15 @@ renderWeeks(); renderGantt(); renderQuote(); renderCal();
 wireQuote(); wireBA(); wireWall();
 if (printing) {
   for (const i of $$('img[loading="lazy"]')) i.loading = 'eager';
+  // links in the PDF must point at the published proposal, not the machine that rendered it
+  const BASE = 'https://pedersen-houpt-proposal.vercel.app/'; // ponytail: update if the proposal moves to another address
+  for (const l of $$('a[href]')) { const h = l.getAttribute('href'); if (!/^(https?:|mailto:|#)/.test(h)) l.href = BASE + h; }
+  // lighter copies for the PDF: the page keeps its retina images, the document stays small enough to email
+  const PRINT = new Set(["chicago-1956", "clark-adams", "clark-field", "clark-haer", "hero-duo", "hero-ink", "inland-steel-tall", "lasalle-canyon", "lineage-loop", "loop-l", "pv-bio", "pv-home", "pv-home-long", "pv-phone", "record-bio", "record-home", "river-night", "today-home"]);
+  for (const i of $$('img')) {
+    const m = i.getAttribute('src').match(/^img\/(.+)\.webp$/);
+    if (m && PRINT.has(m[1])) i.src = 'img/print/' + m[1].replace('/', '__') + '.jpg';
+  }
   for (const e of $$('.rv, .hl, .measures tr, .quote, .phase')) e.classList.add('in', 'drawn');
   for (const l of $$('.q-line')) l.classList.add('open');
   for (const b of $$('.g-bar')) b.classList.add('done');

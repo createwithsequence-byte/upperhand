@@ -40,6 +40,8 @@ try {
   const pdf = await page.pdf({ format: 'Letter', landscape: true, printBackground: true, scale: 0.8, preferCSSPageSize: true });
   const pages = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
   if (errs.length) throw new Error('[BUILD] page errors: ' + errs.join(' | '));
+  // render contract: a link to the build machine inside the PDF is a dead link for the firm
+  if (/\/URI\s*\((https?:\/\/(127\.0\.0\.1|localhost)[^)]*)\)/.test(pdf.toString('latin1'))) throw new Error('[BUILD] PDF contains links to the local build server');
   if (pages < 12 || pages > 22) throw new Error(`[BUILD] PDF has ${pages} pages; expected 12 to 22`);
   await writeFile(join(ROOT, 'pedersen-houpt-proposal.pdf'), pdf);
   console.log(`[BUILD] pedersen-houpt-proposal.pdf: ${pages} pages, ${(pdf.length / 1024 / 1024).toFixed(1)} MB`);

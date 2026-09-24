@@ -3,7 +3,7 @@
 @page { size: letter landscape; margin: 0.42in 0.5in; }
 html, body { background: #fff !important; }
 body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-body::after, .contact, .ph-media.sheet, .ph-media.browser, .ph-media.cal, .tl-note, .spine, .pillnav, .skip, .cover-cta, .stage-tag, .stage canvas, .ba-handle, .wall-tabs, .opt-total, .opt-row .sw, .q-tog, .close-cta .btn { display: none !important; }
+body::after, .est input, .contact, .ph-media.sheet, .ph-media.browser, .ph-media.cal, .tl-note, .spine, .pillnav, .skip, .cover-cta, .stage-tag, .stage canvas, .ba-handle, .wall-tabs, .opt-total, .opt-row .sw, .q-tog, .close-cta .btn { display: none !important; }
 main, .foot { margin-left: 0 !important; }
 html.js .rv, .rv { opacity: 1 !important; transform: none !important; }
 .hl > span { background-size: 100% 90% !important; color: #fff !important; transition: none !important; }
@@ -60,7 +60,7 @@ section[id], .cover { break-before: page; }
 a[href^="mailto"] { text-decoration: none; }
 
 /* density: the web page breathes, the document doesn't have to */
-.h2 { font-size: 4.2rem; }
+.h2 { font-size: 2.8rem; }
 .records { margin-top: 2rem; }
 .batch, .shoot, .seo, .success, .stack, .ba, .svc { margin-top: 2.4rem; }
 .shotlist { grid-template-columns: 1fr 1fr; margin-top: 1.6rem; }
@@ -121,3 +121,11 @@ a[href^="mailto"] { text-decoration: none; }
 .foot { padding-block: 0.8rem; }
 .foot-in { gap: 6px; }
 .close { margin-top: 1rem; }
+
+.est { box-shadow: 0 0 0 1px var(--line); }
+/* before / after in print: two whole frames, not two crops */
+.ba-frame { aspect-ratio: auto !important; max-height: none !important; }
+.ba-img { height: auto !important; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+.ba { margin-top: 1.6rem; }
+.pv-block { margin-top: 1.6rem; break-inside: avoid; }
+.pv-lineage img { box-shadow: 0 0 0 1px var(--line); }

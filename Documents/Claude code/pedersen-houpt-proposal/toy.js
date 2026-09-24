@@ -55,7 +55,7 @@ export async function mountToy(host, { reduce = false } = {}) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setClearColor(0x0047ff, 1);
+  renderer.setClearColor(0x1c1d20, 1);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 60);
@@ -66,7 +66,7 @@ export async function mountToy(host, { reduce = false } = {}) {
 
   // the backdrop: La Salle Street, dipped in Upperhand blue. The block refracts it.
   const loader = new THREE.TextureLoader();
-  const photo = await loader.loadAsync('img/hero-duo.webp');
+  const photo = await loader.loadAsync('img/hero-ink.webp');
   photo.colorSpace = THREE.SRGBColorSpace;
   const back = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: photo, toneMapped: false }));
   back.position.z = -2.6;
@@ -77,7 +77,7 @@ export async function mountToy(host, { reduce = false } = {}) {
   const glass = new THREE.MeshPhysicalMaterial({
     color: 0xffffff, metalness: 0, roughness: 0.035, transmission: 1, thickness: 0.95, ior: 1.49,
     attenuationColor: new THREE.Color(0xe8efff), attenuationDistance: 4.5,
-    clearcoat: 1, clearcoatRoughness: 0.02, specularIntensity: 1, envMapIntensity: 1.35,
+    clearcoat: 1, clearcoatRoughness: 0.02, specularIntensity: 1, envMapIntensity: 1.35, dispersion: 0.18,
   });
   const block = new THREE.Mesh(new RoundedBoxGeometry(1.55, 2.05, 0.46, 8, 0.085), glass);
   toy.add(block);
