@@ -2,5 +2,9 @@
   "name": "pedersen-houpt-proposal",
   "private": true,
   "type": "module",
-  "scripts": { "check": "node check.mjs --selftest && node check.mjs", "build": "node build.mjs" }
+  "scripts": {
+    "check": "node check.mjs --selftest && node check.mjs",
+    "build": "node build.mjs",
+    "push": "cd ~ && git subtree split --prefix='Documents/Claude code/pedersen-houpt-proposal' -b ph-proposal-split && git push https://github.com/Upperhand-LLC/pedersen-houpt-proposal.git ph-proposal-split:main"
+  }
 }
