@@ -1,0 +1,2529 @@
+<!--
+  deep-dive deck · Michael A. Riemenschneider · MICEL-Consulting · The Chefs Community · Sept 2026
+  Engine: deep-dive skill deck-engine (tokens, chrome, particle layer, slide CSS).
+  Skin: The Chefs Community (thechefscommunity.com): near-black navy, gold accent,
+  Instrument Serif display. Particles recolored to gold and cream, slowed to steam.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Riemenschneider · Deep Dive · Sept 2026</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0b0d13;
+        --bg-2: #10131a;
+        --line: #23262f;
+        --line-2: #363a47;
+        --ink: #f6f3ed;
+        --ink-2: #b3afa6;
+        --ink-3: #6f6c66;
+        --ember: #dcb05b;
+        --heat: #efd190;
+        --steel: #c7c9cd;
+        --cool: #8fa7c4;
+        --pad: clamp(28px, 4.2vw, 78px);
+        --display: "Instrument Serif", "Times New Roman", Georgia, serif;
+        --sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      body.ready {
+        opacity: 1;
+      }
+
+      #embers {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        display: block;
+      }
+      #heat {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            70% 55% at 50% 118%,
+            rgba(220, 176, 91, 0.32),
+            transparent 62%
+          ),
+          radial-gradient(
+            40% 30% at 50% 108%,
+            rgba(239, 209, 144, 0.18),
+            transparent 70%
+          );
+        opacity: 0.9;
+      }
+      #photo {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 0.9s ease;
+        filter: saturate(0.9) contrast(1.05);
+      }
+      #photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(11, 13, 19, 0.97) 0%,
+          rgba(11, 13, 19, 0.84) 42%,
+          rgba(11, 13, 19, 0.38) 100%
+        );
+      }
+      #vig {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: radial-gradient(
+          125% 92% at 50% 42%,
+          transparent 34%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.09;
+        mix-blend-mode: overlay;
+      }
+
+      #deck {
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: var(--pad);
+        padding-bottom: calc(var(--pad) + 34px);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .slide .inner {
+        margin: auto;
+      }
+      .slide.dense h2 {
+        font-size: clamp(30px, 3.9vw, 60px);
+      }
+      .slide.dense .card {
+        padding: clamp(11px, 1.15vw, 18px);
+      }
+      .slide.dense .card h3 {
+        font-size: clamp(13.5px, 1.15vw, 17px);
+      }
+      .slide.dense p,
+      .slide.dense li {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+        line-height: 1.5;
+      }
+      .slide.dense .row {
+        padding: 7px 0;
+        gap: 14px;
+        grid-template-columns: 150px 0.9fr 1.7fr;
+      }
+      .slide.dense .stat {
+        padding: clamp(12px, 1.3vw, 20px) clamp(10px, 1.2vw, 18px);
+      }
+      .slide.dense .stat .n {
+        font-size: clamp(32px, 4vw, 60px);
+      }
+      .slide.dense .kicker {
+        margin-bottom: 12px;
+      }
+      body.cover #logo-corner {
+        display: none;
+      }
+      .slide.on {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .inner {
+        width: 100%;
+        max-width: 1380px;
+        margin: 0 auto;
+      }
+
+      #rail {
+        position: fixed;
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 26px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #ticks {
+        flex: 1;
+        display: flex;
+        gap: 3px;
+        height: 2px;
+      }
+      .tick {
+        flex: 1;
+        background: var(--line-2);
+        transition:
+          background 0.45s ease,
+          transform 0.45s ease;
+        transform-origin: bottom;
+      }
+      .tick.b1 {
+        background: #3a3322;
+      }
+      .tick.b2 {
+        background: #2d3240;
+      }
+      .tick.b3 {
+        background: #3b3026;
+      }
+      .tick.b4 {
+        background: #2f3a33;
+      }
+      .tick.done {
+        background: var(--ink-3);
+      }
+      .tick.now {
+        background: var(--ember);
+        transform: scaleY(3);
+      }
+      #brand {
+        position: fixed;
+        top: 26px;
+        right: var(--pad);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #brand b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+      #logo-corner {
+        position: fixed;
+        top: 22px;
+        left: var(--pad);
+        z-index: 6;
+        height: 20px;
+        width: auto;
+        opacity: 0.9;
+      }
+
+      .kicker {
+        font-family: var(--mono);
+        font-size: clamp(9px, 0.78vw, 11px);
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .kicker .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ember);
+        flex: 0 0 auto;
+      }
+      .kicker .num {
+        color: var(--ink-2);
+      }
+      h1 {
+        font-family: var(--display);
+        font-size: clamp(56px, 9.4vw, 160px);
+        font-weight: 400;
+        line-height: 0.94;
+        letter-spacing: -0.015em;
+        text-wrap: balance;
+      }
+      h2 {
+        font-family: var(--display);
+        font-size: clamp(36px, 5vw, 78px);
+        font-weight: 400;
+        line-height: 0.98;
+        letter-spacing: -0.012em;
+        text-wrap: balance;
+        max-width: 22ch;
+      }
+      h1 i,
+      h2 i {
+        font-style: italic;
+        color: var(--ember);
+      }
+      h3 {
+        font-size: clamp(15px, 1.35vw, 20px);
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.012em;
+      }
+      .lede {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.55;
+        color: var(--ink-2);
+        max-width: 62ch;
+        font-weight: 300;
+      }
+      p,
+      li {
+        font-size: clamp(12.5px, 1vw, 15px);
+        line-height: 1.6;
+        color: var(--ink-2);
+        font-weight: 300;
+      }
+      strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      em {
+        font-style: normal;
+        color: var(--heat);
+        font-weight: 500;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .w {
+        display: inline-block;
+        will-change: transform, opacity;
+      }
+      .hot {
+        color: var(--ember);
+      }
+      .warm {
+        color: var(--heat);
+      }
+      .cold {
+        color: var(--cool);
+      }
+      .unv {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--cool);
+        border: 1px solid rgba(143, 167, 196, 0.35);
+        border-radius: 2px;
+        padding: 1px 5px;
+        margin-left: 6px;
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+
+      .cols {
+        display: grid;
+        gap: clamp(14px, 1.8vw, 30px);
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .c2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .c3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .c4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: clamp(26px, 3.6vw, 64px);
+        align-items: center;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: clamp(14px, 1.5vw, 24px);
+        background: rgba(16, 19, 26, 0.74);
+        backdrop-filter: blur(6px);
+      }
+      .card h3 {
+        margin-bottom: 8px;
+      }
+      .card .tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 10px;
+        display: block;
+      }
+      .card.hot {
+        border-color: rgba(220, 176, 91, 0.55);
+      }
+      .card.hot .tag {
+        color: var(--ember);
+      }
+      .card.cold {
+        border-color: rgba(143, 167, 196, 0.45);
+      }
+      .card.cold .tag {
+        color: var(--cool);
+      }
+      ul {
+        list-style: none;
+      }
+      ul li {
+        padding-left: 16px;
+        position: relative;
+        margin-bottom: 6px;
+      }
+      ul li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.72em;
+        width: 6px;
+        height: 1px;
+        background: var(--ember);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .stat {
+        padding: clamp(14px, 1.6vw, 26px) clamp(12px, 1.4vw, 22px);
+        background: rgba(16, 19, 26, 0.72);
+        border-top: 1px solid var(--line-2);
+      }
+      .stat .n {
+        font-family: var(--display);
+        font-size: clamp(40px, 5vw, 80px);
+        font-weight: 400;
+        line-height: 0.9;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      .stat .n.hot {
+        color: var(--ember);
+      }
+      .stat .n.warm {
+        color: var(--heat);
+      }
+      .stat .l {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .stat .s {
+        font-size: 12.5px;
+        color: var(--ink-2);
+        margin-top: 6px;
+        font-weight: 300;
+        line-height: 1.45;
+      }
+
+      .verdict {
+        border-left: 3px solid var(--ember);
+        padding-left: clamp(16px, 2vw, 30px);
+        margin-top: 26px;
+      }
+      .verdict p {
+        font-size: clamp(15px, 1.45vw, 22px);
+        color: var(--ink);
+        font-weight: 300;
+        line-height: 1.45;
+        max-width: 60ch;
+      }
+
+      .tl {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 6px;
+        margin-top: clamp(22px, 3vw, 44px);
+        position: relative;
+      }
+      .tl::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 7px;
+        height: 1px;
+        background: linear-gradient(90deg, var(--ink-3), var(--ember));
+      }
+      .tl > div {
+        position: relative;
+        padding-top: 22px;
+      }
+      .tl > div::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 0;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 2px solid var(--ink-3);
+      }
+      .tl > div.hot::before {
+        border-color: var(--ember);
+        background: var(--ember);
+        box-shadow: 0 0 14px rgba(220, 176, 91, 0.6);
+      }
+      .tl .y {
+        font-family: var(--display);
+        font-size: clamp(20px, 2.3vw, 36px);
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .tl .y.hot {
+        color: var(--ember);
+      }
+      .tl p {
+        font-size: clamp(10.5px, 0.82vw, 13px);
+        line-height: 1.4;
+        margin-top: 6px;
+      }
+
+      .bars {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 12px;
+        align-items: end;
+        height: clamp(200px, 30vh, 320px);
+        margin-top: 20px;
+      }
+      .bar {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+      }
+      .bar .v {
+        font-family: var(--display);
+        font-size: clamp(22px, 2.4vw, 38px);
+        font-weight: 400;
+        color: var(--ink);
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .bar .v small {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+        margin-left: 4px;
+        font-weight: 400;
+      }
+      .bar .f {
+        background: linear-gradient(180deg, var(--heat), var(--ember));
+        border-radius: 3px 3px 0 0;
+        transform-origin: bottom;
+      }
+      .bar .f.dim {
+        background: linear-gradient(180deg, #5a554a, #3a372f);
+      }
+      .bar .f.ghost {
+        background: transparent;
+        border: 1px dashed var(--line-2);
+      }
+      .bar .l {
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+        line-height: 1.4;
+      }
+      .bar .l b {
+        color: var(--ink-2);
+        font-weight: 500;
+        display: block;
+      }
+
+      .person {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        gap: 14px;
+        align-items: start;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .person img {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        object-fit: cover;
+        filter: grayscale(0.2);
+      }
+      .person .ph {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        background: var(--bg-2);
+        border: 1px solid var(--line-2);
+        display: grid;
+        place-items: center;
+        font-family: var(--display);
+        font-size: 26px;
+        color: var(--ink-3);
+      }
+      .person h3 {
+        font-size: clamp(14px, 1.2vw, 18px);
+      }
+      .person .r {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin: 3px 0 6px;
+      }
+      .person p {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+      }
+
+      .q {
+        border-top: 1px solid var(--line);
+        padding: 16px 0 6px;
+      }
+      .q blockquote {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.4;
+        color: var(--ink);
+        font-weight: 300;
+      }
+      .q blockquote::before {
+        content: "\201C";
+        color: var(--ember);
+        font-family: var(--display);
+        font-size: 1.6em;
+        line-height: 0;
+        vertical-align: -0.3em;
+        margin-right: 4px;
+      }
+      .q cite {
+        display: block;
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+
+      .portrait {
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        max-width: 420px;
+        border: 1px solid var(--line-2);
+      }
+      .portrait img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .portrait .cap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px;
+        background: linear-gradient(0deg, rgba(11, 13, 19, 0.92), transparent);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+
+      .rows {
+        margin-top: 22px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 150px 1fr 1fr;
+        gap: 20px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        align-items: baseline;
+      }
+      .row.head {
+        border-top: none;
+        padding-bottom: 6px;
+      }
+      .row.head span {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .row .k {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .row p {
+        font-size: clamp(11.5px, 0.92vw, 14px);
+      }
+      .row .no {
+        color: var(--ink-3);
+      }
+      .row .yes {
+        color: var(--ink);
+      }
+      .tight .row {
+        padding: 4px 0;
+      }
+      .rows.fp .row,
+      .slide.dense .rows.fp .row {
+        grid-template-columns: 1.1fr 0.45fr 1.75fr;
+        gap: 12px;
+      }
+      .rows.fp .k {
+        text-transform: none;
+        letter-spacing: 0.02em;
+        overflow-wrap: anywhere;
+        font-size: 10.5px;
+      }
+      .rows.brief .row,
+      .slide.dense .rows.brief .row {
+        grid-template-columns: 200px 1.55fr 0.85fr;
+      }
+      .tight .row p,
+      .slide.dense .tight .row p {
+        font-size: clamp(11px, 0.84vw, 12.5px);
+        line-height: 1.42;
+      }
+      .src.c3 {
+        columns: 3;
+        column-gap: 26px;
+        margin-top: 12px;
+      }
+      .src.c3 p {
+        font-size: 9px;
+        line-height: 1.42;
+        margin-bottom: 3px;
+      }
+
+      .pdiv .part {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin-bottom: 18px;
+      }
+      .pdiv h1 {
+        font-size: clamp(64px, 11vw, 190px);
+      }
+      .pdiv .lede {
+        margin-top: 22px;
+      }
+
+      .cover-slide .inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .cover-slide .logo {
+        height: clamp(26px, 3vw, 44px);
+        width: auto;
+        margin-bottom: clamp(28px, 4vw, 60px);
+      }
+      .cover-slide h1 {
+        max-width: 12ch;
+      }
+      .cover-slide .sub {
+        margin-top: clamp(20px, 2.6vw, 40px);
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        gap: clamp(20px, 3vw, 50px);
+        justify-content: start;
+      }
+      .cover-slide .sub div {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        line-height: 1.7;
+      }
+      .cover-slide .sub b {
+        color: var(--ink);
+        font-weight: 500;
+        display: block;
+      }
+
+      .call {
+        margin-top: 22px;
+        padding: 14px 18px;
+        border: 1px solid rgba(220, 176, 91, 0.45);
+        border-radius: 4px;
+        background: rgba(220, 176, 91, 0.07);
+      }
+      .call p {
+        color: var(--ink);
+        font-size: clamp(12.5px, 1.02vw, 15.5px);
+      }
+      .note {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        margin-top: 16px;
+        text-transform: uppercase;
+        line-height: 1.6;
+      }
+
+      .exhibit img {
+        display: block;
+        width: auto;
+        max-width: 100%;
+        max-height: calc(100vh - 2 * var(--pad) - 120px);
+        margin: 0 auto;
+        border: 1px solid var(--line-2);
+        border-radius: 4px;
+      }
+      .exhibit .kicker {
+        margin-bottom: 14px;
+      }
+      .exhibit .note {
+        text-align: center;
+        margin-top: 12px;
+      }
+      .big {
+        font-family: var(--display);
+        font-size: clamp(120px, 22vw, 360px);
+        line-height: 0.85;
+        color: var(--ember);
+        letter-spacing: -0.03em;
+      }
+
+      .src {
+        columns: 2;
+        column-gap: 40px;
+        margin-top: 20px;
+      }
+      .src p {
+        font-size: 10.5px;
+        line-height: 1.5;
+        margin-bottom: 5px;
+        break-inside: avoid;
+        font-family: var(--mono);
+        color: var(--ink-3);
+      }
+      .src p b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      #ov {
+        position: fixed;
+        inset: 0;
+        z-index: 8;
+        background: rgba(11, 13, 19, 0.96);
+        display: none;
+        padding: 60px var(--pad);
+        overflow: auto;
+      }
+      #ov.on {
+        display: block;
+      }
+      #ovg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+      }
+      .ovc {
+        border: 1px solid var(--line);
+        padding: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .ovc:hover,
+      .ovc.now {
+        border-color: var(--ember);
+      }
+      .ovc.part {
+        background: rgba(220, 176, 91, 0.08);
+      }
+      .ovc .n {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.16em;
+      }
+      .ovc .t {
+        font-size: 13px;
+        color: var(--ink);
+        margin-top: 6px;
+      }
+      #help {
+        position: fixed;
+        right: var(--pad);
+        bottom: 52px;
+        z-index: 7;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        display: none;
+      }
+      #help.on {
+        display: block;
+      }
+
+      @media (max-width: 900px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats {
+          grid-template-columns: 1fr 1fr;
+        }
+        .bars {
+          grid-template-columns: repeat(4, 1fr);
+          height: auto;
+          row-gap: 20px;
+        }
+        .bar {
+          height: 180px;
+        }
+        .tl {
+          grid-template-columns: repeat(5, 1fr);
+          row-gap: 26px;
+        }
+        .row,
+        .slide.dense .row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+        .src {
+          columns: 1;
+        }
+        h2 {
+          max-width: none;
+        }
+        .slide {
+          justify-content: flex-start;
+          overflow: auto;
+          padding-top: 70px;
+        }
+      }
+      @media (max-width: 600px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats {
+          grid-template-columns: 1fr;
+        }
+        .bars {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .cover-slide .sub {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="embers"></canvas>
+    <div id="photo"></div>
+    <div id="heat"></div>
+    <div id="vig"></div>
+    <svg id="grain">
+      <filter id="n">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.8"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#n)" />
+    </svg>
+    <img id="logo-corner" src="img/tcc-logo-white.png" alt="The Chefs Community" />
+    <div id="brand">
+      <b>Riemenschneider · MICEL · The Chefs Community</b> · deep dive · Sept
+      2026
+    </div>
+
+    <div id="deck">
+      <!-- ═══════════ COVER ═══════════ -->
+      <section
+        class="slide cover-slide"
+        data-t="Cover"
+        data-p="0"
+        data-photo="img/micel-hero.jpg"
+        data-int="1"
+      >
+        <div class="inner">
+          <img
+            class="logo"
+            src="img/tcc-logo-white.png"
+            alt="The Chefs Community"
+          />
+          <h1 data-split>Check the pass <i>first.</i></h1>
+          <div class="sub">
+            <div>
+              Audit<b
+                >Michael A. Riemenschneider · MICEL-Consulting · The Chefs
+                Community</b
+              >
+            </div>
+            <div>
+              Scope<b>The ventures · The product · The person · The counterparty</b>
+            </div>
+            <div>Date<b>24 September 2026</b></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ THE READ ═══════════ -->
+      <section class="slide" data-t="The read" data-p="0" data-int="0.35">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">01</span> The read in one
+            breath
+          </div>
+          <h2 data-split>Real product. Real chef. Unreal record.</h2>
+          <div class="verdict" style="margin-top: 16px">
+            <p>
+              Michael Riemenschneider holds one Michelin star under his own
+              name, for about ten months in 2017, not two for twenty years.
+              Sixteen venues in six countries since 2008 all closed, three into
+              insolvency, two still open. The Chefs Community is live on
+              Lovable with Stripe checkout, four founding chefs who do not
+              appear to exist, and no verifiable member. The $400K to $600K
+              rebuild is the only number in the intro with no source.
+            </p>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="n hot">1</div>
+              <div class="l">Star held under his ownership</div>
+              <div class="s">
+                Atelier Wilma, Frankfurt, Guide Michelin 2017. Announced Nov
+                2016; his insolvency May 2017; fired Oct 2017. Claim: two stars,
+                nearly twenty years.
+              </div>
+            </div>
+            <div class="stat">
+              <div class="n">16</div>
+              <div class="l">Venues, 2008 to 2023</div>
+              <div class="s">
+                UK, Austria, Germany, Turkey, Spain, Belgium. None open today.
+                Median life under him: six months.
+              </div>
+            </div>
+            <div class="stat">
+              <div class="n warm">£1.87M</div>
+              <div class="l">Claimed in the High Court, 2016</div>
+              <div class="s">
+                Mascolo v Riemenschneider. Worldwide freezing order, £90,000
+                costs order, defendant absent and unrepresented.
+              </div>
+            </div>
+            <div class="stat">
+              <div class="n">0</div>
+              <div class="l">Verifiable founding chefs</div>
+              <div class="s">
+                Four of the five named founding members return nothing in any
+                search. Memberships sell against them at $9 a month.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ PART 1 ═══════════ -->
+      <section
+        class="slide pdiv"
+        data-t="Part 1 · The ventures"
+        data-p="1"
+        data-photo="img/couple.jpg"
+        data-pos="center 18%"
+        data-int="0.9"
+      >
+        <div class="inner">
+          <div class="part">Part one</div>
+          <h1 data-split>The ventures</h1>
+          <p class="lede">
+            Two Lovable sites, one consulting engagement, one $9 membership, and
+            a company register that runs from Penzance to De Panne.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="What exists today" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">03</span> Under the name
+            today · Dallas-Fort Worth
+          </div>
+          <h2 data-split>Four names on the door. One paying engagement.</h2>
+          <div class="cols c4">
+            <div class="card">
+              <span class="tag">MICEL-Consulting</span>
+              <h3>"Hospitality consulting with Michelin-starred precision."</h3>
+              <p>
+                Domain 15 Jan 2024. Lovable build, "© 2026". Six service lines,
+                two founders, no entity, no address, no pricing, no client list.
+                Contact is a Gmail-style mailbox at the domain. No Texas
+                filing found (SOS, Comptroller, TABC, Bizapedia).
+              </p>
+            </div>
+            <div class="card hot">
+              <span class="tag">The Chefs Community</span>
+              <h3>Live. $9 a month, $89 a year, Stripe checkout.</h3>
+              <p>
+                Domain 23 Oct 2025. Lovable build on the same IP as MICEL.
+                Public: home, chefs, partners, events, pricing. Members-only:
+                feed, boards, The Pass, jobs. Founding invite codes. No app, no
+                member count, no testimonial.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">Textures by MR · Secret Dinners Society</span>
+              <h3>Instagram bios, not venues.</h3>
+              <p>
+                "Textures by MR Restaurant" and "Secret Dinners Society" sit in
+                his Instagram bio and on his TCC profile ("Texturs by MR").
+                Textures was the name in Gaucín (2022) and De Panne (2023). No
+                Texas Textures found. Only paid work found: Beren Meze,
+                Fort Worth.
+              </p>
+            </div>
+            <div class="card cold">
+              <span class="tag">Frisco and Plano concepts</span>
+              <h3>No evidence.</h3>
+              <p>
+                Searched Dallas Morning News, D Magazine, Eater, CultureMap,
+                Community Impact, Frisco Enterprise, city portals, Collin
+                County, TABC open data (0 rows for Riemenschneider, MICEL,
+                Textures). One anonymous reader comment (Aug 2026) places him
+                in Frisco. Nothing else.
+              </p>
+            </div>
+          </div>
+          <p class="note">
+            The one engagement: consulting chef at Beren Meze &amp; Grill
+            House, 1216 Sixth Ave, Fort Worth, announced 26 Jun 2026. Two $189
+            omakase dinners 26 and 27 Aug 2026. Owner Charlie Unlu wants the
+            city's first Michelin star.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Sixteen venues" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">04</span> Every venue,
+            2008 to 2023 · six countries
+          </div>
+          <h2 data-split>Sixteen openings. Sixteen closings. Zero sales.</h2>
+          <div class="rows tight" style="margin-top: 12px">
+            <div class="row head">
+              <span>When</span><span>Venue</span><span>What actually happened</span>
+            </div>
+            <div class="row">
+              <div class="k">Jan 08 · Feb 09</div>
+              <p class="yes"><strong>The Abbey</strong> · Penzance</p>
+              <p>Star was Ben Tunnicliffe's (2003). Lost in the 2009 guide. Closed Feb 2009.</p>
+            </div>
+            <div class="row">
+              <div class="k">Sep 08 · Feb 09</div>
+              <p class="yes"><strong>Juniper</strong> · Altrincham</p>
+              <p>One star under Paul Kitching 1997 to 2008, never two. Lost Jan 2009. Soups Ltd wound up on a butcher's £7,000 petition.</p>
+            </div>
+            <div class="row">
+              <div class="k">May 10</div>
+              <p class="yes"><strong>The Highwayman</strong> · Rainow</p>
+              <p>Pub relaunch, age 27, with fiancée Leah Stevenson. Closed within the year.</p>
+            </div>
+            <div class="row">
+              <div class="k">2011</div>
+              <p class="yes"><strong>Barcaldine House</strong> · Oban</p>
+              <p>"Briefly took over" (Hayler). Riemenschneider Ltd dissolved 2015.</p>
+            </div>
+            <div class="row">
+              <div class="k">Jan 14 · Jul 14</div>
+              <p class="yes"><strong>Canvas</strong> · Marylebone</p>
+              <p>20 covers, Hayler 14/20. Closed after six months to relocate.</p>
+            </div>
+            <div class="row">
+              <div class="k">Sep 14 · Jan 15</div>
+              <p class="yes"><strong>Canvas</strong> · Chelsea, plus <strong>Black Boys Inn</strong> · Hurley</p>
+              <p>Investor syndicate. Three AA rosettes 15 Jan 2015; resigned the same day over rent and shareholding. Company in liquidation since Nov 2016.</p>
+            </div>
+            <div class="row">
+              <div class="k">Early 16 · Oct 16</div>
+              <p class="yes"><strong>Tischlerwirt</strong> · Reith bei Kitzbühel</p>
+              <p>Named in the freezing order. Gone by October.</p>
+            </div>
+            <div class="row">
+              <div class="k">Jun 16 · Oct 16</div>
+              <p class="yes"><strong>Reinhold's Enkel</strong> · Bad Homburg</p>
+              <p>Owners: "unfortunate management," poor payment practice. Four months.</p>
+            </div>
+            <div class="row">
+              <div class="k">Feb 16 · Oct 17</div>
+              <p class="yes"><strong>Atelier Wilma</strong> · Frankfurt</p>
+              <p>18 seats. One star, 2017 guide. Insolvency May 17, sold Jul 17, fired Oct 17, theft complaint Nov 17. Closed for good Jan 2018.</p>
+            </div>
+            <div class="row">
+              <div class="k">Sep 18 · Dec 18</div>
+              <p class="yes"><strong>Canvas</strong> · Freßgass, Frankfurt</p>
+              <p>With florist René Meister. Closed end of 2018.</p>
+            </div>
+            <div class="row">
+              <div class="k">Mar 20 · May 21</div>
+              <p class="yes"><strong>Spektr</strong>, <strong>Twins Kitchen</strong>, <strong>Twins Bakery</strong> · Istanbul</p>
+              <p>Three openings in fourteen months. All closed "due to COVID-19" per his site. No Michelin guide existed in Istanbul before 2022.</p>
+            </div>
+            <div class="row">
+              <div class="k">2022 · 2023</div>
+              <p class="yes"><strong>Textures by MR</strong> · Gaucín, then De Panne</p>
+              <p>Spain: 7 courses at €59, closed Dec 2022<span class="unv">unverified</span>. Belgium: C &amp; M Riemenschneider BV, inc. Jan 2023, struck off Feb 2024, bankruptcy opened 4 Dec 2024.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Lifespans" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="split" style="grid-template-columns: 1.15fr 0.85fr">
+            <div>
+              <div class="kicker">
+                <span class="dot"></span><span class="num">05</span> Months open
+                under him · selected venues
+              </div>
+              <h2 data-split>The median venue lasted six months.</h2>
+              <div class="bars">
+                <div class="bar">
+                  <div class="v">13</div>
+                  <div class="f dim" style="height: 65%"></div>
+                  <div class="l"><b>Abbey</b>2008</div>
+                </div>
+                <div class="bar">
+                  <div class="v">5</div>
+                  <div class="f dim" style="height: 25%"></div>
+                  <div class="l"><b>Juniper</b>2008</div>
+                </div>
+                <div class="bar">
+                  <div class="v">6</div>
+                  <div class="f dim" style="height: 30%"></div>
+                  <div class="l"><b>Canvas M.</b>2014</div>
+                </div>
+                <div class="bar">
+                  <div class="v">4</div>
+                  <div class="f dim" style="height: 20%"></div>
+                  <div class="l"><b>Canvas C.</b>2014</div>
+                </div>
+                <div class="bar">
+                  <div class="v">4</div>
+                  <div class="f dim" style="height: 20%"></div>
+                  <div class="l"><b>R. Enkel</b>2016</div>
+                </div>
+                <div class="bar">
+                  <div class="v">20</div>
+                  <div class="f" style="height: 100%"></div>
+                  <div class="l"><b>At. Wilma</b>2016</div>
+                </div>
+                <div class="bar">
+                  <div class="v">7</div>
+                  <div class="f dim" style="height: 35%"></div>
+                  <div class="l"><b>Twins K.</b>2020</div>
+                </div>
+                <div class="bar">
+                  <div class="v">3<small>est</small></div>
+                  <div class="f ghost" style="height: 15%"></div>
+                  <div class="l"><b>Gaucín</b>2022</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div
+                class="stats"
+                style="grid-template-columns: 1fr 1fr; margin-top: 0"
+              >
+                <div class="stat">
+                  <div class="n">£7,000</div>
+                  <div class="l">The bill that ended Juniper</div>
+                  <div class="s">
+                    Butcher W H Frost petitioned. Soups Ltd wound up 23 Mar
+                    2009.
+                  </div>
+                </div>
+                <div class="stat">
+                  <div class="n hot">£1.87M</div>
+                  <div class="l">Mascolo's claim, 2016</div>
+                  <div class="s">
+                    €2.24M invested in Canvas and Black Boys Inn. Freezing order
+                    over nine cars, watches, three restaurants.
+                  </div>
+                </div>
+                <div class="stat">
+                  <div class="n">£90,000</div>
+                  <div class="l">Costs ordered, 16 Dec 2016</div>
+                  <div class="s">
+                    Mr Justice Males. Seven days to disclose worldwide assets
+                    or be barred from defending.
+                  </div>
+                </div>
+                <div class="stat">
+                  <div class="n warm">€11,620</div>
+                  <div class="l">Theft complaint, Nov 2017</div>
+                  <div class="s">
+                    Wines and goods, per the Atelier Wilma buyer. He denies it.
+                    Outcome not public.
+                  </div>
+                </div>
+              </div>
+              <p class="note">
+                Months counted from opening or takeover to his exit. Atelier
+                Wilma includes seven months under a buyer who then fired him.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Filings" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">06</span> The registers ·
+            Companies House · KBO · High Court
+          </div>
+          <h2 data-split>Three insolvencies. Two are still open.</h2>
+          <div class="cols c3">
+            <div class="card">
+              <span class="tag">Soups Limited · 03022756 · UK</span>
+              <h3>Compulsory liquidation, 2009.</h3>
+              <p>
+                Juniper's company. Director from 2 Sep 2008. Petition 27 Jan
+                2009, wound up 23 Mar 2009, dissolved 3 Feb 2011. Official
+                Receiver, London.
+              </p>
+            </div>
+            <div class="card hot">
+              <span class="tag">Canvas Dining Ltd · 09002681 · UK</span>
+              <h3>Creditors' liquidation since 11 Nov 2016. Open.</h3>
+              <p>
+                Incorporated 17 Apr 2014 as Michael Riemenschneider Dining Ltd,
+                renamed Feb 2015. Directors of record were Porter and Wood, not
+                him. Liquidator's annual statement filed 17 Dec 2025.
+              </p>
+            </div>
+            <div class="card hot">
+              <span class="tag">C &amp; M Riemenschneider BV · 0797.260.420 · BE</span>
+              <h3>Bankruptcy opened 4 Dec 2024. Open.</h3>
+              <p>
+                Incorporated 17 Jan 2023, Koksijde, unit in De Panne. Directors
+                Michael and Vedia Riemenschneider. Struck off for UBO
+                non-compliance 22 Feb 2024. Curator Dirk Waeyaert.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">Personal insolvency · Germany</span>
+              <h3>Filed 1 May 2017.</h3>
+              <p>
+                Reported by BISS and Genussmagazin Frankfurt. The Atelier Wilma
+                buyer: "Michael's financial troubles hastened this plan" (Jul
+                2017). Steeple Times, Jul 2017: "supposedly bankrupt and living
+                in Austria."
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">Mascolo v Riemenschneider · QBD · HQ16X02641</span>
+              <h3>Filed 26 Jul 2016. Freezing order. Costs.</h3>
+              <p>
+                Flora Mascolo, widow of Toni &amp; Guy co-founder Guy Mascolo,
+                says she invested €2.24M. Court noted he had "no money before he
+                met Mascolo." Judgment for fraudulent misrepresentation per a
+                case-index snippet<span class="unv">unverified</span>.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">Other UK entities</span>
+              <h3>Riemenschneider Ltd, MDRS Pubs Ltd.</h3>
+              <p>
+                07635998 (director from Apr 2012, dissolved Jul 2015) and
+                08371557 (director from Jan 2013, dissolved Dec 2015).
+                Companies House records his nationality as German, born July
+                1981.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="People" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">07</span> Who is in the
+            room, and who used to be
+          </div>
+          <h2 data-split>Two founders. A long list of former partners.</h2>
+          <div class="cols c2" style="margin-top: 18px">
+            <div>
+              <div class="person">
+                <img src="img/michael.jpg" alt="Michael Riemenschneider" />
+                <div>
+                  <h3>Michael A. C. M. Riemenschneider</h3>
+                  <div class="r">Founder · MICEL · The Chefs Community · b. Jul 1981</div>
+                  <p>
+                    German per Companies House; "Swiss-born" in UK press 2008
+                    to 2016; "half German, half Swiss" in his own words (2014).
+                    Hometown Frankfurt area. Full profile in Part 3.
+                  </p>
+                </div>
+              </div>
+              <div class="person">
+                <img src="img/celine.jpg" alt="Céline Riemenschneider" />
+                <div>
+                  <h3>Céline Riemenschneider</h3>
+                  <div class="r">Co-founder · CMO · Head of Community</div>
+                  <p>
+                    Yelp Frankfurt community manager from 2014; "The Community
+                    Mentor"; Canva creator community lead for Germany and
+                    Austria; CMX Community Industry Award, best executive
+                    leader of a community team, 2024. Current LinkedIn headline
+                    reportedly names Boardy<span class="unv">unverified</span>,
+                    which may be how this intro arrived. The credible operator
+                    in the pair.
+                  </p>
+                </div>
+              </div>
+              <div class="person">
+                <div class="ph">CU</div>
+                <div>
+                  <h3>Charlie and Leman Unlu</h3>
+                  <div class="r">Beren Meze &amp; Grill House · Fort Worth · client</div>
+                  <p>
+                    Hired him as consulting chef Jun 2026 to chase Fort Worth's
+                    first Michelin star. Their announcement repeats "Juniper,
+                    two Michelin stars" verbatim from his website.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <span class="tag">Former partners, in order</span>
+                <ul>
+                  <li><strong>Bill Treloar</strong>, Old Coastguard owner. Abbey and Juniper, 2008. Both liquidated.</li>
+                  <li><strong>Investor syndicate, Porter and Wood</strong>. Canvas Chelsea, 2014. He walked; company in liquidation.</li>
+                  <li><strong>Flora Mascolo</strong>. €2.24M. High Court, 2016.</li>
+                  <li><strong>Familie Nikodem</strong>, Reinhold's Enkel landlords. "Riemenschneider's behavior," 2016.</li>
+                  <li><strong>Carl-Philipp Graf zu Solms-Wildenfels</strong>. Bought Atelier Wilma Jul 2017, fired him Oct 2017, filed theft complaint.</li>
+                  <li><strong>René Meister</strong>, florist. Canvas Frankfurt, 2018. "No legal dispute. Our friendship continues."</li>
+                </ul>
+              </div>
+              <div class="card hot" style="margin-top: 14px">
+                <span class="tag">Pattern</span>
+                <p>
+                  Every venue since 2008 was funded by a partner, a landlord or
+                  an investor. Every partnership ended inside eighteen months.
+                  He said it himself in Jan 2015: "I seem to pick the wrong
+                  investors."
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Site cold read" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">08</span> Cold read ·
+            thechefscommunity.com · micel-consulting.com · 24 Sept 2026
+          </div>
+          <h2 data-split>A finished-looking shell with a working till.</h2>
+          <div class="cols c3">
+            <div class="card">
+              <span class="tag">What the page sells first</span>
+              <p>
+                Hero: "The kitchen is bigger than the restaurant." Nav: The
+                Pass is open, Discover, Boards, The Pass, Jobs, Chefs, Events,
+                Join at $9/mo. Pricing copy: "Less than your daily Starbucks."
+                Serif headline, gold accent, a plating photo that reads as
+                AI-generated. Good taste, borrowed vocabulary.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">What is behind the door</span>
+              <p>
+                Chefs page: "Profiles are being published, check back shortly."
+                Events: "The first dates are being set." Partners wall: ten
+                brand logos including Callebaut, KitchenAid, Resy, Tock, plus
+                MICEL itself; no agreement evidenced; "partner pricing set per
+                partnership." Every member page redirects to a paywall.
+              </p>
+            </div>
+            <div class="card hot">
+              <span class="tag">The tell</span>
+              <p>
+                "Made with Lovable" badge on both sites. Same server IP.
+                Lovable Cloud backend: one Supabase project, Resend for mail,
+                Sentry, and two live Stripe publishable keys plus a test key
+                shipped in the client bundle (public by design, but two live
+                keys means two Stripe accounts). Terms and privacy pages "last
+                updated" the day of this read. His own profile card misspells
+                the venture "Texturs by MR". The product that needs a $400K
+                rebuild was prompted into existence in the last eleven months,
+                and it already takes money.
+              </p>
+            </div>
+          </div>
+          <p class="note">
+            MICEL site: Cormorant Garamond, dark dining-room hero, six service
+            lines, "we respond personally to every inquiry." Footer links to a
+            Feasibility Guide and Private Chef page. The Experiences page is
+            luxury travel curation: Botswana safari, Tokyo, Paris. No entity,
+            no address, no client, no case study.
+          </p>
+        </div>
+      </section>
+
+      <!-- ═══════════ PART 2 ═══════════ -->
+      <section
+        class="slide pdiv"
+        data-t="Part 2 · The product"
+        data-p="2"
+        data-photo="img/tcc-hero-kitchen.jpg"
+        data-int="0.9"
+      >
+        <div class="inner">
+          <div class="part">Part two</div>
+          <h1 data-split>The product</h1>
+          <p class="lede">
+            What The Chefs Community promises, what is actually live, who else
+            has built it, and what the intro brief got wrong.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="What $9 buys" data-p="2" data-int="0.12">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">10</span> The membership
+            promise versus the visible product
+          </div>
+          <h2 data-split>Five promises. One is deliverable today.</h2>
+          <div class="rows">
+            <div class="row head">
+              <span>Promised</span><span>Site copy</span><span>Visible evidence, 24 Sept 2026</span>
+            </div>
+            <div class="row">
+              <div class="k">Boards</div>
+              <p class="yes">"Private discussion boards across five kitchen disciplines."</p>
+              <p class="no">Paywalled. No public thread, count, or sample. A Lovable forum template is plausible and cheap.</p>
+            </div>
+            <div class="row">
+              <div class="k">The Pass</div>
+              <p class="yes">"Video library with chapters and watch progress."</p>
+              <p class="no">One teaser title on the homepage. No episode list, host, or runtime anywhere public.</p>
+            </div>
+            <div class="row">
+              <div class="k">Live tables</div>
+              <p class="yes">"Live tables and interviews, plus the full recording archive."</p>
+              <p class="no">Events page: "The first dates are being set." No archive can exist yet.</p>
+            </div>
+            <div class="row">
+              <div class="k">Podcasts</div>
+              <p class="yes">"Long-form podcasts with show notes."</p>
+              <p class="no">No feed on Apple, Spotify or YouTube found under the brand. His own channel exists, undated.</p>
+            </div>
+            <div class="row">
+              <div class="k">Jobs</div>
+              <p class="yes">"Curated kitchen job board: browse, post, and apply."</p>
+              <p class="yes">The one deliverable: his LinkedIn is recruiting junior chefs and sous chefs for the Fort Worth client. A job board with one employer.</p>
+            </div>
+          </div>
+          <div class="call">
+            <p>
+              Céline's own framing from her Canva years applies: "The challenge
+              with communities is that their value can be difficult to
+              quantify." Nothing on the site quantifies it. No member number,
+              no founding cohort size, no city.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Founding chefs" data-p="2" data-int="0.12">
+        <div class="inner">
+          <div class="split" style="grid-template-columns: 0.55fr 1.45fr">
+            <div>
+              <div class="kicker">
+                <span class="dot"></span><span class="num">11</span> The
+                founding roster
+              </div>
+              <div class="big">0</div>
+              <p class="lede" style="margin-top: 14px">
+                Founding chefs, other than the founders, who exist anywhere
+                outside the site.
+              </p>
+            </div>
+            <div>
+              <h2 data-split>Verified badges on people nobody can verify.</h2>
+              <div class="rows">
+                <div class="row head">
+                  <span>Founding member</span><span>As listed</span><span>Searched</span>
+                </div>
+                <div class="row">
+                  <div class="k">Sofia Maren</div>
+                  <p class="yes">Maren &amp; Co., Copenhagen. "Nordic Pastry Award 2024."</p>
+                  <p class="no">No chef, restaurant or award of that name. Nothing.</p>
+                </div>
+                <div class="row">
+                  <div class="k">Lena Fioravanti</div>
+                  <p class="yes">Trattoria Fioravanti, Bologna. "Bib Gourmand."</p>
+                  <p class="no">No Bib Gourmand of that name in the Italy guide. Nothing.</p>
+                </div>
+                <div class="row">
+                  <div class="k">Tomas Aldana</div>
+                  <p class="yes">Casa Lume, Lisbon. "World Pastry Cup semifinalist."</p>
+                  <p class="no">No such restaurant or competitor found. Nothing.</p>
+                </div>
+                <div class="row">
+                  <div class="k">Nadia Belrose</div>
+                  <p class="yes">Ferme Onze, Lyon. "Michelin Green Star."</p>
+                  <p class="no">Green Stars are a public list. Not on it. Nothing.</p>
+                </div>
+                <div class="row">
+                  <div class="k">Michael · Céline</div>
+                  <p class="yes">"Michelin star · co-founder" · "Textures, Dallas."</p>
+                  <p class="yes">Real. Dallas venue "Textures" not found.</p>
+                </div>
+              </div>
+              <p class="note">
+                Homepage: "Founding members carry a verified badge and sit at
+                the top of the community." The site's own copy: "Every member
+                is verified." Read as Lovable placeholder personas left in
+                production, on a page with live checkout.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Exhibit · the roster" data-p="2" data-int="0.08">
+        <div class="inner exhibit">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">11</span> Exhibit ·
+            thechefscommunity.com, founding chefs section, captured 24 Sept
+            2026
+          </div>
+          <img
+            src="img/tcc-roster.jpg"
+            alt="The Chefs Community founding chefs section: Michael Riemenschneider, Sofia Maren, Lena Fioravanti, Tomas Aldana, Nadia Belrose, Céline Riemenschneider, and a second Michael Riemenschneider card"
+          />
+          <p class="note">
+            Seven cards, two of them the founder. "Founding members carry a
+            verified badge." The "Texturs by MR" typo, the duplicate card and
+            the Lovable badge are all in frame.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="The footprint" data-p="2" data-int="0.12">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">12</span> Digital
+            footprint · what exists, what does not
+          </div>
+          <h2 data-split>Five domains, nine handles, one number that does not add up.</h2>
+          <div class="cols c2">
+            <div>
+              <div class="rows tight fp" style="margin-top: 0">
+                <div class="row head">
+                  <span>Surface</span><span>Since</span><span>State</span>
+                </div>
+                <div class="row">
+                  <div class="k">thechefscommunity.com</div>
+                  <p>Oct 2025</p>
+                  <p>Lovable SPA, Stripe, paywall, placeholder roster.</p>
+                </div>
+                <div class="row">
+                  <div class="k">micel-consulting.com</div>
+                  <p>Jan 2024</p>
+                  <p>Lovable, one page plus guides. No client evidence.</p>
+                </div>
+                <div class="row">
+                  <div class="k">michaelriemenschneider.com</div>
+                  <p>Dec 2017</p>
+                  <p>WordPress, last real edit Jul 2021: "no active restaurant projects." Press page: Turkish lifestyle titles, 2020.</p>
+                </div>
+                <div class="row">
+                  <div class="k">texturesbymr.com · secretdinnerssociety.com</div>
+                  <p>2022 · 2017</p>
+                  <p>Textures: GoDaddy builder, "© 2022", Gaucín; contact page still says "pop up, chef in residence, while we are looking for new locations," +1 (646) number. Secret Dinners: parked.</p>
+                </div>
+                <div class="row">
+                  <div class="k">@riemenschneiderofficial</div>
+                  <p>IG · TikTok · YT</p>
+                  <p>Instagram 435K per snippet<span class="unv">unverified</span>. TikTok 40 followers. YouTube one video, 2019, 922 views. Bio: "Textures by MR Restaurant, Secret Dinners Society, based in Texas."</p>
+                </div>
+              </div>
+              <p class="note" style="margin-top: 10px">
+                Also: @micelconsulting, @thechefscommunity, @mrrestaurants,
+                @texturesbymr, X @chefmrofficial, two LinkedIn profiles, and a
+                TCC company page with an ambassador call around 17 Aug 2026
+                (unverified).
+              </p>
+            </div>
+            <div>
+              <div class="card hot">
+                <span class="tag">Searched for, not found</span>
+                <p>
+                  No app in either store. No Discord, Circle, Skool, Mighty
+                  Networks, Slack, Substack or podcast feed. No member count,
+                  testimonial or case study. No RFP, job post, Upwork or Clutch
+                  listing for a build. No investor, deck or press release. No
+                  public mention of $400K, $600K or "technical partner." No
+                  Texas venue, permit or liquor license.
+                </p>
+              </div>
+              <div class="card" style="margin-top: 12px">
+                <span class="tag">The follower number</span>
+                <p>
+                  435K on Instagram. 40 on TikTok. 922 YouTube views since
+                  2019. No open restaurant, no cookbook, no TV since 2017. Ask
+                  how the Instagram number was acquired before it appears in a
+                  proposal as reach.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="The landscape" data-p="2" data-int="0.12">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">13</span> Who already
+            built a chef community · the lane
+          </div>
+          <h2 data-split>Sponsor-funded chef communities die. Chef-paid ones have not been proven.</h2>
+          <div class="cols c4" id="landscape">
+            <div class="card hot">
+              <span class="tag">Gronda · Austria · 2016 · live</span>
+              <p>€1.5M raised. PRO tier $9.99 a month, iOS updated 23 Sep 2026, 4.8★ on 7.5K ratings. The direct price comp. He has a Gronda profile. Content alone is already sold at TCC's price.</p>
+            </div>
+            <div class="card hot">
+              <span class="tag">MAJC · US · 2025 · live</span>
+              <p>$2M seed, 24 Jul 2026. Operator SaaS at $4.99 a seat with a community tab. The closest threat, and it is funded.</p>
+            </div>
+            <div class="card">
+              <span class="tag">The Staff Canteen · UK · 2008 · live</span>
+              <p>Sponsor and recruiter funded, 145K monthly users claimed. Free. The scale reference for "chef community."</p>
+            </div>
+            <div class="card">
+              <span class="tag">Culinary Agents · Poached · US · live</span>
+              <p>$4.75M and $2.5M raised. Employers pay $39 to $500 a month; chefs pay nothing. TCC's "jobs" promise competes with free.</p>
+            </div>
+            <div class="card">
+              <span class="tag">ChefsFeed · Hospitality Rising · dead</span>
+              <p>ChefsFeed: $4M, sold to Tastemade Dec 2020, domain redirects. Hospitality Rising: £900K of sponsors, paused Apr 2024. Both died when the audience stopped being the customer.</p>
+            </div>
+            <div class="card">
+              <span class="tag">CODE Hospitality · UK · £39.99 a year</span>
+              <p>Perks plus jobs, UK only. The one chef-paid membership that has lasted, and it sells discounts, not community.</p>
+            </div>
+            <div class="card">
+              <span class="tag">Chef's Roll · Burnt Chef · Worldchefs</span>
+              <p>Sponsor-funded portfolio network (2013), a mental-health nonprofit with per-country ambassadors (2019), federations. Plus r/KitchenConfidential at 1.8M and the Facebook groups where cooks actually talk, free.</p>
+            </div>
+            <div class="card cold">
+              <span class="tag">Searched for, not found</span>
+              <p>No other Michelin-chef-led private network launched since 2023. No chef-paid, vetted, mentoring-led community at any price that has published a member count. That is the whitespace, and it is a trust problem before it is a software problem.</p>
+            </div>
+          </div>
+          <p class="note" style="margin-top: 10px">
+            Gronda already sells content at $9.99. Who is in the room is the
+            only moat TCC could have, and the room is placeholders.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="The brief vs the record" data-p="2" data-int="0.12">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">14</span> The intro brief
+            as sent · line by line
+          </div>
+          <h2 data-split>Four bullets. Three are wrong, one is unsourced.</h2>
+          <div class="rows brief">
+            <div class="row head">
+              <span>Brief says</span><span>Record says</span><span>Source</span>
+            </div>
+            <div class="row">
+              <div class="k">Two-Michelin-star chef, nearly 20 years holding stars</div>
+              <p>One star under his ownership, Atelier Wilma, 2017 guide, about ten months before insolvency. Abbey and Juniper stars belonged to predecessors and were lost at the first guide after takeover. Juniper never held two.</p>
+              <p class="no">Caterer 2008 to 2009; Sternefresser 2016; Genussmagazin 2017; Michelin archive lists.</p>
+            </div>
+            <div class="row">
+              <div class="k">Concepts across Belgium, Spain, Germany, Istanbul, UK</div>
+              <p>True as a list of places. Every one closed, most inside a year. Belgium is a bankrupt BV. Spain lasted a season. Istanbul: three venues in fourteen months.</p>
+              <p class="no">KBO; Tripadvisor; his own site; Steeple Times comments.</p>
+            </div>
+            <div class="row">
+              <div class="k">Building chef-led concepts in Frisco and Plano</div>
+              <p>No evidence. No permit, license, lease, press or job post. The only Texas work is a consulting hire and two dinners in Fort Worth.</p>
+              <p class="no">TABC open data; Collin County; DFW press; FWTX Jun and Aug 2026.</p>
+            </div>
+            <div class="row">
+              <div class="k">$400K to $600K build, evaluating technical partners</div>
+              <p>Unsourced. Nothing public says it. The product already exists on Lovable at $9/mo. Two insolvencies are open. No entity found to contract with in Texas.</p>
+              <p class="no">Companies House LIQ03 Dec 2025; KBO Dec 2024; site read Sept 2026.</p>
+            </div>
+          </div>
+          <div class="verdict">
+            <p>
+              The connector's brief is his LinkedIn headline, restated. Every
+              downstream document, including Fort Worth Magazine and his new
+              client's own announcement, repeats it. Nobody checked the pass.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ PART 3 ═══════════ -->
+      <section
+        class="slide pdiv"
+        data-t="Part 3 · The person"
+        data-p="3"
+        data-photo="img/michael.jpg"
+        data-int="0.9"
+      >
+        <div class="inner">
+          <div class="part">Part three</div>
+          <h1 data-split>The person</h1>
+          <p class="lede">
+            Michael Alfred Christopher Manuel Riemenschneider. Born July 1981.
+            The jacket has two stars embroidered on it.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Profile" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="split" style="grid-template-columns: 0.75fr 1.25fr">
+            <div class="portrait">
+              <img src="img/michael.jpg" alt="Michael Riemenschneider" />
+              <div class="cap">micel-consulting.com · Guide Michelin jacket, two stars, sponsor patches</div>
+            </div>
+            <div>
+              <div class="kicker">
+                <span class="dot"></span><span class="num">16</span> Profile
+              </div>
+              <h2 data-split>Michael A. Riemenschneider, 45.</h2>
+              <p class="lede" style="margin-top: 12px">
+                Styles himself "Michelin Star ★★ Chef" on LinkedIn and "Founder
+                of The Chefs Community, Textures by MR, The Secret Dinners
+                Society" on his own platform. Dallas-Fort Worth since at least
+                June 2026.
+              </p>
+              <div class="cols c2" style="margin-top: 18px">
+                <div class="card">
+                  <span class="tag">Role at the ventures</span>
+                  <ul>
+                    <li>MICEL-Consulting: co-founder, "culinary excellence and operational leadership." No entity found.</li>
+                    <li>The Chefs Community: founder, "founding member, Michelin star." Site live since Oct 2025 domain.</li>
+                    <li>Beren Meze, Fort Worth: consulting chef from Jun 2026; menu "later this year"; Chef's Night Series host.</li>
+                    <li>Directorships: Soups Ltd (liq.), Riemenschneider Ltd (diss.), MDRS Pubs (diss.), C &amp; M Riemenschneider BV (bankrupt).</li>
+                  </ul>
+                </div>
+                <div class="card">
+                  <span class="tag">Outside the job</span>
+                  <ul>
+                    <li>Married to Céline (also "Selin" in Turkish press; "Vedia" on the Belgian register), co-founder and CMO. She is the community professional.</li>
+                    <li>Twin sons, born 2019; the "Twins" in Twins Kitchen.</li>
+                    <li>Grandmother Wilma, the restaurant namesake and the origin story he tells in every city.</li>
+                    <li>TV: Mein Lokal, Dein Lokal (Kabel Eins, 2017), "first full points" per his site.</li>
+                  </ul>
+                </div>
+              </div>
+              <p class="note">
+                Handles: @riemenschneiderofficial (IG, 435K unverified),
+                @chefmrofficial (X), LinkedIn michael-riemenschneider-93a69a168.
+                Nationality: German on Companies House; "Swiss-born" in UK
+                press. Height 6ft 6in per his 2014 interview.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Career arc" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">17</span> Career arc ·
+            titles as reported at the time
+          </div>
+          <h2 data-split>Nineteen years, six countries, one uninterrupted move.</h2>
+          <div class="tl">
+            <div>
+              <div class="y">2007</div>
+              <p>Head chef, Old Coastguard, Mousehole, summer season. Owner Bill Treloar.</p>
+            </div>
+            <div class="hot">
+              <div class="y hot">2008</div>
+              <p>Chef-patron, The Abbey (Jan). Buys Juniper (Sep): "unlikely" to keep the star.</p>
+            </div>
+            <div>
+              <div class="y">2009</div>
+              <p>Both lose stars in January, close in February. Soups Ltd wound up in March.</p>
+            </div>
+            <div>
+              <div class="y">2010</div>
+              <p>The Highwayman, Rainow, at 27. "Michelin quality at £15." Then Barcaldine House, Oban, 2011.</p>
+            </div>
+            <div>
+              <div class="y">2014</div>
+              <p>Canvas, Marylebone (Jan) then Chelsea (Sep) plus Black Boys Inn. Mascolo money.</p>
+            </div>
+            <div class="hot">
+              <div class="y hot">2015</div>
+              <p>15 Jan: three AA rosettes and his resignation on the same day. "I was nearly homeless."</p>
+            </div>
+            <div class="hot">
+              <div class="y hot">2016</div>
+              <p>Kitzbühel, Bad Homburg, Frankfurt. Freezing order (Oct). Atelier Wilma star (Nov).</p>
+            </div>
+            <div>
+              <div class="y">2017</div>
+              <p>Insolvency (May). Sold (Jul). Fired (Oct). Theft complaint (Nov).</p>
+            </div>
+            <div>
+              <div class="y">2018–23</div>
+              <p>Canvas Frankfurt. Istanbul ×3. Gaucín. De Panne. Belgian BV bankrupt Dec 2024.</p>
+            </div>
+            <div class="hot">
+              <div class="y hot">2026</div>
+              <p>Dallas-Fort Worth. MICEL. The Chefs Community. Beren consulting chef. "Michelin Star ★★."</p>
+            </div>
+          </div>
+          <div class="call">
+            <p>
+              Gap between the self-description and the record: the bio adds a
+              star at every stop (Juniper "two stars," Canvas "crowned with
+              Michelin stars," Abbey "earned") and removes every ending. He
+              wants to be read as a chef who keeps winning and moving on. The
+              registers read a chef who keeps moving on.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="What he believes" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">18</span> On the record ·
+            2008 to 2026
+          </div>
+          <h2 data-split>Directness as brand. Someone else as the ending.</h2>
+          <div class="cols c2" style="margin-top: 14px">
+            <div>
+              <div class="q">
+                <blockquote>I am very very direct and everyone knows this. You don't cross me.</blockquote>
+                <cite>The Caterer chef profile, 17 Oct 2014</cite>
+              </div>
+              <div class="q">
+                <blockquote>I ended up with absolutely nothing after Juniper and the Abbey. I was nearly homeless.</blockquote>
+                <cite>The Caterer, 17 Oct 2014</cite>
+              </div>
+              <div class="q">
+                <blockquote>I seem to pick the wrong investors.</blockquote>
+                <cite>The Caterer, 19 Jan 2015, the day he left Canvas</cite>
+              </div>
+            </div>
+            <div>
+              <div class="q">
+                <blockquote>We want to casualise fine dining. We don't have tablecloths and my staff wear jeans.</blockquote>
+                <cite>Restaurant magazine, 3 Oct 2014</cite>
+              </div>
+              <div class="q">
+                <blockquote>The Graf does everything to get public attention. That's super silly.</blockquote>
+                <cite>Genussmagazin Frankfurt, 17 Nov 2017, on the man who had just bought and fired him</cite>
+              </div>
+              <div class="q">
+                <blockquote>Omakase doesn't necessarily mean sushi. For me, it means cooking what's fresh that day.</blockquote>
+                <cite>Fort Worth Magazine, 20 Aug 2026</cite>
+              </div>
+            </div>
+          </div>
+          <div class="call">
+            <p>
+              Pattern: every ending has an external author. Wrong investors,
+              wrong critics ("what a cock," on Jay Rayner), staff who "don't
+              want to work any more," a landlord who wants attention, a
+              pandemic, a political landscape. Never a number, never a date.
+              Pitch instruction: do not become the next name in that sentence.
+              Put the number and the date in the contract before he does not.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="His situation" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">19</span> Constraints ·
+            September 2026
+          </div>
+          <h2 data-split>A consulting fee, two dinners, and a $9 till.</h2>
+          <div class="cols c4">
+            <div class="card">
+              <span class="tag">Budget</span>
+              <p>
+                No public sign of $400K to $600K. Belgian company bankrupt nine
+                months ago; UK liquidation still filing. Visible income: Beren
+                consulting, two $189 dinners, whatever the $9 till takes. If the
+                money exists it is a partner's or a new investor's. Ask whose.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">Scope</span>
+              <p>
+                MICEL (consulting), TCC (platform), Textures by MR (a
+                restaurant that does not exist yet), Secret Dinners Society
+                (private events), Beren's new menu and Chef's Night Series. Five
+                names, one paid client.
+              </p>
+            </div>
+            <div class="card hot">
+              <span class="tag">Skin in the game</span>
+              <p>
+                His name is the brand, and the brand has a Steeple Times
+                comment thread that follows it from country to country. The
+                real collateral is Céline's reputation in the community
+                profession: Yelp, Canva, a CMX award. That is what a failed
+                build burns.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">Calendar</span>
+              <p>
+                Beren menu "later this year." Chef's Night Series monthly.
+                TCC ambassadors call ~17 Aug 2026; "first dates being set." No
+                conference, panel or podcast booked that we could find.
+              </p>
+            </div>
+          </div>
+          <div class="cols c2" style="margin-top: 14px">
+            <div class="card">
+              <span class="tag">What he has shipped</span>
+              <ul>
+                <li>The Chefs Community site with checkout (Lovable, since late 2025).</li>
+                <li>MICEL site (Lovable, 2024, refreshed 2026).</li>
+                <li>Beren consulting engagement and two sold-out-style dinners, Aug 2026 (PaperCity recap, Sept 2026).</li>
+                <li>Sixteen restaurant openings, 2008 to 2023. He can open.</li>
+              </ul>
+            </div>
+            <div class="card cold">
+              <span class="tag">What he has not</span>
+              <ul>
+                <li>A venue that lasted two years. A venue that was sold rather than closed.</li>
+                <li>A verifiable member, chef, event or partner on TCC.</li>
+                <li>A Texas entity, permit, lease or license.</li>
+                <li>A build partner, RFP, or public statement about technology. The lane the intro describes has no footprint at all. That absence is a gap, not a preference.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="How to reach them" data-p="3" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">20</span> If Upperhand
+            takes the meeting
+          </div>
+          <h2 data-split>Talk to Céline. Price the sprint. Get paid first.</h2>
+          <div class="cols c3">
+            <div class="card hot">
+              <span class="tag">Do</span>
+              <ul>
+                <li>Treat Céline as the operator. Use her vocabulary: engagement, personalization, member types, "value is hard to quantify." She wrote the framework.</li>
+                <li>Treat the Lovable build as the spec. It already answers "what." Sell "who joins and why," not a rebuild.</li>
+                <li>Scope the smallest paid thing: a two-week discovery sprint, fixed fee, paid before day one.</li>
+                <li>Ask who signs and who pays, by entity. MICEL has none on record in Texas.</li>
+                <li>Route value to the asset they brag about: the founding roster. Make the first hundred real chefs the deliverable.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <span class="tag">Don't</span>
+              <ul>
+                <li>Don't extend credit, take equity, or accept revenue share in lieu of fees. Six partners tried variants of that.</li>
+                <li>Don't sign a multi-phase $400K SOW on the strength of the number in the brief.</li>
+                <li>Don't put "two Michelin stars" or "20 years" in anything Upperhand writes. It is not true and it travels.</li>
+                <li>Don't hold the Stripe, Supabase or domain accounts under Upperhand's name.</li>
+                <li>Don't send a deck first. He opens with a story; open with a one-page SOW and a price.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <span class="tag">Openers that fit the record</span>
+              <ul>
+                <li>"Your Lovable build already proves the product. What it lacks is the first 500 members. That is the project."</li>
+                <li>To Céline: "The Canva creator program is the closest thing to what TCC needs. The software is the smaller problem."</li>
+                <li>"Beren's Chef's Night Series is a content engine for The Pass. One city, one host, one live table. Thirty days."</li>
+                <li>"Before we scope anything: who is the contracting entity, and who funds it?" Asked plainly, once, early.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ PART 4 ═══════════ -->
+      <section
+        class="slide pdiv"
+        data-t="Part 4 · So what"
+        data-p="4"
+        data-photo="img/micel-whatwedo.jpg"
+        data-int="0.9"
+      >
+        <div class="inner">
+          <div class="part">Part four</div>
+          <h1 data-split>So what</h1>
+          <p class="lede">
+            The author's read. Where Upperhand fits, and where it should not.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Openings" data-p="4" data-int="0.12">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">22</span> Openings ·
+            Upperhand × The Chefs Community · the author's read
+          </div>
+          <h2 data-split>Take the call. Do not take the risk.</h2>
+          <div class="cols c2">
+            <div class="card hot">
+              <span class="tag">01 · Correct the brief before the intro</span>
+              <h3>Tell the connector what the record says, in three lines, before anyone is introduced.</h3>
+              <p>
+                One star, not two. Sixteen closures, two open insolvencies, a
+                High Court fraud claim. The connector's credibility is also on
+                the line. This is the cheapest opening in the deck (slide 14).
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">02 · The prepaid sprint</span>
+              <h3>A two-week discovery sprint on the existing Lovable build, fixed fee, paid up front.</h3>
+              <p>
+                Output: a member-acquisition plan and a real founding roster
+                target, not a rebuild estimate. If the fee cannot be paid before
+                day one, the $400K does not exist (slides 5, 6, 19).
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">03 · Céline as the client</span>
+              <h3>Contract with the co-founder who has the track record.</h3>
+              <p>
+                She ran Yelp Frankfurt and Canva's German creator community and
+                won a CMX award for it. The community is hers to build; the
+                platform is a Lovable project. Make her the day-to-day and put
+                her name on the entity (slides 7, 20).
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">04 · Pilot, structured the way he opens</span>
+              <h3>One city, one host, one live table, thirty days.</h3>
+              <p>
+                He opens venues; make the pilot an opening. Beren's Chef's Night
+                Series becomes the first recorded Live Table on The Pass. Paid
+                per event, measured in members joined, killed if it does not
+                convert (slides 10, 19).
+              </p>
+            </div>
+          </div>
+          <p class="note">
+            Counterparty caveat: prepaid only, no credit, no equity, no shared
+            accounts, no work before funds clear. Verify the contracting entity
+            and the source of funds. Ask directly about Mascolo v
+            Riemenschneider and the Belgian bankruptcy; the answer tells you
+            more than the RFP. The default recommendation is to pass unless 02
+            clears.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Sources" data-p="4" data-int="0.06">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">23</span> Sources · all
+            read 24 Sept 2026
+          </div>
+          <h2 data-split>Receipts.</h2>
+          <div class="src c3" id="src"></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="rail">
+      <span id="idx">01</span>
+      <div id="ticks"></div>
+      <span id="ttl"></span>
+    </div>
+    <div id="help">← → navigate · esc overview · ? help</div>
+    <div id="ov"><div id="ovg"></div></div>
+
+    <script src="vendor/gsap.min.js"></script>
+    <script>
+      /* ═══ STEAM · 2D canvas, slow gold and cream motes. Heat off the pass.
+         ponytail: no WebGL, particles are enough. */
+      const canvas = document.getElementById("embers");
+      const ctx = canvas.getContext("2d");
+      const state = { int: 1 };
+      let W,
+        H,
+        P = [];
+      const COUNT = innerWidth < 760 ? 70 : 160;
+      function resize() {
+        W = canvas.width = innerWidth * Math.min(devicePixelRatio, 2);
+        H = canvas.height = innerHeight * Math.min(devicePixelRatio, 2);
+      }
+      resize();
+      addEventListener("resize", resize);
+      function spawn(p, fresh) {
+        p.x = Math.random() * W;
+        p.y = fresh ? Math.random() * H : H + Math.random() * 40;
+        p.r = (0.6 + Math.random() * 2.4) * Math.min(devicePixelRatio, 2);
+        p.vy = (0.15 + Math.random() * 0.55) * Math.min(devicePixelRatio, 2);
+        p.vx = (Math.random() - 0.5) * 0.3;
+        p.life = 0.4 + Math.random() * 0.6;
+        p.ph = Math.random() * Math.PI * 2;
+        p.hot = Math.random() < 0.35;
+        return p;
+      }
+      for (let i = 0; i < COUNT; i++) P.push(spawn({}, true));
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function frame(t) {
+        ctx.clearRect(0, 0, W, H);
+        const I = state.int;
+        for (const p of P) {
+          p.y -= p.vy * (0.35 + I);
+          p.x += p.vx + Math.sin(t * 0.001 + p.ph) * 0.35;
+          p.life -= 0.0008;
+          if (p.y < -10 || p.life <= 0) spawn(p, false);
+          const a =
+            Math.min(1, p.life * 1.6) *
+            (0.2 + I * 0.7) *
+            (0.6 + 0.4 * Math.sin(t * 0.003 + p.ph));
+          ctx.beginPath();
+          ctx.fillStyle = p.hot
+            ? `rgba(239,209,144,${a})`
+            : `rgba(220,176,91,${a * 0.7})`;
+          ctx.arc(p.x, p.y, p.r * (0.7 + I * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (!reduced) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      /* ═══ SLIDE ENGINE ═══ */
+      const slides = [...document.querySelectorAll(".slide")];
+      const N = slides.length;
+      let cur = 0;
+      const photo = document.getElementById("photo");
+      const heat = document.getElementById("heat");
+
+      document.querySelectorAll("[data-split]").forEach((el) => {
+        el.innerHTML = el.innerHTML
+          .split(/(<br\s*\/?>|<i>.*?<\/i>)/i)
+          .map((part) =>
+            /^<br/i.test(part) || /^<i>/i.test(part)
+              ? part
+                  .replace(/^<i>/i, '<i class="w">')
+              : part
+                  .split(/(\s+)/)
+                  .map((w) => (w.trim() ? `<span class="w">${w}</span>` : w))
+                  .join(""),
+          )
+          .join("");
+      });
+
+      const ticks = document.getElementById("ticks");
+      slides.forEach((s) =>
+        ticks.insertAdjacentHTML(
+          "beforeend",
+          `<i class="tick b${s.dataset.p}"></i>`,
+        ),
+      );
+      const tickEls = [...ticks.children];
+      const ovg = document.getElementById("ovg");
+      slides.forEach((s, i) =>
+        ovg.insertAdjacentHTML(
+          "beforeend",
+          `<div class="ovc${s.classList.contains("pdiv") ? " part" : ""}" data-i="${i}"><div class="n">${String(i + 1).padStart(2, "0")}</div><div class="t">${s.dataset.t}</div></div>`,
+        ),
+      );
+      ovg.addEventListener("click", (e) => {
+        const c = e.target.closest(".ovc");
+        if (!c) return;
+        go(+c.dataset.i);
+        toggleOv(false);
+      });
+
+      let entrance = null;
+      gsap.ticker.lagSmoothing(0);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && entrance) entrance.progress(1);
+      });
+
+      function go(n) {
+        n = Math.max(0, Math.min(N - 1, n));
+        if (n === cur && slides[n].classList.contains("on")) return;
+        const prev = slides[cur],
+          next = slides[n];
+        cur = n;
+        if (prev !== next)
+          gsap.to(prev, {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => prev.classList.remove("on"),
+          });
+        next.classList.add("on");
+        next.scrollTop = 0;
+        if (entrance) entrance.progress(1);
+        const tl = (entrance = gsap.timeline());
+        tl.fromTo(
+          next,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.42, ease: "power2.out" },
+          0,
+        );
+        if (!reduced) {
+          const words = next.querySelectorAll(".w");
+          if (words.length)
+            tl.fromTo(
+              words,
+              { yPercent: 108, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: 0.022,
+                ease: "expo.out",
+              },
+              0.06,
+            );
+          const blocks = next.querySelectorAll(
+            ".card, .stat, .row, .tl > div, .q, .person, .verdict, .call, .lede, .sub > div, .big, .portrait",
+          );
+          if (blocks.length)
+            tl.fromTo(
+              blocks,
+              { y: 18, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.018,
+                ease: "power3.out",
+              },
+              0.16,
+            );
+          const bars = next.querySelectorAll(".bar .f");
+          if (bars.length)
+            tl.fromTo(
+              bars,
+              { scaleY: 0 },
+              { scaleY: 1, duration: 0.9, stagger: 0.08, ease: "expo.out" },
+              0.2,
+            );
+        }
+        const int = parseFloat(next.dataset.int ?? 0.1);
+        gsap.to(state, { int, duration: 1.2, ease: "power2.inOut" });
+        gsap.to(heat, { opacity: 0.25 + int * 0.75, duration: 1.1 });
+        const ph = next.dataset.photo;
+        if (ph) {
+          photo.style.backgroundImage = `url(${ph})`;
+          photo.style.backgroundPosition = next.dataset.pos || "center";
+          photo.style.opacity = 1;
+        } else photo.style.opacity = 0;
+
+        tickEls.forEach((t, i) => {
+          t.className =
+            "tick b" +
+            slides[i].dataset.p +
+            (i < n ? " done" : i === n ? " now" : "");
+        });
+        document.getElementById("idx").textContent =
+          String(n + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+        document.getElementById("ttl").textContent = next.dataset.t;
+        document.body.classList.toggle("cover", n === 0);
+        [...ovg.children].forEach((c, i) => c.classList.toggle("now", i === n));
+        history.replaceState(null, "", n ? "#" + (n + 1) : "./");
+      }
+      const ov = document.getElementById("ov");
+      const toggleOv = (on) =>
+        ov.classList.toggle("on", on ?? !ov.classList.contains("on"));
+      addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur - 1);
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          toggleOv();
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(N - 1);
+        else if (e.key === "?")
+          document.getElementById("help").classList.toggle("on");
+      });
+      let tx = 0;
+      addEventListener(
+        "touchstart",
+        (e) => (tx = e.changedTouches[0].clientX),
+        { passive: true },
+      );
+      addEventListener(
+        "touchend",
+        (e) => {
+          const d = e.changedTouches[0].clientX - tx;
+          if (Math.abs(d) > 55) go(cur + (d < 0 ? 1 : -1));
+        },
+        { passive: true },
+      );
+      addEventListener("click", (e) => {
+        if (ov.classList.contains("on") || e.target.closest("a,button")) return;
+        if (e.clientX > innerWidth * 0.8) go(cur + 1);
+        else if (e.clientX < innerWidth * 0.2) go(cur - 1);
+      });
+
+      /* ═══ SOURCES ═══ */
+      const SRC = [
+        ["thechefscommunity.com: home, pricing, chefs, five chef profiles, boards, jobs, videos, events, partners; JS bundle and network trace, 24 Sep 2026", "thechefscommunity.com"],
+        ["micel-consulting.com: home, page copy, tokens, Lovable badge, 24 Sep 2026", "micel-consulting.com"],
+        ["michaelriemenschneider.com: home, Life, Restaurants, Press, 24 Sep 2026", "michaelriemenschneider.com"],
+        ["WHOIS: thechefscommunity.com created 23 Oct 2025; micel-consulting.com 15 Jan 2024; michaelriemenschneider.com 21 Dec 2017", "whois"],
+        ["Companies House: Canvas Dining Ltd 09002681 (formerly Michael Riemenschneider Dining Ltd), liquidation", "find-and-update.company-information.service.gov.uk"],
+        ["Companies House: Soups Ltd 03022756 insolvency; officer record (DOB Jul 1981, German)", "find-and-update.company-information.service.gov.uk"],
+        ["KBO/CBE: C & M Riemenschneider BV 0797.260.420, bankruptcy 4 Dec 2024", "kbopub.economie.fgov.be"],
+        ["Michelin starred restaurant the Abbey sold, 26 Feb 2008", "thecaterer.com"],
+        ["Swiss chef buys Michelin-starred restaurant Juniper, 1 Sep 2008", "thecaterer.com"],
+        ["Juniper and the Abbey restaurants forced to close, 4 Feb 2009", "thecaterer.com"],
+        ["Owner of former Michelin-starred Juniper is liquidated, 7 Apr 2009", "thecaterer.com"],
+        ["Michelin-star chef comes to Rainow pub, 19 May 2010", "macclesfield-live.co.uk"],
+        ["Andy Hayler, Canvas review, 22 Jan 2014 (Barcaldine House)", "andyhayler.com"],
+        ["Riemenschneider to re-open Canvas in Chelsea, 23 Jul 2014", "restaurantonline.co.uk"],
+        ["Riemenschneider on Canvas Chelsea, interview, 3 Oct 2014", "restaurantonline.co.uk"],
+        ["Chef profile: Michael Riemenschneider, 17 Oct 2014", "thecaterer.com"],
+        ["Riemenschneider leaves restaurants in week of three AA rosettes win, 19 Jan 2015", "thecaterer.com"],
+        ["Handelsblatt: Frozen Money statt Frozen Yoghurt, 21 Oct 2016", "handelsblatt.com"],
+        ["Chef Michael Riemenschneider: court action looms, 11 Nov 2016", "thecaterer.com"],
+        ["Court ultimatum and £90,000 costs bill, 16 Dec 2016", "thecaterer.com"],
+        ["Sternefresser: Guide Michelin Deutschland 2017, new stars", "sternefresser.de"],
+        ["BISS: Riemenschneider verliert zwei Lokale, Feb 2017", "fienholdbiss.de"],
+        ["The Steeple Times: Canvassing a Con, 16 Jul 2017, and reader comments to 10 Aug 2026", "thesteepletimes.com"],
+        ["Mail on Sunday YOU: Widow reveals celebrity chef conned £2 million, Jul 2017 (headline only; body not retrievable)", "you.co.uk"],
+        ["Top Magazin: Solms-Wildenfels kauft Atelier Wilma, 31 Jul 2017", "top-magazin-frankfurt.de"],
+        ["Genussmagazin: Riemenschneider ist weg, der Stern bleibt, 16 Nov 2017", "genussmagazin-frankfurt.de"],
+        ["Genussmagazin: Jetzt spricht Riemenschneider, 17 Nov 2017", "genussmagazin-frankfurt.de"],
+        ["BISS: Atelier Wilma, ein Gastro-Krimi und kein Ende, Nov 2017", "fienholdbiss.de"],
+        ["Genussmagazin: Atelier Wilma für immer geschlossen, 26 Jan 2018", "genussmagazin-frankfurt.de"],
+        ["Genussmagazin: Comeback für das Canvas (Freßgass), 18 Jan 2019", "genussmagazin-frankfurt.de"],
+        ["Gastromasa: Riemenschneider now in Turkey, 23 Jan 2020", "gastromasa.com"],
+        ["Tourmag: Spektr by MR Karaköy, 4 Mar 2020", "tourmag.com.tr"],
+        ["FTN News: Twins Kitchen Istanbul, Oct 2020", "ftnnews.com"],
+        ["Hürriyet, Müge Akgün: Pes etmek yok, 21 Nov 2020", "hurriyet.com.tr"],
+        ["Tripadvisor: Textures by MR, Gaucín (listing only)", "tripadvisor.com"],
+        ["CMX Hub: Céline Riemenschneider, the empathy-led community leader from Canva, 1 Apr 2024", "cmxhub.com"],
+        ["Fort Worth Magazine: Beren's latest hire could change everything, 26 Jun 2026", "fwtx.com"],
+        ["Fort Worth Magazine: Michelin-starred chef takes over Beren for two nights, 20 Aug 2026", "fwtx.com"],
+        ["PaperCity: Fort Worth's Michelin-starred chefs, 8 Sep 2026; chef-driven food events, 17 Sep 2026", "papercitymag.com"],
+        ["texturesbymr.com (GoDaddy builder, 2022) and secretdinnerssociety.com (parked), 24 Sep 2026", "texturesbymr.com"],
+        ["TikTok @riemenschneiderofficial page data; YouTube channel UCuDcDfrac0knq-s4c9vOSYA, 24 Sep 2026", "tiktok.com · youtube.com"],
+        ["Gronda PRO pricing and App Store listing (updated 23 Sep 2026); MAJC seed announcement 24 Jul 2026; Culinary Agents, Poached, ChefsFeed, Hospitality Rising, CODE Hospitality, Staff Canteen public pages", "apps.apple.com · crunchbase.com · company sites"],
+        ["Search snippets, marked unverified in deck: LinkedIn headlines and posts, Instagram bio and follower count, TCC ambassador call", "linkedin.com · instagram.com"],
+        ["Registries searched, nothing found: Texas SOS, Texas Comptroller, TABC open data, Bizapedia, OpenCorporates TX, Frisco, Plano, Collin County, Handelsregister, Michelin Guide site", "various"],
+      ];
+      document.getElementById("src").innerHTML = SRC.map(
+        (s) => `<p><b>${s[0]}</b> · ${s[1]}</p>`,
+      ).join("");
+
+      /* ═══ BOOT ═══ */
+      const h = parseInt(location.hash.slice(1)) || 1;
+      go(h - 1);
+      document.fonts.ready.then(() => document.body.classList.add("ready"));
+      setTimeout(() => document.body.classList.add("ready"), 1200);
+    </script>
+  </body>
+</html>

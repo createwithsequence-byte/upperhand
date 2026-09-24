@@ -227,6 +227,18 @@
       "port": 3600
     },
     {
+      "name": "riemenschneider-deep-dive",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4181",
+        "--directory",
+        "riemenschneider-deep-dive"
+      ],
+      "port": 4181
+    },
+    {
       "name": "solo-stove-audit",
       "runtimeExecutable": "python3",
       "runtimeArgs": [
