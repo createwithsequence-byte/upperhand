@@ -1,0 +1,6 @@
+{
+  "name": "pedersen-houpt-proposal",
+  "private": true,
+  "type": "module",
+  "scripts": { "check": "node check.mjs --selftest && node check.mjs", "build": "node build.mjs" }
+}

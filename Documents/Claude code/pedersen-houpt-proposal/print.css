@@ -1,0 +1,123 @@
+/* print.css: the PDF. Letter landscape; build.mjs renders it at 80% scale, so a page lays out like a
+   1200 × 900 desktop screen. Cmd+P from the browser gets the same document. */
+@page { size: letter landscape; margin: 0.42in 0.5in; }
+html, body { background: #fff !important; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body::after, .contact, .ph-media.sheet, .ph-media.browser, .ph-media.cal, .tl-note, .spine, .pillnav, .skip, .cover-cta, .stage-tag, .stage canvas, .ba-handle, .wall-tabs, .opt-total, .opt-row .sw, .q-tog, .close-cta .btn { display: none !important; }
+main, .foot { margin-left: 0 !important; }
+html.js .rv, .rv { opacity: 1 !important; transform: none !important; }
+.hl > span { background-size: 100% 90% !important; color: #fff !important; transition: none !important; }
+.measures td.t span { background-size: 100% 1.5px !important; }
+section[id], .cover { break-before: page; }
+.cover { break-before: auto; min-height: 0; height: 860px; padding-top: 10px; padding-bottom: 0; }
+.stage { height: 800px; min-height: 0; }
+.toy-fallback { opacity: 1 !important; }
+.stage-bg { display: none; }
+.band, .services, .letter, .next, .timeline { padding-block: 2.2rem !important; }
+.band.ink, .band.blue, .gantt, .q-total, .foot { -webkit-print-color-adjust: exact; }
+.short { position: static; }
+.rec, .toc li, .svc-row, .q-line, .pay, .opt-row, .steps li, .ph-cols, .phase header, .measures tr, .seo-l li, .tomb, .prio li, figure, .close, .quote { break-inside: avoid; }
+.svc-row { padding-block: 18px 22px; }
+.verb { color: var(--ink) !important; }
+.svc-row:nth-child(4) .verb { color: var(--blue) !important; -webkit-text-stroke-color: var(--blue); }
+
+/* before / after sits side by side */
+.ba-frame { height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: none; box-shadow: none; overflow: visible; }
+.ba-img, .ba-before { position: relative; inset: auto; clip-path: none !important; }
+.ba-before { order: -1; }
+.ba-img { height: 520px; border-radius: 12px; box-shadow: 0 0 0 1px var(--line); }
+.ba-lab { top: 12px; }
+.ba-lab.r { right: auto; left: calc(50% + 20px); }
+
+/* the timeline: a classic left-to-right Gantt across the top, phases below */
+.tl { grid-template-columns: 1fr; gap: 1.2rem; }
+.gantt-col { position: static; height: 250px; max-height: none; }
+.gantt { padding: 40px 18px 34px 18px; }
+.g-head { display: none; }
+.g-axis { left: 18px; right: 18px; width: auto; top: auto; bottom: 8px; height: 16px; }
+.g-tick { top: 0; left: calc(var(--s) * 100%); transform: translateX(-50%); }
+.g-lanes { left: 18px; right: 18px; top: 40px; bottom: 34px; }
+.g-grid { top: 0; bottom: 0; height: auto; width: 1px; left: calc(var(--s) * 100%); right: auto; }
+.g-bar { top: calc(var(--lane) * (100% + 5px) / var(--lanes)); height: calc((100% + 5px) / var(--lanes) - 5px); left: calc(var(--s) * 100%); width: calc((var(--e) - var(--s)) * 100%); border-radius: 6px; padding: 0 10px; align-items: center; justify-content: flex-start; gap: 8px; background: rgba(244, 242, 236, 0.22) !important; box-shadow: none !important; }
+.g-bar[data-bar="beyond"] { background: repeating-linear-gradient(135deg, rgba(244, 242, 236, 0.2) 0 6px, transparent 6px 12px) !important; }
+.g-bar b { font-size: 11px; color: #fff !important; }
+.g-bar em { display: inline; font-style: normal; font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; white-space: nowrap; }
+.g-pay { left: calc(var(--s) * 100%); top: -14px; bottom: -14px; right: auto; height: auto; width: 0; border-top: 0; border-left: 1.5px dashed rgba(255, 46, 122, 0.9); }
+.g-pay span { top: -16px; right: auto; left: 4px; }
+.g-pay:last-of-type span { left: auto; right: 4px; }
+.g-play { display: none; }
+.phase { min-height: 0; padding-bottom: 1.6rem; }
+.ph-n { color: var(--blue); }
+.gauge .g-row i { transform: scaleX(1) !important; }
+.q-bar i { transform: scaleX(1) !important; }
+.q-detail { grid-template-rows: 1fr !important; }
+.q-line button { padding-block: 12px; }
+.opt { margin-top: 2rem; }
+.opt-row { grid-template-columns: 1fr auto; }
+.about { break-before: page; }
+.next { break-before: auto; }
+.contact, .sheet img { filter: grayscale(1); }
+a[href^="mailto"] { text-decoration: none; }
+
+/* density: the web page breathes, the document doesn't have to */
+.h2 { font-size: 4.2rem; }
+.records { margin-top: 2rem; }
+.batch, .shoot, .seo, .success, .stack, .ba, .svc { margin-top: 2.4rem; }
+.shotlist { grid-template-columns: 1fr 1fr; margin-top: 1.6rem; }
+.phase + .phase { padding-top: 16px; }
+.ph-media { margin-top: 1.2rem; }
+.duo img:first-child { aspect-ratio: 16 / 8; }
+.duo .phone { width: 14%; }
+.map { padding: 18px; }
+.ba-img { height: 440px; }
+.stage { height: 760px; }
+.cover { height: 820px; }
+
+/* the quote page: copy and payments on the left, the itemized quote on the right, one page */
+.inv { margin-top: 1.4rem; }
+.inv-table { display: contents; }
+.inv-copy { grid-column: 1; grid-row: 1; }
+.inv-copy p { font-size: 0.92rem; }
+.inv-big { font-size: 2rem; margin-bottom: 0.8rem; }
+.inv-h { margin-top: 1.2rem; }
+.quote { grid-column: 2; grid-row: 1 / span 2; }
+.pays { grid-column: 1; grid-row: 2; margin-top: 0; align-self: start; }
+.q-line button { padding: 9px 18px; }
+.q-detail ul { padding: 0 18px 10px 64px; gap: 1px; }
+.q-detail li { font-size: 0.8rem; line-height: 1.35; }
+.q-bar { display: none; }
+.q-total { padding: 14px 18px; }
+.close { margin-top: 2rem; }
+.tomb { padding: 24px 24px; }
+.steps { margin-top: 1.6rem; }
+#investment .h2, #next .h2, #about .h2 { font-size: 2.9rem; }
+#investment { padding-top: 1.4rem !important; }
+.q-head { padding: 9px 18px; }
+.q-line button { padding: 7px 18px; }
+.q-name { font-size: 0.98rem; }
+.q-detail ul { padding-bottom: 7px; }
+.q-detail li { font-size: 0.76rem; line-height: 1.3; }
+.pays { gap: 6px; }
+.pay { padding: 10px 12px; }
+.pay-amt { font-size: 1.3rem; margin: 4px 0 2px; }
+.foot { padding-block: 1.2rem; font-size: 0.74rem; break-inside: avoid; }
+.foot-logo { width: 130px; margin-bottom: 4px; }
+.foot .credits { font-size: 0.68rem; }
+.next { padding-bottom: 1rem !important; }
+.steps li { padding-top: 10px; }
+.close { margin-top: 1.4rem; gap: 2rem; }
+.tomb { max-width: 340px; padding: 18px 20px; }
+.tomb-b { font-size: 1.6rem; }
+.tomb-w { font-size: 2rem; }
+/* investment: heading, copy and payments stack on the left beside the quote, so the page never orphans its title */
+#investment > .wrap { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr); column-gap: 3rem; align-items: start; }
+#investment > .wrap > .kick, #investment > .wrap > .h2 { grid-column: 1; }
+#investment .inv { display: contents; }
+#investment .inv-copy { grid-column: 1; grid-row: auto; margin-top: 1rem; }
+#investment .quote { grid-column: 2; grid-row: 1 / span 4; }
+#investment .pays { grid-column: 1; grid-row: auto; margin-top: 1rem; }
+#investment .opt { grid-column: 1 / -1; }
+#next { padding-top: 1rem !important; padding-bottom: 0.4rem !important; }
+.foot { padding-block: 0.8rem; }
+.foot-in { gap: 6px; }
+.close { margin-top: 1rem; }

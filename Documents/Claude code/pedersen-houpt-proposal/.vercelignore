@@ -1,0 +1,4 @@
+docs
+*.mjs
+package.json
+.vercel
