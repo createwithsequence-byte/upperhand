@@ -131,3 +131,14 @@ a[href^="mailto"] { text-decoration: none; }
 .pv-lineage img { box-shadow: 0 0 0 1px var(--line); }
 .batch .toc { margin-top: 1.2rem; }
 .wf-grid { grid-template-columns: repeat(7, 1fr); }
+.short { -webkit-print-color-adjust: exact; }
+.g-bar { background: color-mix(in srgb, var(--c) 45%, transparent) !important; }
+.g-bar b, .g-bar em { color: #fff !important; }
+.serp .serp-col.now { opacity: 1 !important; transform: none !important; }
+.serp, .with { break-inside: avoid; }
+.guide, .guide-page { break-inside: avoid; }
+.seo, .guide { margin-top: 1rem !important; }
+.shotlist { margin-top: 1rem; }
+.wall { margin-top: 1rem; }
+.wall-grid li { aspect-ratio: 1; }
+.seo-l li { padding-block: 10px; }

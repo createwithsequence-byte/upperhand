@@ -20,6 +20,11 @@ function renderWeeks() {
   }
 }
 
+// the timeline, and only the timeline, runs through Upperhand's four colors
+const PC = [
+  { c: '#0047ff', t: '#fff' }, { c: '#ff2e7a', t: '#fff' }, { c: '#d7ff3f', t: '#131313' },
+  { c: '#ff6b00', t: '#131313' }, { c: '#0047ff', t: '#fff' }, { c: '#ff2e7a', t: '#fff' },
+];
 function renderGantt() {
   const g = $('.gantt');
   if (!g) return;
@@ -33,12 +38,19 @@ function renderGantt() {
   }
   const grid = Array.from({ length: SPAN + 1 }, (_, w) => `<i class="g-grid" style="--s:${w / SPAN}"></i>`).join('');
   const bars = PHASES.map((p, i) =>
-    `<div class="g-bar${p.optional ? ' opt' : ''}" data-bar="${p.id}" style="--lane:${i};--s:${p.start / SPAN};--e:${Math.max(p.end, p.start + 0.6) / SPAN}"><b>${p.n}</b><em>${p.short}</em></div>`).join('');
+    `<div class="g-bar${p.optional ? ' opt' : ''}" data-bar="${p.id}" style="--c:${PC[i].c};--tc:${PC[i].t};--lane:${i};--s:${p.start / SPAN};--e:${Math.max(p.end, p.start + 0.6) / SPAN}"><b>${p.n}</b><em>${p.short}</em></div>`).join('');
   const pays = QUOTE.payments.map((p, i) =>
     `<div class="g-pay" style="--s:${p.week / SPAN}"><i>$</i><span>Payment ${i + 1} · ${money(p.amount)}</span></div>`).join('');
   g.innerHTML = `<div class="g-head">${PHASES.map(p => `<span data-head="${p.id}">${p.short}</span>`).join('')}</div>
     <div class="g-axis">${ticks.join('')}</div>
     <div class="g-lanes">${grid}${bars}${pays}<div class="g-play"><span>Day 1</span></div></div>`;
+}
+
+function colorPhases() {
+  $$('.phase').forEach(el => {
+    const i = PHASES.findIndex(p => p.id === el.dataset.phase);
+    if (i > -1) { el.style.setProperty('--c', PC[i].c); el.style.setProperty('--tc', PC[i].t); }
+  });
 }
 
 function renderQuote() {
@@ -250,7 +262,7 @@ async function toy() {
 }
 
 /* ─── go ─── */
-renderWeeks(); renderGantt(); renderQuote(); renderCal();
+renderWeeks(); renderGantt(); colorPhases(); renderQuote(); renderCal();
 wireQuote(); wireBA(); wireWall();
 if (printing) {
   for (const i of $$('img[loading="lazy"]')) i.loading = 'eager';

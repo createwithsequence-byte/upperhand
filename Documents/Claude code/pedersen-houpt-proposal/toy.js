@@ -14,35 +14,25 @@ async function engraving() {
   ]).catch(err => console.warn('[TOY] fonts not ready, engraving with fallbacks:', err));
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const x = c.getContext('2d');
-  x.fillStyle = x.strokeStyle = '#f3f6ff';
+  x.fillStyle = x.strokeStyle = '#f5f7ff';
   x.textAlign = 'center'; x.textBaseline = 'alphabetic';
   const sp = (px) => { if ('letterSpacing' in x) x.letterSpacing = px + 'px'; };
   const line = (y, w, lw = 2) => { x.lineWidth = lw; x.beginPath(); x.moveTo(W / 2 - w / 2, y); x.lineTo(W / 2 + w / 2, y); x.stroke(); };
-  // the double rule of a tombstone
-  x.lineWidth = 3; x.strokeRect(44, 44, W - 88, H - 88);
-  x.lineWidth = 1.5; x.strokeRect(60, 60, W - 120, H - 120);
-  sp(5); x.font = '600 21px "JetBrains Mono", monospace';
-  x.fillText('THIS ANNOUNCEMENT WILL APPEAR', W / 2, 150);
-  x.fillText('AS A MATTER OF RECORD ONLY', W / 2, 184);
-  line(232, 120);
-  sp(0); x.font = '600 66px Newsreader, Georgia, serif';
-  x.fillText('Pedersen & Houpt, P.C.', W / 2, 340);
-  x.font = 'italic 400 44px Newsreader, Georgia, serif';
-  x.fillText('has relaunched', W / 2, 410);
-  x.font = '600 96px Newsreader, Georgia, serif';
-  x.fillText('pedersenhoupt.com', W / 2, 540);
-  sp(3); x.font = '600 18px "JetBrains Mono", monospace';
-  x.fillText('DESIGN · DEVELOPMENT · PHOTOGRAPHY · COPY · SEARCH', W / 2, 610);
-  line(672, W - 220, 1.5);
-  sp(0); x.font = '600 168px Newsreader, Georgia, serif';
-  x.fillText('Week 10', W / 2, 870);
-  x.font = 'italic 400 36px Newsreader, Georgia, serif';
-  x.fillText('The undersigned acted as studio to the firm.', W / 2, 950);
-  line(1030, 120);
-  sp(9); x.font = '400 58px "Archivo Black", sans-serif';
-  x.fillText('UPPERHAND', W / 2, 1140);
-  sp(5); x.font = '600 18px "JetBrains Mono", monospace';
-  x.fillText('CHICAGO · 2026', W / 2, 1192);
+  // one frame, five lines: the firm, the site, the date, the studio. Nothing small enough to smear.
+  x.lineWidth = 2.5; x.strokeRect(58, 58, W - 116, H - 116);
+  sp(7); x.font = '600 22px "JetBrains Mono", monospace';
+  x.fillText('A MATTER OF RECORD', W / 2, 190);
+  sp(0); x.font = '600 70px Newsreader, Georgia, serif';
+  x.fillText('Pedersen & Houpt, P.C.', W / 2, 380);
+  x.font = 'italic 400 46px Newsreader, Georgia, serif';
+  x.fillText('has relaunched', W / 2, 455);
+  x.font = '600 104px Newsreader, Georgia, serif';
+  x.fillText('pedersenhoupt.com', W / 2, 600);
+  line(700, 140, 2);
+  x.font = '600 190px Newsreader, Georgia, serif';
+  x.fillText('Week 10', W / 2, 930);
+  sp(10); x.font = '400 54px "Archivo Black", sans-serif';
+  x.fillText('UPPERHAND', W / 2, 1160);
   return c;
 }
 
@@ -66,7 +56,7 @@ export async function mountToy(host, { reduce = false } = {}) {
 
   // the backdrop: La Salle Street, dipped in Upperhand blue. The block refracts it.
   const loader = new THREE.TextureLoader();
-  const photo = await loader.loadAsync('img/hero-ink.webp');
+  const photo = await loader.loadAsync('img/hero-ink-soft.webp');
   photo.colorSpace = THREE.SRGBColorSpace;
   const back = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: photo, toneMapped: false }));
   back.position.z = -2.6;
@@ -75,21 +65,22 @@ export async function mountToy(host, { reduce = false } = {}) {
   // the block
   const toy = new THREE.Group();
   const glass = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff, metalness: 0, roughness: 0.035, transmission: 1, thickness: 0.95, ior: 1.49,
+    color: 0xffffff, metalness: 0, roughness: 0.03, transmission: 1, thickness: 0.6, ior: 1.49,
     attenuationColor: new THREE.Color(0xe8efff), attenuationDistance: 4.5,
-    clearcoat: 1, clearcoatRoughness: 0.02, specularIntensity: 1, envMapIntensity: 1.35, dispersion: 0.18,
+    clearcoat: 1, clearcoatRoughness: 0.02, specularIntensity: 1, envMapIntensity: 1.35, dispersion: 0.05,
   });
-  const block = new THREE.Mesh(new RoundedBoxGeometry(1.55, 2.05, 0.46, 8, 0.085), glass);
+  const DEPTH = 0.3;
+  const block = new THREE.Mesh(new RoundedBoxGeometry(1.55, 2.05, DEPTH, 8, 0.06), glass);
   toy.add(block);
 
-  // the engraving floats inside the block. alphaTest keeps it in the opaque pass,
-  // which is the pass the glass samples, so the lettering bends with the acrylic.
+  // the etching sits on the front face, drawn after the glass. Inside the block, the side faces
+  // refracted it into mirrored copies of the lettering; on the face it reads cleanly from every angle.
   const etch = new THREE.CanvasTexture(await engraving());
   etch.colorSpace = THREE.SRGBColorSpace;
   etch.anisotropy = renderer.capabilities.getMaxAnisotropy();
   const plate = new THREE.Mesh(new THREE.PlaneGeometry(1.55 * 0.92, 2.05 * 0.92),
-    new THREE.MeshBasicMaterial({ map: etch, alphaTest: 0.35, alphaToCoverage: true, side: THREE.DoubleSide, toneMapped: false }));
-  plate.position.z = 0.02;
+    new THREE.MeshBasicMaterial({ map: etch, transparent: true, opacity: 0.94, depthWrite: false, toneMapped: false }));
+  plate.position.z = DEPTH / 2 + 0.002;
   toy.add(plate);
   scene.add(toy);
 
@@ -121,8 +112,8 @@ export async function mountToy(host, { reduce = false } = {}) {
   let tx = 0, ty = 0, rx = 0, ry = -0.35, spin = 0, vel = 0, dragging = false, lastX = 0;
   host.addEventListener('pointermove', e => {
     const r = host.getBoundingClientRect();
-    tx = ((e.clientY - r.top) / r.height - 0.5) * 0.35;
-    ty = ((e.clientX - r.left) / r.width - 0.5) * 0.9;
+    tx = ((e.clientY - r.top) / r.height - 0.5) * 0.22;
+    ty = ((e.clientX - r.left) / r.width - 0.5) * 0.55;
     if (dragging) { vel = (e.clientX - lastX) * 0.012; spin += vel; lastX = e.clientX; }
   });
   host.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; });
@@ -139,7 +130,7 @@ export async function mountToy(host, { reduce = false } = {}) {
     if (!dragging) { spin += vel * dt; vel *= Math.pow(0.94, dt); spin *= Math.pow(0.985, dt); }
     const sy = Math.min(scrollY / innerHeight, 1.2);
     rx += (tx + Math.sin(t * 0.5) * 0.04 - sy * 0.12 - rx) * ease;
-    ry += (ty + Math.sin(t * 0.35) * 0.22 - 0.28 + spin + sy * 0.9 - ry) * ease;
+    ry += (ty + Math.sin(t * 0.35) * 0.1 - 0.14 + spin + sy * 0.45 - ry) * ease;
     toy.rotation.set(rx, ry, Math.sin(t * 0.4) * 0.015);
     toy.position.y = Math.sin(t * 0.8) * 0.04 + sy * 0.35;
     back.position.x = -ty * 0.25;
