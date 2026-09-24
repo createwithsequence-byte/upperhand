@@ -129,3 +129,5 @@ a[href^="mailto"] { text-decoration: none; }
 .ba { margin-top: 1.6rem; }
 .pv-block { margin-top: 1.6rem; break-inside: avoid; }
 .pv-lineage img { box-shadow: 0 0 0 1px var(--line); }
+.batch .toc { margin-top: 1.2rem; }
+.wf-grid { grid-template-columns: repeat(7, 1fr); }

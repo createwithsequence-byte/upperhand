@@ -631,3 +631,61 @@ html.js .rv.in { opacity: 1; transform: none; }
   .ph-pay { border-radius: 14px; padding: 10px 14px; gap: 6px 10px; }
 }
 @media (max-width: 900px) { .duo figcaption { padding-right: 34%; } }
+
+/* six launch articles: intro and process on one row, the six as a grid below */
+.batch { display: block; }
+.batch-head { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr); gap: 1rem clamp(2rem, 5vw, 5rem); align-items: start; }
+.batch-head .h3 { font-size: clamp(1.5rem, 2.6vw, 2.2rem); }
+.batch-head p { color: var(--muted); max-width: 62ch; }
+.flow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem; counter-reset: fl; }
+.flow li { counter-increment: fl; font-size: 13px; font-weight: 700; background: var(--card); box-shadow: 0 0 0 1px var(--line); border-radius: 99px; padding: 7px 14px 7px 8px; display: inline-flex; align-items: center; gap: 8px; }
+.flow li::before { content: counter(fl); display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 10px; }
+.batch .toc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 clamp(1.5rem, 3vw, 2.5rem); margin-top: 2rem; }
+.batch .toc li { display: block; padding: 18px 0 22px; border-top: 1.5px solid rgba(19, 19, 19, 0.75); border-bottom: 0; }
+.batch .toc li:last-child { border-bottom: 0; }
+.batch .toc .tn { display: inline-block; padding: 0; margin-right: 10px; }
+.batch .toc .tn + div { display: inline; }
+.batch .toc .tp { display: inline; }
+.batch .toc h4 { margin-top: 10px; }
+
+/* design phase: seven templates as wireframes, deliberately undesigned */
+.wire { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+.wf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.wf { position: relative; aspect-ratio: 3 / 4; background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px var(--line); padding: 10px 10px 30px; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+.wf i { display: block; background: rgba(19, 19, 19, 0.08); border-radius: 3px; }
+.wf .wf-bar { height: 8px; }
+.wf .wf-img { flex: 1; min-height: 30px; background: rgba(19, 19, 19, 0.12); }
+.wf .wf-l { height: 5px; width: 90%; }
+.wf .wf-l.s { width: 60%; }
+.wf b { position: absolute; left: 10px; bottom: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.wf-attorney .wf-img { flex: 0 0 45%; width: 45%; }
+.wf-article .wf-img { flex: 0 0 22%; }
+.wf-contact .wf-img { flex: 0 0 30%; }
+.wf-matter .wf-img { flex: 0 0 26%; }
+
+/* development phase: a sample of the redirect map */
+.redir { background: var(--ink); color: #fff; border-radius: 16px; padding: 20px 22px 16px; }
+.rd-head { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 10px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #a3a095; padding-bottom: 10px; border-bottom: 1px solid rgba(244, 242, 236, 0.18); }
+.rd-head span:last-child { grid-column: 3; }
+.redir ul { display: grid; }
+.redir li { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(244, 242, 236, 0.1); }
+.redir code { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; }
+.redir li code:first-child { color: #a3a095; text-decoration: line-through; text-decoration-color: rgba(244, 242, 236, 0.35); }
+.redir li span { color: var(--blue); font-family: var(--mono); text-align: center; }
+.redir figcaption { color: #a3a095; margin-top: 12px; }
+
+/* about: the mark beside the name */
+.about-head { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; margin-top: 0.9rem; }
+.about-head .h2 { margin-top: 0; }
+.about-logo { height: clamp(34px, 4vw, 52px); width: auto; }
+
+@media (max-width: 900px) {
+  .batch-head { grid-template-columns: 1fr; }
+  .batch .toc { grid-template-columns: 1fr; }
+  .wf-grid { grid-template-columns: repeat(2, 1fr); }
+  .rd-head, .redir li { grid-template-columns: 1fr; gap: 2px; }
+  .rd-head span:last-child { grid-column: 1; }
+  .redir li span { display: none; }
+}
+
+h1, h2, h3, h4 { text-wrap: balance; }

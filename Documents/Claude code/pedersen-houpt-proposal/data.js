@@ -10,7 +10,7 @@ export const QUOTE = {
         'An audit of every page in your sitemap, your analytics and your directory listings',
         'Sitemap, content model, redirect map and shoot plan, signed off before design starts'] },
     { id: 'design', name: 'Design', amount: 11000,
-      detail: ['A design system that starts from the Clark Street preview: type, color, grid and components',
+      detail: ['A design system shaped by what we learn in discovery: type, color, grid and components',
         'Seven templates: home, practice, attorney, matter, article, about and careers, contact',
         'A brand playbook, so later edits stay consistent',
         'Designed phone-first, with a prototype you can click and two rounds of revisions'] },
@@ -59,7 +59,7 @@ export const QUOTE = {
 export const PHASES = [
   { id: 'discovery', n: '01', name: 'Discovery & planning', short: 'Discovery', start: 0, end: 2, milestone: 'sign' },
   { id: 'design', n: '02', name: 'Design', short: 'Design', start: 2, end: 5, milestone: 'm1' },
-  { id: 'content', n: '03', name: 'Content & photography', short: 'Content + photo', start: 4, end: 6 },
+  { id: 'content', n: '03', name: 'Content & photography', short: 'Content', start: 4, end: 6 },
   { id: 'build', n: '04', name: 'Development', short: 'Build', start: 5, end: 9 },
   { id: 'launch', n: '05', name: 'Optimize, test & launch', short: 'Launch', start: 9, end: 10, milestone: 'm2' },
   { id: 'beyond', n: '06', name: 'Beyond launch', short: 'Beyond', start: 10, end: 12, optional: true },
