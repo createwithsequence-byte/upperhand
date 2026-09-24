@@ -18,21 +18,35 @@ async function engraving() {
   x.textAlign = 'center'; x.textBaseline = 'alphabetic';
   const sp = (px) => { if ('letterSpacing' in x) x.letterSpacing = px + 'px'; };
   const line = (y, w, lw = 2) => { x.lineWidth = lw; x.beginPath(); x.moveTo(W / 2 - w / 2, y); x.lineTo(W / 2 + w / 2, y); x.stroke(); };
-  // one frame, five lines: the firm, the site, the date, the studio. Nothing small enough to smear.
-  x.lineWidth = 2.5; x.strokeRect(58, 58, W - 116, H - 116);
+  // one frame, six elements: the scales, the record line, the firm, the site, the date, the studio
+  const FRAME = 58, PAD = 70, MAXW = W - 2 * (FRAME + PAD);
+  const fit = (txt, font, size) => { x.font = font.replace('SIZE', size); let s = size; while (x.measureText(txt).width > MAXW && s > 20) { s -= 2; x.font = font.replace('SIZE', s); } };
+  x.lineWidth = 2.5; x.strokeRect(FRAME, FRAME, W - 2 * FRAME, H - 2 * FRAME);
+  // scales of justice, drawn as a line mark: post, beam, two hanging pans, a base
+  x.save(); x.translate(W / 2, 122); x.scale(1.25, 1.25); x.lineWidth = 3.4; x.lineCap = 'round'; x.lineJoin = 'round';
+  x.beginPath(); x.arc(0, -8, 7, 0, Math.PI * 2); x.stroke();
+  x.beginPath(); x.moveTo(0, 0); x.lineTo(0, 78); x.stroke();
+  x.beginPath(); x.moveTo(-62, 12); x.lineTo(62, 12); x.stroke();
+  for (const sx of [-62, 62]) {
+    x.beginPath(); x.moveTo(sx, 12); x.lineTo(sx - 20, 48); x.moveTo(sx, 12); x.lineTo(sx + 20, 48); x.stroke();
+    x.beginPath(); x.moveTo(sx - 26, 48); x.quadraticCurveTo(sx, 72, sx + 26, 48); x.closePath(); x.stroke();
+  }
+  x.beginPath(); x.moveTo(-26, 86); x.lineTo(26, 86); x.moveTo(-16, 78); x.lineTo(16, 78); x.stroke();
+  x.restore();
   sp(7); x.font = '600 22px "JetBrains Mono", monospace';
-  x.fillText('A MATTER OF RECORD', W / 2, 190);
-  sp(0); x.font = '600 70px Newsreader, Georgia, serif';
-  x.fillText('Pedersen & Houpt, P.C.', W / 2, 380);
-  x.font = 'italic 400 46px Newsreader, Georgia, serif';
-  x.fillText('has relaunched', W / 2, 455);
-  x.font = '600 104px Newsreader, Georgia, serif';
-  x.fillText('pedersenhoupt.com', W / 2, 600);
-  line(700, 140, 2);
+  x.fillText('A MATTER OF RECORD', W / 2, 272);
+  sp(0); fit('Pedersen & Houpt, P.C.', '600 SIZEpx Newsreader, Georgia, serif', 70);
+  x.fillText('Pedersen & Houpt, P.C.', W / 2, 420);
+  x.font = 'italic 400 44px Newsreader, Georgia, serif';
+  x.fillText('has relaunched', W / 2, 492);
+  fit('pedersenhoupt.com', '600 SIZEpx Newsreader, Georgia, serif', 100);
+  x.fillText('pedersenhoupt.com', W / 2, 620);
+  line(712, 140, 2);
   x.font = '600 190px Newsreader, Georgia, serif';
-  x.fillText('Week 10', W / 2, 930);
-  sp(10); x.font = '400 54px "Archivo Black", sans-serif';
-  x.fillText('UPPERHAND', W / 2, 1160);
+  x.fillText('Week 10', W / 2, 940);
+  sp(10); x.font = '400 56px "Archivo Black", sans-serif'; x.fillStyle = '#0047ff';
+  x.fillText('UPPERHAND', W / 2, 1165);
+  x.fillStyle = '#f5f7ff';
   return c;
 }
 

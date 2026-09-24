@@ -31,7 +31,7 @@ export const QUOTE = {
         'Each one starts with a thirty-minute interview with the partner who did the work',
         'Nothing publishes without that partner’s sign-off'] },
     { id: 'launch', name: 'Optimization, QA & launch', amount: 2500,
-      detail: ['Under 2.5 seconds on a phone, cookie consent and ADA accessibility (WCAG 2.2 AA) built in',
+      detail: ['Under 2 seconds on a phone, cookie consent and ADA accessibility (WCAG 2.2 AA) built in',
         'Testing on every device and of every redirect',
         'An hour of CMS training, a written guide, and two weeks of monitoring after launch'] },
   ],
