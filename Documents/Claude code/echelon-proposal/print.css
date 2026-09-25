@@ -1,0 +1,106 @@
+/* print.css: the PDF. Letter landscape; build.mjs renders it at 80% scale, so a page lays out like a
+   1200-wide desktop. The web page is black; the document is white paper with a black cover, because
+   people print proposals. Cmd+P from the browser gets the same document. */
+@page { size: letter landscape; margin: 0.42in 0.5in; }
+html, body { background: #fff !important; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  --bg: #fff; --bg2: #f5f4ef; --fg: #131313; --fg2: #3d3c37; --mute: #5f5c54; --line: rgba(19, 19, 19, 0.13); --line2: rgba(19, 19, 19, 0.26); color: var(--fg); }
+.topnav, .skip, .cta, .stage canvas, .q-tog, .close .btn { display: none !important; }
+html.js .rv, .rv { opacity: 1 !important; transform: none !important; }
+.gantt .g-bar { transform: none !important; }
+
+/* the cover stays black: one dark page, the card on it */
+.cover { --fg: #f4f2ec; --fg2: #c8c6bf; --mute: #8f8d87; --line: rgba(244, 242, 236, 0.14); background: #0b0b0c; color: var(--fg); border-radius: 22px; min-height: 0; height: 900px; max-width: none; padding: 56px 56px 48px; grid-template-columns: 1.05fr 0.95fr; }
+.stage { max-height: none; height: 620px; width: 620px; aspect-ratio: auto; }
+.card-still { opacity: 1 !important; }
+
+.sec { padding-block: 2rem 2.4rem; border-top: 0; break-before: page; }
+.wrap { max-width: none; }
+.h2 { font-size: 3rem; }
+.verbs { font-size: 6.4rem; }
+.short { position: static; box-shadow: inset 0 0 0 1px var(--line2); }
+.letter-body p { font-size: 1.02rem; }
+.letter-grid { gap: 56px; }
+.answers { margin-top: 2.4rem; break-before: page; }
+.ans-grid a { min-height: 0; }
+.ans-grid li, .recs li, .flow li, .phase, .path, .said figure, .pay, .q-line, .opt-row, .steps li, .run tr, .pages div, .measures li, .out li, .cmp tr, .door, .core, .est { break-inside: avoid; }
+.phones { break-inside: avoid; margin-top: 2rem; padding: 32px; }
+.phones .phone .scr { box-shadow: inset 0 0 0 1.5px rgba(244, 242, 236, 0.3), 0 0 0 6px #2a2a2e; }
+.connect, .arch, .pwa, .costs { margin-top: 2.4rem; }
+.connect { break-before: page; }
+.arch { break-before: page; }
+.out { margin-top: 2rem; }
+.recs { margin-top: 1.6rem; }
+.recs li { padding-block: 18px 20px; }
+.pwa { break-inside: avoid; }
+.path { break-inside: avoid; }
+.paths { margin-top: 0; }
+.ask { margin: 1.6rem 0; }
+.gantt { height: 300px; }
+.phases { margin-top: 2rem; gap: 28px 32px; }
+.investment { background: #fff; }
+.inv { gap: 3rem; }
+.inv-big { font-size: 4.4rem; }
+.costs { break-before: page; }
+.opt { margin-top: 2.4rem; break-inside: avoid; }
+.about { break-before: page; border-radius: 22px; }
+.next { break-before: auto; }
+.close { margin-top: 2rem; }
+.who { margin-left: 0; }
+.foot { border-top: 0; padding-block: 1rem; }
+a[href^="mailto"] { text-decoration: none; }
+
+/* the quote page: payments left, the itemized quote right, one page */
+.inv { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.3fr); margin-top: 1rem; }
+.inv-big { font-size: 3.4rem; margin-bottom: 10px; }
+.inv-copy .lab { margin-top: 18px; }
+.pay { padding: 9px 14px; }
+.q-head { padding: 8px 18px; }
+.q-line button { padding: 7px 18px; }
+.q-name { font-size: 0.96rem; }
+.q-amt { font-size: 1rem; }
+.q-detail ul { padding: 0 18px 7px calc(18px + 2.4rem + 12px); gap: 1px; }
+.q-detail li { font-size: 0.74rem; line-height: 1.3; }
+.q-total { padding: 12px 18px; }
+.q-total b { font-size: 1.4rem; }
+.quote-t { break-inside: avoid; }
+
+/* W-9s: the question and both paths on one page */
+.said { margin-top: 1.2rem; }
+.said figure { padding: 18px 20px; }
+.said blockquote { font-size: 1rem; }
+.ask { font-size: 1.15rem; margin: 1rem 0; }
+.path { padding: 20px 22px; }
+.path h3 { font-size: 1.2rem; }
+.path > p, .path li { font-size: 0.9rem; }
+.path li { padding-block: 7px; }
+.path li::before { top: 13px; }
+.path ul { margin: 10px 0 14px; }
+.p-tag { margin-bottom: 12px; }
+.p-price b { font-size: 1.3rem; }
+.either { margin-top: 14px; font-size: 0.95rem; }
+
+/* the last page: about, next steps and the footer together */
+.about { padding-block: 1.6rem 1.8rem; }
+.about .h2 { font-size: 2.4rem; }
+.about-grid { margin-top: 1rem; }
+.about-lead { font-size: 1.2rem; }
+.next { padding-block: 1.4rem 0.6rem; }
+.next .h2 { font-size: 2.2rem; }
+.steps { margin-top: 1rem; }
+.close { margin-top: 1rem; padding-top: 14px; }
+.foot { padding-block: 0.6rem; font-size: 11px; }
+.foot-logo { width: 110px; margin-bottom: 2px; }
+
+/* investment: heading, fee and payments stack on the left beside the quote, so the title never sits alone */
+#investment > .wrap { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.3fr); column-gap: 3rem; align-items: start; }
+#investment > .wrap > .idx, #investment > .wrap > .h2 { grid-column: 1; }
+#investment .inv { display: contents; }
+#investment .inv-copy { grid-column: 1; margin-top: 1rem; }
+#investment .quote-t { grid-column: 2; grid-row: 1 / span 3; }
+#investment .costs, #investment .opt { grid-column: 1 / -1; }
+.w9 .h2 { font-size: 2.4rem; }
+.path li, .path > p { font-size: 0.86rem; }
+.said blockquote { font-size: 0.95rem; }
+#investment > .wrap { grid-template-rows: auto auto auto 1fr; }
+#investment .quote-t { grid-row: 1 / span 4; }

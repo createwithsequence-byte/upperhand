@@ -1,0 +1,5 @@
+docs
+*.mjs
+package.json
+.vercel
+PROCESS.md
