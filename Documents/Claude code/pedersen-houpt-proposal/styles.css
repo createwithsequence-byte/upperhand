@@ -828,3 +828,19 @@ html.js .serp.in .serp-col.now { transform: none; opacity: 1; }
   .inv-bar span { padding: 0 5px; font-size: 0; }
   .inv-bar b { font-size: 0.95rem; }
 }
+
+/* ── the timeline as one pinned scene (JS adds .scene; print and reduced motion keep the stack) ── */
+.timeline.scene .tl { display: block; position: relative; }
+.timeline.scene .tl-stage { position: sticky; top: var(--navh); height: calc(100svh - var(--navh)); display: flex; flex-direction: column; gap: 18px; padding-top: 10px; overflow: hidden; }
+.timeline.scene .gantt-col { position: relative; top: auto; flex: 0 0 auto; }
+.timeline.scene .phases { position: relative; flex: 1 1 auto; overflow: hidden; }
+.timeline.scene .phase { position: absolute; left: 0; right: 0; top: 0; border-top: 2px solid var(--ink); background: var(--paper); will-change: transform, opacity; padding-bottom: 24px; }
+.timeline.scene .phase + .phase { padding-top: 10px; }
+.timeline.scene .ph-media { will-change: transform; }
+.timeline.scene .phase:not(.on) { pointer-events: none; }
+/* soft edges where the phase meets the Gantt and the bottom of the screen */
+.timeline.scene .phases::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 36px; background: linear-gradient(to top, var(--paper), transparent); pointer-events: none; z-index: 2; }
+@media (max-width: 900px) {
+  .timeline.scene .tl-stage { gap: 12px; padding-top: 0; }
+  .timeline.scene .gantt-col { margin: 0 calc(var(--gut) * -1); }
+}

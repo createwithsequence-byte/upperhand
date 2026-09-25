@@ -212,7 +212,7 @@ function scrollWork() {
     links.forEach((a, i) => a.setAttribute('aria-current', i === cur));
 
     // the timeline playhead: a card crossing the reading line maps to its weeks
-    if (tl && gantt) {
+    if (tl && gantt && !tl.classList.contains('scene')) {
       const line = vh * 0.42;
       let t = 0, active = null;
       for (const c of cards) {
@@ -249,6 +249,77 @@ function scrollWork() {
   update();
 }
 
+
+/* ─── the timeline as one pinned scene ───
+   The stage (Gantt + phase viewport) sticks under the nav. Each phase owns a stretch of scroll:
+   it rises in, its content scrolls inside the stage if it is taller than the viewport, its picture
+   drifts at its own speed, then it hands over to the next phase. Off for print and reduced motion. */
+function timelineScene() {
+  const sec = $('#timeline'), track = $('.tl'), stage = $('.tl-stage'), box = $('.phases');
+  const cards = $$('.phase'), gantt = $('.gantt');
+  if (!sec || !track || !stage || !box || reduce || printing) return;
+  sec.classList.add('scene');
+  const bars = Object.fromEntries($$('.g-bar').map(b => [b.dataset.bar, b]));
+  const play = $('.g-play'), playLab = $('.g-play span');
+  const label = t => t <= 0.15 ? 'Day 1' : t >= 10.9 ? 'After launch' : t >= 9.85 ? 'Launch' : `Week ${Math.ceil(t)}`;
+  let segs = [], total = 0, T = 0, ticking = false;
+
+  const layout = () => {
+    const vh = innerHeight, boxH = box.clientHeight;
+    T = Math.round(vh * 0.2);                                   // the handover window, in pixels of scroll
+    let at = 0;
+    segs = cards.map(c => {
+      const over = Math.max(0, c.offsetHeight - boxH + 24);     // how far a tall phase scrolls inside the stage
+      const len = Math.round(vh * 0.75) + over + T;
+      const s = { start: at, len, over }; at += len; return s;
+    });
+    total = at;
+    track.style.height = `${stage.offsetHeight + total - T}px`;
+    update();
+  };
+
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const update = () => {
+    ticking = false;
+    const navh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--navh')) || 76;
+    const s = Math.max(0, Math.min(total - T, scrollY - (track.getBoundingClientRect().top + scrollY - navh)));
+    let cur = 0;
+    segs.forEach((g, j) => { if (s >= g.start) cur = j; });
+    cards.forEach((c, j) => {
+      const g = segs[j], end = g.start + g.len;
+      let op = 1, y = 0;
+      // the handover is sequential: the outgoing phase clears in the first half, the next rises in the second
+      if (j > 0 && s < g.start) { const e = clamp((s - (g.start - T)) / T); op = clamp(e * 2 - 1); y = (1 - e) * 80; }
+      else if (j < cards.length - 1 && s > end - T) { const x = clamp((s - (end - T)) / T); op = clamp(1 - x * 2); y = -x * 60; }
+      const q = clamp((s - g.start) / Math.max(1, g.len - T));
+      const scroll = -g.over * q;
+      c.style.opacity = op;
+      c.style.transform = `translate3d(0, ${y + scroll}px, 0)`;
+      c.style.visibility = op < 0.01 ? 'hidden' : 'visible';
+      c.classList.toggle('on', j === cur);
+      const m = c.querySelector('.ph-media');
+      if (m) m.style.transform = `translate3d(0, ${(0.5 - q) * 56}px, 0)`;   // the picture drifts slower than the words
+    });
+    const g = segs[cur], p = PHASES.find(x => x.id === cards[cur].dataset.phase);
+    const q = clamp((s - g.start) / Math.max(1, g.len - T));
+    const t = p.start + (p.end - p.start) * q;
+    if (play) play.style.setProperty('--t', Math.min(1, t / SPAN));
+    if (playLab) { playLab.textContent = label(t); playLab.classList.toggle('end', t / SPAN > 0.72); }
+    PHASES.forEach((ph, i) => {
+      bars[ph.id]?.classList.toggle('on', i === cur);
+      bars[ph.id]?.classList.toggle('done', i < cur);
+    });
+  };
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', layout);
+  addEventListener('load', layout);
+  if ('ResizeObserver' in window) new ResizeObserver(layout).observe(box);
+  for (const img of $$('.phase img')) if (!img.complete) img.addEventListener('load', layout, { once: true });
+  layout();
+  window.__scene = { segs: () => segs, total: () => total };
+}
+
 async function toy() {
   const host = $('#toy');
   if (!host || printing || new URLSearchParams(location.search).has('nogl')) return;
@@ -279,6 +350,6 @@ if (printing) {
   for (const l of $$('.q-line')) l.classList.add('open');
   for (const b of $$('.g-bar')) b.classList.add('done');
 } else {
-  reveals(); scrollWork(); toy();
+  timelineScene(); reveals(); scrollWork(); toy();
 }
 window.__proposal = { QUOTE, PHASES, ready: true };
