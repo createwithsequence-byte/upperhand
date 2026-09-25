@@ -104,3 +104,23 @@ a[href^="mailto"] { text-decoration: none; }
 .said blockquote { font-size: 0.95rem; }
 #investment > .wrap { grid-template-rows: auto auto auto 1fr; }
 #investment .quote-t { grid-row: 1 / span 4; }
+
+/* after the copy review the page grew; keep security, the quote and the close to one page each */
+.security .lede { margin-top: 0.6rem; font-size: 1rem; }
+.ticks li { padding-block: 6px; font-size: 0.9rem; }
+.ticks li::before { top: 12px; }
+.acc-h { margin-top: 18px; }
+.q-line button { padding: 5px 18px; }
+.q-detail li { font-size: 0.7rem; line-height: 1.25; }
+.inv-copy > p:not(.inv-big):not(.lab) { font-size: 0.9rem; }
+.valid { margin-top: 8px; font-size: 10.5px; }
+.about-card { margin: 0; max-width: 240px; justify-self: end; }
+.about-grid { grid-template-columns: 1.1fr 1fr 0.7fr; }
+.about-grid div p { font-size: 0.92rem; }
+.steps p { font-size: 0.9rem; }
+
+/* the footer shares the last page: About already carries the mark */
+.foot-logo { display: none; }
+.foot { padding-block: 0.2rem; font-size: 10px; }
+.foot-in { gap: 2px; }
+.close { margin-top: 0.6rem; padding-top: 10px; }

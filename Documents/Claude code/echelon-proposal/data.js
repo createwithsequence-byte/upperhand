@@ -7,7 +7,7 @@ export const QUOTE = {
   lines: [
     { id: 'discovery', name: 'Discovery & planning', amount: 1500,
       detail: ['A working session with you on the Member journey, from the request form to the first Connect',
-        'The Company Partner profile template, shaped around the questionnaire Partners already fill in',
+        'The Company Partner profile template, shaped around your Company Partner Profile questionnaire',
         'Sitemap, roles and the Connect email, signed off before design starts'] },
     { id: 'design', name: 'Brand extension & design', amount: 5500,
       detail: ['Your logo and brand standards carried into a digital system: type, color, spacing',
@@ -19,15 +19,15 @@ export const QUOTE = {
         'The Request Founding Membership form, with the source and Ambassador captured on the way in',
         'Search basics, social previews, video embeds, and pages for your Terms, Privacy and Company Partner Disclaimer'] },
     { id: 'portal', name: 'Member Portal', amount: 6500,
-      detail: ['Sign in, the Member home, Explore by ecosystem and category, and Company Partner profiles',
-        'A prominent Echelon Member Advantage on every profile',
+      detail: ['Password sign-in, the Member home, Explore by ecosystem and category, and Company Partner profiles',
+        'Profiles with logo, overview, services, reach, contact, the Member Benefit and a prominent Echelon Member Advantage',
         'Connect: the email introduction, logged at the button with the Member, the Partner, the date and the time',
         'My Echelon, with account details and connection history',
         'Installs to the home screen on iPhone and Android, as a Progressive Web App'] },
     { id: 'admin', name: 'Administration', amount: 3000,
       detail: ['Add, edit and remove Members, Company Partners, profiles, categories, Member Advantages and page content',
-        'The membership queue: approve a request and send the enrollment link',
-        'The connection report, filterable and exportable, and the source and Ambassador on every Member record'] },
+        'The membership queue: approve a request and send the enrollment link; the Member sets a password and accepts your Terms',
+        'The connection report, a CSV export of Members, Partners and connections, and the source and Ambassador on every Member record'] },
     { id: 'systems', name: 'Integrations & security', amount: 2000,
       detail: ['Constant Contact: approved Members added to your list automatically',
         'Email for Connect introductions, sign-in links and approvals, sent from your domain',
@@ -35,10 +35,10 @@ export const QUOTE = {
     { id: 'launch', name: 'Testing & launch', amount: 2000,
       detail: ['The first three Company Partner profiles loaded with you, then your team carries on',
         'Testing on iPhone, Android and desktop, then user acceptance testing with your team',
-        'Launch, an hour of admin training, a written guide, and thirty days of fixes after launch'] },
+        'Launch, an hour of admin training, a written guide, and thirty days of fixes for anything that does not work as scoped'] },
   ],
   payments: [
-    { id: 'sign', label: 'At signing', when: 'Day 1', amount: 9600, week: 0, pct: 40 },
+    { id: 'sign', label: 'At signing', when: 'Before kickoff', amount: 9600, week: 0, pct: 40 },
     { id: 'm1', label: 'Milestone 1: design approved', when: 'End of week 4', amount: 7200, week: 4, pct: 30 },
     { id: 'm2', label: 'Milestone 2: launch', when: 'Week 10', amount: 7200, week: 10, pct: 30 },
   ],
@@ -53,17 +53,17 @@ export const QUOTE = {
     { id: 'app', group: 'later', name: 'Native iOS and Android app', price: 20000, unit: 'range', to: 35000,
       detail: 'Preliminary, on the same foundation as V0. We would quote it properly after a few months of real use.' },
     { id: 'v1', group: 'later', name: 'Ambassador dashboard, Partner logins, Shared Value tracking', price: 0, unit: 'quote',
-      detail: 'Each one scoped and quoted on its own, when you are ready for it. V0 stores the data they need from day one.' },
+      detail: 'Each one scoped and quoted on its own, when you are ready for it. V0 keeps the records they build on: Ambassadors, Partners and every connection.' },
   ],
 };
 
 // Running costs, checked Sep 25, 2026 on each vendor's pricing page. Every account opens in IntenseGBD's name.
 export const RUNNING = [
-  { id: 'hosting', item: 'Hosting and security certificates', vendor: 'Vercel Pro', monthly: 20, note: 'Includes SSL, a global network and attack protection' },
+  { id: 'hosting', item: 'Hosting and security certificates', vendor: 'Vercel Pro', monthly: 20, note: 'Includes SSL, a global network, DDoS mitigation and a web firewall. Priced per developer seat; one is enough' },
   { id: 'db', item: 'Database, sign-in, file storage and daily backups', vendor: 'Supabase Pro', monthly: 25, note: 'Backups kept for 7 days' },
-  { id: 'email', item: 'Connect introductions and sign-in email', vendor: 'Resend', monthly: 0, note: 'Free to 3,000 emails a month, then $20' },
+  { id: 'email', item: 'Connect introductions and sign-in email', vendor: 'Resend', monthly: 0, note: 'Free to 3,000 emails a month (100 a day), then $20' },
   { id: 'forms', item: 'Forms and plugins', vendor: 'Built in', monthly: 0, note: 'Nothing to license' },
-  { id: 'cc', item: 'Member email', vendor: 'Constant Contact', monthly: null, note: 'Your existing plan. Connecting it adds nothing' },
+  { id: 'cc', item: 'Member email', vendor: 'Constant Contact', monthly: null, note: 'Your plan, priced by list size. Connecting it adds nothing' },
   { id: 'domain', item: 'Domain', vendor: 'theechelonsignature.com', monthly: null, note: 'You already own it; the renewal stays yours' },
 ];
 export const RUNNING_LATER = [
@@ -72,7 +72,7 @@ export const RUNNING_LATER = [
   { item: 'App store accounts, once there is an app', cost: '$99 a year + $25 once' },
 ];
 
-// start/end are weeks. Week 0 is the signing day; V0 launches at the end of week 10.
+// start/end are weeks. Week 0 is kickoff, within five business days of the first payment; V0 launches at the end of week 10.
 export const PHASES = [
   { id: 'discovery', n: '01', name: 'Discovery & planning', short: 'Discovery', start: 0, end: 1, milestone: 'sign' },
   { id: 'design', n: '02', name: 'Design', short: 'Design', start: 1, end: 4, milestone: 'm1' },
@@ -94,4 +94,4 @@ export const NAV = [
 export const money = n => '$' + n.toLocaleString('en-US');
 export const monthlyTotal = () => RUNNING.reduce((s, r) => s + (r.monthly || 0), 0);
 export const LAUNCH = PHASES.find(p => p.milestone === 'm2').end;
-export const weeks = p => p.start === 0 ? (p.end === 1 ? 'Week 1' : `Day 1 to week ${p.end}`) : p.start === p.end ? `Week ${p.end}` : `Weeks ${p.start} to ${p.end}`;
+export const weeks = p => p.start === 0 ? (p.end === 1 ? 'Week 1' : `Kickoff to week ${p.end}`) : p.start === p.end ? `Week ${p.end}` : `Weeks ${p.start} to ${p.end}`;

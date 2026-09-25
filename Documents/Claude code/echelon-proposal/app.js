@@ -30,7 +30,7 @@ function renderGantt() {
   g.style.setProperty('--lanes', PHASES.length);
   const ticks = Array.from({ length: SPAN }, (_, w) => {
     const big = QUOTE.payments.some(p => p.week === w);
-    const lab = w === 0 ? 'Day 1' : `Wk ${w}`;
+    const lab = w === 0 ? 'Kickoff' : `Wk ${w}`;
     return `<span class="g-tick${big ? ' big' : ''}" style="--s:${w / SPAN}">${lab}</span>`;
   }).join('');
   const grid = Array.from({ length: SPAN }, (_, w) => `<i class="g-grid" style="--s:${w / SPAN}"></i>`).join('');
@@ -58,7 +58,7 @@ function renderQuote() {
     </div>`).join('') +
     `<div class="q-total"><span>Total, fixed fee</span><b>${money(QUOTE.total)}</b></div>`;
   $('#pays').innerHTML = QUOTE.payments.map(p => `
-    <div class="pay"><span class="pay-pct">${p.pct}%</span><p class="pay-lab">${p.label}<span class="pay-when">${p.week === 0 ? 'Day 1' : 'Week ' + p.week}</span></p><p class="pay-amt">${money(p.amount)}</p></div>`).join('');
+    <div class="pay"><span class="pay-pct">${p.pct}%</span><p class="pay-lab">${p.label}<span class="pay-when">${p.week === 0 ? 'Before kickoff' : 'Week ' + p.week}</span></p><p class="pay-amt">${money(p.amount)}</p></div>`).join('');
 
   $('#run').innerHTML = `<thead><tr><th scope="col">What</th><th scope="col">Note</th><th scope="col" class="mo">Monthly</th></tr></thead><tbody>` +
     RUNNING.map(r => `<tr><td>${r.item}<span class="ven">${r.vendor}</span></td><td class="nt">${r.note}</td><td class="mo">${r.monthly === null ? '<small>Yours today</small>' : money(r.monthly)}</td></tr>`).join('') +
