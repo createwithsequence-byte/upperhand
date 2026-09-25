@@ -39,7 +39,8 @@ const probe = () => {
   }
   // small text contrast
   const lum = c => { const [r, g, b] = c.match(/[\d.]+/g).slice(0, 3).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
-  const bgOf = e => { while (e) { const c = getComputedStyle(e).backgroundColor; if (c && !c.includes('rgba(0, 0, 0, 0)') && !/,\s*0\)$/.test(c)) return c; e = e.parentElement; } return 'rgb(244, 242, 236)'; };
+  // only an rgba() alpha of 0 is transparent; rgb(255, 107, 0) is opaque orange
+  const bgOf = e => { while (e) { const c = getComputedStyle(e).backgroundColor; if (c && !/^rgba\(.*,\s*0\)$/.test(c)) return c; e = e.parentElement; } return 'rgb(244, 242, 236)'; };
   const low = [];
   for (const e of textEls) {
     const s = getComputedStyle(e); if (parseFloat(s.fontSize) > 15) continue;
