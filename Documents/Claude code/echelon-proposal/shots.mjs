@@ -1,6 +1,6 @@
 // shots.mjs: viewport screenshots at real sizes (the Browser pane's emulation returns stale frames).
 //   node shots.mjs [url] [outdir]      desktop 1440x900 + phone 390x844, one frame per screen of scroll
-//   node shots.mjs --card              capture img/card.webp, the still used for print and no-WebGL
+//   node shots.mjs --card [--back]     capture img/card.webp (or card-back.webp), the stills used for print, no-WebGL and About
 import { createRequire } from 'node:module';
 import { mkdirSync, writeFileSync } from 'node:fs';
 const require = createRequire(import.meta.url);
@@ -14,13 +14,15 @@ const browser = await chromium.launch({ args: ['--use-angle=metal', '--enable-gp
 
 if (args.includes('--card')) {
   const page = await browser.newPage({ viewport: { width: 1000, height: 1000 }, deviceScaleFactor: 1.2 });
-  await page.goto(url + '?snap', { waitUntil: 'networkidle' });
+  const back = args.includes('--back');
+  await page.goto(url + (back ? '?snap&back' : '?snap'), { waitUntil: 'networkidle' });
   await page.addStyleTag({ content: '.cover{display:block!important;padding:0!important;max-width:none!important}.cover-txt,.topnav,.stage-tag{display:none!important}.stage{width:1000px!important;height:1000px!important;max-height:none!important;border-radius:0!important;background:none!important;box-shadow:none!important}' });
   await page.waitForFunction(() => window.__card, null, { timeout: 20000 });
   await page.waitForTimeout(2500);
   const data = await page.evaluate(() => window.__card.snap());
-  writeFileSync(new URL('./img/card.webp', import.meta.url), Buffer.from(data.split(',')[1], 'base64'));
-  console.log('[SHOTS] img/card.webp written');
+  const name = back ? 'card-back.webp' : 'card.webp';
+  writeFileSync(new URL('./img/' + name, import.meta.url), Buffer.from(data.split(',')[1], 'base64'));
+  console.log('[SHOTS] img/' + name + ' written');
   await browser.close();
   process.exit(0);
 }

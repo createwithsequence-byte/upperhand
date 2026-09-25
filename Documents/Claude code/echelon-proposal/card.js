@@ -81,7 +81,7 @@ async function faces() {
 export async function mountCard(host, { reduce = false } = {}) {
   const probe = document.createElement('canvas');
   if (!(probe.getContext('webgl2') || probe.getContext('webgl'))) throw new Error('no WebGL');
-  const snap = new URLSearchParams(location.search).has('snap');
+  const q = new URLSearchParams(location.search), snap = q.has('snap');
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: snap });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1.5 : 1.75));
@@ -145,13 +145,13 @@ export async function mountCard(host, { reduce = false } = {}) {
     camera.updateProjectionMatrix();
     // keep the card at the same share of the stage's width, whatever its shape
     const vw = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
-    card.scale.setScalar(Math.min(1.1, (vw * 0.74) / CW));
+    card.scale.setScalar(Math.min(1.15, (vw * 0.84) / CW));
   };
   fit();
   new ResizeObserver(fit).observe(host);
 
   // pointer tilts it, a drag turns it over, and it settles face-on (front or back)
-  let tx = 0, ty = 0, rx = 0, ry = 0, spin = 0, target = 0, dragging = false, lastX = 0;
+  let tx = 0, ty = 0, rx = 0, ry = 0, spin = q.has('back') ? Math.PI : 0, target = spin, dragging = false, lastX = 0;
   host.addEventListener('pointermove', e => {
     const b = host.getBoundingClientRect();
     tx = ((e.clientY - b.top) / b.height - 0.5) * 0.3;

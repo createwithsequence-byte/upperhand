@@ -21,8 +21,9 @@ function renderFigures() {
 
 // the timeline, and only the timeline, runs through Upperhand's four colors
 const PC = [
-  { c: '#0047ff', t: '#fff' }, { c: '#ff2e7a', t: '#fff' }, { c: '#d7ff3f', t: '#131313' },
-  { c: '#ff6b00', t: '#131313' }, { c: '#0047ff', t: '#fff' }, { c: '#ff2e7a', t: '#fff' },
+  // white on UH pink measures 3.5:1, too low for small labels, so pink bars carry ink like lime and orange
+  { c: '#0047ff', t: '#fff' }, { c: '#ff2e7a', t: '#131313' }, { c: '#d7ff3f', t: '#131313' },
+  { c: '#ff6b00', t: '#131313' }, { c: '#0047ff', t: '#fff' }, { c: '#ff2e7a', t: '#131313' },
 ];
 function renderGantt() {
   const g = $('.gantt');
@@ -123,6 +124,7 @@ async function card() {
 /* ─── go ─── */
 renderFigures(); renderGantt(); renderQuote(); wireQuote();
 if (printing) {
+  for (const i of $$('img[loading="lazy"]')) i.loading = 'eager'; // a lazy image below the fold never loads for the PDF
   // links in the PDF must point at the published proposal, not the machine that rendered it
   const BASE = 'https://echelon-v0-proposal.vercel.app/'; // ponytail: update if the proposal moves to another address
   for (const l of $$('a[href]')) { const h = l.getAttribute('href'); if (!/^(https?:|mailto:|#)/.test(h)) l.href = BASE + h; }
