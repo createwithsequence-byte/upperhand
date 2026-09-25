@@ -39,7 +39,7 @@ function renderGantt() {
     return `<div class="g-bar" style="--c:${PC[i].c};--tc:${PC[i].t};--lane:${i};--s:${start / SPAN};--e:${p.end / SPAN}"><b>${p.n}</b><em>${p.short}</em></div>`;
   }).join('');
   const pays = QUOTE.payments.map((p, i) =>
-    `<div class="g-pay${p.week === LAUNCH ? ' end' : ''}" style="--s:${p.week / SPAN}"><span>Payment ${i + 1} · ${money(p.amount)}</span></div>`).join('');
+    `<div class="g-pay${p.week === LAUNCH ? ' end' : ''}" style="--s:${p.week / SPAN}"><span><i>Payment ${i + 1} · </i>${money(p.amount)}</span></div>`).join('');
   g.innerHTML = `<div class="g-axis">${ticks}</div><div class="g-lanes">${grid}${bars}${pays}</div>`;
   $$('.phase').forEach(el => {
     const i = PHASES.findIndex(p => p.id === el.dataset.phase);

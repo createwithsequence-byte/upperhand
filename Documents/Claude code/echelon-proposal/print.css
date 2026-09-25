@@ -112,7 +112,7 @@ a[href^="mailto"] { text-decoration: none; }
 .acc-h { margin-top: 18px; }
 .q-line button { padding: 5px 18px; }
 .q-detail li { font-size: 0.7rem; line-height: 1.25; }
-.inv-copy > p:not(.inv-big):not(.lab) { font-size: 0.9rem; }
+.inv-copy > p:not(.inv-big):not(.lab):not(.valid) { font-size: 0.9rem; }
 .valid { margin-top: 8px; font-size: 10.5px; }
 .about-card { margin: 0; max-width: 240px; justify-self: end; }
 .about-grid { grid-template-columns: 1.1fr 1fr 0.7fr; }
