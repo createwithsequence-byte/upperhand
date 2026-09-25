@@ -59,7 +59,7 @@ export const QUOTE = {
 
 // Running costs, checked Sep 25, 2026 on each vendor's pricing page. Every account opens in IntenseGBD's name.
 export const RUNNING = [
-  { id: 'hosting', item: 'Hosting and security certificates', vendor: 'Vercel Pro', monthly: 20, note: 'Includes SSL, a global network, DDoS mitigation and a web firewall. Priced per developer seat; one is enough' },
+  { id: 'hosting', item: 'Hosting and security certificates', vendor: 'Vercel Pro', monthly: 20, note: 'Includes SSL, a global network, DDoS mitigation and a web firewall. Includes one developer seat, which is enough; more are $20 each' },
   { id: 'db', item: 'Database, sign-in, file storage and daily backups', vendor: 'Supabase Pro', monthly: 25, note: 'Backups kept for 7 days' },
   { id: 'email', item: 'Connect introductions and sign-in email', vendor: 'Resend', monthly: 0, note: 'Free to 3,000 emails a month (100 a day), then $20' },
   { id: 'forms', item: 'Forms and plugins', vendor: 'Built in', monthly: 0, note: 'Nothing to license' },
