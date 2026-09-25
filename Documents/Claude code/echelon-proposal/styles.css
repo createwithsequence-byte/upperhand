@@ -295,6 +295,7 @@ html.js .gantt:not(.in) .g-bar { transform: scaleX(0); }
 .inv { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr); gap: clamp(32px, 5vw, 88px); margin-top: clamp(32px, 4vw, 56px); align-items: start; }
 .inv-big { font-family: var(--disp); font-size: clamp(3.2rem, 6.4vw, 5.8rem); letter-spacing: -0.035em; line-height: 1; color: var(--blue); margin-bottom: 20px; }
 .inv-copy > p:not(.inv-big):not(.lab) { color: var(--fg2); font-size: 1.06rem; max-width: 44ch; }
+.inv-copy > p:not(.inv-big):not(.lab) + p:not(.lab) { margin-top: 0.8rem; }
 .inv-copy .lab { margin-top: 34px; }
 .pays { display: grid; gap: 8px; }
 .pay { display: grid; grid-template-columns: 3.4rem 1fr auto; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
@@ -343,10 +344,11 @@ html.js .gantt:not(.in) .g-bar { transform: scaleX(0); }
 .maint { color: var(--fg2); font-size: 0.98rem; }
 
 .opt { margin-top: clamp(64px, 8vw, 110px); }
+.opt-later { margin-top: clamp(48px, 5vw, 72px); }
 .opt-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: baseline; padding-block: 18px; border-top: 1px solid var(--line); }
 .opt-name { display: block; font-weight: 600; font-size: 1.08rem; }
 .opt-det { display: block; color: var(--fg2); font-size: 0.97rem; max-width: 68ch; margin-top: 2px; }
-.opt-row:first-child .opt-name::after { content: "Recommended"; margin-left: 10px; font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--blue); padding: 3px 8px; border-radius: 99px; vertical-align: 2px; }
+#opts .opt-row:first-child .opt-name::after { content: "Recommended"; margin-left: 10px; font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; background: var(--blue); padding: 3px 8px; border-radius: 99px; vertical-align: 2px; }
 .opt-price { text-align: right; font-family: var(--disp); font-size: 1.3rem; white-space: nowrap; }
 .opt-price small { display: block; font-family: var(--body); font-size: 12.5px; color: var(--mute); }
 

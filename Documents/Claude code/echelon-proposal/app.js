@@ -1,12 +1,12 @@
 // app.js: draws every number on the page from data.js (fee, payments, running costs, timeline),
 // then runs the motion. Everything readable still renders with motion off.
-import { QUOTE, PHASES, RUNNING, RUNNING_LATER, NAV, money, monthlyTotal, weeks } from './data.js';
+import { QUOTE, PHASES, RUNNING, RUNNING_LATER, NAV, LAUNCH, money, monthlyTotal, weeks } from './data.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const printing = new URLSearchParams(location.search).has('print');
-const SPAN = 13; // the axis runs from signing (0) to a week past launch
+const SPAN = LAUNCH + 1; // the axis runs from signing (0) to a week past launch
 
 /* ─── render from data ─── */
 function renderFigures() {
@@ -14,6 +14,9 @@ function renderFigures() {
   for (const el of $$('[data-monthly]')) el.textContent = money(monthlyTotal());
   for (const el of $$('[data-opt]')) el.textContent = money(QUOTE.optional.find(o => o.id === el.dataset.opt).price);
   for (const el of $$('[data-weeks]')) el.textContent = weeks(PHASES.find(p => p.id === el.dataset.weeks));
+  for (const el of $$('[data-launch]')) el.textContent = el.dataset.launch.replace('N', LAUNCH);
+  const app = QUOTE.optional.find(o => o.id === 'app');
+  for (const el of $$('[data-app]')) el.textContent = `${money(app.price)} to ${money(app.to)}`;
 }
 
 // the timeline, and only the timeline, runs through Upperhand's four colors
@@ -25,17 +28,17 @@ function renderGantt() {
   const g = $('.gantt');
   g.style.setProperty('--lanes', PHASES.length);
   const ticks = Array.from({ length: SPAN }, (_, w) => {
-    const big = [0, 5, 12].includes(w);
-    const lab = w === 0 ? 'Day 1' : w === 12 ? 'Wk 12' : `Wk ${w}`;
+    const big = QUOTE.payments.some(p => p.week === w);
+    const lab = w === 0 ? 'Day 1' : `Wk ${w}`;
     return `<span class="g-tick${big ? ' big' : ''}" style="--s:${w / SPAN}">${lab}</span>`;
   }).join('');
   const grid = Array.from({ length: SPAN }, (_, w) => `<i class="g-grid" style="--s:${w / SPAN}"></i>`).join('');
   const bars = PHASES.map((p, i) => {
-    const start = p.start === p.end ? p.end - 1 : p.start; // launch is a moment at the end of week 12; draw it as that week
+    const start = p.start === p.end ? p.end - 1 : p.start; // launch is a moment at the end of its week; draw it as that week
     return `<div class="g-bar" style="--c:${PC[i].c};--tc:${PC[i].t};--lane:${i};--s:${start / SPAN};--e:${p.end / SPAN}"><b>${p.n}</b><em>${p.short}</em></div>`;
   }).join('');
   const pays = QUOTE.payments.map((p, i) =>
-    `<div class="g-pay${p.week === 12 ? ' end' : ''}" style="--s:${p.week / SPAN}"><span>Payment ${i + 1} · ${money(p.amount)}</span></div>`).join('');
+    `<div class="g-pay${p.week === LAUNCH ? ' end' : ''}" style="--s:${p.week / SPAN}"><span>Payment ${i + 1} · ${money(p.amount)}</span></div>`).join('');
   g.innerHTML = `<div class="g-axis">${ticks}</div><div class="g-lanes">${grid}${bars}${pays}</div>`;
   $$('.phase').forEach(el => {
     const i = PHASES.findIndex(p => p.id === el.dataset.phase);
@@ -62,9 +65,11 @@ function renderQuote() {
   $('#later').innerHTML = RUNNING_LATER.map(r => `<li><span>${r.item}</span><span>${r.cost}</span></li>`).join('');
 
   const unit = { once: 'one time', block: 'per 10-hour block', quote: 'one at a time', range: 'preliminary' };
-  $('#opts').innerHTML = QUOTE.optional.map(o => `<div class="opt-row">
+  const row = o => `<div class="opt-row">
       <span><span class="opt-name">${o.name}</span><span class="opt-det">${o.detail}</span></span>
-      <span class="opt-price">${o.unit === 'quote' ? 'Quoted' : o.unit === 'range' ? `${money(o.price)} to ${money(o.to)}` : money(o.price)}<small>${unit[o.unit]}</small></span></div>`).join('');
+      <span class="opt-price">${o.unit === 'quote' ? 'Quoted' : o.unit === 'range' ? `${money(o.price)} to ${money(o.to)}` : money(o.price)}<small>${unit[o.unit]}</small></span></div>`;
+  $('#opts').innerHTML = QUOTE.optional.filter(o => !o.group).map(row).join('');
+  $('#opts-later').innerHTML = QUOTE.optional.filter(o => o.group === 'later').map(row).join('');
 }
 
 function wireQuote() {

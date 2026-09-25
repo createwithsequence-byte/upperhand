@@ -57,7 +57,7 @@ if (process.argv.includes('--selftest')) {
     'invented split': { ...ok, html: base + 'a 25% share' },
     'AI': { ...ok, html: base + 'we use AI' },
     'placeholder': { ...ok, html: base + 'TODO' },
-    'payment off its phase': { ...ok, quote: { ...QUOTE, payments: QUOTE.payments.map(p => p.id === 'm1' ? { ...p, week: 4 } : p) } },
+    'payment off its phase': { ...ok, quote: { ...QUOTE, payments: QUOTE.payments.map(p => p.id === 'm1' ? { ...p, week: p.week + 1 } : p) } },
   };
   const clean = rules(ok);
   if (clean.length) throw new Error('selftest: clean input failed: ' + clean.join('; '));
