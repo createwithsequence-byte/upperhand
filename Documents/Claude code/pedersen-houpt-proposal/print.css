@@ -142,3 +142,6 @@ a[href^="mailto"] { text-decoration: none; }
 .wall { margin-top: 1rem; }
 .wall-grid li { aspect-ratio: 1; }
 .seo-l li { padding-block: 10px; }
+.gantt-col { position: static !important; }
+.keep, .fates, .tags { break-inside: avoid; }
+.phase > .ph-media { margin-top: 12px; }

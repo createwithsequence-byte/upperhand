@@ -750,3 +750,81 @@ html.js .serp.in .serp-col.now { transform: none; opacity: 1; }
   .serp-arrow { transform: rotate(90deg); justify-self: center; }
 }
 @media (prefers-reduced-motion: reduce) { html.js .serp .serp-col.now { opacity: 1; transform: none; transition: none; } }
+
+/* ── timeline: horizontal at every width, pinned under the nav while the phases scroll past ── */
+.tl { grid-template-columns: 1fr; gap: 1.4rem; }
+.gantt-col { position: sticky; top: calc(var(--navh) + 6px); height: 232px; max-height: none; z-index: 6; margin: 0; }
+.gantt { border-radius: 18px; padding: 0; box-shadow: 0 22px 44px -26px rgba(19, 19, 19, 0.6); }
+.g-head { display: none; }
+.g-lanes { left: 22px; right: 22px; top: 46px; bottom: 56px; }
+.g-axis { left: 22px; right: 22px; width: auto; top: auto; bottom: 8px; height: 14px; }
+.g-tick { top: 0; left: calc(var(--s) * 100%); transform: translateX(-50%); font-size: 10px; }
+.g-tick:first-child { transform: none; }
+.g-tick:last-child { transform: translateX(-100%); }
+.g-grid { top: 0; bottom: 0; height: auto; width: 1px; left: calc(var(--s) * 100%); right: auto; }
+.g-bar { top: calc(var(--lane) * (100% + 5px) / var(--lanes)); height: calc((100% + 5px) / var(--lanes) - 5px); left: calc(var(--s) * 100%); width: calc((var(--e) - var(--s)) * 100%); border-radius: 6px; padding: 0 10px; align-items: center; justify-content: flex-start; gap: 8px; }
+.g-bar b { font-family: var(--mono); font-weight: 700; font-size: 11px; }
+.g-bar em { display: inline; font-style: normal; font-family: var(--mono); font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: color-mix(in srgb, var(--c) 75%, #fff); }
+.g-bar.done em { color: #fff; }
+.g-bar.on em { color: var(--tc); }
+.g-pay { left: calc(var(--s) * 100%); top: -32px; bottom: -8px; right: auto; height: auto; width: 0; border-top: 0; border-left: 1.5px dashed rgba(244, 242, 236, 0.5); }
+.g-pay span { top: 0; right: auto; left: 7px; }
+.g-pay.end span { left: auto; right: 7px; }
+.g-play { left: calc(var(--t, 0) * 100%); top: -14px; right: auto; bottom: -34px; width: 2px; height: auto; transition: left 0.12s linear; }
+.g-play span { top: auto; bottom: 0; left: 7px; }
+.g-play span.end { left: auto; right: 7px; }
+
+/* phase cards: the words on the left, the picture on the right */
+.phase { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); column-gap: clamp(2rem, 4vw, 4rem); min-height: 0; padding-bottom: clamp(2.5rem, 6vh, 4rem); align-items: start; }
+.phase > * { grid-column: 1; }
+.phase > .ph-media { grid-column: 2; grid-row: 1 / span 8; margin-top: 22px; }
+
+/* ── articles: the heading above the six ── */
+.toc-h { margin-top: 2.2rem; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+.batch .toc { margin-top: 0.8rem; }
+.batch-head p + p { margin-top: 0.8rem; }
+
+/* ── search: keeping what already ranks ── */
+.keep { margin-top: 2.6rem; padding-top: 2.2rem; border-top: 1px solid rgba(19, 19, 19, 0.2); display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr); gap: 1.6rem clamp(2rem, 4vw, 4rem); align-items: start; }
+.keep h4, .guide h4 { font-family: var(--disp); font-weight: 400; font-size: 1.3rem; letter-spacing: -0.01em; }
+.keep-copy p { color: var(--muted); margin-top: 0.7rem; max-width: 56ch; }
+.stock { margin: 0; }
+.inv-bar { display: flex; height: 64px; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--line); }
+.inv-bar span { flex: var(--n) 0 0; display: flex; flex-direction: column; justify-content: center; padding: 0 10px; min-width: 0; font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid rgba(255, 255, 255, 0.6); }
+.inv-bar span:last-child { border-right: 0; }
+.inv-bar b { font-family: var(--disp); font-weight: 400; font-size: 1.2rem; line-height: 1; letter-spacing: -0.01em; text-transform: none; }
+.t-pub { background: #cdd9ff; } .t-prac { background: #dfe6ff; } .t-bio { background: #ece9e1; } .t-alert { background: #d8d4c9; } .t-other { background: #e6e3da; } .t-news { background: #c6d4ff; }
+.stock figcaption { margin-top: 8px; font-size: 0.9rem; color: var(--faint); }
+.fates { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.fates li { background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--line); padding: 14px 16px 16px; font-size: 0.93rem; color: var(--muted); line-height: 1.45; }
+.fates b { display: block; font-family: var(--disp); font-weight: 400; font-size: 1.1rem; color: var(--ink); margin-bottom: 4px; }
+.fates li:nth-child(1) b { color: var(--blue); }
+.tags { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0; }
+.tag-col { background: #fff; border-radius: 12px; box-shadow: 0 0 0 1px var(--line); padding: 16px 18px 18px; font-family: Arial, "Helvetica Neue", sans-serif; }
+.tag-col.was { opacity: 0.8; }
+.tag-k { font-family: var(--body); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+.tag-col.now .tag-k { color: var(--blue); }
+.tag-url { font-size: 12px; color: #4d5156; overflow-wrap: anywhere; }
+.tag-title { font-size: 1.1rem; color: #1a0dab; margin-top: 3px; line-height: 1.3; }
+.tag-desc { font-size: 0.88rem; color: #4d5156; margin-top: 5px; line-height: 1.5; }
+.tag-desc.none { font-style: italic; color: #9a9a9a; }
+.tags figcaption { grid-column: 1 / -1; font-size: 0.9rem; color: var(--faint); }
+
+@media (max-width: 900px) {
+  .gantt-col { top: var(--navh); height: 170px; margin: 0 calc(var(--gut) * -1); }
+  .gantt { border-radius: 0; }
+  .g-lanes { left: 14px; right: 14px; top: 30px; bottom: 44px; }
+  .g-axis { left: 14px; right: 14px; bottom: 6px; }
+  .g-bar em { display: none; }
+  .g-pay span { display: none; }
+  .g-pay { top: -12px; bottom: -8px; }
+  .g-play { top: -12px; bottom: -28px; }
+  .g-play span { font-size: 8px; padding: 2px 6px; }
+  .phase { grid-template-columns: 1fr; }
+  .phase > .ph-media { grid-column: 1; grid-row: auto; }
+  .keep, .tags { grid-template-columns: 1fr; }
+  .fates { grid-template-columns: 1fr 1fr; }
+  .inv-bar { height: 56px; }
+  .inv-bar span { padding: 0 5px; font-size: 0; }
+  .inv-bar b { font-size: 0.95rem; }
+}

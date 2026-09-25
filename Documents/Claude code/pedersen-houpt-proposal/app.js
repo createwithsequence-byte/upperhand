@@ -40,7 +40,7 @@ function renderGantt() {
   const bars = PHASES.map((p, i) =>
     `<div class="g-bar${p.optional ? ' opt' : ''}" data-bar="${p.id}" style="--c:${PC[i].c};--tc:${PC[i].t};--lane:${i};--s:${p.start / SPAN};--e:${Math.max(p.end, p.start + 0.6) / SPAN}"><b>${p.n}</b><em>${p.short}</em></div>`).join('');
   const pays = QUOTE.payments.map((p, i) =>
-    `<div class="g-pay" style="--s:${p.week / SPAN}"><i>$</i><span>Payment ${i + 1} · ${money(p.amount)}</span></div>`).join('');
+    `<div class="g-pay${p.week / SPAN > 0.7 ? ' end' : ''}" style="--s:${p.week / SPAN}"><i>$</i><span>Payment ${i + 1} · ${money(p.amount)}</span></div>`).join('');
   g.innerHTML = `<div class="g-head">${PHASES.map(p => `<span data-head="${p.id}">${p.short}</span>`).join('')}</div>
     <div class="g-axis">${ticks.join('')}</div>
     <div class="g-lanes">${grid}${bars}${pays}<div class="g-play"><span>Day 1</span></div></div>`;
