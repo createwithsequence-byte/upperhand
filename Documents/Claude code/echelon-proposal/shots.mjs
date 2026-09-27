@@ -16,7 +16,7 @@ if (args.includes('--card')) {
   const page = await browser.newPage({ viewport: { width: 1000, height: 1000 }, deviceScaleFactor: 1.2 });
   const back = args.includes('--back');
   await page.goto(url + (back ? '?snap&back' : '?snap'), { waitUntil: 'networkidle' });
-  await page.addStyleTag({ content: '.cover{display:block!important;padding:0!important;max-width:none!important}.cover-txt,.topnav,.stage-tag{display:none!important}.stage{width:1000px!important;height:1000px!important;max-height:none!important;border-radius:0!important;background:none!important;box-shadow:none!important}' });
+  await page.addStyleTag({ content: '.cover{display:block!important;padding:0!important;max-width:none!important}.cover-txt,.topnav,.stage-tag,.cover-photo{display:none!important}.cover-img::before{display:none!important}.stage{width:1000px!important;height:1000px!important;max-height:none!important;border-radius:0!important;background:none!important;box-shadow:none!important}' });
   await page.waitForFunction(() => window.__card, null, { timeout: 20000 });
   await page.waitForTimeout(2500);
   const data = await page.evaluate(() => window.__card.snap());

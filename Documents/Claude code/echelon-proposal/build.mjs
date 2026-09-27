@@ -44,7 +44,7 @@ try {
   if (errs.length) throw new Error('[BUILD] page errors: ' + errs.join(' | '));
   // render contract: a link to the build machine inside the PDF is a dead link for the client
   if (/\/URI\s*\((https?:\/\/(127\.0\.0\.1|localhost)[^)]*)\)/.test(pdf.toString('latin1'))) throw new Error('[BUILD] PDF contains links to the local build server');
-  if (pages < 10 || pages > 30) throw new Error(`[BUILD] PDF has ${pages} pages; expected 10 to 30`);
+  if (pages < 8 || pages > 16) throw new Error(`[BUILD] PDF has ${pages} pages; expected 8 to 16`); // v2 is a plan, not a pitch: short
   await writeFile(join(ROOT, OUT), pdf);
   console.log(`[BUILD] ${OUT}: ${pages} pages, ${(pdf.length / 1024 / 1024).toFixed(1)} MB`);
 } finally {

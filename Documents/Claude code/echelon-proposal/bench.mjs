@@ -1,6 +1,7 @@
 // bench.mjs: the instrument. Measures the page instead of eyeballing it.
 //   node bench.mjs [url]   (default http://localhost:4497/)
 import { createRequire } from 'node:module';
+import { NAV } from './data.js';
 const require = createRequire(import.meta.url);
 const { chromium } = require('/Users/gugumax/code/proposal-engine/node_modules/playwright');
 const url = process.argv.find(a => a.startsWith('http')) || 'http://localhost:4497/';
@@ -69,7 +70,7 @@ for (const [name, vp, mobile] of [['desktop 1440', { width: 1440, height: 900 },
   const stuck = await page.evaluate(() => [...document.querySelectorAll('.rv:not(.in)')].map(e => e.className + ' ' + e.textContent.trim().slice(0, 30)));
   // every nav link: is the section heading hidden under the sticky nav after the jump?
   const covered = [];
-  for (const id of ['goals', 'v0', 'approach', 'timeline', 'investment', 'about']) {
+  for (const { id } of NAV) {
     await page.evaluate(i => { document.documentElement.style.scrollBehavior = 'auto'; location.hash = ''; document.getElementById(i).scrollIntoView(); }, id);
     await page.waitForTimeout(150);
     const r = await page.evaluate(i => { const h = document.querySelector('#' + i + ' .h2, #' + i + ' h2'); const n = document.querySelector('.topnav').getBoundingClientRect(); return [Math.round(h.getBoundingClientRect().top), Math.round(n.bottom)]; }, id);

@@ -263,3 +263,19 @@ Critique of Joe's current state is nearly absent. The cleanup is mostly table st
 ## Updates
 
 - 2026-09-27: v2 brief written. $7,500 from 60 hrs × $125, three equal payments of $2,500, six weeks. The page is unchanged until Greg and John agree on this.
+- 2026-09-27, Greg's calls on the brief:
+  - Keep the three.js Founding Member card, because "joe will like this". It now floats over the cover photograph.
+  - Maintenance is optional.
+  - W-9 Path A is in the fee. The number stays $7,500, so the hours were cut elsewhere, not the scope:
+    - public site 8 → 7
+    - portal 16 → 14
+    - admin 10 → 9
+    - W-9 4 hrs added
+    - testing & launch 5 → 4
+  - The cover is a Chicago photograph, not P&H's La Salle Street: Preston Bradley Hall and the Tiffany dome, Chicago Cultural Center (Grant Henninger, CC BY-SA 4.0).
+  - Design approval moved to the end of week 3, so design gets two weeks. Payment 2 moves with it.
+  - Live link: v2 replaces it at the same URL.
+  - John and Greg review the notes later; build for now.
+- 2026-09-27: v2 page built from this brief:
+  - the page drops from 3,459 to 2,269 words, and the PDF from 21 to 9 pages
+  - `check.mjs` now checks hours × rate on every line and option, and three equal payments

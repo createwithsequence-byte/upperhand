@@ -6,10 +6,10 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0b0b0c">
 <title>Upperhand × The Echelon · V0 proposal</title>
-<meta name="description" content="A proposal for The Echelon's V0: the public website and the private Member Portal, designed mobile-first and launched in ten weeks for one fixed fee.">
+<meta name="description" content="A proposal for The Echelon's V0: the public website and the private Member Portal, launched together in six weeks.">
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/HankenGrotesk-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/JetBrainsMono-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="img/cover-dome.webp" as="image" fetchpriority="high">
 <script>document.documentElement.classList.add("js");setTimeout(function(){if(!window.__proposal)document.documentElement.classList.remove("js")},3000)</script>
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="print.css" media="print">
@@ -21,7 +21,7 @@
 <nav class="topnav" aria-label="Proposal sections">
   <a class="brand" href="#top"><img src="img/logo-full-white-bluehand.svg" alt="Upperhand" width="112" height="24"><span class="x" aria-hidden="true">×</span><span class="for">The Echelon</span></a>
   <div class="links">
-    <a href="#goals">Goals</a><a href="#v0">V0</a><a href="#approach">Approach</a><a href="#timeline">Timeline</a><a href="#investment">Investment</a><a href="#about">About</a>
+    <a href="#project">Project</a><a href="#scope">Scope</a><a href="#look">Look</a><a href="#timeline">Timeline</a><a href="#investment">Investment</a><a href="#after">After launch</a><a href="#about">About</a>
   </div>
   <a class="go" href="echelon-v0-proposal.pdf" download>PDF <span aria-hidden="true">↓</span></a>
   <i class="prog" aria-hidden="true"></i>
@@ -32,126 +32,99 @@
 <!-- ══ COVER ══ -->
 <header class="cover" id="top">
   <div class="cover-txt">
-    <p class="kick rv">Proposal · The Echelon V0 · Website &amp; Member Portal</p>
+    <p class="kick rv">Proposal · The Echelon V0</p>
     <h1 class="rv"><span>Intentionally simple.</span> <span class="b">Built to grow.</span></h1>
-    <p class="sub rv">The public website and the private Member Portal, designed on a phone first, launched together in ten weeks, for one fixed fee. Every question your document raises is answered here.</p>
-    <div class="cta rv">
-      <a class="btn" href="#letter">Read the proposal <span aria-hidden="true">↓</span></a>
-      <a class="btn ghost" href="echelon-v0-proposal.pdf" download>Download PDF</a>
-    </div>
+    <p class="sub rv">The public website and the private Member Portal for The Echelon, built together and launched in six weeks.</p>
     <dl class="meta rv">
       <div><dt>Prepared for</dt><dd>Joe Brocato<br><span>IntenseGBD · The Echelon</span></dd></div>
       <div><dt>Prepared by</dt><dd>Upperhand<br><span>Chicago</span></dd></div>
-      <div><dt>Fixed fee</dt><dd data-total>$24,000</dd></div>
-      <div><dt>Launch</dt><dd data-launch="Week N">Week 10</dd></div>
+      <div><dt>Date</dt><dd>September 2026</dd></div>
     </dl>
   </div>
-  <figure class="stage" id="card">
-    <img class="card-still" src="img/card.webp" alt="A black metal Founding Member card for The Echelon, engraved in gold: the E mark, Founding Member, Joe Brocato, No. 0001, member since 2026." width="1200" height="1200">
+  <figure class="cover-img stage" id="card">
+    <img class="cover-photo" src="img/cover-dome.webp" alt="The Tiffany glass dome over Preston Bradley Hall, Chicago Cultural Center" width="1200" height="1680" fetchpriority="high">
+    <img class="card-still" src="img/card.webp" alt="A black metal Founding Member card for The Echelon, engraved in gold with the crest, Founding Member, Joe Brocato, No. 0001, member since 2026." width="1200" height="1200">
   </figure>
 </header>
 
-<!-- ══ 01 · LETTER + THE EIGHT ANSWERS ══ -->
-<section class="sec letter" id="letter" aria-labelledby="letter-h">
-  <div class="wrap">
-    <p class="idx">01 · Before the numbers</p>
-    <div class="letter-grid">
-      <div class="letter-body rv">
-        <h2 id="letter-h" class="h2">A V0 as simple as you asked for.</h2>
-        <p class="salute">Joe,</p>
-        <p>Thank you for the functionality document. It says what V0 does, what it leaves for later, and what you need from us before you decide.</p>
-        <p>This proposal builds the V0 you describe. Members sign in, browse Company Partners, read a profile and press Connect, and the public website launches alongside the portal. The questions your document raises are answered just below this letter.</p>
-        <p>Where your document leaves a decision open (the Progressive Web App, the native app, the W-9s) we give you our recommendation and the reason for it. And we build V0 so the things you set aside, the Ambassador dashboard, Partner logins and Shared Value, arrive later as new screens on the same foundation, without a rebuild.</p>
-        <p>One choice changes the price: how W-9s are handled. Section 05 shows how your two requirements fit together, and what each path costs.</p>
-        <p class="sign">John Williamson &amp; Greg McDonald<span>Upperhand</span></p>
-      </div>
-      <aside class="short rv" aria-label="The short version">
-        <p class="short-h">The short version</p>
-        <ul>
-          <li><b data-total>$24,000</b><span>Fixed fee for V0, paid in three parts</span></li>
-          <li><b data-launch="N weeks">10 weeks</b><span>From kickoff to launch</span></li>
-          <li><b>1 launch</b><span>Public website and Member Portal, together</span></li>
-          <li><b data-monthly>$45</b><span>A month for hosting, database and email, on accounts in your name</span></li>
-          <li><b>0</b><span>Plugins, templates or retainers</span></li>
-          <li><b>Yours</b><span>The custom code, the data, the design files and every account</span></li>
-        </ul>
-      </aside>
+<!-- ══ LETTER ══ -->
+<section class="letter" id="letter" aria-label="Letter to Joe">
+  <div class="wrap letter-in">
+    <div class="letter-body rv">
+      <p class="salute">Joe,</p>
+      <p>Thanks for sending the V0 document, and for the time with John. It gave us a clear brief to work from.</p>
+      <p>What follows is how we would build V0: the public website and the private Member Portal, launched together. It is built from three things: your document, The Echelon's Executive Overview, and what we have learned building products and companies of our own.</p>
+      <p>We kept the scope as you wrote it. Members sign in, browse Company Partners, read a profile and press Connect, and your team runs all of it without a developer. It stays intentionally simple, and it is built so the things you have set aside for later can arrive on the same foundation.</p>
+      <p>Your questions are answered below. We would love to walk you through it on a call.</p>
+      <p class="sign">John Williamson &amp; Greg McDonald<span>Co-Founders, Upperhand</span></p>
     </div>
-
-    <div class="answers" id="answers">
-      <h3 class="h3 rv">What you asked, answered</h3>
-      <ol class="ans-grid">
-        <li class="rv"><a href="#investment"><span class="a-n">01</span><span class="a-q">The build cost</span><span class="a-a"><b data-total>$24,000</b>, fixed, in three payments tied to milestones.</span><span class="a-go">Investment</span></a></li>
-        <li class="rv"><a href="#costs"><span class="a-n">02</span><span class="a-q">Recurring and third-party costs</span><span class="a-a">About <b data-monthly>$45</b> a month for hosting, database and email, with every other cost itemized.</span><span class="a-go">Running costs</span></a></li>
-        <li class="rv"><a href="#timeline"><span class="a-n">03</span><span class="a-q">Timeline and milestones</span><span class="a-a">Ten weeks. Design approved in week 4, launch in week 10.</span><span class="a-go">Timeline</span></a></li>
-        <li class="rv"><a href="#v0"><span class="a-n">04</span><span class="a-q">Mobile-first, confirmed</span><span class="a-a">Yes. Every screen is designed on a phone first, and fully responsive on tablet and desktop.</span><span class="a-go">V0</span></a></li>
-        <li class="rv"><a href="#pwa"><span class="a-n">05</span><span class="a-q">A Progressive Web App?</span><span class="a-a">Yes, in V0. Members add it to their home screen. No app store.</span><span class="a-go">Approach</span></a></li>
-        <li class="rv"><a href="#pwa"><span class="a-n">06</span><span class="a-q">A native app, later</span><span class="a-a">Its own project, on the same foundation. Preliminary: <b data-app>$20,000 to $35,000</b>.</span><span class="a-go">Approach</span></a></li>
-        <li class="rv"><a href="#w9"><span class="a-n">07</span><span class="a-q">Secure W-9s</span><span class="a-a">Submitted through the portal, held by a specialist service. That meets both of your requirements.</span><span class="a-go">W-9s</span></a></li>
-        <li class="rv"><a href="#security"><span class="a-n">08</span><span class="a-q">Security and ownership</span><span class="a-a">Standard protection from the first build, and the work transfers to you: code, data, accounts.</span><span class="a-go">Security</span></a></li>
+    <div class="qs rv" id="questions">
+      <h2 class="lab">Your questions, answered</h2>
+      <ol>
+        <li><a href="#investment"><b>The cost to build</b><span><b data-total>$7,500</b>, fixed, from <b data-hours>60</b> hours at $125.</span></a></li>
+        <li><a href="#after"><b>Recurring costs</b><span>About <b data-monthly>$45</b> a month, paid directly to the providers.</span></a></li>
+        <li><a href="#timeline"><b>Timeline and milestones</b><span>Six weeks from kickoff, with each milestone you named.</span></a></li>
+        <li><a href="#project"><b>Mobile first</b><span>Yes. Designed on a phone first and fully responsive.</span></a></li>
+        <li><a href="#scope"><b>A Progressive Web App</b><span>Yes, in V0. Members add the portal to their home screen.</span></a></li>
+        <li><a href="#after"><b>A native app later</b><span>Its own project, on the same foundation. Preliminary: $12,500 to $20,000.</span></a></li>
+        <li><a href="#scope"><b>W-9s</b><span>Submitted through the portal and held by a specialist service. In the fee.</span></a></li>
+        <li><a href="#project"><b>Security and ownership</b><span>Protected from the first build. IntenseGBD owns the code, data, design files and accounts.</span></a></li>
       </ol>
     </div>
   </div>
 </section>
 
-<!-- ══ 02 · GOALS ══ -->
-<section class="sec goals" id="goals" aria-labelledby="goals-h">
+<!-- ══ 01 · THE PROJECT ══ -->
+<section class="sec project" id="project" aria-labelledby="project-h">
   <div class="wrap">
-    <p class="idx">02 · Goals</p>
-    <h2 id="goals-h" class="h2 verbs rv" aria-label="Log in. Browse. Read. Connect."><span>Log in.</span> <span>Browse.</span> <span>Read.</span> <span class="b">Connect.</span></h2>
-    <div class="goals-grid">
-      <figure class="quote rv">
-        <blockquote>“Members should be able to log in, browse Company Partners by ecosystem/category, view Company Partner profiles, and initiate contact with a Company Partner.”</blockquote>
-        <figcaption>Your bottom line for the portal, September 21</figcaption>
-      </figure>
-      <div class="measures rv">
-        <p class="lab">We build V0 so that</p>
-        <ol>
-          <li>A visitor can request Founding Membership on a phone in under a minute.</li>
-          <li>A Member gets from sign-in to a sent introduction in a few taps.</li>
-          <li>Every Connect is on record: the Member, the Company Partner, the date and the time.</li>
-          <li>Every Member carries their source, and their Ambassador where there is one, from the day they ask to join.</li>
-          <li>Your team makes routine changes without calling us.</li>
-          <li>Pages load in under 2 seconds on a phone with a typical 4G connection.</li>
-          <li>It looks like The Echelon, not like a template.</li>
-        </ol>
-      </div>
+    <p class="idx">01 · The project</p>
+    <h2 id="project-h" class="h2 rv">What we're building</h2>
+    <ol class="jobs">
+      <li class="rv"><span class="pn">01</span><h3>For Members</h3><p>Most will use it on a phone. They sign in, browse Company Partners by ecosystem and category, read a profile with its Echelon Member Advantage, and press Connect. The portal sits on their home screen and keeps them signed in.</p></li>
+      <li class="rv"><span class="pn">02</span><h3>For prospective Members</h3><p>They arrive from an Ambassador or a referral. The public site explains The Echelon, its Standards and its two ecosystems, and takes a request for Founding Membership in a short form, with the source and Ambassador captured on the way in.</p></li>
+      <li class="rv"><span class="pn">03</span><h3>For your team</h3><p>Approve Members, build Partner profiles, see every connection and keep Constant Contact current, from an admin you run yourselves.</p></li>
+    </ol>
+    <div class="principles">
+      <h3 class="h3 rv">How we build every site</h3>
+      <ul>
+        <li class="rv"><h4>Mobile first</h4><p>Designed for a phone, then scaled up to the desktop.</p></li>
+        <li class="rv"><h4>Fast</h4><p>Pages load in under 2 seconds on mobile.</p></li>
+        <li class="rv"><h4>Secure</h4><p>Encrypted, with a role for each kind of user, two-factor sign-in for administrators and daily backups.</p></li>
+        <li class="rv"><h4>Accessible</h4><p>Built to WCAG 2.2 AA, so everyone can read and use it.</p></li>
+        <li class="rv"><h4>Easy to run</h4><p>An admin your team uses without a developer.</p></li>
+        <li class="rv"><h4>Yours</h4><p>IntenseGBD owns the code, the data, the design files and every account, and can move them to another host or developer.</p></li>
+      </ul>
     </div>
   </div>
 </section>
 
-<!-- ══ 03 · V0 ══ -->
-<section class="sec v0" id="v0" aria-labelledby="v0-h">
+<!-- ══ 02 · SCOPE ══ -->
+<section class="sec scope" id="scope" aria-labelledby="scope-h">
   <div class="wrap">
-    <p class="idx">03 · What we build</p>
-    <h2 id="v0-h" class="h2 rv">Everything on your list, launched together.</h2>
-    <div class="two">
-      <div class="col rv">
-        <p class="lab">The public website</p>
-        <p class="navbar" aria-label="Your navigation">Home <i>|</i> The Echelon <i>|</i> Explore <i>|</i> Our Standards <i>|</i> Membership <i>|</i> Sign In</p>
-        <dl class="pages">
-          <div><dt>Home</dt><dd>The proposition in one scroll: trusted access, Member Benefits, the Member Advantage, the two ecosystems, and the invitation to request Founding Membership.</dd></div>
-          <div><dt>The Echelon</dt><dd>What it is, why it exists, how it works, and who Members, Company Partners and Ambassadors are.</dd></div>
-          <div><dt>Explore</dt><dd>The two ecosystems and their categories. Partner names stay inside the portal.</dd></div>
-          <div><dt>Our Standards</dt><dd>The six Standards, how Company Partners are selected (profile and questionnaire, diligence, background screening), what is expected of them, how one can be removed, and the disclaimer.</dd></div>
-          <div><dt>Membership</dt><dd>Who it is for, the benefits, Founding Membership, and a short request form. You approve each request; the approved Member completes enrollment, sets a password and accepts your Terms.</dd></div>
-          <div><dt>Sign In</dt><dd>Email and password, straight into the portal. Footer: About, Contact, Privacy, Terms, Company Partner Disclaimer and the copyright notice.</dd></div>
-        </dl>
-      </div>
-      <div class="col rv">
-        <p class="lab">The Member Portal</p>
-        <p class="navbar private" aria-label="Private">Private · Members only · Installs to the home screen</p>
-        <dl class="pages">
-          <div><dt>Home</dt><dd>An elegant welcome and three ways in: Explore, recent Partners, My Echelon.</dd></div>
-          <div><dt>Explore</dt><dd>Company Partners by ecosystem and category.</dd></div>
-          <div><dt>Profiles</dt><dd>One template your team fills in admin: logo, overview, why the Partner is relevant, services, differentiators, reach, website and contact, video, the Member Benefit, and the Echelon Member Advantage set apart at the top.</dd></div>
-          <div><dt>Connect</dt><dd>One button. It logs the request and sends the introduction email. More below.</dd></div>
-          <div><dt>My Echelon</dt><dd>The Member's details and every Partner they have asked to meet.</dd></div>
-          <div><dt>Admin</dt><dd>Members, Partners, profiles, categories, Advantages, the membership queue, the connection report and a CSV export. Approved Members flow into Constant Contact.</dd></div>
-        </dl>
-      </div>
-    </div>
+    <p class="idx">02 · What it consists of</p>
+    <h2 id="scope-h" class="h2 rv">Scope of work</h2>
+    <dl class="scope-list">
+      <div class="rv"><dt>Discovery &amp; planning</dt><dd>One working session on the Member journey, from the request form to the first Connect. We shape the Company Partner profile template around your profile and questionnaire, and settle the roles, the Connect email and the sitemap.</dd></div>
+      <div class="rv"><dt>Design</dt><dd>One direction, carried from your logo and brand standards into every page and portal screen, designed on a phone first. We refine it with you until you are happy with it, working from one consolidated set of comments at a time.</dd></div>
+      <div class="rv"><dt>Public website</dt><dd>Your navigation as written: Home, The Echelon, Explore, Our Standards, Membership and Sign In. Membership carries the Request Founding Membership form. The footer carries About, Contact, Privacy, Terms, the Company Partner Disclaimer and the copyright notice.</dd></div>
+      <div class="rv"><dt>Member Portal</dt><dd>Password sign-in, the Member home, Explore by ecosystem and category, and Company Partner profiles with the Echelon Member Advantage set apart at the top. Connect records the Member, the Partner, the date and the time, then sends your introduction email with IntenseGBD copied. My Echelon shows each Member's connections, videos embed from YouTube, and the portal installs to the home screen as a Progressive Web App.</dd></div>
+      <div class="rv"><dt>Administration</dt><dd>Add, edit and remove Members, Company Partners, profiles, categories, Member Advantages and page content. Approve membership requests and send enrollment, where the Member sets a password and accepts your Terms. The connection report exports to CSV, and every Member record keeps its source and Ambassador. Ambassadors are records of their own, so a later dashboard is a new screen rather than a rework.</dd></div>
+      <div class="rv"><dt>Integrations &amp; security</dt><dd>Approved Members flow into Constant Contact, email goes out from your domain, and administrators sign in with two-factor authentication. Backups and rate limits are set up before launch.</dd></div>
+      <div class="rv"><dt>W-9s</dt><dd>Members open their W-9 from My Echelon, and Ambassadors get a secure link by email. A specialist tax-form service collects and holds the form, and admin shows its status without exposing anything on it. That meets both of your requirements: submitted through the platform, and not stored in the portal.</dd></div>
+      <div class="rv"><dt>Content population</dt><dd>We load the first Company Partner profile with your team as the pattern. Your team loads the rest, and the page copy is yours.</dd></div>
+      <div class="rv"><dt>Testing &amp; launch</dt><dd>Testing on iPhone, Android and desktop, user acceptance testing with your team, launch at theechelonsignature.com, admin training with a short written guide, and two weeks of monitoring.</dd></div>
+    </dl>
+    <p class="out rv"><b>Out of V0, as you set it:</b> revenue and transaction tracking, an Ambassador portal or login, Partners editing their own profiles, marketing automation, social features and proprietary video.</p>
+  </div>
+</section>
 
+<!-- ══ 03 · THE LOOK ══ -->
+<section class="sec look" id="look" aria-labelledby="look-h">
+  <div class="wrap">
+    <p class="idx">03 · What it looks like</p>
+    <h2 id="look-h" class="h2 rv">Your brand, carried in</h2>
+    <p class="lede rv">The site starts from The Echelon's own identity: the crest, the navy and gold, and the voice of the Executive Overview. The design round turns that into a system for the web.</p>
+    <p class="note rv">For illustration only. These four screens show the path you described, not a design.</p>
     <div class="phones rv" role="img" aria-label="Wireframes of four portal screens: Explore, a Company Partner profile with the Member Advantage and a Connect button, the introduction sent, and My Echelon with connection history.">
       <div class="phone"><div class="scr">
         <p class="p-top">Explore</p>
@@ -179,278 +152,115 @@
         <ul class="p-hist"><li><b></b><span>Oct 8</span></li><li><b></b><span>Oct 2</span></li><li><b></b><span>Sep 29</span></li></ul>
       </div><p class="p-cap">4 · My Echelon</p></div>
     </div>
-    <p class="note rv">Wireframes, not the design. The look comes out of discovery and your brand standards.</p>
-
-    <div class="connect" id="connect">
-      <h3 class="h3 rv">When a Member presses Connect</h3>
-      <ol class="flow">
-        <li class="rv"><span>01</span><h4>The press is logged</h4><p>Before any email goes out: the Member, the Company Partner, the date and the time.</p></li>
-        <li class="rv"><span>02</span><h4>One introduction goes out</h4><p>From The Echelon, to the Partner, with the Member on the thread and IntenseGBD copied. Exactly the email you described.</p></li>
-        <li class="rv"><span>03</span><h4>They carry on by email</h4><p>You are on the first message, so the introduction is in your records as well as the portal's.</p></li>
-        <li class="rv"><span>04</span><h4>It shows up twice</h4><p>In the Member's My Echelon, and in your connection report, where it can be filtered and exported.</p></li>
-      </ol>
-    </div>
-
-    <div class="out rv">
-      <p class="lab">Left out of V0, on purpose</p>
-      <ul>
-        <li><s>Transaction and revenue tracking</s><span>Later, as Shared Value</span></li>
-        <li><s>An Ambassador portal or login</s><span>Later. The data is ready from day one</span></li>
-        <li><s>Partners editing their own profiles</s><span>Later, as Partner logins</span></li>
-        <li><s>Marketing automation</s><span>Constant Contact covers V0</span></li>
-        <li><s>Member social profiles and community</s><span>Not planned</span></li>
-        <li><s>Hosting our own video</s><span>YouTube embeds instead</span></li>
-      </ul>
-    </div>
   </div>
 </section>
 
-<!-- ══ 04 · APPROACH ══ -->
-<section class="sec approach" id="approach" aria-labelledby="approach-h">
-  <div class="wrap">
-    <p class="idx">04 · Approach</p>
-    <h2 id="approach-h" class="h2 rv">Where you asked for advice, <span class="b">our advice.</span></h2>
-    <p class="lede rv">Your list decides most of V0. These are the calls it leaves open, and what we would do with each.</p>
-    <ol class="recs">
-      <li class="rv"><span class="r-n">01</span><div><h3>Design it custom, build it on tested parts.</h3><p>Your document rules out a site that looks off-the-shelf, and a site built from plugins usually does. Everything Members see is designed for The Echelon. Underneath, it is built from our own library of tested components on Next.js, Postgres and Vercel, which is most of why V0 costs what it does. The tools are standard, so another developer could take it over, and with no plugins there is far less to patch.</p><span class="tag">In V0</span></div></li>
-      <li class="rv"><span class="r-n">02</span><div><h3>Make the portal a Progressive Web App now.</h3><p>Members add it to their home screen from the browser. It opens full screen with your icon and stays signed in. It costs nothing extra in V0, and it tells you how Members actually use a phone before you pay for an app.</p><span class="tag">In V0</span></div></li>
-      <li class="rv"><span class="r-n">03</span><div><h3>Keep Connect on email, and log it at the button.</h3><p>Email is where these conversations happen anyway, as your document says. The portal records the press before the email is sent, so the log is complete even when the conversation moves to email. Your team can mark each introduction as made, in conversation or closed. That records no dollar amounts, so V0 still tracks no revenue.</p><span class="tag">In V0</span></div></li>
-      <li class="rv"><span class="r-n">04</span><div><h3>Give every Ambassador a personal link.</h3><p>Anyone who requests membership through an Ambassador's link arrives with the Ambassador already recorded. For everyone else, the form asks how they heard of The Echelon. Your team confirms the answer at approval, and any later change is logged.</p><span class="tag">In V0</span></div></li>
-      <li class="rv"><span class="r-n">05</span><div><h3>Store Ambassadors and Partners as real records now.</h3><p>Each Ambassador is a record of its own, linked to the Members they introduced. The Ambassador dashboard is then a new screen on existing data, which is how V0 meets your “without requiring substantial rework”. Partners get the same treatment, so Partner logins can follow the same way.</p><span class="tag">In V0</span></div></li>
-      <li class="rv"><span class="r-n">06</span><div><h3>Shape the profile around your questionnaire.</h3><p>Your review process starts with a Company Partner Profile and questionnaire. We shape the profile template around it, so your team copies across only the answers meant for Members, in the same order Partners gave them.</p><span class="tag">In V0</span></div></li>
-      <li class="rv"><span class="r-n">07</span><div><h3>Launch Explore with no empty shelves.</h3><p>An empty category reads as a missing one. In the portal, a category appears once it has a live Partner. The public Explore page can still show every category you plan to fill.</p><span class="tag">Your call</span></div></li>
-      <li class="rv"><span class="r-n">08</span><div><h3>The fine print stays on your side of the table.</h3><p>Terms, Privacy and the Company Partner Disclaimer are legal documents, so the words come from you. We set them into the site and ask Members to accept them at enrollment, with the time recorded.</p><span class="tag">Your call</span></div></li>
-    </ol>
-
-    <div class="arch rv" aria-labelledby="arch-h">
-      <h3 id="arch-h" class="h3">One platform underneath all of it</h3>
-      <p class="lede">Everything sits on one platform. What you add later, you add at the edges.</p>
-      <div class="arch-map">
-        <div class="doors now">
-          <span class="door"><b>Public website</b><em>V0</em></span>
-          <span class="door"><b>Member Portal</b><em>V0 · home screen</em></span>
-          <span class="door"><b>Admin</b><em>V0</em></span>
-        </div>
-        <div class="core">
-          <p class="core-h">The Echelon platform</p>
-          <p class="core-l"><span>Members</span><span>Company Partners</span><span>Ambassadors</span><span>Connections</span><span>Categories</span><span>Content</span></p>
-          <p class="core-s">One database, one sign-in, one set of rules for who can see what</p>
-        </div>
-        <div class="doors later">
-          <span class="door"><b>Native app</b><em>Later</em></span>
-          <span class="door"><b>Ambassador dashboard</b><em>Later</em></span>
-          <span class="door"><b>Partner logins</b><em>Later</em></span>
-          <span class="door"><b>Shared Value</b><em>Later</em></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="pwa" id="pwa">
-      <div class="pwa-copy rv">
-        <h3 class="h3">A web app now, a native app if use calls for it</h3>
-        <p>Launch the portal as a Progressive Web App. Watch how Members use it for three to six months. If you then want a store listing, or you are adding features a browser can't handle, build the native app on the same foundation. The database, sign-in, admin and every rule carry over. The app's screens, notifications and store listings are the new work.</p>
-        <div class="est">
-          <p class="lab">Native iOS and Android app · preliminary</p>
-          <p class="est-n">$20,000 <i>to</i> $35,000</p>
-          <p class="est-s">8 to 12 weeks, both platforms from one codebase. Plus Apple's developer program at $99 a year and Google Play's $25 one-time fee. We would quote it properly once V0 is in use.</p>
-        </div>
-      </div>
-      <table class="cmp rv">
-        <caption class="lab">What each one gets you</caption>
-        <thead><tr><th scope="col"></th><th scope="col">Web app, V0</th><th scope="col">Native app</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Icon on the home screen</th><td class="y">Yes</td><td class="y">Yes</td></tr>
-          <tr><th scope="row">Opens full screen, stays signed in</th><td class="y">Yes</td><td class="y">Yes</td></tr>
-          <tr><th scope="row">iPhone and Android</th><td class="y">Yes</td><td class="y">Yes</td></tr>
-          <tr><th scope="row">Updates reach everyone</th><td class="y">Instantly</td><td>After store review</td></tr>
-          <tr><th scope="row">Listed in the App Store and Google Play</th><td>No</td><td class="y">Yes</td></tr>
-          <tr><th scope="row">Push notifications</th><td>Not in V0, possible later</td><td class="y">Yes</td></tr>
-          <tr><th scope="row">Cost</th><td class="y">Included</td><td data-app>$20,000 to $35,000</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ══ 05 · W-9s ══ -->
-<section class="sec w9" id="w9" aria-labelledby="w9-h">
-  <div class="wrap">
-    <p class="idx">05 · W-9s</p>
-    <h2 id="w9-h" class="h2 rv">Submitted through the portal, <span class="b">held somewhere built for it.</span></h2>
-    <div class="said">
-      <figure class="rv"><blockquote>“We do not intend to store W-9s, Social Security numbers or other sensitive tax information in the V0 portal.”</blockquote><figcaption>Your document, under Security and Privacy</figcaption></figure>
-      <figure class="rv"><blockquote>“We expect to collect completed Forms W-9 from Members and Echelon Ambassadors and would prefer … that they be securely submitted through the Platform.”</blockquote><figcaption>Your document, under Secure W-9 Collection and Storage</figcaption></figure>
-    </div>
-    <p class="ask rv">Both can be true at once. Members submit their W-9 through the portal, and a specialist service holds it. That is Path A, and it is what we recommend. If you would rather keep the forms on your own platform, Path B is a build of its own.</p>
-    <div class="paths">
-      <article class="path rec rv">
-        <p class="p-tag">Path A · Our recommendation</p>
-        <h3>A specialist service holds the forms.</h3>
-        <p>Members open the W-9 from My Echelon. Ambassadors, who have no login in V0, get a secure link by email. Either way the form is completed with a tax-form service built for exactly this, and the portal stores only the status and a reference.</p>
-        <ul>
-          <li>Encryption, access control and audits are the service's specialty</li>
-          <li>Many such services also offer tax ID matching and 1099 filing, if you need them</li>
-          <li>Admin shows each record as requested, received or verified</li>
-        </ul>
-        <p class="p-price"><b data-opt="w9a">$1,000</b> to connect it, inside the ten weeks, plus the service's own per-form fees</p>
-      </article>
-      <article class="path rv">
-        <p class="p-tag">Path B</p>
-        <h3>We build secure storage into the platform.</h3>
-        <p>The forms live with us, in storage kept apart from everything else, and only designated IntenseGBD administrators can open them.</p>
-        <ul>
-          <li>Encrypted in transit and at rest, in segregated storage</li>
-          <li>Two-factor sign-in, and every view and download written to an audit log</li>
-          <li>Backups, plus a retention and deletion schedule you set</li>
-        </ul>
-        <p class="p-price"><b data-opt="w9b">$4,000</b> as its own build after V0, or two more weeks if it runs alongside. Holding tax forms means keeping that storage secure for as long as you keep them.</p>
-      </article>
-    </div>
-    <p class="either rv"><b>Either way:</b> no W-9 is ever an ordinary upload, and the admin record shows its status without exposing a single number from the form.</p>
-  </div>
-</section>
-
-<!-- ══ 06 · SECURITY & OWNERSHIP ══ -->
-<section class="sec security" id="security" aria-labelledby="security-h">
-  <div class="wrap">
-    <p class="idx">06 · Security &amp; ownership</p>
-    <h2 id="security-h" class="h2 rv">Protected from the first build, and yours at handover.</h2>
-    <p class="lede rv">Standard, well-tested measures for a members-only site, and a clean handover of everything we make for you.</p>
-    <div class="two">
-      <div class="col rv">
-        <p class="lab">How V0 is protected</p>
-        <ul class="ticks">
-          <li>Encrypted in transit on every page, and encrypted at rest in the database</li>
-          <li>Members see only their own record and their own history, enforced by the database, not just the screen</li>
-          <li>Administrators sign in with two-factor authentication</li>
-          <li>Every admin change is logged: who, what and when</li>
-          <li>Daily backups kept for seven days, and a CSV export of your records whenever you want one</li>
-          <li>Rate limits and spam protection on sign-in and every form</li>
-          <li>No Social Security numbers or tax information stored in the portal. Path B, if you later choose it, adds its own protections</li>
-        </ul>
-      </div>
-      <div class="col rv">
-        <p class="lab">What you own</p>
-        <ul class="ticks">
-          <li>The website, the portal, the database and all custom code, transferred to IntenseGBD on final payment</li>
-          <li>The design files, the content, and all Member and Company Partner data</li>
-          <li>Every account, opened in IntenseGBD's name from the first week. We work as invited collaborators</li>
-          <li>Our underlying component library stays ours, with a perpetual, royalty-free license to you, so nothing you own depends on us</li>
-          <li>A written handover, so another host or developer can take it over</li>
-        </ul>
-        <p class="lab acc-h">Accounts in your name</p>
-        <p class="accts"><span>Domain</span><span>Vercel</span><span>Supabase</span><span>Resend</span><span>Constant Contact</span><span>GitHub</span></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ 07 · TIMELINE ══ -->
+<!-- ══ 04 · TIMELINE ══ -->
 <section class="sec timeline" id="timeline" aria-labelledby="timeline-h">
   <div class="wrap">
-    <p class="idx">07 · Timeline</p>
-    <h2 id="timeline-h" class="h2 rv">Ten weeks from kickoff.</h2>
-    <p class="lede rv">Every milestone your document names is here: design approval, development, testing, content population, user acceptance testing and launch. Design approval and launch each trigger a payment. The dates assume reviews come back within two business days; if one takes longer, launch moves by the same number of days.</p>
+    <p class="idx">04 · Timeline</p>
+    <h2 id="timeline-h" class="h2 rv">Six weeks from kickoff</h2>
+    <p class="lede rv">Each milestone in your document is here: design approval, development, testing, content population, user acceptance testing and launch. Kickoff is within five business days of signing. The dates assume comments come back within two business days.</p>
     <div class="gantt rv" aria-hidden="true"></div>
     <ol class="phases">
       <li class="phase" data-phase="discovery"><header><span class="ph-n">01</span><h3>Discovery &amp; planning</h3><p class="ph-w" data-weeks="discovery"></p></header>
-        <p>A working session on the Member journey, a look at your questionnaire, and the decisions that shape the build: roles, the profile template, the Connect email.</p>
-        <p class="ph-g"><b>You get</b> the sitemap, the data model and a signed-off plan</p><p class="ph-g"><b>We need</b> two hours with you, your brand standards and the questionnaire</p></li>
+        <p>A working session on the Member journey and the decisions that shape the build.</p>
+        <p class="ph-g"><b>We need from you</b> two hours, your brand standards and the Company Partner questionnaire</p></li>
       <li class="phase" data-phase="design"><header><span class="ph-n">02</span><h3>Design</h3><p class="ph-w" data-weeks="design"></p></header>
-        <p>Your brand carried into a digital system, then every page and screen, phone first. One design direction, a clickable prototype of the portal, one round of revisions and a final polish.</p>
-        <p class="ph-g"><b>You get</b> the approved design, milestone 1</p><p class="ph-g"><b>We need</b> one decision-maker for the reviews</p></li>
+        <p>Every page and portal screen, phone first, refined with you until you approve it.</p>
+        <p class="ph-g"><b>We need from you</b> one decision-maker, and comments in one set</p></li>
       <li class="phase" data-phase="build"><header><span class="ph-n">03</span><h3>Development</h3><p class="ph-w" data-weeks="build"></p></header>
-        <p>The website, the portal, admin, Connect, Constant Contact and security, built in that order. You get a private preview link on the first day of the phase, and it changes every week.</p>
-        <p class="ph-g"><b>You get</b> a working preview to click through each week</p><p class="ph-g"><b>We need</b> the Constant Contact account and the final text of the legal pages</p></li>
+        <p>The website, the portal, admin, Constant Contact, W-9s and security. A staging link updates every week.</p>
+        <p class="ph-g"><b>We need from you</b> the Constant Contact account and the final text of your legal pages</p></li>
       <li class="phase" data-phase="content"><header><span class="ph-n">04</span><h3>Content population</h3><p class="ph-w" data-weeks="content"></p></header>
-        <p>We load the first three Company Partners with your team, then you carry on in admin. Page copy goes in, videos get embedded.</p>
-        <p class="ph-g"><b>You get</b> admin training while it matters</p><p class="ph-g"><b>We need</b> the launch Partners' profile information and logos</p></li>
+        <p>Your team loads the Company Partners, with the first one done together.</p>
+        <p class="ph-g"><b>We need from you</b> the launch Partners' profile information and logos</p></li>
       <li class="phase" data-phase="test"><header><span class="ph-n">05</span><h3>Testing &amp; user acceptance</h3><p class="ph-w" data-weeks="test"></p></header>
-        <p>We test on iPhone, Android and desktop. Then your team, and a few Founding Members if you want, use it for real and send us everything they find.</p>
-        <p class="ph-g"><b>You get</b> a fix list, closed before launch</p><p class="ph-g"><b>We need</b> your sign-off that it is ready</p></li>
+        <p>We test on every device, then your team uses it for real and tells us what they find.</p>
+        <p class="ph-g"><b>We need from you</b> your sign-off that it is ready</p></li>
       <li class="phase" data-phase="launch"><header><span class="ph-n">06</span><h3>Launch</h3><p class="ph-w" data-weeks="launch"></p></header>
-        <p>The site replaces “Launching Soon” at theechelonsignature.com and the portal opens to approved Members. For thirty days after, we fix anything that does not work as scoped.</p>
-        <p class="ph-g"><b>You get</b> V0, live, milestone 2</p><p class="ph-g"><b>We need</b> your first invitations ready to send</p></li>
+        <p>The site replaces “Launching Soon” at theechelonsignature.com and the portal opens to approved Members.</p>
+        <p class="ph-g"><b>We need from you</b> your first invitations, ready to send</p></li>
+      <li class="phase" data-phase="beyond"><header><span class="ph-n">07</span><h3>Monitoring</h3><p class="ph-w" data-weeks="beyond"></p></header>
+        <p>Two weeks of monitoring, and fixes for anything that does not work as scoped.</p>
+        <p class="ph-g"><b>We need from you</b> anything your team or Members notice</p></li>
     </ol>
   </div>
 </section>
 
-<!-- ══ 08 · INVESTMENT ══ -->
+<!-- ══ 05 · INVESTMENT ══ -->
 <section class="sec investment" id="investment" aria-labelledby="investment-h">
   <div class="wrap">
-    <p class="idx">08 · Investment</p>
-    <h2 id="investment-h" class="h2 rv">One fixed fee for V0.</h2>
+    <p class="idx">05 · Investment</p>
+    <h2 id="investment-h" class="h2 rv">Fee and payment terms</h2>
     <div class="inv">
       <div class="inv-copy rv">
-        <p class="inv-big" data-total>$24,000</p>
-        <p>Fixed, for the line items below and everything marked In V0 in sections 03 to 07. If the scope holds, the price holds. If you add something, we price it in writing before we start it.</p>
-        <p>It stays lean for three reasons: we build on our own component library, we work to one design direction, and your team loads most of the Partner profiles.</p>
-        <p class="valid">This price holds through October 31, 2026.</p>
-        <p class="lab">Three payments</p>
-        <div class="pays" id="pays"></div>
-        <p class="valid">If launch waits on content or sign-off from your side, the final payment falls due ten business days after user acceptance testing begins.</p>
+        <p>We estimate V0 at <b data-hours>60</b> hours, priced at our project rate of $125 an hour. The fee is fixed: if the work runs past our estimate, that is ours to absorb. It covers everything from kickoff to two weeks after launch, including the W-9 service. IntenseGBD owns everything we make.</p>
+        <h3 class="inv-h">Payment terms</h3>
+        <p>Three equal payments: one at signing, one when you approve the design at the end of week 3, and one at launch.</p>
+        <h3 class="inv-h">What would change it</h3>
+        <p>Work not listed here, such as a second design direction, Upperhand loading all the Partner profiles, or any of the bigger builds under After launch. We would quote it as a fixed fee before starting.</p>
+        <p class="valid">This proposal holds through October 31, 2026.</p>
       </div>
-      <div class="quote-t rv" id="quote"></div>
-    </div>
-
-    <div class="costs" id="costs">
-      <h3 class="h3 rv">What it costs to run</h3>
-      <p class="lede rv">Everything outside our fee, as you asked: hosting, plugins, forms, email, security, backups, maintenance and Constant Contact. Checked against each vendor's published prices on September 25.</p>
-      <div class="costs-grid">
-        <table class="run rv" id="run"></table>
-        <div class="run-side rv">
-          <div class="run-total"><span>At launch</span><b data-monthly>$45</b><em>a month</em></div>
-          <p class="lab">Only if you need it</p>
-          <ul class="later" id="later"></ul>
-          <p class="lab">Maintenance</p>
-          <p class="maint">No retainer. After the thirty days of fixes, you buy hours when you need them. A Path A W-9 service charges its own fee per form.</p>
-        </div>
+      <div class="inv-table rv">
+        <div class="quote-t" id="quote"><!-- lines from data.js --></div>
+        <div class="pays" id="pays"><!-- payments from data.js --></div>
       </div>
-    </div>
-
-    <div class="opt">
-      <h3 class="h3 rv">Small additions, priced now</h3>
-      <div class="opts rv" id="opts"></div>
-      <h3 class="h3 rv opt-later">Bigger builds, each its own project</h3>
-      <div class="opts rv" id="opts-later"></div>
     </div>
   </div>
 </section>
 
-<!-- ══ 09 · ABOUT ══ -->
+<!-- ══ 06 · AFTER LAUNCH ══ -->
+<section class="sec after" id="after" aria-labelledby="after-h">
+  <div class="wrap">
+    <p class="idx">06 · After launch</p>
+    <h2 id="after-h" class="h2 rv">After launch</h2>
+    <div class="after-grid">
+      <div class="rv">
+        <h3 class="h3">Keeping it running</h3>
+        <p class="after-lede">Nothing is on a retainer. Hosting and email are paid by IntenseGBD directly to the providers, on accounts in its name, for about <b data-monthly>$45</b> a month. We checked each price on September 25.</p>
+        <table class="run" id="run"></table>
+        <div class="opts" id="opts-care"></div>
+      </div>
+      <div class="rv">
+        <h3 class="h3">Bigger builds, each its own project</h3>
+        <p class="after-lede">Each one is priced at the same project rate, and builds on the same database and sign-in as V0.</p>
+        <div class="opts" id="opts-later"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 07 · ABOUT ══ -->
 <section class="sec about" id="about" aria-labelledby="about-h">
   <div class="wrap">
-    <p class="idx">09 · About us</p>
+    <p class="idx">07 · About us</p>
     <h2 id="about-h" class="h2 rv">About <span class="nw">Upperhand <img class="about-mark" src="img/hand-white.svg" alt="" aria-hidden="true"></span></h2>
     <div class="about-grid">
-      <p class="about-lead rv">Upperhand is a studio in Chicago, led by John Williamson and Greg McDonald. We've spent decades starting, running and selling companies, and building the brands and products inside them.</p>
+      <p class="about-lead rv">A creative studio run by founders. We've spent decades starting, running, and selling companies, and building the brands and products inside them. Now we do that work for ambitious brands we believe in, from the first strategy conversation through design and build, with the two of us in the room the whole way.</p>
       <div class="rv">
-        <p>Both of us work on The Echelon with you from kickoff to launch, supported internally by our dedicated team. We've hired agencies ourselves, which is why this proposal has a fixed fee, an end date, and accounts in your name.</p>
+        <p class="about-k">Why we started this</p>
+        <p>The best hires either of us ever made were people who'd already run something. Most owners can't afford one of those. So we made ourselves hireable by the problem instead of by the year.</p>
       </div>
-      <figure class="about-card rv"><img src="img/card-back.webp" alt="The back of the Founding Member card: The Echelon, Where Trust Connects, membership@TheEchelonSignature.com, designed and built by Upperhand." width="1200" height="1200" loading="lazy"></figure>
     </div>
   </div>
 </section>
 
-<!-- ══ 10 · NEXT ══ -->
+<!-- ══ 08 · NEXT ══ -->
 <section class="sec next" id="next" aria-labelledby="next-h">
   <div class="wrap">
-    <p class="idx">10 · Next steps</p>
+    <p class="idx">08 · Next steps</p>
     <h2 id="next-h" class="h2 rv">What happens next</h2>
     <ol class="steps">
-      <li class="rv"><span>01</span><h3>Walk through it</h3><p>Reply to John with a time next week. Thirty minutes with both of us, on the scope, the recommendations and your questions.</p></li>
-      <li class="rv"><span>02</span><h3>Settle the W-9s</h3><p>Path A, Path B, or not in V0. Whichever it is, the final number follows the same day.</p></li>
-      <li class="rv"><span>03</span><h3>Sign</h3><p>A short services agreement by e-signature, with this scope attached as written.</p></li>
-      <li class="rv"><span>04</span><h3>Kick off</h3><p>Within five business days of the first payment. Ten weeks from kickoff, V0 is live.</p></li>
+      <li class="rv"><span>01</span><h3>Walk through it</h3><p>Reply to John with a time next week. Thirty minutes with both of us, and your questions.</p></li>
+      <li class="rv"><span>02</span><h3>Sign</h3><p>A master services agreement (MSA) and a scope of work for this project, based on this proposal, both signed electronically.</p></li>
+      <li class="rv"><span>03</span><h3>Kick off</h3><p>After the first payment, within five business days.</p></li>
+      <li class="rv"><span>04</span><h3>Launch</h3><p>Six weeks later, V0 goes live at theechelonsignature.com.</p></li>
     </ol>
-    <div class="close rv">
-      <a class="btn" href="mailto:john@getupperhand.io?subject=The%20Echelon%20V0%20proposal">Email John <span aria-hidden="true">→</span></a>
-      <a class="btn ghost" href="echelon-v0-proposal.pdf" download>Download PDF</a>
-      <dl class="who">
-        <div><dt>John Williamson</dt><dd><a href="mailto:john@getupperhand.io">john@getupperhand.io</a></dd></div>
-        <div><dt>Greg McDonald</dt><dd><a href="mailto:greg@getupperhand.io">greg@getupperhand.io</a></dd></div>
-      </dl>
-    </div>
+    <dl class="who rv">
+      <div><dt>John Williamson</dt><dd><a href="mailto:john@getupperhand.io">john@getupperhand.io</a></dd></div>
+      <div><dt>Greg McDonald</dt><dd><a href="mailto:greg@getupperhand.io">greg@getupperhand.io</a></dd></div>
+    </dl>
   </div>
 </section>
 
@@ -459,7 +269,8 @@
 <footer class="foot">
   <div class="wrap foot-in">
     <img src="img/logo-full-white-bluehand.svg" alt="Upperhand" class="foot-logo" width="140" height="30">
-    <p>Prepared for Joe Brocato, IntenseGBD, LLC · The Echelon, September 25, 2026. Confidential. Running costs are each vendor's published price on September 25, 2026, and may change. The Echelon name and logo belong to IntenseGBD, LLC.</p>
+    <p>Prepared for Joe Brocato, IntenseGBD, LLC · The Echelon, September 2026. Confidential. The Echelon name and logo belong to IntenseGBD, LLC.</p>
+    <p class="credits">Cover photograph: Preston Bradley Hall and the Tiffany glass dome, Chicago Cultural Center, by Grant Henninger, CC BY-SA 4.0, via Wikimedia Commons.</p>
     <p>© 2026 Upperhand LLC · <a href="mailto:hello@getupperhand.io">hello@getupperhand.io</a></p>
   </div>
 </footer>

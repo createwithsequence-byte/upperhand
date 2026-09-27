@@ -137,6 +137,7 @@ export async function mountCard(host, { reduce = false } = {}) {
   host.appendChild(renderer.domElement);
   renderer.domElement.setAttribute('aria-hidden', 'true');
 
+  let baseY = 0;
   const fit = () => {
     const cw = host.clientWidth, chh = host.clientHeight;
     if (!cw || !chh) return;
@@ -144,8 +145,10 @@ export async function mountCard(host, { reduce = false } = {}) {
     camera.aspect = cw / chh;
     camera.updateProjectionMatrix();
     // keep the card at the same share of the stage's width, whatever its shape
-    const vw = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
-    card.scale.setScalar(Math.min(1.15, (vw * 0.84) / CW));
+    const vh = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), vw = vh * camera.aspect;
+    card.scale.setScalar(Math.min(1.15, (vw * 0.76) / CW));
+    // on a tall photo the card floats over the hall, below the dome
+    baseY = camera.aspect < 0.9 ? -vh * 0.12 : 0;
   };
   fit();
   new ResizeObserver(fit).observe(host);
@@ -176,8 +179,8 @@ export async function mountCard(host, { reduce = false } = {}) {
     rx += (tx + Math.sin(t * 0.5) * 0.05 - 0.1 - sy * 0.25 - rx) * ease;
     ry += (ty + Math.sin(t * 0.33) * 0.16 - 0.2 - ry) * ease;
     card.rotation.set(rx, ry + spin, -0.06 + Math.sin(t * 0.4) * 0.012);
-    card.position.y = Math.sin(t * 0.8) * 0.035 + sy * 0.3;
-    shadow.position.x = -ry * 0.3;
+    card.position.y = baseY + Math.sin(t * 0.8) * 0.035 + sy * 0.3;
+    shadow.position.x = -ry * 0.3; shadow.position.y = baseY - 0.28;
     renderer.render(scene, camera);
     if (visible && !reduce) raf = requestAnimationFrame(frame);
   };
