@@ -54,8 +54,8 @@ We build on our own component library and Supabase's standard sign-in, so sign-i
    - roles
    - the Connect email
    - the sitemap
-2. **Design** (weeks 1 to 2, 10 hrs). One direction, extending his logo and brand standards: navy, gold, the crest. Every page and portal screen is designed on a phone first. We refine with him until he's happy, on one consolidated set of comments at a time.
-3. **Public website** (weeks 2 to 4, 8 hrs). His navigation, as written:
+2. **Design** (weeks 1 to 3, 10 hrs; approval at the end of week 3). One direction, extending his logo and brand standards: navy, gold, the crest. Every page and portal screen is designed on a phone first. We refine with him until he's happy, on one consolidated set of comments at a time.
+3. **Public website** (weeks 2 to 5, 7 hrs). His navigation, as written:
    - Home
    - The Echelon
    - Explore
@@ -63,7 +63,7 @@ We build on our own component library and Supabase's standard sign-in, so sign-i
    - Membership, with the Request Founding Membership form, which captures the source and the Ambassador on the way in
    - Sign In
    - The footer pages: About, Contact, Privacy, Terms, Company Partner Disclaimer, plus the copyright notice
-4. **Member Portal** (weeks 3 to 5, 16 hrs):
+4. **Member Portal** (weeks 2 to 5, 14 hrs):
    - password sign-in
    - the Member home
    - Explore by ecosystem and category
@@ -72,7 +72,7 @@ We build on our own component library and Supabase's standard sign-in, so sign-i
    - My Echelon, with connection history
    - YouTube embeds
    - installs to the home screen as a Progressive Web App
-5. **Admin** (weeks 3 to 5, 10 hrs):
+5. **Admin** (weeks 2 to 5, 9 hrs):
    - add, edit and remove Members, Partners, profiles, categories, Advantages and page content
    - the membership queue: approve a request, then send enrollment, where the Member sets a password and accepts the Terms
    - the connection report, with a CSV export
@@ -83,6 +83,7 @@ We build on our own component library and Supabase's standard sign-in, so sign-i
    - email sent from his domain
    - two-factor sign-in for admins
    - backups and rate limits configured
+6b. **W-9s, through a specialist service** (weeks 2 to 5, 4 hrs). Path A, inside the fee (Greg, 9/27). A service chosen in discovery for encryption, admin-only access with two-factor sign-in, an audit log and deletion on his schedule. Connecting it is in the fee; its per-form charge is not.
 7. **Content population** (weeks 4 to 5, 2 hrs of ours). We load the first Partner profile with his team as the pattern. His team loads the rest. The page copy is his.
 8. **Testing, acceptance & launch** (weeks 5 to 6, 4 hrs):
    - testing on iPhone, Android and desktop
@@ -94,7 +95,7 @@ We build on our own component library and Supabase's standard sign-in, so sign-i
 
 **Total: 60 hours over 6 weeks.**
 
-**Tight:** the portal and admin, at 26 hours between them. What holds them in budget:
+**Tight:** the portal and admin, at 23 hours between them, and the W-9 connection at 4. What holds them in budget:
 - the component library
 - Supabase's built-in sign-in
 - his team loading the profiles
@@ -126,7 +127,7 @@ They show the path he described, not a design. The design comes out of week 1 an
 Six weeks from kickoff, and kickoff within five business days of signing. No far-off date anchors it.
 
 His six milestones are all named:
-- design approval (end of week 2)
+- design approval (end of week 3)
 - development
 - testing
 - content population
@@ -151,9 +152,10 @@ One fixed fee, built from hours, shown as the hours table. There's no headline f
 |---|---|---|
 | Discovery & planning | 4 | $500 |
 | Design | 10 | $1,250 |
-| Public website | 8 | $1,000 |
-| Member Portal | 16 | $2,000 |
-| Admin | 10 | $1,250 |
+| Public website | 7 | $875 |
+| Member Portal | 14 | $1,750 |
+| Admin | 9 | $1,125 |
+| W-9s, through a specialist service | 4 | $500 |
 | Integrations & security | 4 | $500 |
 | Content population | 2 | $250 |
 | Testing, acceptance & launch | 4 | $500 |
@@ -162,7 +164,7 @@ One fixed fee, built from hours, shown as the hours table. There's no headline f
 
 **Three equal payments of $2,500:**
 1. at signing
-2. at design approval (end of week 2)
+2. at design approval (end of week 3)
 3. at launch (end of week 6)
 
 The price holds through October 31, 2026.

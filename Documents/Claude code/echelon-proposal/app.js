@@ -35,7 +35,7 @@ function renderGantt() {
 }
 
 function renderQuote() {
-  $('#quote').innerHTML = `<div class="q-head"><span>Line item</span><span>Estimate</span></div>` +
+  $('#quote').innerHTML = `<div class="q-head"><span>Line item</span><span>Hours × rate</span></div>` +
     QUOTE.lines.map((l, i) => `
     <div class="q-line" data-line="${l.id}">
       <button type="button" aria-expanded="false" aria-controls="qd-${l.id}">

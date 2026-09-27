@@ -1,5 +1,5 @@
 // card.js: the Founding Member card. Black metal, The Echelon's own gold mark on the face,
-// member No. 0001 in Joe's name, and who built it on the back.
+// member No. 0001 in Joe's name, and his line "Know who to trust." on the back.
 // ponytail: one extruded card, two engraved planes, no post-processing, no models.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/RoomEnvironment.js';
@@ -37,7 +37,6 @@ const sp = (x, px) => { if ('letterSpacing' in x) x.letterSpacing = px + 'px'; }
 async function faces() {
   await Promise.all([
     document.fonts.load('500 60px "Hanken Grotesk"'), document.fonts.load('400 30px "Hanken Grotesk"'),
-    document.fonts.load('400 60px "Archivo Black"'),
   ]).catch(err => console.warn('[CARD] fonts not ready, engraving with fallbacks:', err));
   const [crest, word, tag] = await Promise.all(['img/card-crest.webp', 'img/card-word.webp', 'img/card-tag.webp'].map(img));
 
@@ -71,10 +70,9 @@ async function faces() {
   y.textAlign = 'center'; y.fillStyle = SILVER;
   sp(y, 4); y.font = '400 34px "Hanken Grotesk", sans-serif';
   y.fillText('membership@TheEchelonSignature.com', TW / 2 + 2, 780);
-  sp(y, 9); y.font = '500 26px "Hanken Grotesk", sans-serif'; y.fillStyle = 'rgba(233,230,222,0.8)';
-  y.fillText('DESIGNED AND BUILT BY', TW / 2 + 4, 1010);
-  sp(y, 16); y.font = '400 66px "Archivo Black", sans-serif'; y.fillStyle = '#0047ff';
-  y.fillText('UPPERHAND', TW / 2 + 8, 1098);
+  // his own line from the Executive Overview; the card is his artifact, so it carries no credit of ours
+  sp(y, 14); y.font = '500 40px "Hanken Grotesk", sans-serif'; y.fillStyle = GOLD;
+  y.fillText('KNOW WHO TO TRUST.', TW / 2 + 7, 1060);
   return [f, b];
 }
 

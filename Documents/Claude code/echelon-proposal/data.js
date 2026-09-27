@@ -14,14 +14,14 @@ export const QUOTE = {
     { id: 'design', name: 'Design', hours: 10, amount: 1250,
       detail: ['One direction, carried from your logo and brand standards into every page and screen',
         'Designed on a phone first, then the desktop',
-        'Refined with you until it is approved'] },
+        'Refined with you within the design weeks, from one consolidated set of comments at a time'] },
     { id: 'site', name: 'Public website', hours: 7, amount: 875,
       detail: ['Home, The Echelon, Explore, Our Standards, Membership and Sign In, plus the footer pages',
         'The Request Founding Membership form, with the source and Ambassador captured'] },
     { id: 'portal', name: 'Member Portal', hours: 14, amount: 1750,
       detail: ['Password sign-in, the Member home, Explore and Company Partner profiles',
         'Connect: logged at the button, then your introduction email, with IntenseGBD copied',
-        'My Echelon, YouTube embeds, and a Progressive Web App for the home screen'] },
+        'My Echelon with account details and connections, YouTube embeds, and a Progressive Web App for the home screen'] },
     { id: 'admin', name: 'Administration', hours: 9, amount: 1125,
       detail: ['Members, Company Partners, profiles, categories, Member Advantages and page content',
         'The membership queue and enrollment, and the connection report with a CSV export',
@@ -30,8 +30,8 @@ export const QUOTE = {
       detail: ['Constant Contact, and email sent from your domain',
         'Two-factor sign-in for administrators, backups and rate limits'] },
     { id: 'w9', name: 'W-9s, through a specialist service', hours: 4, amount: 500,
-      detail: ['Members submit from My Echelon; Ambassadors get a secure link by email',
-        'The service holds the form and admin shows its status. The service’s per-form fees are separate'] },
+      detail: ['Members submit from My Echelon; Ambassadors use a secure link from the same service',
+        'A service chosen in discovery for encryption, admin-only access, an audit log and deletion on your schedule. Connecting it is in the fee; its per-form charge is not'] },
     { id: 'content', name: 'Content population', hours: 2, amount: 250,
       detail: ['The first Company Partner profile, loaded with your team as the pattern'] },
     { id: 'launch', name: 'Testing, acceptance & launch', hours: 4, amount: 500,
@@ -60,14 +60,15 @@ export const QUOTE = {
 
 // Running costs, checked Sep 25, 2026 on each vendor's pricing page. Paid by IntenseGBD directly, on accounts in its name.
 export const RUNNING = [
-  { id: 'hosting', item: 'Hosting', vendor: 'Vercel Pro', monthly: 20, note: 'Includes one developer seat, which is enough' },
+  { id: 'hosting', item: 'Hosting', vendor: 'Vercel Pro', monthly: 20, note: 'Includes one developer seat' },
+  { id: 'none', item: 'Plugins, forms and security add-ons', vendor: 'Built in', monthly: 0, note: 'Nothing to license' },
   { id: 'db', item: 'Database, sign-in and daily backups', vendor: 'Supabase Pro', monthly: 25, note: 'Backups kept for 7 days' },
   { id: 'email', item: 'Connect and sign-in email', vendor: 'Resend', monthly: 0, note: 'Free to 3,000 a month (100 a day), then $20' },
   { id: 'cc', item: 'Member email', vendor: 'Constant Contact', monthly: null, note: 'Your plan; connecting it adds nothing' },
   { id: 'w9', item: 'W-9 service', vendor: 'Chosen in discovery', monthly: null, note: 'Its own fee per form' },
 ];
 
-// start/end are weeks from kickoff (week 0). Kickoff is within five business days of signing.
+// start/end are weeks from kickoff (week 0). Kickoff is within five business days of signing and the first payment.
 export const PHASES = [
   { id: 'discovery', n: '01', name: 'Discovery & planning', short: 'Discovery', start: 0, end: 1, milestone: 'sign' },
   { id: 'design', n: '02', name: 'Design', short: 'Design', start: 1, end: 3, milestone: 'm1' },

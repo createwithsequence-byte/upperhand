@@ -93,3 +93,27 @@ a[href^="mailto"], .qs a { text-decoration: none; }
 .scope-list { margin-top: 0.8rem; }
 .scope-list div { padding-block: 6px; }
 .scope-list dd { font-size: 0.8rem; line-height: 1.38; }
+
+/* after the copy review the text grew; keep every section to one page */
+.scope-list div { padding-block: 4px; grid-template-columns: 11.5rem 1fr; }
+.scope-list dd { font-size: 0.75rem; line-height: 1.34; }
+.scope-list dt { font-size: 0.9rem; }
+.out { font-size: 0.76rem; margin-top: 8px; }
+.timeline .lede { font-size: 0.84rem; margin-top: 0.6rem; }
+.timeline .h2 { font-size: 2.4rem; }
+.gantt { height: 190px; margin-top: 1rem; }
+.phases { gap: 12px 20px; margin-top: 1rem; }
+.phase > p, .phase .ph-g { font-size: 0.74rem; line-height: 1.32; }
+.investment { padding-block: 1rem 0 !important; }
+.inv-copy p { font-size: 0.84rem; }
+.investment .h2 { font-size: 2.4rem; }
+.after { padding-block: 1rem 0 !important; }
+.after .h2 { font-size: 2.2rem; }
+.after-grid { margin-top: 0.6rem; }
+.after .h3 { font-size: 1.3rem; margin-bottom: 0.6rem; }
+.after-lede { font-size: 0.84rem; margin-bottom: 10px; }
+.run th, .run td { padding-block: 5px; font-size: 0.8rem; }
+.run .ven { font-size: 10px; }
+.run + .opts { margin-top: 12px; }
+.opt-row { padding-block: 7px; }
+.opt-det { font-size: 0.8rem; }
