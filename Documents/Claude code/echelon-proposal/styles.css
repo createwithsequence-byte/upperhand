@@ -56,6 +56,11 @@ section[id], header[id] { scroll-margin-top: calc(var(--navh) + 4px); }
 .note { font-family: var(--mono); font-size: 12px; color: var(--mute); margin-top: 18px; }
 h3, h4 { text-wrap: balance; }
 
+/* ── buttons: one real button for the one thing people ask for, the PDF ── */
+.btn { display: inline-flex; align-items: center; gap: 10px; background: var(--blue); color: #fff; text-decoration: none; font-weight: 600; font-size: 15px; padding: 14px 24px; border-radius: 999px; transition: background 0.2s, transform 0.2s var(--expo); }
+.btn:hover { background: #1f5dff; transform: translateY(-1px); }
+.cta { margin-top: 32px; }
+
 /* ── nav: a full-width black bar, a hairline of blue grows along it as you read ── */
 .topnav { position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--navh); display: flex; align-items: center; gap: 28px; padding-inline: var(--gut); background: rgba(11, 11, 12, 0.8); -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex: none; }
@@ -258,7 +263,8 @@ html.js .gantt:not(.in) .g-bar { transform: scaleX(0); }
 .steps span { font-family: var(--disp); font-size: 1.4rem; color: var(--blue); display: block; margin-bottom: 14px; }
 .steps h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
 .steps p { color: var(--fg2); }
-.who { display: flex; gap: 48px; margin-top: clamp(48px, 6vw, 80px); padding-top: 28px; border-top: 1px solid var(--line); }
+.close { display: flex; flex-wrap: wrap; align-items: center; gap: 20px 48px; margin-top: clamp(48px, 6vw, 80px); padding-top: 28px; border-top: 1px solid var(--line); }
+.who { display: flex; gap: 48px; }
 .who dt { font-weight: 600; }
 .who dd a { color: var(--fg2); font-size: 15px; text-decoration: none; }
 .who dd a:hover { color: var(--fg); text-decoration: underline; }
@@ -284,6 +290,7 @@ html.js .rv.in { opacity: 1; transform: none; }
 @media (max-width: 1180px) {
   .links { gap: 16px; }
   .links a { font-size: 13px; }
+  .go .lg { display: none; }
   .phases { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 1100px) {
@@ -335,5 +342,6 @@ html.js .rv.in { opacity: 1; transform: none; }
   .opt-row { grid-template-columns: 1fr; gap: 6px; }
   .opt-price { text-align: left; }
   .who { flex-direction: column; gap: 4px; }
+  .close .btn, .cta .btn { width: 100%; justify-content: center; }
   .who dd a { display: inline-block; padding-block: 10px; }
 }

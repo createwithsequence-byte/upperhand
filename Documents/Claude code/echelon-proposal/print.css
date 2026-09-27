@@ -5,7 +5,7 @@
 html, body { background: #fff !important; }
 body { -webkit-print-color-adjust: exact; print-color-adjust: exact;
   --bg: #fff; --bg2: #f5f4ef; --fg: #131313; --fg2: #3d3c37; --mute: #5f5c54; --line: rgba(19, 19, 19, 0.13); --line2: rgba(19, 19, 19, 0.26); color: var(--fg); }
-.topnav, .skip, .cover-img canvas, .q-tog { display: none !important; }
+.topnav, .skip, .cover-img canvas, .q-tog, .btn { display: none !important; }
 html.js .rv, .rv { opacity: 1 !important; transform: none !important; }
 .gantt .g-bar { transform: none !important; }
 a[href^="mailto"], .qs a { text-decoration: none; }
@@ -117,3 +117,5 @@ a[href^="mailto"], .qs a { text-decoration: none; }
 .run + .opts { margin-top: 12px; }
 .opt-row { padding-block: 7px; }
 .opt-det { font-size: 0.8rem; }
+
+.close { margin-top: 1rem; padding-top: 12px; }
