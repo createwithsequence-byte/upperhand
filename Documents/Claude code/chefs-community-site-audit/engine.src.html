@@ -1,0 +1,1949 @@
+<!--
+  deep-dive deck engine. Worked example: Solo Stove / Liz Vanzura, Sept 2026.
+  Everything above <div id="deck"> is the engine (tokens, chrome, embers, slide CSS).
+  Everything inside #deck is an EXAMPLE of each slide type with real content.
+  Re-skin via :root tokens + the background layer; rewrite the slides; keep the engine.
+  Slide attributes: data-t (rail title), data-p (part index 0-4 for tick colors),
+  data-int (0..1 background intensity: 1 on cover/dividers, ~0.1 behind argument),
+  data-photo (optional full-bleed image behind a divider), class "dense" for slides
+  with more than ~6 blocks (smaller h2, tighter cards, scrolls instead of clipping).
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{{TARGET}} · Deep Dive · {{MONTH YEAR}}</title>
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0c0a08;
+        --bg-2: #14110d;
+        --line: #2a241d;
+        --line-2: #3a3229;
+        --ink: #f4ede3;
+        --ink-2: #b3a89a;
+        --ink-3: #6f665c;
+        --ember: #f04e23;
+        --heat: #ffb24a;
+        --steel: #c7c9cd;
+        --cool: #7fa8c9;
+        --pad: clamp(28px, 4.2vw, 78px);
+        --display: "Big Shoulders Display", "Space Grotesk", Impact, sans-serif;
+        --sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --mono:
+          "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      body.ready {
+        opacity: 1;
+      }
+
+      #embers {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        display: block;
+      }
+      #heat {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            70% 55% at 50% 118%,
+            rgba(240, 78, 35, 0.55),
+            transparent 62%
+          ),
+          radial-gradient(
+            40% 30% at 50% 108%,
+            rgba(255, 178, 74, 0.35),
+            transparent 70%
+          );
+        opacity: 0.9;
+      }
+      #photo {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 0.9s ease;
+        filter: saturate(1.05) contrast(1.05);
+      }
+      #photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(12, 10, 8, 0.96) 0%,
+          rgba(12, 10, 8, 0.82) 42%,
+          rgba(12, 10, 8, 0.35) 100%
+        );
+      }
+      #vig {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: radial-gradient(
+          125% 92% at 50% 42%,
+          transparent 34%,
+          rgba(0, 0, 0, 0.72) 100%
+        );
+      }
+      #grain {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0.1;
+        mix-blend-mode: overlay;
+      }
+
+      #deck {
+        position: fixed;
+        inset: 0;
+        z-index: 4;
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: var(--pad);
+        padding-bottom: calc(var(--pad) + 34px);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .slide .inner {
+        margin: auto;
+      }
+      .slide.dense h2 {
+        font-size: clamp(30px, 4.2vw, 64px);
+      }
+      .slide.dense .card {
+        padding: clamp(11px, 1.15vw, 18px);
+      }
+      .slide.dense .card h3 {
+        font-size: clamp(13.5px, 1.15vw, 17px);
+      }
+      .slide.dense p,
+      .slide.dense li {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+        line-height: 1.5;
+      }
+      .slide.dense .row {
+        padding: 8px 0;
+        gap: 14px;
+        grid-template-columns: 130px 0.8fr 1.6fr;
+      }
+      .slide.dense .stat {
+        padding: clamp(12px, 1.3vw, 20px) clamp(10px, 1.2vw, 18px);
+      }
+      .slide.dense .stat .n {
+        font-size: clamp(32px, 4vw, 60px);
+      }
+      .slide.dense .kicker {
+        margin-bottom: 12px;
+      }
+      body.cover #logo-corner {
+        display: none;
+      }
+      .slide.on {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+      .inner {
+        width: 100%;
+        max-width: 1380px;
+        margin: 0 auto;
+      }
+
+      #rail {
+        position: fixed;
+        left: var(--pad);
+        right: var(--pad);
+        bottom: 26px;
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #ticks {
+        flex: 1;
+        display: flex;
+        gap: 3px;
+        height: 2px;
+      }
+      .tick {
+        flex: 1;
+        background: var(--line-2);
+        transition:
+          background 0.45s ease,
+          transform 0.45s ease;
+        transform-origin: bottom;
+      }
+      .tick.b1 {
+        background: #3d2a20;
+      }
+      .tick.b2 {
+        background: #3f3322;
+      }
+      .tick.b3 {
+        background: #2f3238;
+      }
+      .tick.b4 {
+        background: #3b2f2a;
+      }
+      .tick.done {
+        background: var(--ink-3);
+      }
+      .tick.now {
+        background: var(--ember);
+        transform: scaleY(3);
+      }
+      #brand {
+        position: fixed;
+        top: 26px;
+        right: var(--pad);
+        z-index: 6;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+      }
+      #brand b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+      #logo-corner {
+        position: fixed;
+        top: 22px;
+        left: var(--pad);
+        z-index: 6;
+        height: 18px;
+        width: auto;
+        color: var(--ink-2);
+        opacity: 0.85;
+      }
+
+      .kicker {
+        font-family: var(--mono);
+        font-size: clamp(9px, 0.78vw, 11px);
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .kicker .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ember);
+        flex: 0 0 auto;
+      }
+      .kicker .num {
+        color: var(--ink-2);
+      }
+      h1 {
+        font-family: var(--display);
+        font-size: clamp(64px, 11vw, 190px);
+        font-weight: 900;
+        line-height: 0.84;
+        letter-spacing: 0.005em;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+      h2 {
+        font-family: var(--display);
+        font-size: clamp(40px, 5.6vw, 88px);
+        font-weight: 800;
+        line-height: 0.9;
+        letter-spacing: 0.005em;
+        text-transform: uppercase;
+        text-wrap: balance;
+        max-width: 18ch;
+      }
+      h3 {
+        font-size: clamp(15px, 1.35vw, 20px);
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.012em;
+      }
+      .lede {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.55;
+        color: var(--ink-2);
+        max-width: 62ch;
+        font-weight: 300;
+      }
+      p,
+      li {
+        font-size: clamp(12.5px, 1vw, 15px);
+        line-height: 1.6;
+        color: var(--ink-2);
+        font-weight: 300;
+      }
+      strong {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      em {
+        font-style: normal;
+        color: var(--heat);
+        font-weight: 500;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .w {
+        display: inline-block;
+        will-change: transform, opacity;
+      }
+      .hot {
+        color: var(--ember);
+      }
+      .warm {
+        color: var(--heat);
+      }
+      .cold {
+        color: var(--cool);
+      }
+
+      .cols {
+        display: grid;
+        gap: clamp(14px, 1.8vw, 30px);
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .c2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .c3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .c4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: clamp(26px, 3.6vw, 64px);
+        align-items: center;
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: clamp(14px, 1.5vw, 24px);
+        background: rgba(20, 17, 13, 0.72);
+        backdrop-filter: blur(6px);
+      }
+      .card h3 {
+        margin-bottom: 8px;
+      }
+      .card .tag {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-bottom: 10px;
+        display: block;
+      }
+      .card.hot {
+        border-color: rgba(240, 78, 35, 0.5);
+      }
+      .card.hot .tag {
+        color: var(--ember);
+      }
+      ul {
+        list-style: none;
+      }
+      ul li {
+        padding-left: 16px;
+        position: relative;
+        margin-bottom: 6px;
+      }
+      ul li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.72em;
+        width: 6px;
+        height: 1px;
+        background: var(--ember);
+      }
+
+      /* stat blocks */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        margin-top: clamp(20px, 2.6vw, 40px);
+      }
+      .stat {
+        padding: clamp(14px, 1.6vw, 26px) clamp(12px, 1.4vw, 22px);
+        background: rgba(20, 17, 13, 0.7);
+        border-top: 1px solid var(--line-2);
+      }
+      .stat .n {
+        font-family: var(--display);
+        font-size: clamp(38px, 4.6vw, 72px);
+        font-weight: 900;
+        line-height: 0.9;
+        letter-spacing: 0.01em;
+        color: var(--ink);
+      }
+      .stat .n.hot {
+        color: var(--ember);
+      }
+      .stat .n.warm {
+        color: var(--heat);
+      }
+      .stat .l {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .stat .s {
+        font-size: 12.5px;
+        color: var(--ink-2);
+        margin-top: 6px;
+        font-weight: 300;
+        line-height: 1.45;
+      }
+
+      /* verdict */
+      .verdict {
+        border-left: 3px solid var(--ember);
+        padding-left: clamp(16px, 2vw, 30px);
+        margin-top: 26px;
+      }
+      .verdict p {
+        font-size: clamp(15px, 1.45vw, 22px);
+        color: var(--ink);
+        font-weight: 300;
+        line-height: 1.45;
+        max-width: 58ch;
+      }
+
+      /* timeline */
+      .tl {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 6px;
+        margin-top: clamp(22px, 3vw, 44px);
+        position: relative;
+      }
+      .tl::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 7px;
+        height: 1px;
+        background: linear-gradient(90deg, var(--ink-3), var(--ember));
+      }
+      .tl > div {
+        position: relative;
+        padding-top: 22px;
+      }
+      .tl > div::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 0;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 2px solid var(--ink-3);
+      }
+      .tl > div.hot::before {
+        border-color: var(--ember);
+        background: var(--ember);
+        box-shadow: 0 0 14px rgba(240, 78, 35, 0.6);
+      }
+      .tl .y {
+        font-family: var(--display);
+        font-size: clamp(20px, 2.2vw, 34px);
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+        line-height: 1;
+      }
+      .tl .y.hot {
+        color: var(--ember);
+      }
+      .tl p {
+        font-size: clamp(10.5px, 0.82vw, 13px);
+        line-height: 1.4;
+        margin-top: 6px;
+      }
+
+      /* bars */
+      .bars {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        align-items: end;
+        height: clamp(200px, 30vh, 320px);
+        margin-top: 20px;
+      }
+      .bar {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+      }
+      .bar .v {
+        font-family: var(--display);
+        font-size: clamp(22px, 2.4vw, 38px);
+        font-weight: 800;
+        color: var(--ink);
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .bar .v small {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+        margin-left: 4px;
+        font-weight: 400;
+      }
+      .bar .f {
+        background: linear-gradient(180deg, var(--heat), var(--ember));
+        border-radius: 3px 3px 0 0;
+        transform-origin: bottom;
+      }
+      .bar .f.dim {
+        background: linear-gradient(180deg, #5a5148, #3a332c);
+      }
+      .bar .f.ghost {
+        background: transparent;
+        border: 1px dashed var(--line-2);
+      }
+      .bar .l {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+      .bar .l b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* people */
+      .person {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        gap: 14px;
+        align-items: start;
+        padding: 14px 0;
+        border-top: 1px solid var(--line);
+      }
+      .person img {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        object-fit: cover;
+        filter: grayscale(0.2);
+      }
+      .person .ph {
+        width: 64px;
+        height: 64px;
+        border-radius: 4px;
+        background: var(--bg-2);
+        border: 1px solid var(--line-2);
+        display: grid;
+        place-items: center;
+        font-family: var(--display);
+        font-size: 26px;
+        color: var(--ink-3);
+      }
+      .person h3 {
+        font-size: clamp(14px, 1.2vw, 18px);
+      }
+      .person .r {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin: 3px 0 6px;
+      }
+      .person p {
+        font-size: clamp(11.5px, 0.9vw, 13.5px);
+      }
+
+      /* quote */
+      .q {
+        border-top: 1px solid var(--line);
+        padding: 16px 0 6px;
+      }
+      .q blockquote {
+        font-size: clamp(14px, 1.3vw, 19px);
+        line-height: 1.4;
+        color: var(--ink);
+        font-weight: 300;
+      }
+      .q blockquote::before {
+        content: "\201C";
+        color: var(--ember);
+        font-family: var(--display);
+        font-size: 1.6em;
+        line-height: 0;
+        vertical-align: -0.3em;
+        margin-right: 4px;
+      }
+      .q cite {
+        display: block;
+        font-style: normal;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        margin-top: 10px;
+      }
+
+      /* portrait */
+      .portrait {
+        position: relative;
+        border-radius: 4px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        max-width: 420px;
+        border: 1px solid var(--line-2);
+      }
+      .portrait img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .portrait .cap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px;
+        background: linear-gradient(0deg, rgba(12, 10, 8, 0.92), transparent);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+
+      /* table-ish rows */
+      .rows {
+        margin-top: 22px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 150px 1fr 1fr;
+        gap: 20px;
+        padding: 12px 0;
+        border-top: 1px solid var(--line);
+        align-items: baseline;
+      }
+      .row.head {
+        border-top: none;
+        padding-bottom: 6px;
+      }
+      .row.head span {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .row .k {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .row p {
+        font-size: clamp(11.5px, 0.92vw, 14px);
+      }
+      .row .no {
+        color: var(--ink-3);
+      }
+      .row .yes {
+        color: var(--ink);
+      }
+
+      /* product strip */
+      .prods {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .prod {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .prod img {
+        width: 100%;
+        aspect-ratio: 5 / 3;
+        object-fit: cover;
+        display: block;
+      }
+      .prod .c {
+        padding: 10px 12px;
+        background: rgba(20, 17, 13, 0.9);
+      }
+      .prod .c b {
+        display: block;
+        font-size: 13px;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .prod .c span {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.1em;
+      }
+
+      /* part divider */
+      .pdiv .part {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--ember);
+        margin-bottom: 18px;
+      }
+      .pdiv h1 {
+        font-size: clamp(72px, 13vw, 220px);
+      }
+      .pdiv .lede {
+        margin-top: 22px;
+      }
+
+      /* cover */
+      .cover-slide .inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .cover-slide .logo {
+        height: clamp(28px, 3.2vw, 46px);
+        width: auto;
+        color: var(--ink);
+        margin-bottom: clamp(28px, 4vw, 60px);
+      }
+      .cover-slide h1 {
+        max-width: 12ch;
+      }
+      .cover-slide .sub {
+        margin-top: clamp(20px, 2.6vw, 40px);
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        gap: clamp(20px, 3vw, 50px);
+        justify-content: start;
+      }
+      .cover-slide .sub div {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        line-height: 1.7;
+      }
+      .cover-slide .sub b {
+        color: var(--ink);
+        font-weight: 500;
+        display: block;
+      }
+
+      /* callout */
+      .call {
+        margin-top: 22px;
+        padding: 14px 18px;
+        border: 1px solid rgba(240, 78, 35, 0.45);
+        border-radius: 4px;
+        background: rgba(240, 78, 35, 0.07);
+      }
+      .call p {
+        color: var(--ink);
+        font-size: clamp(12.5px, 1.02vw, 15.5px);
+      }
+      .note {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        margin-top: 16px;
+        text-transform: uppercase;
+      }
+
+      /* sources */
+      .src {
+        columns: 2;
+        column-gap: 40px;
+        margin-top: 20px;
+      }
+      .src p {
+        font-size: 11px;
+        line-height: 1.5;
+        margin-bottom: 6px;
+        break-inside: avoid;
+        font-family: var(--mono);
+        color: var(--ink-3);
+      }
+      .src p b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      /* overview */
+      #ov {
+        position: fixed;
+        inset: 0;
+        z-index: 8;
+        background: rgba(12, 10, 8, 0.96);
+        display: none;
+        padding: 60px var(--pad);
+        overflow: auto;
+      }
+      #ov.on {
+        display: block;
+      }
+      #ovg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+      }
+      .ovc {
+        border: 1px solid var(--line);
+        padding: 14px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .ovc:hover,
+      .ovc.now {
+        border-color: var(--ember);
+      }
+      .ovc.part {
+        background: rgba(240, 78, 35, 0.08);
+      }
+      .ovc .n {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        letter-spacing: 0.16em;
+      }
+      .ovc .t {
+        font-size: 13px;
+        color: var(--ink);
+        margin-top: 6px;
+      }
+      #help {
+        position: fixed;
+        right: var(--pad);
+        bottom: 52px;
+        z-index: 7;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        display: none;
+      }
+      #help.on {
+        display: block;
+      }
+
+      @media (max-width: 900px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats,
+        .prods {
+          grid-template-columns: 1fr 1fr;
+        }
+        .tl {
+          grid-template-columns: repeat(5, 1fr);
+          row-gap: 26px;
+        }
+        .row {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+        .src {
+          columns: 1;
+        }
+        h2 {
+          max-width: none;
+        }
+        .slide {
+          justify-content: flex-start;
+          overflow: auto;
+          padding-top: 70px;
+        }
+      }
+      @media (max-width: 600px) {
+        .c2,
+        .c3,
+        .c4,
+        .split,
+        .stats,
+        .prods,
+        .bars {
+          grid-template-columns: 1fr 1fr;
+        }
+        .cover-slide .sub {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="embers"></canvas>
+    <div id="photo"></div>
+    <div id="heat"></div>
+    <div id="vig"></div>
+    <svg id="grain">
+      <filter id="n">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.8"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#n)" />
+    </svg>
+    <img id="logo-corner" src="img/solo-logo-cream.svg" alt="Solo Stove" />
+    <div id="brand"><b>Solo Stove · Solo Brands</b> · audit · Sept 2026</div>
+
+    <div id="deck">
+      <!-- ═══════════ COVER ═══════════ -->
+      <section
+        class="slide cover-slide"
+        data-t="Cover"
+        data-p="0"
+        data-photo="img/v2-0.jpg"
+        data-int="1"
+      >
+        <div class="inner">
+          <img class="logo" src="img/solo-logo-cream.svg" alt="Solo Stove" />
+          <h1 data-split>Everything around the fire.</h1>
+          <div class="sub">
+            <div>Audit<b>Solo Brands, Inc. · Solo Stove</b></div>
+            <div>
+              Scope<b
+                >Company · Brand · Live entertainment · Liz Vanzura, CMO</b
+              >
+            </div>
+            <div>Date<b>3 September 2026</b></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ THE READ ═══════════ -->
+      <section class="slide" data-t="The read" data-p="0" data-int="0.35">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">01</span> The read in one
+            breath
+          </div>
+          <h2 data-split>Biggest ambition. Thinnest ice.</h2>
+          <div class="verdict">
+            <p>
+              Solo Stove is expanding from fire pits into griddles, coolers and
+              propane at the exact moment its parent has been delisted, is down
+              to ~300 staff, and is carrying $258M of debt on a ~$9M market cap.
+              Marketing is run by a board member who has bet her own money on
+              the turnaround.
+            </p>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="n hot">−44%</div>
+              <div class="l">Solo Stove sales, FY2025</div>
+              <div class="s">
+                $167.2M, from $297.4M. Retail destocking plus DTC softness.
+              </div>
+            </div>
+            <div class="stat">
+              <div class="n">$9M</div>
+              <div class="l">Market cap · OTCQB: SBDS</div>
+              <div class="s">
+                Delisted from the NYSE 2 April 2026. $3.51 a share on 2 Sept.
+              </div>
+            </div>
+            <div class="stat">
+              <div class="n warm">3.8M</div>
+              <div class="l">Email database</div>
+              <div class="s">
+                Plus one of the largest brand Facebook communities. The real
+                asset.
+              </div>
+            </div>
+            <div class="stat">
+              <div class="n" id="stat-live">2</div>
+              <div class="l">Artists, ever</div>
+              <div class="s" id="stat-live-s">
+                Artists in fifteen years: Snoop Dogg and one parade float. No
+                festival, tour, venue or music program has ever existed.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════ PART 1 ═══════════ -->
+      <section
+        class="slide pdiv"
+        data-t="Part 1 · The company"
+        data-p="1"
+        data-photo="img/v2-6.jpg"
+        data-int="0.9"
+      >
+        <div class="inner">
+          <div class="part">Part one</div>
+          <h1 data-split>The company</h1>
+          <p class="lede">
+            Solo Brands, Inc. Grapevine, Texas. Four brands, three reporting
+            segments, one very stressed balance sheet.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Timeline" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">03</span> Fifteen years,
+            three CEOs, two delistings
+          </div>
+          <h2 data-split>From Kickstarter to the pink sheets.</h2>
+          <div class="tl">
+            <div>
+              <div class="y">2011</div>
+              <p>
+                Brothers Jeff and Spencer Jan launch the Solo Stove Lite camp
+                stove.
+              </p>
+            </div>
+            <div>
+              <div class="y">2016</div>
+              <p>
+                Bonfire fire pit on Kickstarter. $1.1M raised. The cult begins.
+              </p>
+            </div>
+            <div class="hot">
+              <div class="y hot">2021</div>
+              <p>
+                Roll-up of Chubbies, Oru, ISLE. NYSE IPO 28 Oct at $17 (ticker
+                DTC), ~$200M raised.
+              </p>
+            </div>
+            <div>
+              <div class="y">2023</div>
+              <p>
+                Snoop "goes smokeless" in Nov. Viral, but not sales. $249M of
+                impairments. CEO John Merris out.
+              </p>
+            </div>
+            <div>
+              <div class="y">2024</div>
+              <p>
+                Chris Metz (ex-Vista Outdoor) CEO from 15 Jan. Sales −8%, net
+                loss $180M. IcyBreeze killed.
+              </p>
+            </div>
+            <div class="hot">
+              <div class="y hot">Feb 25</div>
+              <p>
+                Metz out after 13 months. John Larson interim CEO. Company-wide
+                layoffs. Liz Vanzura to interim CMO.
+              </p>
+            </div>
+            <div>
+              <div class="y">Apr 25</div>
+              <p>
+                NYSE halts trading, starts delisting for "abnormally low" price.
+                Going-concern doubt in the 10-K.
+              </p>
+            </div>
+            <div>
+              <div class="y">Jul 25</div>
+              <p>
+                1-for-40 reverse split. Debt refinanced ($240M term loan,
+                JPMorgan). Relisted as SBDS. Larson permanent.
+              </p>
+            </div>
+            <div class="hot">
+              <div class="y hot">Apr 26</div>
+              <p>
+                Delisted again: market cap under $15M for 30 days. Moves to
+                OTCQB. Appeal withdrawn in July.
+              </p>
+            </div>
+            <div>
+              <div class="y">Aug 26</div>
+              <p>
+                Q2: first quarter of EBITDA growth in the turnaround. $13.5M
+                adj. EBITDA on $88.5M sales.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-t="The numbers" data-p="1" data-int="0.1">
+        <div class="inner">
+          <div class="split" style="grid-template-columns: 1.1fr 0.9fr">
+            <div>
+              <div class="kicker">
+                <span class="dot"></span><span class="num">04</span> Net sales ·
+                Solo Brands, Inc. · $M
+              </div>
+              <h2 data-split>A third of the company is gone in two years.</h2>
+              <div class="bars">
+                <div class="bar">
+                  <div class="v">494.8</div>
+                  <div class="f dim" style="height: 100%"></div>
+                  <div class="l"><b>FY2023</b> · −4%</div>
+                </div>
+                <div class="bar">
+                  <div class="v">454.6</div>
+                  <div class="f dim" style="height: 92%"></div>
+                  <div class="l"><b>FY2024</b> · −8%</div>
+                </div>
+                <div class="bar">
+                  <div class="v">316.6</div>
+                  <div class="f" style="height: 64%"></div>
+                  <div class="l"><b>FY2025</b> · −30%</div>
+                </div>
+                <div class="bar">
+                  <div class="v">280–310<small>guide</small></div>
+                  <div class="f ghost" style="height: 60%"></div>
+                  <div class="l"><b>FY2026</b> · guidance</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div
+                class="stats"
+                style="grid-template-columns: 1fr 1fr; margin-top: 0"
+              >
+                <div class="stat">
+                  <div class="n hot">−$145M</div>
+                  <div class="l">Net loss FY2025</div>
+                  <div class="s">
+                    After −$180M (2024) and −$195M (2023). $93.5M of
+                    restructuring and impairment in 2025 alone.
+                  </div>
+                </div>
+                <div class="stat">
+                  <div class="n">$167M</div>
+                  <div class="l">Solo Stove segment FY2025</div>
+                  <div class="s">
+                    Down from $297M. The fire pit business, not Chubbies, is
+                    what collapsed.
+                  </div>
+                </div>
+                <div class="stat">
+                  <div class="n warm">$18.5M</div>
+                  <div class="l">Adj. EBITDA FY2025</div>
+                  <div class="s">
+                    5.8% margin. 2026 guide: $24–30M. Q2 alone delivered $13.5M.
+                  </div>
+                </div>
+                <div class="stat">
+                  <div class="n">63.5%</div>
+                  <div class="l">DTC share of sales</div>
+                  <div class="s">
+                    Solo still sells mostly direct. Retail partners destocked
+                    hard through 2025.
+                  </div>
+                </div>
+              </div>
+              <p class="note">
+                Sources: FY2025 10-K, Q2 2026 8-K (13 Aug 2026), FY2026 guidance
+                (23 Mar 2026).
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide dense"
+        data-t="Leadership"
+        data-p="1"
+        data-int="0.1"
+      >
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">06</span> Who runs it now
+          </div>
+          <h2 data-split>
+            A car-industry board rebuilt the C-suite in one year.
+          </h2>
+          <div class="cols c2" style="margin-top: 18px">
+            <div>
+              <div class="person">
+                <img src="img/larson.jpg" alt="John Larson" />
+                <div>
+                  <h3>John P. Larson</h3>
+                  <div class="r">
+                    President & CEO · interim Feb 2025 · permanent 16 Jun 2025
+                  </div>
+                  <p>
+                    Ex-CEO of Bestop (Jeep tops) and Escort (radar detectors),
+                    ex-GM. Joined the board Dec 2024, took the wheel ten weeks
+                    later. Calls international a "blue ocean" with no tariff
+                    drag.
+                  </p>
+                </div>
+              </div>
+              <div class="person">
+                <div class="ph">LC</div>
+                <div>
+                  <h3>Laura Coffey</h3>
+                  <div class="r">CFO · since Feb 2024</div>
+                  <p>
+                    Ex-CFO of The Vitamin Shoppe; 23 years at Pier 1 Imports.
+                    Ran the June 2025 refinancing with Kirkland, Lazard and
+                    AlixPartners in the room.
+                  </p>
+                </div>
+              </div>
+              <div class="person">
+                <img src="img/liz.jpg" alt="Liz Vanzura" />
+                <div>
+                  <h3>Liz Vanzura</h3>
+                  <div class="r">
+                    CMO · board Jan 2025 · interim CMO 12 Mar 2025 · permanent
+                    Jun 2025
+                  </div>
+                  <p>
+                    Ex-VW, HUMMER, Cadillac, Wahlburgers. Replaced Luana
+                    Bumachar. Holds both the CMO seat and a board seat. Full
+                    profile in Part 3.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="person">
+                <div class="ph">MG</div>
+                <div>
+                  <h3>Matthew Guy-Hamilton</h3>
+                  <div class="r">Chairman · Summit Partners</div>
+                  <p>
+                    PE managing director, on the board since Oct 2020. Summit
+                    was the pre-IPO sponsor. The company is being run for the
+                    lender group as much as for equity.
+                  </p>
+                </div>
+              </div>
+              <div class="person">
+                <div class="ph">CB</div>
+                <div>
+                  <h3>Chris Blevins</h3>
+                  <div class="r">General Counsel · Jul 2025</div>
+                  <p>
+                    Promoted from deputy GC. Handled the NYSE appeal, the Up-C
+                    collapse and the delisting.
+                  </p>
+                </div>
+              </div>
+              <div class="card" style="margin-top: 14px">
+                <span class="tag">Turnover</span>
+                <p>
+                  Merris (founder-era CEO) → Metz (Jan 2024, 13 months) →
+                  Larson. Lead independent director Michael Dennison resigned
+                  March 2026. Julia Brown left the board the week Liz joined it.
+                  Larson and Vanzura are both GM alumni.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide dense"
+        data-t="Live + music · the full list"
+        data-p="2"
+        data-int="0.15"
+      >
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">11</span> Live
+            entertainment and music · every artist, ever
+          </div>
+          <h2 data-split>
+            Two artists in fifteen years. One of them was on a float.
+          </h2>
+          <div class="rows">
+            <div class="row head">
+              <span>When</span><span>Artist</span
+              ><span>What it actually was</span>
+            </div>
+            <div class="row">
+              <div class="k">Nov 2023 → Dec 2024</div>
+              <p class="yes"><strong>Snoop Dogg</strong></p>
+              <p>
+                "Smokesman." Two campaigns, a signature matte-black Bonfire with
+                "SD" initials and paw prints. Endorsement, not performance.
+                Ended with the campaign.
+              </p>
+            </div>
+            <div class="row">
+              <div class="k">23 Nov 2023</div>
+              <p class="yes"><strong>Drew Holcomb & The Neighbors</strong></p>
+              <p>
+                Performed "Find Your People" on Solo Stove's "Igniting Memories"
+                float at the 97th Macy's Thanksgiving Day Parade, NBC and
+                Peacock. The float was retired after one year. The only live
+                music in the brand's history, and it was incidental to a parade
+                buy.
+              </p>
+            </div>
+            <div class="row">
+              <div class="k">Aug → Dec 2024</div>
+              <p class="yes"><strong>Warren G</strong></p>
+              <p>
+                Co-star of "Blunt Marketing." Press called it a G-funk riff; no
+                licensed track is listed anywhere.
+              </p>
+            </div>
+            <div class="row">
+              <div class="k">Fall 2024</div>
+              <p class="yes">The Voice, season 26</p>
+              <p>
+                A media buy adjacent to Snoop's coaching seat. Not a
+                performance, not a placement.
+              </p>
+            </div>
+            <div class="row">
+              <div class="k">19 Sep 2025</div>
+              <p class="no">Unnamed guitars, Pershing Square</p>
+              <p>
+                Liz described the pop-up as "a backyard oasis" with s'mores and
+                guitars. No performer named in any listing. Ambient at best.
+              </p>
+            </div>
+          </div>
+          <div class="cols c2" style="margin-top: 18px">
+            <div class="card hot">
+              <span class="tag">Searched for, not found</span>
+              <p>
+                No "Sessions," "Fireside," or "Backyard" performance series. No
+                Stagecoach, CMA Fest, ACL, Bonnaroo, Coachella or Country
+                Thunder presence (2026 partner pages checked). No tour, venue,
+                Red Rocks, Ryman or amphitheater deal. No Live Nation, C3,
+                iHeart, Spotify or Amazon Music partnership. No country artist,
+                no Nashville activation, no brand playlist, no licensing
+                program.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">Sibling brand · Chubbies</span>
+              <p>
+                Thomas Rhett "Rhettro" swim collab, Aug 2019, is the only artist
+                tie. Otherwise sports: George Kittle as "Creative Director of
+                Football" (2023), NFL license (Sept 2024). No festival
+                sponsorships found.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide"
+        data-t="Liz · what she believes"
+        data-p="3"
+        data-int="0.1"
+      >
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">17</span> On the record ·
+            2024–2026
+          </div>
+          <h2 data-split>Insight, community, and a human in the loop.</h2>
+          <div class="cols c2" style="margin-top: 14px">
+            <div>
+              <div class="q">
+                <blockquote>
+                  Deep consumer insight, not surface-level data, fuels enduring
+                  brand loyalty.
+                </blockquote>
+                <cite>DisruptED podcast, Jan 2026</cite>
+              </div>
+              <div class="q">
+                <blockquote>The backyard is the third space.</blockquote>
+                <cite
+                  >DisruptED · on Solo Stove's 2025 mission to go "beyond
+                  world-class fire pits to owning the backyard"</cite
+                >
+              </div>
+              <div class="q">
+                <blockquote>
+                  Authentic UGC outperforms scripted campaigns.
+                </blockquote>
+                <cite
+                  >DisruptED, episode three · "how Solo Stove sparked a customer
+                  movement"</cite
+                >
+              </div>
+            </div>
+            <div>
+              <div class="q">
+                <blockquote>
+                  We're building our own AI models, but you still need the human
+                  in the loop.
+                </blockquote>
+                <cite
+                  >HATCH "Eat In or Dine Out," June 2026 · lean in-house team,
+                  proprietary media-mix model</cite
+                >
+              </div>
+              <div class="q">
+                <blockquote>
+                  The bravest marketers aren't afraid to fail; they pilot,
+                  learn, and adapt.
+                </blockquote>
+                <cite>Tim Brunelle, Curiosity + Courage, Nov 2024</cite>
+              </div>
+              <div class="q">
+                <blockquote>
+                  We're not just a smokeless fire pit company anymore.
+                </blockquote>
+                <cite
+                  >National Backyard Day announcement, SXSW, 12 Mar 2026</cite
+                >
+              </div>
+            </div>
+          </div>
+          <div class="call">
+            <p>
+              Pattern: she is an engineer who learned to sell emotion. Every
+              quote pairs a measurable with a feeling. Pitch her the same way: a
+              pilot with a number attached, wrapped in a moment.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="slide dense"
+        data-t="Liz · how to reach her"
+        data-p="3"
+        data-int="0.1"
+      >
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">19</span> How a pitch
+            lands with her
+          </div>
+          <h2 data-split>Speak engineer. Sell the moment. Bring a number.</h2>
+          <div class="cols c3">
+            <div class="card hot">
+              <span class="tag">Do</span>
+              <ul>
+                <li>
+                  Lead with the fan insight, then the mechanism, then the ask.
+                </li>
+                <li>
+                  Frame it as a pilot with a kill criterion. She says "pilot,
+                  learn, adapt" unprompted.
+                </li>
+                <li>
+                  Use her words: third space, moments and memories, human in the
+                  loop, community.
+                </li>
+                <li>
+                  Show how it feeds the 3.8M-email community and the Facebook
+                  group, not a media buy.
+                </li>
+                <li>
+                  Make it giftable. Corporate Gifting and Gift Cards are top-nav
+                  on her site.
+                </li>
+              </ul>
+            </div>
+            <div class="card">
+              <span class="tag">Don't</span>
+              <ul>
+                <li>
+                  Don't pitch a big-budget campaign. The budget was just cut and
+                  she runs an in-house model.
+                </li>
+                <li>
+                  Don't lead with AI. She co-founded an AI advisory; she will
+                  out-AI you. Lead with craft, mention the tooling once.
+                </li>
+                <li>
+                  Don't bring stock celebrity. Snoop already happened and the
+                  CEO who signed it is gone.
+                </li>
+                <li>
+                  Don't send a deck first. She is Boston, Harvard, engineer.
+                  Send a one-line insight and a demo.
+                </li>
+              </ul>
+            </div>
+            <div class="card">
+              <span class="tag">Openers that fit her record</span>
+              <ul>
+                <li>
+                  "You built a customer movement around a product with no smoke.
+                  What is the sound of it?"
+                </li>
+                <li>
+                  Fanatics-era muscle: she knows fan-personalization at scale
+                  from the inside.
+                </li>
+                <li>
+                  VW-era muscle: she launched an internet radio station in 1999.
+                  Music-as-brand-utility is not new to her.
+                </li>
+                <li>
+                  Rice Krispies proves she will co-brand with a consumer brand
+                  that owns a ritual. Song is a ritual.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide dense" data-t="Openings" data-p="4" data-int="0.12">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">20</span> Openings ·
+            Songfinch × Solo Stove
+          </div>
+          <h2 data-split>The fire is the stage. They own the fire.</h2>
+          <div class="cols c2">
+            <div class="card hot">
+              <span class="tag">01 · Fireside Sessions</span>
+              <h3>
+                A recurring UGC-first content series: Songfinch artists premiere
+                real customers' songs around a Solo Stove.
+              </h3>
+              <p>
+                Fits her "authentic UGC beats scripted" thesis. Fills the empty
+                entertainment lane. Cheap to produce, endlessly clippable, and
+                it makes the brand's own community the cast.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">02 · The gift stack</span>
+              <h3>Song + fire pit as one gifted moment.</h3>
+              <p>
+                Corporate Gifting and Gift Cards are top-nav on solostove.com. A
+                bundle (Mesa + personalized song) is a Father's Day, wedding and
+                retirement product that neither company has today. Rice Krispies
+                shows she will co-brand around a ritual.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">03 · Backyard Day and Family Day</span>
+              <h3>Two owned calendar moments with no soundtrack.</h3>
+              <p>
+                National Backyard Day (March) and National Family Day (Sept) are
+                already hers. A commissioned family song sung live at the
+                activation is the GMA segment she was reaching for.
+              </p>
+            </div>
+            <div class="card">
+              <span class="tag">04 · Pilot, with a kill switch</span>
+              <h3>Structure it the way she talks.</h3>
+              <p>
+                One quarter, one content series, one bundle SKU, measured in
+                email captures and community engagement, not impressions. If it
+                does not move her media-mix model, it dies. She will respect
+                that more than a campaign.
+              </p>
+            </div>
+          </div>
+          <p class="note">
+            Caveat: the parent is a distressed, delisted company. Any deal
+            should be paid on delivery or prepaid. Do not extend credit to Solo
+            Brands.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" data-t="Sources" data-p="4" data-int="0.06">
+        <div class="inner">
+          <div class="kicker">
+            <span class="dot"></span><span class="num">21</span> Sources · all
+            read 3 Sept 2026
+          </div>
+          <h2 data-split>Receipts.</h2>
+          <div class="src" id="src"></div>
+        </div>
+      </section>
+    </div>
+
+    <div id="rail">
+      <span id="idx">01</span>
+      <div id="ticks"></div>
+      <span id="ttl"></span>
+    </div>
+    <div id="help">← → navigate · esc overview · ? help</div>
+    <div id="ov"><div id="ovg"></div></div>
+
+    <script src="vendor/gsap.min.js"></script>
+    <script>
+      /* ═══ EMBERS — 2D canvas, rising sparks. Performs on cover and part
+         dividers, near-silent behind argument slides. ponytail: no WebGL,
+         the fire is the brand, particles are enough. */
+      const canvas = document.getElementById("embers");
+      const ctx = canvas.getContext("2d");
+      const state = { int: 1 };
+      let W,
+        H,
+        P = [];
+      const COUNT = innerWidth < 760 ? 90 : 220;
+      function resize() {
+        W = canvas.width = innerWidth * Math.min(devicePixelRatio, 2);
+        H = canvas.height = innerHeight * Math.min(devicePixelRatio, 2);
+      }
+      resize();
+      addEventListener("resize", resize);
+      function spawn(p, fresh) {
+        p.x = Math.random() * W;
+        p.y = fresh ? Math.random() * H : H + Math.random() * 40;
+        p.r = (0.6 + Math.random() * 2.2) * Math.min(devicePixelRatio, 2);
+        p.vy = (0.25 + Math.random() * 0.9) * Math.min(devicePixelRatio, 2);
+        p.vx = (Math.random() - 0.5) * 0.35;
+        p.life = 0.4 + Math.random() * 0.6;
+        p.ph = Math.random() * Math.PI * 2;
+        p.hot = Math.random() < 0.3;
+        return p;
+      }
+      for (let i = 0; i < COUNT; i++) P.push(spawn({}, true));
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function frame(t) {
+        ctx.clearRect(0, 0, W, H);
+        const I = state.int;
+        for (const p of P) {
+          p.y -= p.vy * (0.35 + I);
+          p.x += p.vx + Math.sin(t * 0.0012 + p.ph) * 0.3;
+          p.life -= 0.0009;
+          if (p.y < -10 || p.life <= 0) spawn(p, false);
+          const a =
+            Math.min(1, p.life * 1.6) *
+            (0.25 + I * 0.75) *
+            (0.6 + 0.4 * Math.sin(t * 0.004 + p.ph));
+          ctx.beginPath();
+          ctx.fillStyle = p.hot
+            ? `rgba(255,178,74,${a})`
+            : `rgba(240,78,35,${a * 0.85})`;
+          ctx.arc(p.x, p.y, p.r * (0.7 + I * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        if (!reduced) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+
+      /* ═══ SLIDE ENGINE ═══ */
+      const slides = [...document.querySelectorAll(".slide")];
+      const N = slides.length;
+      let cur = 0;
+      const photo = document.getElementById("photo");
+      const heat = document.getElementById("heat");
+
+      document.querySelectorAll("[data-split]").forEach((el) => {
+        el.innerHTML = el.innerHTML
+          .split(/(<br\s*\/?>)/i)
+          .map((part) =>
+            /^<br/i.test(part)
+              ? part
+              : part
+                  .split(/(\s+)/)
+                  .map((w) => (w.trim() ? `<span class="w">${w}</span>` : w))
+                  .join(""),
+          )
+          .join("");
+      });
+
+      const ticks = document.getElementById("ticks");
+      slides.forEach((s) =>
+        ticks.insertAdjacentHTML(
+          "beforeend",
+          `<i class="tick b${s.dataset.p}"></i>`,
+        ),
+      );
+      const tickEls = [...ticks.children];
+      const ovg = document.getElementById("ovg");
+      slides.forEach((s, i) =>
+        ovg.insertAdjacentHTML(
+          "beforeend",
+          `<div class="ovc${s.classList.contains("pdiv") ? " part" : ""}" data-i="${i}"><div class="n">${String(i + 1).padStart(2, "0")}</div><div class="t">${s.dataset.t}</div></div>`,
+        ),
+      );
+      ovg.addEventListener("click", (e) => {
+        const c = e.target.closest(".ovc");
+        if (!c) return;
+        go(+c.dataset.i);
+        toggleOv(false);
+      });
+
+      let entrance = null;
+      gsap.ticker.lagSmoothing(0);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && entrance) entrance.progress(1);
+      });
+
+      function go(n) {
+        n = Math.max(0, Math.min(N - 1, n));
+        if (n === cur && slides[n].classList.contains("on")) return;
+        const prev = slides[cur],
+          next = slides[n];
+        cur = n;
+        if (prev !== next)
+          gsap.to(prev, {
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => prev.classList.remove("on"),
+          });
+        next.classList.add("on");
+        if (entrance) entrance.progress(1);
+        const tl = (entrance = gsap.timeline());
+        tl.fromTo(
+          next,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.42, ease: "power2.out" },
+          0,
+        );
+        if (!reduced) {
+          const words = next.querySelectorAll(".w");
+          if (words.length)
+            tl.fromTo(
+              words,
+              { yPercent: 108, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: 0.022,
+                ease: "expo.out",
+              },
+              0.06,
+            );
+          const blocks = next.querySelectorAll(
+            ".card, .stat, .row, .tl > div, .q, .person, .prod, .verdict, .call, .lede, .sub > div",
+          );
+          if (blocks.length)
+            tl.fromTo(
+              blocks,
+              { y: 18, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.5,
+                stagger: 0.018,
+                ease: "power3.out",
+              },
+              0.16,
+            );
+          const bars = next.querySelectorAll(".bar .f");
+          if (bars.length)
+            tl.fromTo(
+              bars,
+              { scaleY: 0 },
+              { scaleY: 1, duration: 0.9, stagger: 0.08, ease: "expo.out" },
+              0.2,
+            );
+        }
+        const int = parseFloat(next.dataset.int ?? 0.1);
+        gsap.to(state, { int, duration: 1.2, ease: "power2.inOut" });
+        gsap.to(heat, { opacity: 0.25 + int * 0.75, duration: 1.1 });
+        const ph = next.dataset.photo;
+        if (ph) {
+          photo.style.backgroundImage = `url(${ph})`;
+          photo.style.opacity = 1;
+        } else photo.style.opacity = 0;
+
+        tickEls.forEach((t, i) => {
+          t.className =
+            "tick b" +
+            slides[i].dataset.p +
+            (i < n ? " done" : i === n ? " now" : "");
+        });
+        document.getElementById("idx").textContent =
+          String(n + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+        document.getElementById("ttl").textContent = next.dataset.t;
+        document.body.classList.toggle("cover", n === 0);
+        [...ovg.children].forEach((c, i) => c.classList.toggle("now", i === n));
+        history.replaceState(null, "", n ? "#" + (n + 1) : "./");
+      }
+      const ov = document.getElementById("ov");
+      const toggleOv = (on) =>
+        ov.classList.toggle("on", on ?? !ov.classList.contains("on"));
+      addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur + 1);
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          toggleOv(false);
+          go(cur - 1);
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          toggleOv();
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(N - 1);
+        else if (e.key === "?")
+          document.getElementById("help").classList.toggle("on");
+      });
+      let tx = 0;
+      addEventListener(
+        "touchstart",
+        (e) => (tx = e.changedTouches[0].clientX),
+        { passive: true },
+      );
+      addEventListener(
+        "touchend",
+        (e) => {
+          const d = e.changedTouches[0].clientX - tx;
+          if (Math.abs(d) > 55) go(cur + (d < 0 ? 1 : -1));
+        },
+        { passive: true },
+      );
+      addEventListener("click", (e) => {
+        if (ov.classList.contains("on") || e.target.closest("a,button")) return;
+        if (e.clientX > innerWidth * 0.8) go(cur + 1);
+        else if (e.clientX < innerWidth * 0.2) go(cur - 1);
+      });
+
+      /* ═══ SOURCES ═══ */
+      const SRC = [
+        ["Solo Brands Q2 2026 results, 8-K 13 Aug 2026", "sec.gov"],
+        [
+          "Solo Brands FY2025 10-K and FY2025 results, 19 Mar 2026",
+          "sec.gov · globenewswire.com",
+        ],
+        ["FY2026 guidance, 8-K 23 Mar 2026", "sec.gov"],
+        ["Q1 2026 results, 8-K 14 May 2026", "sec.gov"],
+        [
+          "NYSE delisting 8-K, 2 Apr 2026; ICE notice",
+          "sec.gov · ir.theice.com",
+        ],
+        [
+          "Corporate simplification (Up-C collapse), 22 Dec 2025",
+          "globenewswire.com",
+        ],
+        ["Larson CEO + debt restructuring, 16 Jun 2025", "globenewswire.com"],
+        [
+          "Reverse split, NYSE reinstatement, ticker change, Jul 2025",
+          "nasdaq.com · tipranks.com",
+        ],
+        ["Vanzura interim CMO, 12 Mar 2025", "marketscreener.com"],
+        ["Adweek: Solo Brands names Liz Vanzura CMO, Jul 2025", "adweek.com"],
+        ["Solo Brands DEF 14A proxy, 10 Apr 2026 (comp, age, bio)", "sec.gov"],
+        ["Vanzura insider buy, 30 Mar 2026", "investing.com"],
+        ["Board bio, investors.solobrands.com", "investors.solobrands.com"],
+        ["DisruptED podcast, three episodes, 22 Jan 2026", "marketscale.com"],
+        ["HATCH 'Eat In or Dine Out', 24 Jun 2026", "lbbonline.com"],
+        [
+          "Tim Brunelle, Curiosity + Courage, 26 Nov 2024",
+          "timbrunelle.substack.com",
+        ],
+        [
+          "Harvard Grid, Future of AI & Marketing, 13 Mar 2025",
+          "otd.harvard.edu",
+        ],
+        ["IMPA 2006 speaker bio (VW, HUMMER, awards)", "impa.org"],
+        ["Ad Age, Vanzura leaving GM, 12 May 2008", "adage.com"],
+        ["Bentley University faculty page", "faculty.bentley.edu"],
+        ["GAI World conference, 28 Jul 2023", "prnewswire.com"],
+        ["National Backyard Day expansion, SXSW, Mar 2026", "prnewswire.com"],
+        ["EU brand expansion release, May 2026", "prnewswire.com"],
+        [
+          "TerraFlame sale-back, IcyBreeze wind-down",
+          "sgbonline.com · cookoutnews.com",
+        ],
+        ["Chubbies acquisition interest, Apr 2025", "octus.com"],
+        ["Retail Dive: strategic review, 2024", "retaildive.com"],
+        ["CNBC: how Solo Stove became a $400M company, Feb 2023", "cnbc.com"],
+        [
+          "solostove.com/eu/en-fr storefront and Stories & Community, read 3 Sept 2026",
+          "solostove.com",
+        ],
+        [
+          "StockAnalysis: SBDS price, shares, market cap, 2 Sept 2026",
+          "stockanalysis.com",
+        ],
+      ];
+      document.getElementById("src").innerHTML = SRC.map(
+        (s) => `<p><b>${s[0]}</b> · ${s[1]}</p>`,
+      ).join("");
+
+      /* ═══ BOOT ═══ */
+      const h = parseInt(location.hash.slice(1)) || 1;
+      go(h - 1);
+      document.fonts.ready.then(() => document.body.classList.add("ready"));
+      setTimeout(() => document.body.classList.add("ready"), 1200);
+    </script>
+  </body>
+</html>

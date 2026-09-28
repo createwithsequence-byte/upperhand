@@ -227,6 +227,18 @@
       "port": 3600
     },
     {
+      "name": "chefs-community-site-audit",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4183",
+        "--directory",
+        "chefs-community-site-audit"
+      ],
+      "port": 4183
+    },
+    {
       "name": "riemenschneider-deep-dive",
       "runtimeExecutable": "python3",
       "runtimeArgs": [
@@ -359,6 +371,69 @@
         "cd /Users/gugumax/code/assembly && npm run dev -- -p 3050"
       ],
       "port": 3050
+    },
+    {
+      "name": "ph-proposal",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4496",
+        "--directory",
+        "pedersen-houpt-proposal"
+      ],
+      "port": 4496
+    },
+    {
+      "name": "echelon-proposal",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4497",
+        "--directory",
+        "echelon-proposal"
+      ],
+      "port": 4497
+    },
+    {
+      "name": "librarian-review-demo",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/Users/gugumax/code/upperhand-skills/librarian/scripts/review.py",
+        "/private/tmp/claude-501/-Users-gugumax-Documents-Claude-code/baee7fd9-ec7b-406b-ac79-9e130db3bccf/scratchpad/ptdemo/Potential Trash",
+        "--port",
+        "4530",
+        "--no-open"
+      ],
+      "port": 4530
+    },
+    {
+      "name": "hub-goldmine-room",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "/Users/gugumax/code/proposal-engine-goldmine",
+        "run",
+        "dev",
+        "--",
+        "-p",
+        "3517",
+        "--webpack"
+      ],
+      "port": 3517
+    },
+    {
+      "name": "librarian-mac-review",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/Users/gugumax/code/upperhand-skills/librarian/scripts/review.py",
+        "--mac",
+        "--port",
+        "4531",
+        "--no-open"
+      ],
+      "port": 4531
     }
   ]
 }

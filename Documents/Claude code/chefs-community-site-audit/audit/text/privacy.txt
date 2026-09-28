@@ -1,0 +1,46 @@
+CHEFS
+EVENTS
+PARTNERS
+MEMBERSHIP
+MEMBERS
+Join — $9/mo
+
+LEGAL
+
+Privacy Policy.
+
+Last updated September 28, 2026. Short version: your data runs your membership, nothing else.
+
+1. What we collect
+
+Your name, email address, profile details (restaurant, location, bio) and the content you choose to post. Payment details are handled by Stripe — we never see or store your card number.
+
+2. How we use it
+
+To run your membership: signing you in, showing your profile and posts to other members, processing payment, tracking your course progress, and sending essential service emails.
+
+3. What we never do
+
+We do not sell your data. We do not show advertising. Your posts and profile are visible inside the member community; only profiles you mark public appear on the public chefs page.
+
+4. Third parties
+
+We use Stripe for payments and Lovable Cloud for secure hosting and authentication. Each processes only what is needed to provide the service.
+
+5. Your choices
+
+You can edit your profile, delete your posts and threads, and cancel your membership at any time from your account page. To delete your account entirely, contact us and we will remove your data within 30 days.
+
+6. Retention
+
+We keep your data while your account is active. Billing records are retained as required by tax law after cancellation.
+
+HOME
+CHEFS
+EVENTS
+PARTNERS
+MEMBERSHIP
+SIGN IN
+TERMS
+PRIVACY
+Made with

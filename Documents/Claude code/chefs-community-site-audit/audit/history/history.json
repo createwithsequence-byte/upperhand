@@ -1,0 +1,10 @@
+[
+ {
+  "year": "2025",
+  "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
+ },
+ {
+  "year": "2026",
+  "none": true
+ }
+]

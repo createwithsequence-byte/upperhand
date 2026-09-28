@@ -1,0 +1,246 @@
+/* evidence images */
+.ev {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+.ev.two {
+  grid-template-columns: 1.55fr 0.9fr;
+  align-items: start;
+}
+.ev.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+.ev.strip {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.ev figure {
+  margin: 0;
+  min-width: 0;
+}
+.ev img {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: #fff;
+}
+.ev .shot {
+  max-height: 56vh;
+  object-fit: cover;
+  object-position: top;
+}
+.ev .tall {
+  max-height: 62vh;
+  object-fit: cover;
+  object-position: top;
+}
+.ev figcaption {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.ev figcaption b {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.ann {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 8px;
+}
+.ann li {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  padding-left: 22px;
+  position: relative;
+}
+.ann li::before {
+  content: attr(data-n);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ember);
+}
+.ann li b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.serp {
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  background: #fff;
+  color: #1a1a1a;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.serp .u {
+  font-size: 12px;
+  color: #4d5156;
+}
+.serp .t {
+  font-size: 18px;
+  color: #1a0dab;
+  margin: 4px 0 6px;
+}
+.serp .d {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #4d5156;
+}
+.slide.dense .ev img {
+  max-height: 46vh;
+}
+.lh {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.gauge {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 14px 12px;
+}
+.gauge .n {
+  font-family: var(--display);
+  font-size: clamp(34px, 3.6vw, 54px);
+  line-height: 1;
+  font-variation-settings: "opsz" 144;
+}
+.gauge .n.bad {
+  color: var(--ember);
+}
+.gauge .n.mid {
+  color: var(--heat);
+}
+.gauge .n.ok {
+  color: var(--ink);
+}
+.gauge .l {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+.gauge .s {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+.signoff {
+  margin-top: 26px;
+  display: flex;
+  gap: 40px;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  flex-wrap: wrap;
+}
+.signoff b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* legibility: prose never under 14px at 1280, dense never under 13px */
+#deck .card p,
+#deck .verdict p,
+#deck .lede,
+#deck .rows .row p,
+#deck .tl p,
+#deck .ann li,
+#deck .note,
+#deck .stat .s,
+#deck .person p {
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+#deck .slide.dense .card p,
+#deck .slide.dense .rows .row p,
+#deck .slide.dense .ann li,
+#deck .slide.dense .stat .s,
+#deck .slide.dense .person p,
+#deck .slide.dense .tl p {
+  font-size: 13.5px;
+}
+#deck .verdict p {
+  font-size: 17px;
+}
+#deck .kicker {
+  font-size: 11.5px;
+}
+#deck h2 {
+  font-weight: 900;
+  letter-spacing: -0.005em;
+}
+#deck .gauge .n,
+#deck .stat .n {
+  font-variation-settings: normal;
+  font-weight: 900;
+}
+#deck .card h3 {
+  font-size: 20px;
+}
+
+/* short viewports: the engine's padding eats 158px of a 720 pane */
+@media (max-height: 860px) {
+  #deck .slide {
+    padding-top: 44px !important;
+    padding-bottom: 60px !important;
+  }
+}
+.rows.tight .row {
+  padding: 7px 0;
+}
+.rows .k span {
+  display: block;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  opacity: 0.62;
+  margin-top: 3px;
+  line-height: 1.3;
+}
+.row p.no::before {
+  content: "✕ ";
+  color: var(--ember);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.row p.yes::before {
+  content: "✓ ";
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+#deck .rows.tight .row {
+  grid-template-columns: 215px 0.85fr 1.55fr;
+}
+#deck .rows.tight .row.head {
+  grid-template-columns: 215px 0.85fr 1.55fr;
+}
+
+/* chefs-community audit: headline weight on dense slides, evidence heights */
+#deck .slide.dense h2 { font-size: clamp(28px, 3.6vw, 52px); }
+#deck .ev .shot { max-height: 50vh; }
+#deck .slide.dense .card h3 { font-size: 17px; line-height: 1.25; }
+#deck .slide.dense .cols { margin-top: 16px; }
+#deck .slide.dense h2 { max-width: 30ch; }
+#peers .row { padding: 5px 0; }
+#peers .row p { font-size: 13px; }
